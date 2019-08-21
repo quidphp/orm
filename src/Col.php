@@ -12,7 +12,7 @@ class Col extends Main\Root
 	
 	
 	// config
-	public static $config = array(
+	public static $config = [
 		'ignore'=>null, // défini si la colonne est ignoré
 		'cell'=>null, // détermine la class a utilisé pour la cell, si null laisse le loop de dbclasse faire son oeuvre
 		'type'=>null, // type de la colonne
@@ -42,9 +42,9 @@ class Col extends Main\Root
 		'editable'=>true, // permet de spécifier si une colonne est readOnly (donc ne peut pas être modifié après l'insertion)
 		'visibleGeneral'=>true, // permet d'afficher une colonne dans general, doit être booléean et utiliser la validation de role dans l'attribut visible
 		'required'=>false, // détermine si la colonne est requise
-		'removeWhiteSpace'=>array( // détermine s'il faut enlever les whiteSpace lors du required ou du autocast
+		'removeWhiteSpace'=>[ // détermine s'il faut enlever les whiteSpace lors du required ou du autocast
 			'required'=>true,
-			'cast'=>false),
+			'cast'=>false],
 		'preValidate'=>null, // règle de validation pour la colonne, données au moment du set (en provenance du post par exemple)
 		'validate'=>null, // règle de validation pour la colonne, données tel qu'inséré dans le post
 		'compare'=>null, // règle de validation gérant la comparaison avec d'autres champs
@@ -71,11 +71,11 @@ class Col extends Main\Root
 		'onUpdate'=>null, // callback sur update
 		'onCommit'=>null, // callack sur insertion ou update
 		'generalExcerptMin'=>null // excerpt min pour l'affichage dans general
-	);
+	];
 	
 	
 	// replaceMode
-	protected static $replaceMode = array(); // défini les colonnes à ne pas merger récursivement
+	protected static $replaceMode = []; // défini les colonnes à ne pas merger récursivement
 
 	
 	// dynamique
@@ -187,23 +187,23 @@ class Col extends Main\Root
 	// doit retourner un tableau
 	public function onExport(string $type,$value=null,Cell $cell,?array $option=null):array
 	{
-		$return = array();
+		$return = [];
 		
-		if(in_array($type,array('col','cell'),true))
+		if(\in_array($type,['col','cell'],true))
 		{
 			$separator = $this->attr('exportSeparator');
 			
 			if($type === 'col')
 			$value = $this->label();
 			
-			$return = $this->attrCallback('onExport',false,array($value),$type,$cell,(array) $option);
+			$return = $this->attrCallback('onExport',false,[$value],$type,$cell,(array) $option);
 			
-			if(!is_array($return))
+			if(!\is_array($return))
 			$return = (array) $return;
 			
 			foreach ($return as $key => $value) 
 			{
-				if(is_array($value) && Base\Arr::isIndexed($value))
+				if(\is_array($value) && Base\Arr::isIndexed($value))
 				$return[$key] = Base\Str::cast($value,$separator);
 			}
 		}
@@ -419,7 +419,7 @@ class Col extends Main\Root
 	// un type doit être fourni
 	public function shouldRemoveWhiteSpace(string $key):bool 
 	{
-		return ($this->attr(array('removeWhiteSpace',$key)) === true)? true:false;
+		return ($this->attr(['removeWhiteSpace',$key]) === true)? true:false;
 	}
 	
 	
@@ -443,7 +443,7 @@ class Col extends Main\Root
 	// retourne vrai s'il faut afficher le max length de la colonne dans les détails
 	public function showDetailsMaxLength():bool 
 	{
-		return (is_int($this->length()))? true:false;
+		return (\is_int($this->length()))? true:false;
 	}
 	
 	
@@ -491,7 +491,7 @@ class Col extends Main\Root
 	// retourne vrai si la colonne est de type media
 	public function isMedia():bool 
 	{
-		return (is_int($this->attr('media')))? true:false;
+		return (\is_int($this->attr('media')))? true:false;
 	}
 	
 
@@ -542,7 +542,7 @@ class Col extends Main\Root
 	{
 		$return = false;
 		
-		if(method_exists($this,'onInsert') || method_exists($this,'onCommit'))
+		if(\method_exists($this,'onInsert') || \method_exists($this,'onCommit'))
 		$return = true;
 		
 		elseif(!empty($this->attr['onInsert']) || !empty($this->attr['onCommit']))
@@ -559,7 +559,7 @@ class Col extends Main\Root
 	{
 		$return = false;
 		
-		if(method_exists($this,'onUpdate') || method_exists($this,'onCommit'))
+		if(\method_exists($this,'onUpdate') || \method_exists($this,'onCommit'))
 		$return = true;
 		
 		elseif(!empty($this->attr['onUpdate']) || !empty($this->attr['onCommit']))
@@ -637,7 +637,7 @@ class Col extends Main\Root
 		$array = $this->export($option);
 		
 		if(!empty($array))
-		$return = current($array);
+		$return = \current($array);
 		
 		return $return;
 	}
@@ -647,7 +647,7 @@ class Col extends Main\Root
 	// retourne le placeholder ou le label, si value n'est pas string
 	public function placeholder($value=null):?string
 	{
-		return (is_string($value))? $value:$this->label();
+		return (\is_string($value))? $value:$this->label();
 	}
 	
 	
@@ -687,7 +687,7 @@ class Col extends Main\Root
 		{
 			$visible = $this->attr('visible');
 			
-			if(is_array($visible) && !empty($visible))
+			if(\is_array($visible) && !empty($visible))
 			{
 				$cell = ($value instanceof Cell)? $value:null;
 				$validateVisible = $visible['validate'] ?? null;
@@ -704,13 +704,13 @@ class Col extends Main\Root
 				
 				if(!empty($cell))
 				{
-					if($return === true && is_string($sessionVisible) && !empty($session))
+					if($return === true && \is_string($sessionVisible) && !empty($session))
 					{
 						if(!$session->$sessionVisible($this,$cell))
 						$return = false;
 					}
 					
-					if($return === true && is_string($rowVisible))
+					if($return === true && \is_string($rowVisible))
 					{
 						if(!$cell->row()->$rowVisible())
 						$return = false;
@@ -753,7 +753,7 @@ class Col extends Main\Root
 		if(Base\Html::isHiddenTag($tag) || $visible === false)
 		$return = false;
 		
-		elseif(is_array($visible) && !empty($visible))
+		elseif(\is_array($visible) && !empty($visible))
 		$return = $this->roleValidateCommon($visible);
 		
 		return $return;
@@ -788,7 +788,7 @@ class Col extends Main\Root
 		if($editable === true)
 		$return = true;
 		
-		elseif(is_array($editable) && !empty($editable))
+		elseif(\is_array($editable) && !empty($editable))
 		$return = $this->roleValidateCommon($editable);
 		
 		return $return;
@@ -802,7 +802,7 @@ class Col extends Main\Root
 		$return = Base\Sql::getOrderDirection($this->attr('direction'));
 		
 		if($lower === true)
-		$return = strtolower($return);
+		$return = \strtolower($return);
 		
 		return $return;
 	}
@@ -854,7 +854,7 @@ class Col extends Main\Root
 	{
 		$return = $this;
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$return = $return->$value(...$args);
 		
 		return $return;
@@ -888,7 +888,7 @@ class Col extends Main\Root
 	{
 		$return = $this->attr($type);
 		
-		if(!is_array($return))
+		if(!\is_array($return))
 		$return = (array) $return;
 		
 		if($lang === true && !empty($return))
@@ -908,11 +908,11 @@ class Col extends Main\Root
 	// la clé doit être un symbol de comparaison valide
 	public function attrCompare():array 
 	{
-		$return = array();
+		$return = [];
 		$attr = $this->attr('compare');
 		$table = $this->table();
 		
-		if(!is_array($attr))
+		if(!\is_array($attr))
 		$attr = (array) $attr;
 		
 		foreach ($attr as $symbol => $col) 
@@ -1026,9 +1026,9 @@ class Col extends Main\Root
 		$return = null;
 		$length = $this->length();
 		
-		if(is_int($length))
+		if(\is_int($length))
 		{
-			$return = array('maxLength'=>$length);
+			$return = ['maxLength'=>$length];
 			
 			if($lang === true)
 			{
@@ -1046,8 +1046,8 @@ class Col extends Main\Root
 	// si lang est true, retourne les textes plutôt que les règles de validation
 	public function rules(bool $lang=false,bool $preValidate=false):array
 	{
-		$return = array();
-		$rules = array();
+		$return = [];
+		$rules = [];
 		
 		$rules['exception'] = $this->ruleException($lang);
 		$rules['required'] = $this->ruleRequired($lang);
@@ -1079,7 +1079,7 @@ class Col extends Main\Root
 	{
 		$return = null;
 		
-		foreach (array('pattern','preValidate','validate') as $v) 
+		foreach (['pattern','preValidate','validate'] as $v) 
 		{
 			$pattern = null;
 			
@@ -1104,10 +1104,10 @@ class Col extends Main\Root
 			}
 		}
 		
-		if($lang === true && !empty($return) && is_string($return))
+		if($lang === true && !empty($return) && \is_string($return))
 		{
 			$lang = $this->db()->lang();
-			$return = $lang->validate(array($return),null,$this->ruleLangOption());
+			$return = $lang->validate([$return],null,$this->ruleLangOption());
 		}
 		
 		return $return;
@@ -1138,7 +1138,7 @@ class Col extends Main\Root
 	// est utilisé par validate, compare, required et unique
 	public function ruleLangOption():array 
 	{
-		return array('path'=>array('tables',$this->tableName(),$this->name()));
+		return ['path'=>['tables',$this->tableName(),$this->name()]];
 	}
 	
 	
@@ -1201,7 +1201,7 @@ class Col extends Main\Root
 				$rules = $this->rulesWrapClosure('validate',$rules,$value);
 				$return = Base\Validate::isAndCom($rules,$value);
 				
-				if($lang === true && is_array($return))
+				if($lang === true && \is_array($return))
 				{
 					$lang = $this->db()->lang();
 					$return = $lang->validates($return,null,$this->ruleLangOption());
@@ -1217,7 +1217,7 @@ class Col extends Main\Root
 	// fait les test de comparaison sur la colonne
 	// le tableau row, contenant toutes les données de la ligne doit être fourni
 	// si lang est true, retourne le message d'erreur
-	public function compare($value,$row=array(),bool $lang=false) 
+	public function compare($value,$row=[],bool $lang=false) 
 	{
 		$return = true;
 		
@@ -1227,15 +1227,15 @@ class Col extends Main\Root
 		if($row instanceof Row)
 		$row = $row->value();
 		
-		if($this->hasCompare() && is_array($row) && !empty($row) && !Base\Validate::isReallyEmpty($value))
+		if($this->hasCompare() && \is_array($row) && !empty($row) && !Base\Validate::isReallyEmpty($value))
 		{
-			$error = array();
+			$error = [];
 			$attr = $this->attrCompare();
 			
 			foreach ($attr as $symbol => $col) 
 			{
 				$name = $col->name();
-				if(array_key_exists($name,$row) && !Base\Validate::isReallyEmpty($row[$name]))
+				if(\array_key_exists($name,$row) && !Base\Validate::isReallyEmpty($row[$name]))
 				{
 					if(!Base\Validate::compare($value,$symbol,$row[$name]))
 					$error[$symbol] = ($lang === true)? $col->label():$col;
@@ -1291,7 +1291,7 @@ class Col extends Main\Root
 	// possible de mettre une valeur notIn
 	public function duplicate($value,$notIn=null):array 
 	{
-		$return = array();
+		$return = [];
 		
 		if($value instanceof Cell)
 		$value = $value->value();
@@ -1301,10 +1301,10 @@ class Col extends Main\Root
 			$table = $this->table();
 			$primary = $table->primary();
 			$db = $table->db();
-			$where = array(array($this,'=',$value));
+			$where = [[$this,'=',$value]];
 			
 			if(!empty($notIn))
-			$where[] = array($primary,'notIn',$notIn);
+			$where[] = [$primary,'notIn',$notIn];
 			
 			$return = $db->selectColumns($primary,$table,$where);
 		}
@@ -1320,8 +1320,8 @@ class Col extends Main\Root
 	{
 		$db = $this->db();
 		$table = $this->table();
-		$set = array();
-		$set[] = array($this,'replace',$from,$to);
+		$set = [];
+		$set[] = [$this,'replace',$from,$to];
 		
 		if(empty($where))
 		$where = $table->whereAll();
@@ -1345,9 +1345,9 @@ class Col extends Main\Root
 	// completeValidation
 	// fait les test required, validate et unique sur la colonne
 	// si lang est true, retourne les textes plutôt que les règles de validation
-	public function completeValidation($value,$row=array(),bool $lang=false) 
+	public function completeValidation($value,$row=[],bool $lang=false) 
 	{
-		$array = array();
+		$array = [];
 		$array['exception'] = $this->exception($lang);
 		$array['required'] = $this->required($value,$lang);
 		$array['validate'] = $this->validate($value,$lang);
@@ -1367,29 +1367,29 @@ class Col extends Main\Root
 	public function makeCompleteValidation(array $array) 
 	{
 		$return = true;
-		$error = array();
+		$error = [];
 		
-		if(!empty($array['exception']) && is_string($array['exception']))
+		if(!empty($array['exception']) && \is_string($array['exception']))
 		$error[] = $array['exception'];
 		
 		if(empty($error))
 		{
-			if(!empty($array['required']) && is_string($array['required']))
+			if(!empty($array['required']) && \is_string($array['required']))
 			$error[] = $array['required'];
 			
-			if(!empty($array['editable']) && is_string($array['editable']))
+			if(!empty($array['editable']) && \is_string($array['editable']))
 			$error[] = $array['editable'];
 			
-			if(!empty($array['validate']) && is_array($array['validate']))
+			if(!empty($array['validate']) && \is_array($array['validate']))
 			$error = Base\Arr::append($error,$array['validate']);
 			
-			if(!empty($array['compare']) && is_array($array['compare']))
+			if(!empty($array['compare']) && \is_array($array['compare']))
 			$error = Base\Arr::append($error,$array['compare']);
 			
 			if(empty($error) && !empty($array['unique']) && $array['unique'] instanceof \Closure)
 			{
 				$unique = $array['unique']();
-				if(is_string($unique))
+				if(\is_string($unique))
 				$error[] = $unique;
 			}
 		}
@@ -1453,7 +1453,7 @@ class Col extends Main\Root
 		$name = $this->name();
 		$defaultAttr = $db->colAttr($name);
 		$tableAttr = $table->colAttr($name);
-		$baseAttr = array();
+		$baseAttr = [];
 		$callable = static::getConfigCallable();
 		
 		foreach (static::$config as $key => $value) 
@@ -1479,16 +1479,16 @@ class Col extends Main\Root
 	// méthode protégé
 	protected function checkAttr(array $attr):self 
 	{
-		if(empty($attr['type']) || !is_string($attr['type']))
+		if(empty($attr['type']) || !\is_string($attr['type']))
 		static::throw($this,'invalidType');
 		
-		if(empty($attr['group']) || !is_string($attr['group']))
+		if(empty($attr['group']) || !\is_string($attr['group']))
 		static::throw($this,'invalidGroup');
 		
-		if(empty($attr['priority']) || !is_int($attr['priority']))
+		if(empty($attr['priority']) || !\is_int($attr['priority']))
 		static::throw($this,'invalidPriority');
 		
-		if(!empty($attr['check']) && is_array($attr['check']) && !Base\Arr::hasSlices($attr['check'],$attr))
+		if(!empty($attr['check']) && \is_array($attr['check']) && !Base\Arr::hasSlices($attr['check'],$attr))
 		static::throw($this,$this->table(),'checkFailed');
 		
 		return $this;
@@ -1526,17 +1526,17 @@ class Col extends Main\Root
 		$return = null;
 		$attr = $this->attr($key);
 		
-		if(!empty($attr) && is_array($attr))
+		if(!empty($attr) && \is_array($attr))
 		{
 			if(static::classIsCallable($attr))
-			$return = array('callable'=>$attr,'args'=>array());
+			$return = ['callable'=>$attr,'args'=>[]];
 			
-			elseif(static::classIsCallable(current($attr)))
+			elseif(static::classIsCallable(\current($attr)))
 			{
-				$callable = current($attr);
-				unset($attr[key($attr)]);
-				$args = array_values($attr);
-				$return = array('callable'=>$callable,'args'=>$args);
+				$callable = \current($attr);
+				unset($attr[\key($attr)]);
+				$args = \array_values($attr);
+				$return = ['callable'=>$callable,'args'=>$args];
 			}
 		}
 		
@@ -1623,7 +1623,7 @@ class Col extends Main\Root
 		{
 			$return = $this->attr['default'];
 			
-			if(is_string($return) && strpos($return,'/') !== false)
+			if(\is_string($return) && \strpos($return,'/') !== false)
 			$return = $this->db()->lang()->safe($return) ?? $return;
 		}
 		
@@ -1652,7 +1652,7 @@ class Col extends Main\Root
 		$kind = $this->kind();
 		$removeWhiteSpace = $this->shouldRemoveWhiteSpace('cast');
 		
-		if(is_array($return) || is_object($return))
+		if(\is_array($return) || \is_object($return))
 		$return = Base\Obj::cast($return);
 		
 		if(Base\Validate::isReallyEmpty($return,$removeWhiteSpace))
@@ -1677,7 +1677,7 @@ class Col extends Main\Root
 			elseif($kind === 'float')
 			$return = Base\Number::castToFloat($return) ?? $str;
 			
-			elseif(in_array($kind,array('char','text'),true))
+			elseif(\in_array($kind,['char','text'],true))
 			$return = $str;
 		}
 		
@@ -1690,10 +1690,10 @@ class Col extends Main\Root
 	// si pas de méthode, retourne la valeur tel quelle
 	public function insertCallable($return,array $row,array $option)
 	{
-		if(method_exists($this,'onInsert'))
+		if(\method_exists($this,'onInsert'))
 		$return = $this->onInsert($return,$row,$option);
 		
-		elseif(method_exists($this,'onCommit'))
+		elseif(\method_exists($this,'onCommit'))
 		$return = $this->onCommit($return,$row,null,$option);
 		
 		elseif(!empty($this->attr['onInsert']))
@@ -1713,10 +1713,10 @@ class Col extends Main\Root
 	{
 		$value = $return;
 		
-		if(method_exists($this,'onUpdate'))
+		if(\method_exists($this,'onUpdate'))
 		$value = $this->onUpdate($return,$option);
 		
-		elseif(method_exists($this,'onCommit'))
+		elseif(\method_exists($this,'onCommit'))
 		$value = $this->onCommit($return->value(),$return->row()->get(),$return,$option);
 		
 		elseif(!empty($this->attr['onUpdate']))
@@ -1767,7 +1767,7 @@ class Col extends Main\Root
 		$return = null;
 		$obj = $this->db()->lang();
 		$path = $this->attr('label');
-		$option = Base\Arr::plus($option,array('pattern'=>$pattern));
+		$option = Base\Arr::plus($option,['pattern'=>$pattern]);
 		
 		if(!empty($path))
 		$return = $obj->same($path,null,$lang,$option);
@@ -1786,7 +1786,7 @@ class Col extends Main\Root
 		$return = null;
 		$obj = $this->db()->lang();
 		$path = $this->attr('description');
-		$option = Base\Arr::plus($option,array('pattern'=>$pattern));
+		$option = Base\Arr::plus($option,['pattern'=>$pattern]);
 		
 		if(!empty($path))
 		$return = $obj->same($path,$replace,$lang,$option);
@@ -1802,7 +1802,7 @@ class Col extends Main\Root
 	// les détails sont pour la plupart généré automatiquement
 	public function details(bool $lang=true):array
 	{
-		$return = array();
+		$return = [];
 		$details = $this->makeDetails();
 		
 		if($this->isRequired())
@@ -1837,7 +1837,7 @@ class Col extends Main\Root
 	// méthode à étendre pour ajouter des détails en lien avec la colonne
 	public function makeDetails():array 
 	{
-		return array();
+		return [];
 	}
 	
 	
@@ -1865,7 +1865,7 @@ class Col extends Main\Root
 	{
 		$return = $this->attr('panel');
 		
-		if(empty($return) || !is_string($return))
+		if(empty($return) || !\is_string($return))
 		$return = 'default';
 		
 		return $return;
@@ -1880,10 +1880,10 @@ class Col extends Main\Root
 	{
 		$return = (array) $this->attr('attr');
 		
-		if(is_array($attr))
+		if(\is_array($attr))
 		$return = Base\Arr::replace($return,$attr);
 		
-		if(array_key_exists('tag',$return))
+		if(\array_key_exists('tag',$return))
 		unset($return['tag']);
 		
 		$tag = $this->tag($attr,$complex);
@@ -1894,7 +1894,7 @@ class Col extends Main\Root
 			$isInputMethod = Base\Html::isInputMethod($tag);
 			$isHiddenTag = Base\Html::isHiddenTag($tag);
 			
-			if(!array_key_exists('data-required',$return) && $this->isRequired())
+			if(!\array_key_exists('data-required',$return) && $this->isRequired())
 			$return['data-required'] = true;
 			
 			if($isHiddenTag === false)
@@ -1902,19 +1902,19 @@ class Col extends Main\Root
 				if($isTextTag === true || $isInputMethod === true)
 				{
 					$pattern = $this->rulePattern();
-					if(!array_key_exists('data-pattern',$return) && !empty($pattern))
+					if(!\array_key_exists('data-pattern',$return) && !empty($pattern))
 					$return['data-pattern'] = $pattern;
 				}
 				
 				if($isInputMethod === true)
 				{
 					$length = $this->length();
-					if(!array_key_exists('maxlength',$return) && is_int($length))
+					if(!\array_key_exists('maxlength',$return) && \is_int($length))
 					$return['maxlength'] = $length;
 				}
 			}
 			
-			if(!array_key_exists('name',$return))
+			if(!\array_key_exists('name',$return))
 			$return['name'] = $this->name();
 		}
 		
@@ -1952,7 +1952,7 @@ class Col extends Main\Root
 	// différence: valeur par défaut est null, et non pas la valeur par défaut (true)
 	public function formHidden($value=null,?array $attr=null,?array $option=null):string
 	{
-		return $this->form($value,Base\Arr::plus($attr,array('tag'=>'inputHidden')),$option);
+		return $this->form($value,Base\Arr::plus($attr,['tag'=>'inputHidden']),$option);
 	}
 	
 	
@@ -1962,7 +1962,7 @@ class Col extends Main\Root
 	// si placeholder est null, utilise label
 	public function formPlaceholder($value=true,?string $placeholder=null,?array $attr=null,?array $option=null):string
 	{
-		return $this->form($value,Base\Arr::plus($attr,array('placeholder'=>$this->placeholder($placeholder))),$option);
+		return $this->form($value,Base\Arr::plus($attr,['placeholder'=>$this->placeholder($placeholder)]),$option);
 	}
 	
 	
@@ -2018,7 +2018,7 @@ class Col extends Main\Root
 	// si placeholder est null, utilise label
 	public function formPlaceholderWrap(?string $wrap=null,$pattern=null,$value=true,?string $placeholder=null,?array $attr=null,?array $replace=null,?array $option=null):string
 	{
-		return $this->formWrap($wrap,$pattern,$value,Base\Arr::plus($attr,array('placeholder'=>$this->placeholder($placeholder))),$replace,$option);
+		return $this->formWrap($wrap,$pattern,$value,Base\Arr::plus($attr,['placeholder'=>$this->placeholder($placeholder)]),$replace,$option);
 	}
 	
 	
@@ -2038,7 +2038,7 @@ class Col extends Main\Root
 	{
 		$return = '';
 		
-		if(in_array($method,array('form','formComplex'),true))
+		if(\in_array($method,['form','formComplex'],true))
 		{
 			$complex = ($method === 'formComplex')? true:false;
 			$label = $this->label($pattern);
@@ -2047,12 +2047,12 @@ class Col extends Main\Root
 			if($this->hasFormLabelId($attr,$complex))
 			{
 				$id = Base\Attr::randomId($attr['name'] ?? $this->name());
-				$attr = Base\Arr::plus($attr,array('id'=>$id));
+				$attr = Base\Arr::plus($attr,['id'=>$id]);
 			}
 			
 			$form = $this->$method($value,$attr,$option);
 			
-			if(is_string($form))
+			if(\is_string($form))
 			$return = Base\Html::formWrapStr($label,$form,$wrap,$replace,$id);
 		}
 		
@@ -2082,9 +2082,9 @@ class Col extends Main\Root
 	// la com sera inséré dans la row ou la table dépendamment si l'argument cell est founri
 	public function com($value,?Cell $cell=null,?string $type=null,?array $replace=null):self 
 	{
-		$value = array($this->name()=>$value);
+		$value = [$this->name()=>$value];
 		
-		if(is_array($value) && !empty($value))
+		if(\is_array($value) && !empty($value))
 		{
 			if(!empty($cell))
 			{
@@ -2162,7 +2162,7 @@ class Col extends Main\Root
 	// retourne le tableau de remplacement, utilisé par la méthode html
 	public function htmlReplace($value=true,?array $option=null):array 
 	{
-		$return = array();
+		$return = [];
 		$option = (array) $option;
 		$option['cell'] = ($value instanceof Cell)? $value:null;
 		$value = $this->value($value);
@@ -2214,7 +2214,7 @@ class Col extends Main\Root
 	// retourne les clés primaries qui réponde à la requête
 	public function primaries($where,...$args):array 
 	{
-		return $this->db()->selectPrimaries($this->table(),array($this->name()=>$where),...$args);
+		return $this->db()->selectPrimaries($this->table(),[$this->name()=>$where],...$args);
 	}
 	
 	
@@ -2250,7 +2250,7 @@ class Col extends Main\Root
 	// retourne le tableau des clés à ne pas merger recursivement
 	public static function configReplaceMode():array
 	{
-		return static::$replaceMode ?? array();
+		return static::$replaceMode ?? [];
 	}
 }
 

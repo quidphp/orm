@@ -12,12 +12,12 @@ class RowsIndex extends Rows
 	
 	
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// map
-	protected static $allow = array('add','unset','remove','empty','sequential','filter','sort','clone'); // méthodes permises
-	protected static $after = array('sequential'); // sequential après chaque appel qui modifie, sequential ne crée pas de clone
+	protected static $allow = ['add','unset','remove','empty','sequential','filter','sort','clone']; // méthodes permises
+	protected static $after = ['sequential']; // sequential après chaque appel qui modifie, sequential ne crée pas de clone
 	
 	
 	// isTable
@@ -28,7 +28,7 @@ class RowsIndex extends Rows
 		
 		foreach ($this->tables() as $table) 
 		{
-			if((is_object($value) && $value === $table) || (is_string($value) && $value === $table->name()))
+			if((\is_object($value) && $value === $table) || (\is_string($value) && $value === $table->name()))
 			{
 				$return = true;
 				break;
@@ -49,7 +49,7 @@ class RowsIndex extends Rows
 		
 		if(!empty($table))
 		{
-			if(count($data) > 1)
+			if(\count($data) > 1)
 			{
 				$i = 0;
 				foreach ($data as $key => $value) 
@@ -96,15 +96,15 @@ class RowsIndex extends Rows
 	// retourne un tableau multidimensionnel avec toutes les ids de lignes séparés par le nom de table
 	public function primaries():array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $value) 
 		{
 			$id = $value->primary();
 			$table = $value->table()->name();
 			
-			if(!array_key_exists($table,$return))
-			$return[$table] = array();
+			if(!\array_key_exists($table,$return))
+			$return[$table] = [];
 			
 			$return[$table][] = $id;
 		}
@@ -139,7 +139,7 @@ class RowsIndex extends Rows
 			if(!$value instanceof Row)
 			static::throw('requiresRow');
 			
-			if(!in_array($value,$data,true))
+			if(!\in_array($value,$data,true))
 			$data[] = $value;
 			
 			else
@@ -187,7 +187,7 @@ class RowsIndex extends Rows
 	// les objets retournés retournés sont dans les bonnes classes rows pour les tables
 	public function groupByTable():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $value) 
 		{
@@ -195,7 +195,7 @@ class RowsIndex extends Rows
 			$table = $value->table();
 			$tableName = $table->name();
 			
-			if(!array_key_exists($tableName,$return))
+			if(!\array_key_exists($tableName,$return))
 			{
 				$classe = $table->classe()->rows();
 				
@@ -217,13 +217,13 @@ class RowsIndex extends Rows
 	// retourne un tableau avec toutes les tables contenus dans l'objet
 	public function tables():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $value) 
 		{
 			$table = $value->table();
 			
-			if(!in_array($table,$return,true))
+			if(!\in_array($table,$return,true))
 			$return[] = $table;
 		}
 		
@@ -235,7 +235,7 @@ class RowsIndex extends Rows
 	// retourne un tableau avec tous les noms de tables présent dans l'objet
 	public function tableNames():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->tables() as $value) 
 		{
@@ -316,7 +316,7 @@ class RowsIndex extends Rows
 	{
 		$this->checkAllowed('sequential');
 		$data =& $this->arr();
-		$data = array_values($data);
+		$data = \array_values($data);
 		
 		return $this;
 	}

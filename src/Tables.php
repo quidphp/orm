@@ -12,11 +12,11 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	
 	
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// map
-	protected static $allow = array('add','unset','remove','empty','filter','sort','clone'); // méthodes permises
+	protected static $allow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
 	protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
 	
 	
@@ -35,7 +35,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// retourne les noms de tables séparés par des virgules
 	public function __toString():string
 	{
-		return implode(',',$this->names());
+		return \implode(',',$this->names());
 	}
 	
 	
@@ -47,23 +47,23 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	{
 		$return = null;
 		
-		if(is_string($key))
+		if(\is_string($key))
 		{
-			if(array_key_exists($key,$this->data))
+			if(\array_key_exists($key,$this->data))
 			$return = $key;
 			
-			elseif(strpos($key,'\\') !== false && Base\Classe::extendOne(static::keyClassExtends(),$key))
+			elseif(\strpos($key,'\\') !== false && Base\Classe::extendOne(static::keyClassExtends(),$key))
 			$return = $key::className(true);
 			
 			else
 			{
 				$key = Base\Sql::shortcut($key);
-				if(array_key_exists($key,$this->data))
+				if(\array_key_exists($key,$this->data))
 				$return = $key;
 			}
 		}
 		
-		elseif(is_int($key))
+		elseif(\is_int($key))
 		$return = Base\Arr::index($key,$this->keys());
 		
 		elseif($key instanceof Table)
@@ -72,7 +72,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 		elseif($key instanceof Row || $key instanceof Col || $key instanceof Cell)
 		$return = $key->tableName();
 		
-		elseif(is_array($key))
+		elseif(\is_array($key))
 		{
 			foreach ($key as $k) 
 			{
@@ -193,7 +193,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 			
 			$name = $value->name();
 			
-			if(!array_key_exists($name,$data))
+			if(!\array_key_exists($name,$data))
 			$data[$name] = $value;
 			
 			else
@@ -225,7 +225,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// pas de support pour pattern
 	public function labels(?string $lang=null,?array $option=null):array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $key => $value) 
 		{
@@ -242,7 +242,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// pas de support pour pattern
 	public function descriptions(?array $replace=null,?string $lang=null,?array $option=null):array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $key => $value) 
 		{
@@ -258,7 +258,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// permet de filtre les tables par une ou plusieurs permissions
 	public function hasPermission(string ...$types):self 
 	{
-		return $this->filter(array('hasPermission'=>true),...$types);
+		return $this->filter(['hasPermission'=>true],...$types);
 	}
 	
 	
@@ -269,7 +269,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// ne retourne pas une table si aucun résultat trouvé
 	public function search($search,?string $method=null,...$values):array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->searchable() as $key => $value) 
 		{
@@ -307,7 +307,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// si count et cache sont true, retourne les counts en cache si existant
 	public function total(bool $count=false,bool $cache=false):array
 	{
-		$return = array();
+		$return = [];
 		
 		$return['table'] = $this->count();
 		$return['col'] = 0;
@@ -336,7 +336,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// retourne un objet tables avec toutes les tables cherchables
 	public function searchable(bool $cols=true):self
 	{
-		return $this->filter(array('isSearchable'=>true),$cols);
+		return $this->filter(['isSearchable'=>true],$cols);
 	}
 	
 	
@@ -414,7 +414,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 		if($value instanceof Table)
 		$value = $value->name();
 		
-		if(is_string($value) && !empty($hierarchy))
+		if(\is_string($value) && !empty($hierarchy))
 		{
 			$key = Base\Arrs::keyPath($value,$hierarchy);
 			if($key !== null)
@@ -453,7 +453,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 		if(!empty($value))
 		{
 			$parent = $value->parent();
-			if(is_string($parent))
+			if(\is_string($parent))
 			$return = $this->get($parent);
 		}
 		
@@ -573,16 +573,16 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// retourne tous les ids ou les lignes qui sont des enfants de relation d'une ligne
 	public function relationChilds($table,$primary):array
 	{
-		$return = array();
+		$return = [];
 		$table = $this->get($table);
 		$primary = ($primary instanceof Row)? $primary->primary():$primary;
 		
-		if($table instanceof Table && is_int($primary))
+		if($table instanceof Table && \is_int($primary))
 		{
 			foreach ($this->arr() as $key => $value) 
 			{
-				$cols = $value->cols()->filter(array('isRelation'=>true));
-				$cols = $cols->filter(array('relationTable'=>$table));
+				$cols = $value->cols()->filter(['isRelation'=>true]);
+				$cols = $cols->filter(['relationTable'=>$table]);
 				
 				if($cols->isNotEmpty())
 				{
@@ -606,7 +606,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	// retourne un tableau utilisé par onPrepareKey
 	public static function keyClassExtends():array
 	{
-		return array(Row::class,Table::class,Rows::class,Cells::class,Cols::class);
+		return [Row::class,Table::class,Rows::class,Cells::class,Cols::class];
 	}
 }
 ?>
