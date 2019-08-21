@@ -1,5 +1,5 @@
 {
-	"name": "quid5/main",
+	"name": "quid5/orm",
     "type": "library",
     "description": "A modern PHP framework and CMS",
     "keywords": ["quid5","quid","framework","cms"],
