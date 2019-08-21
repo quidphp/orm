@@ -7,7 +7,7 @@ use Quid\Main;
 trait _colCell
 {
 	// dynamique
-	protected $callback = array(); // permet d'entreposer un ou plusieurs committed callback, lors d'une opération réussi
+	protected $callback = []; // permet d'entreposer un ou plusieurs committed callback, lors d'une opération réussi
 	protected $exception = null; // permet d'entreposer une exception, lors d'une opération raté
 
 
@@ -19,7 +19,7 @@ trait _colCell
 		$return = true;
 		$exception = $this->getException();
 		
-		if(is_array($exception) && array_key_exists('message',$exception) && array_key_exists('messageArgs',$exception))
+		if(\is_array($exception) && \array_key_exists('message',$exception) && \array_key_exists('messageArgs',$exception))
 		{
 			$return = $exception['message'];
 			
@@ -28,11 +28,11 @@ trait _colCell
 				$lang = $this->db()->lang();
 				$message = $exception['messageArgs'];
 				
-				if(is_array($message))
+				if(\is_array($message))
 				{
-					$safe = $lang->safe(...array_values($message));
+					$safe = $lang->safe(...\array_values($message));
 					
-					if(is_string($safe))
+					if(\is_string($safe))
 					$return = $safe;
 				}
 			}
@@ -85,7 +85,7 @@ trait _colCell
 	// vide le callback à appeler après un commit, insert ou update
 	public function clearCommittedCallback():void
 	{
-		$this->callback = array();
+		$this->callback = [];
 		
 		return;
 	}

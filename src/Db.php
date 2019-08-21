@@ -12,14 +12,14 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	
 	
 	// config
-	public static $config = array(
+	public static $config = [
 		'priorityIncrement'=>10, // incrémentation de la priorité lors de la création des tables et des colonnes
-		'option'=>array( // tableau d'options
+		'option'=>[ // tableau d'options
 			'permission'=>true, // la permission est vérifié avant la requête
 			'autoSave'=>false, // active ou désactive le autoSave au closeDown
 			'log'=>true, // si les requêtes sont log
 			'revert'=>null, // permet de conserver une clé à revert après une requête
-			'logClass'=>array( // classe à utiliser pour logger ces différents types de requêtes
+			'logClass'=>[ // classe à utiliser pour logger ces différents types de requêtes
 				'select'=>null,
 				'show'=>null,
 				'insert'=>null,
@@ -28,29 +28,29 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 				'create'=>null,
 				'alter'=>null,
 				'truncate'=>null,
-				'drop'=>null),
-			'classe'=>array( // option pour l'objet classe
-				'default'=>array(), // classe par défaut
-				'colGroup'=>array(), // classe pour colonne selon le group
-				'colAttr'=>array()), // classe pour colonne selon un attribut
+				'drop'=>null],
+			'classe'=>[ // option pour l'objet classe
+				'default'=>[], // classe par défaut
+				'colGroup'=>[], // classe pour colonne selon le group
+				'colAttr'=>[]], // classe pour colonne selon un attribut
 			'classeClosure'=>null, // possible de mettre uen closure comme classe (permet de gérer la cache dans boot)
 			'schemaClosure'=>null, // possible de mettre une closure comme schema (permet de gérer la cache dans boot)
-			'tables'=>array(), // paramètre par défaut pour les tables
-			'cols'=>array()), // paramètre par défaut pour les colonnes
-		'output'=>array(
-			'all'=>array( // configuration des output spécifique à db
-				'row'=>array('onlySelect'=>true,'selectLimit'=>1),
-				'rowRefresh'=>array('onlySelect'=>true,'selectLimit'=>1),
-				'rowIn'=>array('onlySelect'=>true,'selectLimit'=>1),
-				'rowInRefresh'=>array('onlySelect'=>true,'selectLimit'=>1),
-				'rowOut'=>array('onlySelect'=>true,'selectLimit'=>1),
-				'rows'=>array('onlySelect'=>true),
-				'rowsRefresh'=>array('onlySelect'=>true),
-				'rowsIn'=>array('onlySelect'=>true),
-				'rowsInRefresh'=>array('onlySelect'=>true),
-				'rowsOut'=>array('onlySelect'=>true)),
-			'row'=>array('row','rowRefresh','rowIn','rowInRefresh','rowOut','rows','rowsRefresh','rowsIn','rowsInRefresh','rowsOut')) // liste des méthodes en lien avec row/rows
-	);
+			'tables'=>[], // paramètre par défaut pour les tables
+			'cols'=>[]], // paramètre par défaut pour les colonnes
+		'output'=>[
+			'all'=>[ // configuration des output spécifique à db
+				'row'=>['onlySelect'=>true,'selectLimit'=>1],
+				'rowRefresh'=>['onlySelect'=>true,'selectLimit'=>1],
+				'rowIn'=>['onlySelect'=>true,'selectLimit'=>1],
+				'rowInRefresh'=>['onlySelect'=>true,'selectLimit'=>1],
+				'rowOut'=>['onlySelect'=>true,'selectLimit'=>1],
+				'rows'=>['onlySelect'=>true],
+				'rowsRefresh'=>['onlySelect'=>true],
+				'rowsIn'=>['onlySelect'=>true],
+				'rowsInRefresh'=>['onlySelect'=>true],
+				'rowsOut'=>['onlySelect'=>true]],
+			'row'=>['row','rowRefresh','rowIn','rowInRefresh','rowOut','rows','rowsRefresh','rowsIn','rowsInRefresh','rowsOut']] // liste des méthodes en lien avec row/rows
+	];
 	
 	
 	// dynamique
@@ -60,7 +60,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	protected $lang = null; // propriété qui contient l'objet lang
 	protected $com = null; // propriété qui contient l'objet com
 	protected $role = null; // propriété qui contient l'objet role
-	protected $permission = array( // permissions racine de la base de donnée, les priorités roles peuvent seulement mettre false des valeurs racine true, pas l'inverse
+	protected $permission = [ // permissions racine de la base de donnée, les priorités roles peuvent seulement mettre false des valeurs racine true, pas l'inverse
 		'select'=>true,
 		'show'=>true,
 		'insert'=>true,
@@ -69,7 +69,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		'create'=>true,
 		'alter'=>true,
 		'truncate'=>true,
-		'drop'=>true);
+		'drop'=>true];
 	
 	
 	// construct
@@ -230,7 +230,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		$rollback = $this->getOption('rollback');
 		$this->setOption('log',false);
 		$this->setOption('rollback',false);
-		$this->setOption('revert',array('log'=>$log,'rollback'=>$rollback));
+		$this->setOption('revert',['log'=>$log,'rollback'=>$rollback]);
 		
 		return $this;
 	}
@@ -241,7 +241,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	public function on():self 
 	{
 		$revert = $this->getOption('revert');
-		if(is_array($revert) && array_key_exists('log',$revert) && array_key_exists('rollback',$revert))
+		if(\is_array($revert) && \array_key_exists('log',$revert) && \array_key_exists('rollback',$revert))
 		{
 			$this->setOption('log',$revert['log']);
 			$this->setOption('rollback',$revert['rollback']);
@@ -260,7 +260,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	{
 		$return = true;
 
-		if(array_key_exists($type,$this->permission) && $this->permission[$type] === false)
+		if(\array_key_exists($type,$this->permission) && $this->permission[$type] === false)
 		$return = false;
 		
 		if($return === true && $this->hasRole())
@@ -294,7 +294,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		{
 			foreach ($this->role()->table($table) as $key => $value) 
 			{
-				if(array_key_exists($key,$return) && is_bool($value))
+				if(\array_key_exists($key,$return) && \is_bool($value))
 				{
 					if($return[$key] === true && $value === false)
 					$return[$key] = false;
@@ -338,7 +338,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		$class = Exception::getOverloadClass();
 		$exception = new $class($message,null,$option);
 		
-		if(!empty($values[0]) && is_array($values[0]) && !empty($values[0]['sql']))
+		if(!empty($values[0]) && \is_array($values[0]) && !empty($values[0]['sql']))
 		$exception->setQuery(Base\Sql::emulate($values[0]['sql'],$values[0]['prepare'] ?? null));
 		
 		throw $exception;
@@ -359,7 +359,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 			$this->makeClasse($extenders);
 			$this->tablesLoad();
 			$this->tables()->sortDefault()->readOnly(true);
-			Base\Response::onCloseDown(array($this,'onCloseDown'));
+			Base\Response::onCloseDown([$this,'onCloseDown']);
 		}
 		
 		else
@@ -397,7 +397,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 						if(!$class::isIgnored())
 						{
 							$priority += $increment;
-							$attr = array('priority'=>$priority);
+							$attr = ['priority'=>$priority];
 							if(!empty($parent))
 							$attr['parent'] = $parent;
 							
@@ -497,7 +497,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		{
 			$content = $closure($this);
 			
-			if(is_array($content) && !empty($content))
+			if(\is_array($content) && !empty($content))
 			$this->schema = Schema::newOverload($content,$this);
 		}
 		
@@ -554,7 +554,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne le label d'une base de donnée
 	public function label($pattern=null,?string $lang=null,?array $option=null):?string
 	{
-		return $this->lang()->dbLabel($this->dbName(),$lang,Base\Arr::plus($option,array('pattern'=>$pattern)));
+		return $this->lang()->dbLabel($this->dbName(),$lang,Base\Arr::plus($option,['pattern'=>$pattern]));
 	}
 	
 	
@@ -562,7 +562,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne la description d'une base de donnée
 	public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
 	{
-		return $this->lang()->dbDescription($this->dbName(),$replace,$lang,Base\Arr::plus($option,array('pattern'=>$pattern)));
+		return $this->lang()->dbDescription($this->dbName(),$replace,$lang,Base\Arr::plus($option,['pattern'=>$pattern]));
 	}
 	
 	
@@ -570,7 +570,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne les options pour la classe base sql
 	public function getSqlOption(?array $option=null):array 
 	{
-		return Base\Arr::plus(parent::getSqlOption($option),array('defaultCallable'=>array($this,'getTableDefault')));
+		return Base\Arr::plus(parent::getSqlOption($option),['defaultCallable'=>[$this,'getTableDefault']]);
 	}
 	
 	
@@ -672,11 +672,11 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	public function query($value,$output=true)
 	{
 		$return = null;
-		$rows = array();
+		$rows = [];
 		
-		if(is_string($output) && static::isRowOutput($output))
+		if(\is_string($output) && static::isRowOutput($output))
 		{
-			if(!is_array($value))
+			if(!\is_array($value))
 			static::throw($output,'queryInvalid');
 			
 			if(empty($value['type']) || !static::isOutput($value['type'],$output))
@@ -690,7 +690,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 			static::throw('emptyType');
 			$value = $this->prepareRow($value,$type);
 			
-			if(!array_key_exists('id',$value))
+			if(!\array_key_exists('id',$value))
 			static::throw($output,'requiresId');
 			
 			$table = $this->table($value['table']);
@@ -704,7 +704,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 				$return = $table->rowsNew();
 				else
 				{
-					$ids = array_values((array) $value['id']);
+					$ids = \array_values((array) $value['id']);
 					$return = $table->$output(...$ids);
 				}
 			}
@@ -727,7 +727,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		
 		if(!empty($pointer))
 		{
-			if(empty($validTables) || in_array($pointer[0],$validTables,true))
+			if(empty($validTables) || \in_array($pointer[0],$validTables,true))
 			{
 				if($this->hasTable($pointer[0]))
 				$return = $this->table($pointer[0])->row($pointer[1]);
@@ -744,7 +744,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// envoie une exception si le type est incorrect
 	public function prepareRow(array $return,string $type):array
 	{
-		if(in_array($type,array('row','rows'),true))
+		if(\in_array($type,['row','rows'],true))
 		{
 			if(empty($return['id']) || empty($return['whereOnlyId']))
 			{
@@ -764,7 +764,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne un objet row ou null après avoir traité un tableau pour une requête sql
 	public function row(...$values):?Row 
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'row');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'row');
 	}
 
 	
@@ -773,7 +773,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// s'il y a une row, elle ira chercher les dernières valeurs dans la base de donnée
 	public function rowRefresh(...$values):?Row 
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rowRefresh');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowRefresh');
 	}
 
 	
@@ -782,7 +782,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne seulement la row si elle a déjà été chargé
 	public function rowIn(...$values):?Row
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rowIn');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowIn');
 	}
 	
 	
@@ -791,7 +791,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne seulement la row si elle a déjà été chargé, la ligne se mettra à jour avant d'être retourner
 	public function rowInRefresh(...$values):?Row
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rowInRefresh');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowInRefresh');
 	}
 	
 	
@@ -800,7 +800,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne seulement la row si elle n'est pas chargé
 	public function rowOut(...$values):?Row 
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rowOut');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowOut');
 	}
 	
 	
@@ -808,7 +808,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne un objet rows ou null après avoir traité un tableau pour une requête sql
 	public function rows(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rows');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rows');
 	}
 	
 
@@ -817,7 +817,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// s'il y a des rows, les lignes se mettront à jour avant d'être retourner
 	public function rowsRefresh(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rowsRefresh');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsRefresh');
 	}
 	
 	
@@ -826,7 +826,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// les rows sont seulement retournés si elles existent déjà
 	public function rowsIn(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rowsIn');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsIn');
 	}
 	
 	
@@ -835,7 +835,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// les rows sont seulement retournés si elles existent déjà et se mettront à jour avant d'être retourner
 	public function rowsInRefresh(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rowsInRefresh');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsInRefresh');
 	}
 	
 	
@@ -844,7 +844,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// les rows sont seulement retournés si elles n'existent pas déjà
 	public function rowsOut(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,array($this->primary())),$this->getSqlOption()),'rowsOut');
+		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsOut');
 	}
 	
 	
@@ -885,7 +885,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// sauve toutes les lignes ayant changés dans la base de donnée
 	public function autoSave():array 
 	{
-		$return = array();
+		$return = [];
 		
 		$changed = $this->tables()->changed();
 
@@ -907,7 +907,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		if($table instanceof Table)
 		$table = $table->name();
 		
-		if(is_string($table))
+		if(\is_string($table))
 		$return = $this->option['tables'][$table] ?? null;
 		
 		return $return;
@@ -921,7 +921,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	{
 		$return = $this->option['cols'][$col] ?? null;
 		
-		if(is_string($return))
+		if(\is_string($return))
 		static::throw($col,'stringNotAllowed',$return);
 		
 		return $return;
@@ -945,7 +945,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne vrai si le type de output est row/rows
 	public static function isRowOutput($value):bool 
 	{
-		return (is_string($value) && in_array($value,static::$config['output']['row'],true))? true:false;
+		return (\is_string($value) && \in_array($value,static::$config['output']['row'],true))? true:false;
 	}
 	
 	
@@ -956,7 +956,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		$return = null;
 		
 		if(static::isRowOutput($value))
-		$return = (strpos($value,'rows') === 0)? 'rows':'row';
+		$return = (\strpos($value,'rows') === 0)? 'rows':'row';
 		
 		return $return;
 	}

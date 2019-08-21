@@ -12,11 +12,11 @@ class Schema extends Main\Map
 	
 	
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// map
-	protected static $allow = array('empty','jsonSerialize','serialize','clone'); // méthodes permises
+	protected static $allow = ['empty','jsonSerialize','serialize','clone']; // méthodes permises
 
 
 	// construct
@@ -42,19 +42,19 @@ class Schema extends Main\Map
 		$data =& $this->arr();
 		
 		if($cache === true && !empty($data))
-		$return = array_keys($data);
+		$return = \array_keys($data);
 		
 		if(empty($return) || $cache === false)
 		{
 			$db = $this->db();
 			$tables = $db->showTables();
 			
-			if(is_array($tables) && !empty($tables))
+			if(\is_array($tables) && !empty($tables))
 			{
 				foreach ($tables as $table) 
 				{
-					if(!array_key_exists($table,$data))
-					$data[$table] = array();
+					if(!\array_key_exists($table,$data))
+					$data[$table] = [];
 				}
 				
 				$return = $tables;
@@ -74,7 +74,7 @@ class Schema extends Main\Map
 		$table = Base\Obj::cast($table);
 		$data =& $this->arr();
 		
-		if(is_string($table))
+		if(\is_string($table))
 		{
 			if($cache === true)
 			$return = $this->get($table);
@@ -84,7 +84,7 @@ class Schema extends Main\Map
 				$db = $this->db();
 				$schema = $db->showTableColumns($table);
 				
-				if(is_array($schema) && !empty($schema))
+				if(\is_array($schema) && !empty($schema))
 				{
 					$data[$table] = $schema;
 					$return = $schema;
@@ -106,17 +106,17 @@ class Schema extends Main\Map
 		$col = Base\Obj::cast($col);
 		$data =& $this->arr();
 		
-		if(is_string($table) && is_string($col))
+		if(\is_string($table) && \is_string($col))
 		{
 			if($cache === true)
-			$return = $this->get(array($table,$col));
+			$return = $this->get([$table,$col]);
 			
 			if(empty($return) || $cache === false)
 			{
 				$db = $this->db();
 				$schema = $db->showTableColumn($table,$col);
 				
-				if(is_array($schema) && !empty($schema))
+				if(\is_array($schema) && !empty($schema))
 				{
 					$data[$table][$col] = $schema;
 					$return = $schema;

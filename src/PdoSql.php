@@ -12,24 +12,24 @@ class PdoSql extends Main\Map
 	
 	
 	// config
-	public static $config = array(
-		'shortcut'=>array( // tableau des shortcuts de clause, utiliser par les méthodes array acces et aussi certaines méthodes shortcuts
-			'into'=>array('insert'=>'table'),
-			'from'=>array('select'=>'table','delete'=>'table'),
-			'data'=>array('insert'=>'insertSet','update'=>'updateSet'),
-			'col'=>array('create'=>'createCol','alter'=>'addCol')),
+	public static $config = [
+		'shortcut'=>[ // tableau des shortcuts de clause, utiliser par les méthodes array acces et aussi certaines méthodes shortcuts
+			'into'=>['insert'=>'table'],
+			'from'=>['select'=>'table','delete'=>'table'],
+			'data'=>['insert'=>'insertSet','update'=>'updateSet'],
+			'col'=>['create'=>'createCol','alter'=>'addCol']],
 		'default'=>'select' // type par défaut
-	);
+	];
 	
 	
 	// map
-	protected static $allow = array('set','unset','empty','overwrite','serialize','jsonSerialize','clone'); // méthodes permises
+	protected static $allow = ['set','unset','empty','overwrite','serialize','jsonSerialize','clone']; // méthodes permises
 
 
 	// dynamique
 	protected $type = null; // type de la requête
 	protected $output = null; // output de la requête
-	protected $count = array(); // contient une cache des différents count
+	protected $count = []; // contient une cache des différents count
 
 	
 	// construct
@@ -77,9 +77,9 @@ class PdoSql extends Main\Map
 	// seulement pour des requêtes select ou show
 	public function toArray():array 
 	{
-		$return = array();
+		$return = [];
 		
-		if(in_array($this->getType(),array('select','show'),true))
+		if(\in_array($this->getType(),['select','show'],true))
 		$return = $this->trigger();
 		else
 		static::throw('onlyForSelectAndShow');
@@ -184,7 +184,7 @@ class PdoSql extends Main\Map
 	// méthode protégé
 	protected function resetCount():self 
 	{
-		$this->count = array();
+		$this->count = [];
 		
 		return $this;
 	}
@@ -197,7 +197,7 @@ class PdoSql extends Main\Map
 		$return = null;
 		$type = $this->getType();
 		
-		if(array_key_exists($value,static::$config['shortcut']) && !empty(static::$config['shortcut'][$value][$type]))
+		if(\array_key_exists($value,static::$config['shortcut']) && !empty(static::$config['shortcut'][$value][$type]))
 		$return = static::$config['shortcut'][$value][$type];
 		
 		return $return;
@@ -211,7 +211,7 @@ class PdoSql extends Main\Map
 		$return = null;
 		$table = $this->get('table');
 		
-		if(is_string($table))
+		if(\is_string($table))
 		$return = $table;
 		
 		return $return;
@@ -241,7 +241,7 @@ class PdoSql extends Main\Map
 		if($this->getType() === 'select')
 		{
 			$arr = $this->arr();
-			$join = Base\Arr::keysFirst(array('join','innerJoin','outerJoin'),$arr);
+			$join = Base\Arr::keysFirst(['join','innerJoin','outerJoin'],$arr);
 			
 			if($join !== null && !empty($arr[$join]) && !empty($arr[$join]['table']))
 			$return = true;
@@ -266,7 +266,7 @@ class PdoSql extends Main\Map
 	// retourne vrai si la clause est valide avec le type, sinon lance une exception
 	protected function checkClause($value):self
 	{
-		if(is_string($value))
+		if(\is_string($value))
 		{
 			$type = $this->getType();
 			$output = $this->getOutput();
@@ -296,16 +296,16 @@ class PdoSql extends Main\Map
 	// cette validation se fait sur une entrée d'une clause
 	protected function checkValue(string $clause,$value):self 
 	{
-		if(in_array($clause,array('table','group','dropCol','dropKey'),true) && (!is_string($value) || !strlen($value)))
+		if(\in_array($clause,['table','group','dropCol','dropKey'],true) && (!\is_string($value) || !\strlen($value)))
 		static::throw($clause,'requires','stringWithLength');
 		
 		elseif($clause === 'insertSet' && !Base\Arr::isAssoc($value))
 		static::throw($clause,'requires','associativeArray');
 		
-		elseif($clause === 'updateSet' && (!Base\Arr::isAssoc($value) || !count($value)))
+		elseif($clause === 'updateSet' && (!Base\Arr::isAssoc($value) || !\count($value)))
 		static::throw($clause,'requires','associativeArrayWithCount');
 		
-		elseif(in_array($clause,array('createCol','createKey','addCol','addKey','alterCol'),true) && (!is_array($value) || !count($value)))
+		elseif(\in_array($clause,['createCol','createKey','addCol','addKey','alterCol'],true) && (!\is_array($value) || !\count($value)))
 		static::throw($clause,'requires','arrayWithCount');
 		
 		return $this;
@@ -335,7 +335,7 @@ class PdoSql extends Main\Map
 
 		if(!empty($required) && !Base\Arr::keysExists($required,$arr))
 		{
-			$strip = Base\Arr::valuesStrip(array_keys($arr),$required);
+			$strip = Base\Arr::valuesStrip(\array_keys($arr),$required);
 			static::throw('missingRequiredClause',$strip);
 		}
 		
@@ -365,8 +365,8 @@ class PdoSql extends Main\Map
 	{
 		$this->resetCount();
 		$arr =& $this->arr();
-		if(is_array($value) && array_key_exists(0,$value) && count($value) === 1)
-		$value = current($value);
+		if(\is_array($value) && \array_key_exists(0,$value) && \count($value) === 1)
+		$value = \current($value);
 
 		$value = Base\Obj::cast($value);
 		
@@ -375,12 +375,12 @@ class PdoSql extends Main\Map
 		
 		if($clause === 'on')
 		{
-			$join = Base\Arr::keysFirst(array('join','innerJoin','outerJoin'),$arr);
+			$join = Base\Arr::keysFirst(['join','innerJoin','outerJoin'],$arr);
 			
 			if($join !== null)
 			{
-				if(!array_key_exists($clause,$arr[$join]) || !is_array($arr[$join][$clause]))
-				$arr[$join][$clause] = array();
+				if(!\array_key_exists($clause,$arr[$join]) || !\is_array($arr[$join][$clause]))
+				$arr[$join][$clause] = [];
 				
 				$target =& $arr[$join][$clause];
 			}
@@ -388,21 +388,21 @@ class PdoSql extends Main\Map
 		
 		else
 		{
-			if(!array_key_exists($clause,$arr) || !is_array($arr[$clause]))
-			$arr[$clause] = array();
+			if(!\array_key_exists($clause,$arr) || !\is_array($arr[$clause]))
+			$arr[$clause] = [];
 			
 			$target =& $arr[$clause];
 		}
 		
-		if(isset($target) && is_array($target))
+		if(isset($target) && \is_array($target))
 		{
-			if(in_array($clause,array('table','limit','join','innerJoin','outerJoin'),true))
+			if(\in_array($clause,['table','limit','join','innerJoin','outerJoin'],true))
 			$target = $value;
 			
-			elseif(in_array($clause,array('insertSet','updateSet'),true))
+			elseif(\in_array($clause,['insertSet','updateSet'],true))
 			$target = Base\Arr::replace($target,$value);
 			
-			elseif(in_array($clause,array('what','where','order','group','createCol','createKey','addCol','addKey','alterCol','dropCol','dropKey','on'),true))
+			elseif(\in_array($clause,['what','where','order','group','createCol','createKey','addCol','addKey','alterCol','dropCol','dropKey','on'],true))
 			{
 				if(Base\Arr::isAssoc($value))
 				{
@@ -415,7 +415,7 @@ class PdoSql extends Main\Map
 				else
 				{
 					if($prepend === true)
-					$target = Base\Arr::prepend($target,(is_array($value))? array($value):$value);
+					$target = Base\Arr::prepend($target,(\is_array($value))? [$value]:$value);
 					
 					else
 					$target[] = $value;
@@ -572,7 +572,7 @@ class PdoSql extends Main\Map
 	// seule la table est obligatoire, valide pour select
 	public function join($table,?array $values=null):self 
 	{
-		return $this->one('join',array('table'=>Base\Obj::cast($table,1)))->ons($values);
+		return $this->one('join',['table'=>Base\Obj::cast($table,1)])->ons($values);
 	}
 	
 	
@@ -581,7 +581,7 @@ class PdoSql extends Main\Map
 	// seule la table est obligatoire, valide pour select
 	public function innerJoin($table,?array $values=null):self 
 	{
-		return $this->one('innerJoin',array('table'=>Base\Obj::cast($table,1)))->ons($values);
+		return $this->one('innerJoin',['table'=>Base\Obj::cast($table,1)])->ons($values);
 	}
 	
 	
@@ -590,7 +590,7 @@ class PdoSql extends Main\Map
 	// seule la table est obligatoire, valide pour select
 	public function outerJoin($table,?array $values=null):self 
 	{
-		return $this->one('outerJoin',array('table'=>Base\Obj::cast($table,1)))->ons($values);
+		return $this->one('outerJoin',['table'=>Base\Obj::cast($table,1)])->ons($values);
 	}
 	
 	
@@ -632,15 +632,15 @@ class PdoSql extends Main\Map
 	// permet d'ajouter plusieurs entrées clause where via un seul argument
 	public function wheresOne($values):self 
 	{
-		if(!is_array($values))
-		$values = array($values);
+		if(!\is_array($values))
+		$values = [$values];
 		
-		if(is_array($values))
+		if(\is_array($values))
 		{
 			foreach ($values as $key => $value) 
 			{
-				if(is_string($key))
-				$this->where(array($key=>$value));
+				if(\is_string($key))
+				$this->where([$key=>$value]);
 				else
 				$this->where($value);
 			}
@@ -810,7 +810,7 @@ class PdoSql extends Main\Map
 		if($page <= 0)
 		static::throw('pageMustBeAtLeast1');
 		
-		return $this->limit(array($page=>$limit));
+		return $this->limit([$page=>$limit]);
 	}
 	
 	
@@ -819,7 +819,7 @@ class PdoSql extends Main\Map
 	// valide pour insert
 	public function insertSet($key,$value):self 
 	{
-		return $this->one('insertSet',array(Base\Obj::cast($key,1)=>$value));
+		return $this->one('insertSet',[Base\Obj::cast($key,1)=>$value]);
 	}
 	
 	
@@ -837,7 +837,7 @@ class PdoSql extends Main\Map
 	// valide pour update
 	public function updateSet($key,$value):self 
 	{
-		return $this->one('updateSet',array(Base\Obj::cast($key,1)=>$value));
+		return $this->one('updateSet',[Base\Obj::cast($key,1)=>$value]);
 	}
 	
 	
@@ -1009,7 +1009,7 @@ class PdoSql extends Main\Map
 		$value = Base\Obj::cast($value,2);
 		$this->setType('show');
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$this->set('what',$value);
 		
 		return $this;
@@ -1024,7 +1024,7 @@ class PdoSql extends Main\Map
 		$value = Base\Obj::cast($value,2);
 		$this->setType('insert');
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$this->into($value);
 		
 		return $this;
@@ -1039,7 +1039,7 @@ class PdoSql extends Main\Map
 		$value = Base\Obj::cast($value,2);
 		$this->setType('update');
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$this->table($value);
 		
 		return $this;
@@ -1054,7 +1054,7 @@ class PdoSql extends Main\Map
 		$value = Base\Obj::cast($value,2);
 		$this->setType('delete');
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$this->from($value);
 		
 		return $this;
@@ -1069,7 +1069,7 @@ class PdoSql extends Main\Map
 		$value = Base\Obj::cast($value,2);
 		$this->setType('create');
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$this->table($value);
 		
 		return $this;
@@ -1084,7 +1084,7 @@ class PdoSql extends Main\Map
 		$value = Base\Obj::cast($value,2);
 		$this->setType('alter');
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$this->table($value);
 		
 		return $this;
@@ -1099,7 +1099,7 @@ class PdoSql extends Main\Map
 		$value = Base\Obj::cast($value,2);
 		$this->setType('truncate');
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$this->table($value);
 		
 		return $this;
@@ -1114,7 +1114,7 @@ class PdoSql extends Main\Map
 		$value = Base\Obj::cast($value,2);
 		$this->setType('drop');
 		
-		if(is_string($value))
+		if(\is_string($value))
 		$this->table($value);
 		
 		return $this;
@@ -1134,8 +1134,8 @@ class PdoSql extends Main\Map
 		{
 			$return = Base\Nav::parseLimit($limit);
 			
-			if(is_string($key) && !empty($return))
-			$return = (array_key_exists($key,$return))? $return[$key]:null;
+			if(\is_string($key) && !empty($return))
+			$return = (\array_key_exists($key,$return))? $return[$key]:null;
 		}
 		
 		if($return === null)
@@ -1174,7 +1174,7 @@ class PdoSql extends Main\Map
 	protected function pageBase(string $method,?int $page=null,bool $cache=true,...$args) 
 	{
 		$limit = $this->parseLimit();
-		$page = (is_int($page))? $page:$limit['page'];
+		$page = (\is_int($page))? $page:$limit['page'];
 		return Base\Nav::$method($page,$this->triggerWhatCount($cache),$limit['limit'],...$args);
 	}
 	
@@ -1200,10 +1200,10 @@ class PdoSql extends Main\Map
 	public function isSpecificInPage($value,?int $page=null,bool $cache=true):bool 
 	{
 		$return = false;
-		$page = (is_int($page))? $page:$this->getPage();
+		$page = (\is_int($page))? $page:$this->getPage();
 		$specificPage = $this->specificPage($value,$cache);
 		
-		if(is_int($specificPage) && $specificPage === $page)
+		if(\is_int($specificPage) && $specificPage === $page)
 		$return = true;
 		
 		return $return;
@@ -1248,7 +1248,7 @@ class PdoSql extends Main\Map
 	{
 		$return = null;
 		$limit = $this->parseLimit();
-		$page = (is_int($page))? $page:$limit['page'];
+		$page = (\is_int($page))? $page:$limit['page'];
 		$return = Base\Nav::pagesClose($page,$this->triggerWhatCount($cache),$limit['limit'],$amount);
 		
 		return $return;
@@ -1331,9 +1331,9 @@ class PdoSql extends Main\Map
 	public function pageWithSpecific(?int $value=null):?array
 	{
 		$return = null;
-		$value = (is_int($value))? $value:$this->getPage();
+		$value = (\is_int($value))? $value:$this->getPage();
 		
-		if(is_int($value))
+		if(\is_int($value))
 		{
 			$primary = $this->primary();
 			$limit = $this->getLimit();
@@ -1361,8 +1361,8 @@ class PdoSql extends Main\Map
 		$return = null;
 		$content = $this->pageWithSpecific($value);
 		
-		if(is_array($content))
-		$return = current($content);
+		if(\is_array($content))
+		$return = \current($content);
 		
 		return $return;
 	}
@@ -1375,7 +1375,7 @@ class PdoSql extends Main\Map
 		$return = null;
 		$content = $this->pageWithSpecific($value);
 		
-		if(is_array($content))
+		if(\is_array($content))
 		$return = Base\Arr::valueLast($content);
 		
 		return $return;
@@ -1394,10 +1394,10 @@ class PdoSql extends Main\Map
 		$order = $this->get('order');
 		
 		$tableName = Base\Sql::tick($table).' t';
-		$what = array('t.'.$primary);
+		$what = ['t.'.$primary];
 		if(!empty($where))
 		$what = Base\Arr::appendUnique($what,Base\Sql::whatFromWhere($where,'t'));
-		$what[] = array('@rownum := @rownum + 1','position');
+		$what[] = ['@rownum := @rownum + 1','position'];
 		
 		$innerSql = clone $this;
 		$innerSql->select(...$what);
@@ -1416,7 +1416,7 @@ class PdoSql extends Main\Map
 		
 		$position = $sql->trigger();
 		
-		if(is_numeric($position))
+		if(\is_numeric($position))
 		{
 			$position = (int) $position;
 			if($position > 0)
@@ -1434,7 +1434,7 @@ class PdoSql extends Main\Map
 		$return = null;
 		$value = $this->specificIndex($value);
 		
-		if(is_int($value))
+		if(\is_int($value))
 		{
 			$whatCount = $this->triggerWhatCount($cache);
 			$limit = $this->getLimit();
@@ -1473,7 +1473,7 @@ class PdoSql extends Main\Map
 		if($index === null)
 		$index = $this->specificIndex($value);
 		
-		if(is_int($index) && $index > 0)
+		if(\is_int($index) && $index > 0)
 		{
 			$primary = $this->primary();
 			$offset = ($index - 1);
@@ -1500,7 +1500,7 @@ class PdoSql extends Main\Map
 		$page = $this->specificPage($value,$cache);
 		$prev = $this->specificPrev($value,$index);
 		
-		if(is_int($page) && is_int($prev) && $this->specificPage($prev,$cache) === $page)
+		if(\is_int($page) && \is_int($prev) && $this->specificPage($prev,$cache) === $page)
 		$return = $prev;
 		
 		return $return;
@@ -1517,7 +1517,7 @@ class PdoSql extends Main\Map
 		if($index === null)
 		$index = $this->specificIndex($value);
 		
-		if(is_int($index))
+		if(\is_int($index))
 		{
 			$offset = ($index + 1);
 			$primary = $this->primary();
@@ -1545,7 +1545,7 @@ class PdoSql extends Main\Map
 		$page = $this->specificPage($value,$cache);
 		$next = $this->specificNext($value,$index);
 		
-		if(is_int($page) && is_int($next) && $this->specificPage($next,$cache) === $page)
+		if(\is_int($page) && \is_int($next) && $this->specificPage($next,$cache) === $page)
 		$return = $next;
 		
 		return $return;
@@ -1560,7 +1560,7 @@ class PdoSql extends Main\Map
 		$primary = $this->primary();
 		$offset = $this->triggerWhatCount($cache);
 		
-		if(is_int($offset) && $offset > 0)
+		if(\is_int($offset) && $offset > 0)
 		{
 			$offset = ($offset-1);
 			
@@ -1588,7 +1588,7 @@ class PdoSql extends Main\Map
 		$this->checkType('select');
 		$index = $this->specificIndex($value);
 		
-		if(is_int($index))
+		if(\is_int($index))
 		{
 			$return = null;
 			$first = $this->specificFirst();
@@ -1678,7 +1678,7 @@ class PdoSql extends Main\Map
 			$sql = clone $this;
 			$primary = $this->primary();
 			
-			$sql->set('what',array(array($primary,'count()')));
+			$sql->set('what',[[$primary,'count()']]);
 			$sql->unset('limit');
 			$sql->setOutput('column');
 			
@@ -1709,7 +1709,7 @@ class PdoSql extends Main\Map
 			$sql = clone $this;
 			$primary = $this->primary();
 			
-			$sql->set('what',array($primary));
+			$sql->set('what',[$primary]);
 			$sql->setOutput('rowCount');
 			
 			$return = $sql->trigger();

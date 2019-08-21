@@ -8,27 +8,27 @@ use Quid\Base;
 class ColSchema extends Main\Root
 {
 	// config
-	public static $config = array(
-		'intMax'=>array( // détermine les valeurs maximales pour unt int
-			'int'=>2147483647),
-		'textLength'=>array(
+	public static $config = [
+		'intMax'=>[ // détermine les valeurs maximales pour unt int
+			'int'=>2147483647],
+		'textLength'=>[
 			'tinytext'=>255,
 			'text'=>65535,
 			'mediumtext'=>16777215,
-			'longtext'=>4294967295),
-		'patternChars'=>array('_','*'), // caractères pour définir les patterns
-		'pattern'=>array( // pattern pour les noms de colonnes, défini le nom de table d'une relation ainsi que le panel
-			'en'=>array('*_en'),
-			'fr'=>array('*_fr'),
-			'enum'=>array('*_id'),
-			'set'=>array('*_ids')),
-		'relation'=>array('enum','set'), // détermine les patterns considérés comme relation
-		'panel'=>array( // détermine les panels à utiliser à partir des patterns
+			'longtext'=>4294967295],
+		'patternChars'=>['_','*'], // caractères pour définir les patterns
+		'pattern'=>[ // pattern pour les noms de colonnes, défini le nom de table d'une relation ainsi que le panel
+			'en'=>['*_en'],
+			'fr'=>['*_fr'],
+			'enum'=>['*_id'],
+			'set'=>['*_ids']],
+		'relation'=>['enum','set'], // détermine les patterns considérés comme relation
+		'panel'=>[ // détermine les panels à utiliser à partir des patterns
 			'en'=>'en',
 			'fr'=>'fr',
 			'enum'=>'relation',
-			'set'=>'relation')
-	);
+			'set'=>'relation']
+	];
 	
 	
 	// _construct
@@ -51,7 +51,7 @@ class ColSchema extends Main\Root
 	// retourne vrai si le nom de colonne a un pattern
 	public static function hasPattern($value):bool
 	{
-		return (is_string($value) && static::pattern($value) !== null)? true:false;
+		return (\is_string($value) && static::pattern($value) !== null)? true:false;
 	}
 	
 	
@@ -62,7 +62,7 @@ class ColSchema extends Main\Root
 		$return = false;
 		$value = ($isPatternType === true)? $value:static::patternType($value);
 		
-		if(!empty($value) && in_array($value,static::$config['relation'],true))
+		if(!empty($value) && \in_array($value,static::$config['relation'],true))
 		$return = true;
 		
 		return $return;
@@ -76,17 +76,17 @@ class ColSchema extends Main\Root
 		$return = null;
 		$chars = static::$config['patternChars'];
 		
-		if(strpos($value,$chars[0]) !== false)
+		if(\strpos($value,$chars[0]) !== false)
 		{
 			foreach (static::$config['pattern'] as $key => $pattern) 
 			{
-				if(is_string($key) && is_array($pattern))
+				if(\is_string($key) && \is_array($pattern))
 				{
 					foreach ($pattern as $v) 
 					{
-						if(is_string($v) && Base\Str::isPattern($v,$value,$chars[1]))
+						if(\is_string($v) && Base\Str::isPattern($v,$value,$chars[1]))
 						{
-							$return = array($key,$v);
+							$return = [$key,$v];
 							break;
 						}
 					}
@@ -107,16 +107,16 @@ class ColSchema extends Main\Root
 		$chars = $char = static::$config['patternChars'];
 		$char = $chars[1];
 		
-		if(array_key_exists($pattern,static::$config['pattern']))
+		if(\array_key_exists($pattern,static::$config['pattern']))
 		{
 			$pattern = static::$config['pattern'][$pattern];
-			if(is_array($pattern))
-			$pattern = current($pattern);
+			if(\is_array($pattern))
+			$pattern = \current($pattern);
 		}
 		
-		if(is_string($pattern))
+		if(\is_string($pattern))
 		{
-			if(strpos($pattern,$char) === false)
+			if(\strpos($pattern,$char) === false)
 			$pattern = $char.$chars[0].$pattern;
 			
 			$return = Base\Str::addPattern($pattern,$value,$char);
@@ -163,7 +163,7 @@ class ColSchema extends Main\Root
 		$return = null;
 		$type = static::patternType($value);
 		
-		if(is_string($type) && Base\Lang::is($type))
+		if(\is_string($type) && Base\Lang::is($type))
 		$return = $type;
 		
 		return $return;
@@ -178,7 +178,7 @@ class ColSchema extends Main\Root
 		$return = null;
 		$value = ($isPatternType === true)? $value:static::patternType($value);
 		
-		if(!empty($value) && array_key_exists($value,static::$config['panel']))
+		if(!empty($value) && \array_key_exists($value,static::$config['panel']))
 		$return = static::$config['panel'][$value];
 		
 		return $return;
@@ -193,7 +193,7 @@ class ColSchema extends Main\Root
 		$return = null;
 		$pattern = static::pattern($value);
 		
-		if(!empty($pattern) && in_array($pattern[0],static::$config['relation'],true))
+		if(!empty($pattern) && \in_array($pattern[0],static::$config['relation'],true))
 		$return = Base\Str::stripPattern($pattern[1],$value,static::$config['patternChars'][1]);
 		
 		return $return;
@@ -205,7 +205,7 @@ class ColSchema extends Main\Root
 	// retourne un tableau
 	public static function possible(string $value,bool $currentLang=false):array 
 	{
-		$return = array();
+		$return = [];
 		$char = static::$config['patternChars'][1];
 		
 		if(!empty($value))
@@ -215,12 +215,12 @@ class ColSchema extends Main\Root
 				if($currentLang === true && Base\Lang::is($key) && !Base\Lang::isCurrent($key))
 				continue;
 				
-				if(is_string($key) && is_array($pattern))
+				if(\is_string($key) && \is_array($pattern))
 				{
 					foreach ($pattern as $v) 
 					{
-						if(is_string($v))
-						$return[] = str_replace($char,$value,$v);
+						if(\is_string($v))
+						$return[] = \str_replace($char,$value,$v);
 					}
 				}
 			}
@@ -255,7 +255,7 @@ class ColSchema extends Main\Root
 			if(!empty($attr['key']) && $attr['key'] === 'primary')
 			$return = 'primary';
 			
-			elseif(!empty($attr['kind']) && is_string($attr['kind']))
+			elseif(!empty($attr['kind']) && \is_string($attr['kind']))
 			$return = $attr['kind'];
 		}
 		
@@ -272,13 +272,13 @@ class ColSchema extends Main\Root
 	{
 		$return = null;
 		
-		if(array_key_exists('Field',$value) && array_key_exists('Type',$value))
+		if(\array_key_exists('Field',$value) && \array_key_exists('Type',$value))
 		{
 			$return = static::parseType($value['Type']);
 			
-			if(is_array($return))
+			if(\is_array($return))
 			{
-				if(array_key_exists('Null',$value))
+				if(\array_key_exists('Null',$value))
 				{
 					if($value['Null'] === 'YES')
 					$return['null'] = true;
@@ -286,18 +286,18 @@ class ColSchema extends Main\Root
 					$return['null'] = false;
 				}
 				
-				if(array_key_exists('Default',$value))
+				if(\array_key_exists('Default',$value))
 				{
-					if(is_numeric($value['Default']))
+					if(\is_numeric($value['Default']))
 					$value['Default'] = Base\Number::cast($value['Default']);
 					
-					if(is_scalar($value['Default']) || ($value['Default'] === null && !empty($return['null'])))
+					if(\is_scalar($value['Default']) || ($value['Default'] === null && !empty($return['null'])))
 					$return['default'] = $value['Default'];
 				}
 				
-				if(array_key_exists('Key',$value))
+				if(\array_key_exists('Key',$value))
 				{
-					if($value['Key'] === 'PRI' && array_key_exists('Extra',$value) && $value['Extra'] === 'auto_increment')
+					if($value['Key'] === 'PRI' && \array_key_exists('Extra',$value) && $value['Extra'] === 'auto_increment')
 					{
 						$return['key'] = 'primary';
 						$return['required'] = true;
@@ -310,7 +310,7 @@ class ColSchema extends Main\Root
 				
 				$return['group'] = static::group($return);
 				
-				if(array_key_exists('priority',$value))
+				if(\array_key_exists('priority',$value))
 				$return['priority'] = $value['priority'];
 				
 				$return['validate'] = static::parseValidate($return);
@@ -345,33 +345,33 @@ class ColSchema extends Main\Root
 		$return = null;
 		$length = null;
 		$segment = Base\Segment::get('()',$value);
-		if(is_array($segment) && array_key_exists(0,$segment) && is_numeric($segment[0]))
+		if(\is_array($segment) && \array_key_exists(0,$segment) && \is_numeric($segment[0]))
 		$length = (int) $segment[0];
 		
 		foreach (Base\Str::wordExplode($value) as $key => $value)
 		{
 			$value = Base\Str::keepAlpha($value);
 			
-			if(strlen($value))
+			if(\strlen($value))
 			{
 				if($key === 0)
 				{
 					$return['type'] = $value;
 					$return['kind'] = null;
 					
-					if(strpos($value,'char') !== false)
+					if(\strpos($value,'char') !== false)
 					{
 						$return['kind'] = 'char';
 						$return['search'] = true;
 					}
 					
-					elseif(strpos($value,'int') !== false)
+					elseif(\strpos($value,'int') !== false)
 					$return['kind'] = 'int';
 					
-					elseif(strpos($value,'float') === 0)
+					elseif(\strpos($value,'float') === 0)
 					$return['kind'] = 'float';
 					
-					elseif(strpos($value,'text') !== false)
+					elseif(\strpos($value,'text') !== false)
 					{
 						$return['kind'] = 'text';
 						$return['search'] = true;
@@ -390,7 +390,7 @@ class ColSchema extends Main\Root
 		if(empty($return['kind']))
 		$return = null;
 		
-		if(is_array($return) && is_int($length))
+		if(\is_array($return) && \is_int($length))
 		$return['length'] = $length;
 		
 		return $return;
@@ -401,7 +401,7 @@ class ColSchema extends Main\Root
 	// gère les règles de validation selon le kind et le length
 	public static function parseValidate(array $array):array 
 	{
-		$return = array();
+		$return = [];
 		
 		if(!empty($array['kind']))
 		{
@@ -429,7 +429,7 @@ class ColSchema extends Main\Root
 			elseif($array['kind'] === 'text')
 			$return[] = 'string';
 			
-			if(array_key_exists('length',$array) && is_int($array['length']))
+			if(\array_key_exists('length',$array) && \is_int($array['length']))
 			$return['maxLength'] = $array['length']; 
 		}
 		
@@ -443,13 +443,13 @@ class ColSchema extends Main\Root
 	{
 		$return = null;
 		
-		if(array_key_exists('type',$array))
+		if(\array_key_exists('type',$array))
 		{
 			$return = static::parseValidateUnsigned($array);
 			$type = $array['type'];
 			$unsigned = $array['unsigned'] ?? false;
 			
-			if(array_key_exists($type,static::$config['intMax']) && is_int(static::$config['intMax'][$type]))
+			if(\array_key_exists($type,static::$config['intMax']) && \is_int(static::$config['intMax'][$type]))
 			{
 				$max = static::$config['intMax'][$type];
 				
@@ -474,8 +474,8 @@ class ColSchema extends Main\Root
 	{
 		$return = null;
 		
-		if(array_key_exists('unsigned',$array) && $array['unsigned'] === true)
-		$return = array('>='=>0);
+		if(\array_key_exists('unsigned',$array) && $array['unsigned'] === true)
+		$return = ['>='=>0];
 		
 		return $return;
 	}
@@ -529,10 +529,10 @@ class ColSchema extends Main\Root
 	{
 		$return = null;
 		
-		if(array_key_exists('tag',$array))
+		if(\array_key_exists('tag',$array))
 		$return = $array['tag'];
 		
-		elseif(array_key_exists('kind',$array) && is_string($array['kind']))
+		elseif(\array_key_exists('kind',$array) && \is_string($array['kind']))
 		$return = static::kindTag($array['kind']);
 		
 		return $return;
@@ -543,7 +543,7 @@ class ColSchema extends Main\Root
 	// retourne la longueur maximale pour un champ texte
 	public static function textLength(string $value):?int
 	{
-		return (array_key_exists($value,static::$config['textLength']))? static::$config['textLength'][$value]:null;
+		return (\array_key_exists($value,static::$config['textLength']))? static::$config['textLength'][$value]:null;
 	}
 }
 ?>

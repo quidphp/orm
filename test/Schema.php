@@ -17,24 +17,24 @@ class Schema extends Base\Test
 		$schema = new Orm\Schema(null,$db);
 
 		// tables
-		assert(count($schema->tables()) === 26);
+		\assert(\count($schema->tables()) === 26);
 
 		// table
-		assert(count($schema->table('user')) === 13);
-		assert(count($schema->table('user',false)) === 13);
-		assert(count($schema->table('session')) === 11);
+		\assert(\count($schema->table('user')) === 13);
+		\assert(\count($schema->table('user',false)) === 13);
+		\assert(\count($schema->table('session')) === 11);
 
 		// col
-		assert(count($schema->col('page','name_fr')) === 6);
-		assert($schema->col('page','name_fr',false)['Field'] === 'name_fr');
+		\assert(\count($schema->col('page','name_fr')) === 6);
+		\assert($schema->col('page','name_fr',false)['Field'] === 'name_fr');
 
 		// all
-		assert(count($schema->all()) === 26);
+		\assert(\count($schema->all()) === 26);
 
 		// dbAccess
-		assert(!empty($schema->get('user/id')));
-		assert(!empty($schema->get(array('session','data'))));
-		assert($schema->db() instanceof Orm\Db);
+		\assert(!empty($schema->get('user/id')));
+		\assert(!empty($schema->get(['session','data'])));
+		\assert($schema->db() instanceof Orm\Db);
 		
 		return true;
 	}

@@ -12,7 +12,7 @@ class Row extends Main\ArrObj
 	
 	
 	// config
-	public static $config = array(); // les config de row sont mergés à celles de table, avec priorité
+	public static $config = []; // les config de row sont mergés à celles de table, avec priorité
 	
 	
 	// dynamique
@@ -223,7 +223,7 @@ class Row extends Main\ArrObj
 			if($table instanceof Table)
 			$table = $table->name();
 			
-			if(is_string($table))
+			if(\is_string($table))
 			$return = (!empty($childs[$table]))? true:false;
 			
 			if($return === true && $excludeSelf === true)
@@ -235,7 +235,7 @@ class Row extends Main\ArrObj
 				{
 					foreach ($childs[$tableName] as $col => $primaries) 
 					{
-						if(in_array($primary,$primaries,true))
+						if(\in_array($primary,$primaries,true))
 						{
 							$primaries = Base\Arr::valueStrip($primary,$primaries);
 							if(!empty($primaries))
@@ -351,7 +351,7 @@ class Row extends Main\ArrObj
 	// option preValidate
 	public function set(array $data,?array $option=null):self
 	{
-		$option = Base\Arr::plus(array('preValidate'=>false),$option);
+		$option = Base\Arr::plus(['preValidate'=>false],$option);
 		$cells = $this->cells();
 		
 		if($option['preValidate'] === true)
@@ -360,7 +360,7 @@ class Row extends Main\ArrObj
 			$data = $cells->preValidatePrepare($data);
 			$data = $this->preValidate($data,$option);
 			
-			if(count($data) !== count($set))
+			if(\count($data) !== \count($set))
 			$option['partial'] = true;
 			$option['preValidate'] = false;
 		}
@@ -377,7 +377,7 @@ class Row extends Main\ArrObj
 	{
 		$return = null;
 		$obj = $this->db()->lang();
-		$option = Base\Arr::plus($option,array('pattern'=>$pattern));
+		$option = Base\Arr::plus($option,['pattern'=>$pattern]);
 		$tableName = $this->tableName();
 		$return = $obj->rowLabel($this->primary(),$tableName,$lang,$option);
 
@@ -391,7 +391,7 @@ class Row extends Main\ArrObj
 	{
 		$return = null;
 		$obj = $this->db()->lang();
-		$option = Base\Arr::plus($option,array('pattern'=>$pattern));
+		$option = Base\Arr::plus($option,['pattern'=>$pattern]);
 		$tableName = $this->tableName();
 		$return = $obj->rowDescription($this->primary(),$tableName,$replace,$lang,$option);
 		
@@ -546,7 +546,7 @@ class Row extends Main\ArrObj
 	{
 		$return = null;
 		
-		if(is_string($pattern))
+		if(\is_string($pattern))
 		$cell = ColSchema::addPattern($pattern,$cell);
 		
 		elseif(!$this->hasCell($cell))
@@ -581,11 +581,11 @@ class Row extends Main\ArrObj
 	// si get est true, value est passé dans get plutôt que value
 	public function keyValue($key,$value,bool $get=false):array
 	{
-		$return = array();
+		$return = [];
 		$key = $this->cell($key)->value();
 		$value = $this->cell($value);
 		$value = ($get === true)? $value->get():$value->value();
-		$return = array($key=>$value);
+		$return = [$key=>$value];
 		
 		return $return;
 	}
@@ -708,7 +708,7 @@ class Row extends Main\ArrObj
 	public function namePrimary(?string $pattern=null):string
 	{
 		$return = '';
-		$pattern = (is_string($pattern))? $pattern:"%name% (#%primary%)";
+		$pattern = (\is_string($pattern))? $pattern:"%name% (#%primary%)";
 		$replace['%name%'] = $this->cellName();
 		$replace['%primary%'] = $this->primary();
 		$return = Base\Str::replace($replace,$pattern);
@@ -741,7 +741,7 @@ class Row extends Main\ArrObj
 		$table = $this->table();
 		$assoc = $this->db()->selectAll($table,$this);
 		
-		if(is_array($assoc) && !empty($assoc))
+		if(\is_array($assoc) && !empty($assoc))
 		{
 			$cells = $this->cells();
 
@@ -763,7 +763,7 @@ class Row extends Main\ArrObj
 	// option com et strict
 	public function preValidate(array $return,?array $option=null):array 
 	{
-		$option = Base\Arr::plus(array('com'=>false,'strict'=>true),$option);
+		$option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
 		$cells = $this->cells();
 		$preValidate = $cells->preValidate($return,true);
 
@@ -773,9 +773,9 @@ class Row extends Main\ArrObj
 			$this->updateCom($preValidate);
 			
 			elseif($option['strict'] === true)
-			static::throw($this->table(),...array_keys($preValidate));
+			static::throw($this->table(),...\array_keys($preValidate));
 			
-			$return = Base\Arr::keysStrip(array_keys($preValidate),$return);
+			$return = Base\Arr::keysStrip(\array_keys($preValidate),$return);
 		}
 		
 		return $return;
@@ -791,9 +791,9 @@ class Row extends Main\ArrObj
 	public function setUpdateMethod(string $method,array $set,?array $option=null):?int 
 	{
 		$return = null;
-		$option = Base\Arr::plus(array('log'=>true,'com'=>false,'preValidate'=>false),$option);
+		$option = Base\Arr::plus(['log'=>true,'com'=>false,'preValidate'=>false],$option);
 		
-		if(in_array($method,array('update','updateValid','updateChanged','updateChangedIncluded','updateChangedIncludedValid','updateAll'),true))
+		if(\in_array($method,['update','updateValid','updateChanged','updateChangedIncluded','updateChangedIncludedValid','updateAll'],true))
 		{
 			try 
 			{
@@ -852,11 +852,11 @@ class Row extends Main\ArrObj
 	{
 		$return = null;
 		$table = $this->table();
-		$cells = $this->cells()->withoutPrimary()->filter(array('attr'=>true),'duplicate');
+		$cells = $this->cells()->withoutPrimary()->filter(['attr'=>true],'duplicate');
 		
 		if($cells->isNotEmpty())
 		{
-			$keyValue = array();
+			$keyValue = [];
 			$rowGet = $this->get();
 			$option = (array) $option;
 			
@@ -1027,7 +1027,7 @@ class Row extends Main\ArrObj
 	// méthode protégé
 	protected function updateBeforeValid(Cells $return,?array $option=null):?Cells
 	{
-		$option = Base\Arr::plus(array('com'=>false,'strict'=>true),$option);
+		$option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
 		$completeValidation = $return->completeValidation($option['com']);
 
 		if(!empty($completeValidation))
@@ -1038,7 +1038,7 @@ class Row extends Main\ArrObj
 			elseif($option['strict'] === true)
 			static::throw('invalid',$this->table(),$this,Base\Json::encode($completeValidation));
 			
-			$names = Base\Arr::valuesStrip(array_keys($completeValidation),$return->names());
+			$names = Base\Arr::valuesStrip(\array_keys($completeValidation),$return->names());
 			
 			if(!empty($names))
 			$return = $return->gets(...$names);
@@ -1057,7 +1057,7 @@ class Row extends Main\ArrObj
 	protected function updateBeforeAssoc(Cells $cells,bool $changed=true,?array $option=null):?int
 	{
 		$return = null;
-		$option = Base\Arr::plus(array('finalValidate'=>true),$option);
+		$option = Base\Arr::plus(['finalValidate'=>true],$option);
 		
 		if($this->updateBeforeValid($cells,$option) === $cells)
 		{
@@ -1069,7 +1069,7 @@ class Row extends Main\ArrObj
 			
 			if($proceed === true)
 			{
-				$array = array();
+				$array = [];
 				$loop = ($changed === true)? $cells->changed(true,$option):$cells->withoutPrimary();
 				$array = $loop->keyValue();
 				
@@ -1087,7 +1087,7 @@ class Row extends Main\ArrObj
 	protected function updateBeforeFinalValidate(Cells $cells,?array $option=null):bool
 	{
 		$return = true;
-		$option = Base\Arr::plus(array('com'=>false,'strict'=>true),$option);
+		$option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
 		$finalValidation = $this->updateFinalValidate($cells,$option);
 
 		if(!empty($finalValidation))
@@ -1114,7 +1114,7 @@ class Row extends Main\ArrObj
 	public function updateAssoc(array $set,?array $option=null):?int  
 	{
 		$return = null;
-		$option = Base\Arr::plus(array('log'=>true,'com'=>false),$option);
+		$option = Base\Arr::plus(['log'=>true,'com'=>false],$option);
 		$db = $this->db();
 		$table = $this->table();
 		$cells = $this->cells();
@@ -1125,10 +1125,10 @@ class Row extends Main\ArrObj
 			if(empty($set))
 			$result = 0;
 			
-			elseif(!$cells->exists(...array_keys($set)))
+			elseif(!$cells->exists(...\array_keys($set)))
 			static::throw('columnsNoMatch');
 			
-			elseif(array_key_exists($db->primary(),$set))
+			elseif(\array_key_exists($db->primary(),$set))
 			static::throw('cannotSetPrimaryCell');
 			
 			elseif(!$this->isUpdateable($option))
@@ -1155,7 +1155,7 @@ class Row extends Main\ArrObj
 		{
 			$this->updateAfter($result,$set,$option);
 			
-			if(is_int($result))
+			if(\is_int($result))
 			{
 				if($result === 1)
 				$this->onUpdated($option);
@@ -1179,12 +1179,12 @@ class Row extends Main\ArrObj
 		if(!empty($value))
 		{
 			$label = ($label === null)? $this->label():$label;
-			$attr = Base\Attr::append(array('row','update','data'=>array('primary'=>$this,'table'=>$this->table(),'action'=>'update')),$attr);
+			$attr = Base\Attr::append(['row','update','data'=>['primary'=>$this,'table'=>$this->table(),'action'=>'update']],$attr);
 			
-			if(is_string($value))
-			$value = array(array($type,$value,$replace));
+			if(\is_string($value))
+			$value = [[$type,$value,$replace]];
 			
-			elseif(is_array($value) && Base\Arr::isAssoc($value))
+			elseif(\is_array($value) && Base\Arr::isAssoc($value))
 			{
 				foreach ($value as $k => $v) 
 				{
@@ -1199,7 +1199,7 @@ class Row extends Main\ArrObj
 				$value = $return->prepareIn('neutral',$type,$value,$replace);
 			}
 			
-			if(is_array($value) && !empty($value))
+			if(\is_array($value) && !empty($value))
 			{
 				$method = ($prepend === true)? 'prepend':'append';
 				$return->$method('neutral',$label,null,$attr,...$value);
@@ -1216,11 +1216,11 @@ class Row extends Main\ArrObj
 	// méthode protégé
 	protected function updateAfter($result,?array $set=null,?array $option=null):self 
 	{
-		$option = Base\Arr::plus(array('com'=>false,'strict'=>true,'partial'=>false,'onCommitted'=>true),$option);
+		$option = Base\Arr::plus(['com'=>false,'strict'=>true,'partial'=>false,'onCommitted'=>true],$option);
 		
 		if($option['com'] === true)
 		{
-			$in = array();
+			$in = [];
 			$lang = $this->db()->lang();
 			$name = $this->tableName();
 			
@@ -1229,39 +1229,39 @@ class Row extends Main\ArrObj
 				if($option['partial'] === true)
 				{
 					$key = ($lang->existsCom('pos',"update/$name/partial"))? $name:'*';
-					$in[] = array('pos',"update/$key/partial");
+					$in[] = ['pos',"update/$key/partial"];
 				}
 				
 				else
 				{
 					$key = ($lang->existsCom('pos',"update/$name/success"))? $name:'*';
-					$in[] = array('pos',"update/$key/success");
+					$in[] = ['pos',"update/$key/success"];
 				}
 			}
 			
 			elseif($result === 0)
 			{
 				$key = ($lang->existsCom('pos',"update/$name/noChange"))? $name:'*';
-				$in[] = array('pos',"update/$key/noChange");
+				$in[] = ['pos',"update/$key/noChange"];
 			}
 			
-			elseif(is_int($result) && $result > 1)
+			elseif(\is_int($result) && $result > 1)
 			{
 				$key = ($lang->existsCom('neg',"update/$name/tooMany"))? $name:'*';
-				$in[] = array('neg',"update/$key/tooMany");
+				$in[] = ['neg',"update/$key/tooMany"];
 			}
 			
 			elseif($result instanceof Main\Contract\Catchable)
 			{
 				$key = ($lang->existsCom('neg',"update/$name/exception"))? $name:'*';
-				$in[] = array('neg',"update/$key/exception",array('exception'=>$result->classFqcn(),'message'=>$result->getMessageArgs($lang)));
-				$result->onCatched(array('com'=>false));
+				$in[] = ['neg',"update/$key/exception",['exception'=>$result->classFqcn(),'message'=>$result->getMessageArgs($lang)]];
+				$result->onCatched(['com'=>false]);
 			}
 			
 			else
 			{
 				$key = ($lang->existsCom('neg',"update/$name/system"))? $name:'*';
-				$in[] = array('neg',"update/$key/system");
+				$in[] = ['neg',"update/$key/system"];
 			}
 			
 			$this->updateCom($in,null,null,null,null,true);
@@ -1270,10 +1270,10 @@ class Row extends Main\ArrObj
 		elseif($result instanceof Main\Contract\Catchable)
 		throw $result;
 		
-		elseif($option['strict'] === true && !in_array($result,array(0,1),true))
+		elseif($option['strict'] === true && !\in_array($result,[0,1],true))
 		static::throw('updateFailed',$result,'strictMode');
 		
-		if($option['onCommitted'] === true && in_array($result,array(0,1),true) && is_array($set) && !empty($set))
+		if($option['onCommitted'] === true && \in_array($result,[0,1],true) && \is_array($set) && !empty($set))
 		$this->updateOnCommitted($set,$option);
 		
 		return $this;
@@ -1284,7 +1284,7 @@ class Row extends Main\ArrObj
 	// lance le callback onCommitted sur toutes les colonnes qui ont changés
 	protected function updateOnCommitted(array $set,array $option):self 
 	{
-		$cells = $this->cells(...array_keys($set));
+		$cells = $this->cells(...\array_keys($set));
 		
 		foreach ($cells as $key => $cell) 
 		{
@@ -1304,7 +1304,7 @@ class Row extends Main\ArrObj
 	public function delete(?array $option=null):?int 
 	{
 		$return = null;
-		$option = Base\Arr::plus(array('log'=>true,'com'=>false),$option);
+		$option = Base\Arr::plus(['log'=>true,'com'=>false],$option);
 		$db = $this->db();
 		$table = $this->table();
 		$result = null;
@@ -1334,7 +1334,7 @@ class Row extends Main\ArrObj
 		{
 			$this->deleteAfter($result,$option);
 			
-			if(is_int($result))
+			if(\is_int($result))
 			{
 				if($result === 1)
 				$this->onDeleted($option);
@@ -1359,7 +1359,7 @@ class Row extends Main\ArrObj
 		if(!empty($value))
 		{
 			$label = ($label === null)? $this->label():$label;
-			$attr = Base\Attr::append(array('row','delete','data'=>array('table'=>$this->table(),'primary'=>$this,'action'=>'delete')),$attr);
+			$attr = Base\Attr::append(['row','delete','data'=>['table'=>$this->table(),'primary'=>$this,'action'=>'delete']],$attr);
 			
 			if(Base\Arr::isAssoc($value))
 			$value = $return->prepareIn('neutral','neg',$value);
@@ -1381,43 +1381,43 @@ class Row extends Main\ArrObj
 	// méthode protégé
 	protected function deleteAfter($result,?array $option=null):self 
 	{
-		$option = Base\Arr::plus(array('com'=>false,'strict'=>true),$option);
+		$option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
 		
 		if($option['com'] === true)
 		{
-			$in = array();
+			$in = [];
 			$lang = $this->db()->lang();
 			$name = $this->tableName();
 			
 			if($result === 1)
 			{
 				$key = ($lang->existsCom('pos',"delete/$name/success"))? $name:'*';
-				$in[] = array('pos',"delete/$key/success");
+				$in[] = ['pos',"delete/$key/success"];
 			}
 			
 			elseif($result === 0)
 			{
 				$key = ($lang->existsCom('neg',"delete/$name/notFound"))? $name:'*';
-				$in[] = array('neg',"delete/$key/notFound");
+				$in[] = ['neg',"delete/$key/notFound"];
 			}
 			
-			elseif(is_int($result) && $result > 1)
+			elseif(\is_int($result) && $result > 1)
 			{
 				$key = ($lang->existsCom('neg',"delete/$name/tooMany"))? $name:'*';
-				$in[] = array('neg',"delete/$key/tooMany");
+				$in[] = ['neg',"delete/$key/tooMany"];
 			}
 			
 			elseif($result instanceof Main\Contract\Catchable)
 			{
 				$key = ($lang->existsCom('neg',"delete/$name/exception"))? $name:'*';
-				$in[] = array('neg',"delete/$key/exception",array('exception'=>$result->classFqcn(),'message'=>$result->getMessageArgs($lang)));
-				$result->onCatched(array('com'=>false));
+				$in[] = ['neg',"delete/$key/exception",['exception'=>$result->classFqcn(),'message'=>$result->getMessageArgs($lang)]];
+				$result->onCatched(['com'=>false]);
 			}
 			
 			else
 			{
 				$key = ($lang->existsCom('neg',"delete/$name/system"))? $name:'*';
-				$in[] = array('neg',"delete/$key/system");
+				$in[] = ['neg',"delete/$key/system"];
 			}
 			
 			$this->deleteCom($in,null,null,null,true);
@@ -1426,7 +1426,7 @@ class Row extends Main\ArrObj
 		elseif($result instanceof Main\Contract\Catchable)
 		throw $result;
 		
-		elseif($option['strict'] === true && !in_array($result,array(0,1),true))
+		elseif($option['strict'] === true && !\in_array($result,[0,1],true))
 		static::throw('deleteFailed',$result,'strictMode');
 		
 		return $this;
@@ -1487,7 +1487,7 @@ class Row extends Main\ArrObj
 	// écrit la ligne dans l'objet file fourni en argument
 	public function writeFile(Main\File $file,?array $option=null):self 
 	{
-		$cols = $this->table()->cols()->filter(array('isExportable'=>true));
+		$cols = $this->table()->cols()->filter(['isExportable'=>true]);
 		$cells = $this->cells($cols);
 		
 		if($option['header'] === true)
