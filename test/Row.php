@@ -1,0 +1,360 @@
+<?php
+declare(strict_types=1);
+namespace Quid\Orm\Test;
+use Quid\Orm;
+use Quid\Base;
+
+// row
+class Row extends Base\Test
+{
+	// trigger
+	public static function trigger(array $data):bool
+	{
+		// prepare
+		$db = Orm\Db::inst();
+		$table = "ormRow";
+		assert($db->truncate($table) instanceof \PDOStatement);
+		assert($db->inserts($table,array('id','active','name_en','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',1521762409,2,12,2),array(2,2,'james2',20,2,22,2)) === array(1,2));
+		$tb = $db[$table];
+		assert($tb instanceof Orm\Table);
+		$row = $tb->row(1);
+		$row2 = $tb->row(2);
+		assert($row instanceof Orm\Row);
+		foreach ($row as $key => $value) { };
+		$logSql = $db['logSql'];
+		assert($row['active'] instanceof Orm\Cell);
+		assert($row['active']('get') === 1);
+		assert($row['active']('label','%:') === 'Active:');
+		
+		// construct
+
+		// toString
+
+		// call
+		
+		// onInit
+
+		// onRefreshed
+
+		// onInserted
+
+		// onUpdated
+
+		// onCommitted
+
+		// onDeleted
+
+		// onCommittedOrDeleted
+
+		// toArray
+		assert($row->toArray()['id'] instanceof Orm\Cell);
+
+		// cast
+		assert($row->_cast() === 1);
+
+		// offsetGet
+		assert($row['active']->value() === 1);
+
+		// offsetSet
+		assert(($row['active'] = 2) === 2);
+		assert($row['active']->value() === 2);
+		assert($row['active'] = 3);
+		assert($row['active']->value() === 3);
+
+		// offsetUnset
+		unset($row['active']);
+		assert($row['active']->value() === null);
+		assert($row['active'] = 3);
+		unset($row['active']);
+
+		// arr
+
+		// isLinked
+		assert($row->isLinked());
+
+		// alive
+		assert($row->alive());
+
+		// hasCell
+		assert($row->hasCell('id','dateAdd',$row2->cell('id')));
+		assert($row->hasCell($row2->cell('id')->col()));
+		assert($row->hasCell($row2->cell('id')));
+
+		// hasChanged
+		assert($row->hasChanged());
+		$row->cell('active')->reset();
+		assert(!$row->hasChanged());
+
+		// isUpdateable
+		assert($row->isUpdateable());
+
+		// isDeleteable
+		assert($row->isDeleteable());
+
+		// hasRelationChilds
+		assert(!$row->hasRelationChilds());
+
+		// sameRow
+		assert($row2->sameRow($row2->cell('id')));
+
+		// setPrimary
+
+		// primary
+		assert($row->primary() === 1);
+		$get = $row->cells()->keyValue();
+
+		// id
+		assert($row->id() === 1);
+
+		// attr
+		assert(count($row->attr()) === 19); // un de plus car @app n'est pas enlevé
+		
+		// attrCall
+		
+		// attrNotEmpty
+		assert(!$row->attrNotEmpty('test'));
+		assert($row->attrNotEmpty('priority'));
+
+		// pointer
+		assert($row->pointer() === 'ormRow/1');
+
+		// value
+		assert(count($row->value()) === 10);
+		assert($row->value()['dateAdd'] === 1521762409);
+
+		// get
+		assert($row->get()['dateAdd'] === 'March 22, 2018 19:46:49');
+		assert(count($row->get()) === 10);
+		assert(count($row->get('id','active')) === 2);
+
+		// set
+		assert($row->set(array('active'=>1)) === $row);
+
+		// label
+		assert($db['user'][1]->label() === 'User #1');
+		assert($db['user'][1]->label('%:','fr') === 'Utilisateur #1:');
+
+		// description
+		assert($db['user'][1]->description() === null);
+
+		// cellsNew
+
+		// cellsLoad
+
+		// cellsRefresh
+		assert($row->cellsRefresh(array('id'=>1,'active'=>3,'bla'=>'megh')) === $row);
+		assert($row->cells()->sets(array('id'=>1,'active'=>3)) === $row->cells());
+
+		// cells
+		assert($row->cells() instanceof Orm\Cells);
+		assert($row->cells('id')->isCount(1));
+
+		// cellsClass
+		assert(is_a($row->cellsClass(),Orm\Cells::class,true));
+
+		// cellClass
+		assert(is_a($row->cellClass($tb['id']),Orm\Cell::class,true));
+
+		// cellMake
+
+		// cell
+		assert($row->cell('id') instanceof Orm\Cell);
+
+		// cellPattern
+		assert($row->cellPattern('name')->name() === 'name_en');
+		assert($row->cellPattern('namez') === null);
+		assert($row->cellPattern('name','*_de')->name() === 'name_de');
+		assert($row->cellPattern('name','fr') === null);
+
+		// cellValue
+		assert($row->cellValue('id') === 1);
+
+		// segment
+		assert($row->segment('[name_%lang%] - [id] [dateAdd]') === 'james - 1 1521762409');
+		assert($row->segment('[name_%lang%] - [id] [dateAdd]',true) === 'james - 1 March 22, 2018 19:46:49');
+
+		// keyValue
+		$row['active'] = 2;
+		$row['name_en'] = 'bla';
+		assert($row->keyValue('id','name_[lang]') === array(1=>'bla'));
+		assert($row->keyValue('id','dateAdd') === array(1=>1521762409));
+		assert($row->keyValue('id',array('lol','dateAdd')) === array(1=>1521762409));
+		assert($row->keyValue('id',array('lol','dateAdd'),true) === array(1=>'March 22, 2018 19:46:49'));
+
+		// relationKeyValue
+		assert($row->relationKeyValue() === 'bla (#1)');
+
+		// relationChilds
+		assert($row->relationChilds() === array());
+
+		// isActive
+		assert($row->isActive(2));
+		assert($logSql->insert(array('type'=>1))->isActive());
+
+		// deactivate
+		$row['date']->set(time());
+		assert($row->deactivate() === 1);
+
+		// isVisible
+		assert(!$row->isVisible());
+
+		// cellActive
+		assert($row->cellActive()->name() === 'active');
+		assert($logSql->insert(array('type'=>1))->cellActive() === null);
+		
+		// cellKey
+		assert($row->cellKey()->name() === 'id');
+		
+		// cellName
+		assert($row->cellName()->name() === 'name_en');
+		assert($row->cellName()(2) === "bl");
+		assert($row->cellName('de')->name() === 'name_de');
+		
+		// cellContent
+		assert($row->cellContent()->name() === 'content_en');
+		assert($row->cellContent()(true) === '');
+
+		// namePrimary
+		assert($row->namePrimary() === 'bla (#1)');
+
+		// slugName
+		assert($row->slugName() === 'bla');
+
+		// toRows
+		assert($row->toRows()->first() === $row);
+
+		// refresh
+		$rowz = $tb->insert(array('date'=>time(),'name_en'=>'well'));
+		assert($db->delete($tb,$rowz) === 1);
+		assert($rowz->isLinked());
+		$rowz->refresh();
+		assert(!$rowz->isLinked());
+
+		// preValidate
+		assert($row->preValidate(array('date'=>'a','active'=>array('a')),array('strict'=>false,'com'=>true)) === array('active'=>array('a')));
+		assert(strlen($row->db()->com()->flush()) === 253);
+
+		// setUpdateMethod
+		assert($row->setUpdateMethod('updateAll',array('date'=>time(),'active'=>1)) === 1);
+
+		// setUpdate
+		assert($row->setUpdate(array('active'=>null)) === 1);
+
+		// setUpdateValid
+		assert($row->setUpdateValid(array('active'=>1),array('com'=>true)) === 1);
+		assert($row->setUpdateValid(array('active'=>1),array('com'=>true)) === 0);
+		$row->db()->com()->flush();
+
+		// setUpdateChangedIncluded
+
+		// setUpdateChangedIncludedValid
+		assert($row->setUpdateChangedIncludedValid(array('active'=>1),array('com'=>true)) === 0);
+		assert(strlen($row->db()->com()->flush()) === 178);
+		assert($row->setUpdateChangedIncludedValid(array('active'=>null),array('com'=>true)) === 1);
+		assert(strlen($row->db()->com()->flush()) === 183);
+		assert($row->setUpdateChangedIncludedValid(array('active'=>'a','name_en'=>'ok'),array('com'=>true)) === 1);
+		assert(strlen($row->db()->com()->flush()) === 353);
+		$row['active'] = 1;
+
+		// duplicate
+		assert($row->duplicate() instanceof Orm\Row);
+		assert($row->duplicate() !== $row);
+
+		// update
+		assert($row->hasChanged());
+		assert($row->update() === 1);
+		assert(!$row->hasChanged());
+		assert($row->update() === 0);
+
+		// updateValid
+		$row['active'] = 'a';
+		assert($row->updateValid(array('com'=>true)) === 0);
+		assert(strlen($row->db()->com()->flush()) === 340);
+		$row['active'] = null;
+
+		// updateChanged
+
+		// updateChangedIncluded
+		assert($row->updateChangedIncluded() === 1);
+		$row['name_en'] = 'blaz';
+		assert($row->hasChanged());
+		assert($row->cell('name_en')->valueInitial() === 'ok');
+		assert($row->updateChangedIncluded() === 1);
+		assert($row->cell('name_en')->valueInitial() === 'blaz');
+		assert(!$row->hasChanged());
+
+		// updateChangedIncludedValid
+		assert($row->updateChangedIncludedValid(array('com'=>true)) === 0);
+		assert(strlen($row->db()->com()->flush()) === 178);
+
+		// updateAll
+		$row['active'] = 1;
+		assert($row->updateAll() === 1);
+
+		// updateBeforeValid
+
+		// updateBeforeAssoc
+
+		// updateBeforeFinalValidate
+
+		// updateAssoc
+		assert($row->updateAssoc(array('active'=>4)) === 1);
+		assert($row['active']->value() === 4);
+
+		// updateCom
+
+		// updateAfter
+
+		// updateOnCommitted
+
+		// delete
+		assert($row->isLinked());
+		assert($tb->row(1) === $row);
+		assert($row->delete(array('com'=>true)) === 1);
+		assert(strlen($tb->db()->com()->flush()) === 183);
+		assert(!$tb->hasRow(1));
+		assert($tb->row(1) === null);
+		assert(!$row->isLinked());
+
+		// deleteCom
+
+		// deleteAfter
+
+		// deleteOrDeactivate
+		$row4 = $tb->insert(array('date'=>time(),'name_en'=>'sure'));
+		assert($row4->deleteOrDeactivate() === 1);
+
+		// terminate
+
+		// unlink
+
+		// writeFile
+
+		// insertFinalValidate
+
+		// updateFinalValidate
+
+		// commitFinalValidate
+
+		// configReplaceMode
+
+		// tableAccess
+		$row3 = $tb->insert(array('date'=>time(),'name_en'=>'sure'));
+		assert($row3->isLinked());
+		assert($row3->checkLink() === $row3);
+		assert($row->hasDb() === false);
+		assert($row2->hasDb());
+		assert($row2->checkDb());
+		assert($row2->sameTable($row2->cell('id')));
+		assert($row2->tableName() === $table);
+		assert($row2->table() instanceof Orm\Table);
+		assert($row2->db() instanceof Orm\Db);
+		assert($row2->tables() instanceof Orm\Tables);
+
+		// cleanup
+		assert($db->truncate($table) instanceof \PDOStatement);
+		
+		return true;
+	}
+}
+?>

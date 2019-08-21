@@ -1,0 +1,268 @@
+<?php
+declare(strict_types=1);
+namespace Quid\Orm\Test;
+use Quid\Orm;
+use Quid\Base;
+
+// colRelation
+class ColRelation extends Base\Test
+{
+	// trigger
+	public static function trigger(array $data):bool
+	{
+		// prepare
+		$db = Orm\Db::inst();
+		$table = "ormCol";
+		assert($db->truncate($table) instanceof \PDOStatement);
+		assert($db->inserts($table,array('id','dateAdd','dateModify'),array(1,time(),time()),array(2,time()+3000000,time()+2000000)) === array(1,2));
+		$tb = $db[$table];
+		$user = $db['user'];
+		$userId = $tb['user_id']->relation();
+		$userIds = $tb['user_ids']->relation();
+		$myRelation = $tb['myRelation']->relation();
+		$other = $tb['other']->relation();
+		$array = $tb['myRelation']->relation();
+		$range = $tb['relationRange']->relation();
+		$lang = $tb['relationLang']->relation();
+		$multi = $tb['multi']->relation();
+		$check = $tb['check']->relation();
+		$rangeInt = $tb['rangeInt']->relation();
+		$userAdd = $tb['userAdd']->relation();
+		$userAdd2 = $user['userAdd']->relation();
+		$dateAdd = $tb['dateAdd']->relation();
+		$relationCall = $tb['relationCall']->relation();
+		$userAdd->empty();
+
+		// construct
+
+		// prepare
+
+		// mode
+		assert($userId->mode() === 'enum');
+		assert($userIds->mode() === 'set');
+		assert($dateAdd->mode() === 'enum');
+		assert($relationCall->mode() === 'enum');
+
+		// attr
+		assert($userId->attr() === 'user');
+		assert($dateAdd->attr() === 'date');
+
+		// whereTable
+
+		// col
+		assert($userId->col() instanceof Orm\Col);
+		assert($dateAdd->col() instanceof Orm\Col);
+
+		// isEnum
+		assert($userId->isEnum());
+		assert(!$userIds->isEnum());
+		assert($dateAdd->isEnum());
+
+		// isSet
+		assert($userIds->isSet());
+		assert(!$userId->isSet());
+		assert(!$dateAdd->isSet());
+
+		// type
+		assert($array->type() === 'array');
+		assert($range->type() === 'range');
+		assert($lang->type() === 'lang');
+		assert($rangeInt->type() === 'range');
+		assert($multi->type() === 'lang');
+		assert($check->type() === 'range');
+		assert($dateAdd->type() === 'date');
+		assert($relationCall->type() === 'callable');
+
+		// checkType
+		assert($array->checkType() === 'array');
+		assert($range->checkType() === 'range');
+		assert($lang->checkType() === 'lang');
+		assert($multi->checkType() === 'lang');
+		assert($check->checkType() === 'range');
+		assert($dateAdd->checkType() === 'date');
+		
+		// isRelationTable
+		assert($userAdd->isRelationTable());
+		assert(!$multi->isRelationTable());
+		assert(!$dateAdd->isRelationTable());
+		assert(!$relationCall->isRelationTable());
+
+		// defaultOrderCode
+		assert($userAdd->defaultOrderCode() === 2);
+		assert($multi->defaultOrderCode() === 3);
+
+		// allowedOrdering
+		assert($userAdd->allowedOrdering() === array('key'=>true,'value'=>true));
+		assert($multi->allowedOrdering() === array('value'=>true));
+		assert($relationCall->allowedOrdering() === array('value'=>true));
+
+		// relationTable
+		assert($userAdd->relationTable() instanceof Orm\Table);
+		assert($userId->relationTable() instanceof Orm\Table);
+		assert($dateAdd->relationTable() === null);
+
+		// checkRelationTable
+		assert($userIds->checkRelationTable() instanceof Orm\Table);
+
+		// label
+		assert($array->label() === 'My relation');
+		assert($multi->label() === 'multi');
+		assert($check->label() === 'check');
+		assert($userAdd->label() === 'User');
+		assert($dateAdd->label() === 'Date added');
+
+		// size
+		assert($array->size() === 4);
+		assert($range->size() === 11);
+		assert($lang->size() === 3);
+		assert($multi->size() === 3);
+		assert($check->size() === 11);
+		assert($userId->size() === 4);
+		assert($userAdd->size() === 4);
+		assert($dateAdd->size() >= 2);
+		assert($relationCall->size() === 3);
+
+		// all
+		assert($array->all() === array('test',3,4,9=>'ok'));
+		assert(count($range->all()) === 11);
+		assert(count($lang->all()) === 3);
+		assert(count($multi->all()) === 3);
+		assert(count($check->all()) === 11);
+		assert(count($rangeInt->all()) === 8);
+		assert($userAdd[1] === 'nobody (#1)');
+		assert(count($userAdd->all()) !== 4);
+		assert(count($userAdd2->all()) !== 4);
+		assert(count($userId->all(false)) === 4);
+		assert(count($userAdd->all()) === 4);
+		assert(count($userAdd2->all()) === 4);
+		assert(array_keys($userAdd->all(false)) === array(4,3,2,1));
+		assert($range->all(false,array('limit'=>3)) === array(0,2=>2,4=>4));
+		assert($range->all(false,array('limit'=>array(2=>2))) === array(4=>4,6=>6));
+		assert($range->count() === 11);
+		assert($range->size() === 11);
+		assert($range->size(false) === 11);
+		assert(count($userAdd2->all(false,array('not'=>array(1)))) === 3);
+		assert(count($dateAdd->all()) >= 2);
+		assert(key($lang->all(false,array('order'=>4))) === 3);
+		assert(key($userAdd->all(false,array('order'=>1))) === 1);
+		assert(key($userAdd->all(false,array('order'=>2))) === 4);
+		assert(key($userAdd->all(false,array('order'=>3))) === 2);
+		assert(key($userAdd->all(false,array('order'=>4))) === 1);
+		assert(key($userAdd->all(true,array('order'=>1))) === 1);
+		assert(key($userAdd->all(true,array('order'=>2))) === 4);
+		assert(key($userAdd->all(true,array('order'=>3))) === 2);
+		assert(key($userAdd->all(true,array('order'=>4))) === 1);
+		assert($relationCall->all() === array('test','test2','test3'));
+
+		// exists
+		assert(!$lang->exists('oken'));
+		assert($lang->exists(2));
+		assert($lang->exists(5,2));
+		assert($userId->exists(1));
+		assert($userId->exists(1,2));
+		assert(!$userId->exists(1,2,800));
+
+		// in
+		assert($lang->in('oken'));
+		assert(!$lang->in('okenz'));
+		assert($multi->in('oken'));
+		assert($multi->in('oken','bla'));
+		assert(!$multi->in('oken','blaz'));
+		assert($userId->in('nobody (#1)'));
+		assert($userId->in('nobody (#1)','admin (#2)'));
+		assert($userId->in('nobody (#1)','admin (#2)'));
+		assert(!$userId->in('nobody (#1)','adminz (#2)'));
+
+		// search
+		assert($userId->search('nobo ody') === array(1=>'nobody (#1)'));
+		assert($userId->search('adm') === array(2=>'admin (#2)'));
+		assert($userId->search('zzz') === array());
+		assert($lang->search('wll LEL') === array(3=>'wllel'));
+		assert($lang->search('wll + LEL',array('searchSeparator'=>'+')) === array(3=>'wllel'));
+		assert($lang->search('wll') === array(3=>'wllel'));
+		assert($lang->search('cxzzcxzxc') === array());
+		assert($lang->search('e',array('limit'=>1)) === array(2=>'oken'));
+		assert($lang->search('e',array('not'=>array(2),'limit'=>1)) === array(3=>'wllel'));
+		assert($lang->empty() === $lang);
+		assert($lang->search('e',array('limit'=>array(2=>1))) === array(3=>'wllel'));
+		assert($lang->search('e',array('limit'=>array(1=>1))) === array(2=>'oken'));
+		assert(key($lang->search('e',array('order'=>2))) === 3);
+		assert(key($lang->search('e',array('order'=>3))) === 2);
+
+		// notOrderLimit
+
+		// keyValue
+		assert($lang->keyValue(2) === array(2=>'oken'));
+		assert($userId->keyValue(2) === array(2=>'admin (#2)'));
+		assert($userIds->keyValue(2) === array(2=>'admin (#2)'));
+		assert(count($userIds->keyValue(array(1,2,3))) === 3);
+		assert(count($userIds->keyValue(array(2,1,3,1000))) === 4);
+		assert(count($userIds->keyValue(array(1,2,3,1000),true)) === 3);
+
+		// one
+		assert($lang->one(2) === 'oken');
+		assert($lang->one(8) === null);
+		assert($lang->one('oken') === null);
+		assert($userAdd->one(2) === 'admin (#2)');
+
+		// many
+		assert($multi->many(2) === array(2=>'oken'));
+		assert($multi->many(array(2,3)) === array(2=>'oken',3=>'wllel'));
+		assert($multi->many(array(2,3,1000)) === array(2=>'oken',3=>'wllel',1000=>null));
+		assert($multi->many(array(2,3,1000),true) === array(2=>'oken',3=>'wllel'));
+		assert($userIds->many(1) === array(1=>'nobody (#1)'));
+		assert($userIds->many(array(2,1,1000)) === array(2=>'admin (#2)',1=>'nobody (#1)',1000=>null));
+		assert($userIds->many(array(2,1,1000),true) === array(2=>'admin (#2)',1=>'nobody (#1)'));
+
+		// row
+		assert($userAdd->row(2) instanceof Orm\Row);
+
+		// rows
+		assert($userAdd->rows(2) instanceof Orm\Rows);
+		assert($userIds->rows(array(3,2,1)) instanceof Orm\Rows);
+		assert($userIds->rows(array(3,2,1,100))->isCount(3));
+
+		// get
+		assert($multi->get('2,3') === array(2=>'oken',3=>'wllel'));
+		assert($lang->get(8) === null);
+		assert($lang->get(2) === 'oken');
+
+		// getStr
+		assert($multi->getStr('2,3') === 'oken,wllel');
+		assert($multi->getStr('2,3','-') === 'oken-wllel');
+		assert($lang->getStr(2) === 'oken');
+		assert($lang->getStr(8) === null);
+
+		// getKeyValue
+		assert($lang->getKeyValue(2) === array(2=>'oken'));
+
+		// getRow
+		assert($userAdd->getRow(2) instanceof Orm\Row);
+		assert($userIds->getRow(array(3,2,1)) instanceof Orm\Rows);
+		assert($userAdd->getRow(1000) === null);
+		assert($userIds->getRow(1000)->isEmpty());
+
+		// arrMap
+		$clone = clone $lang;
+		assert($clone !== $lang);
+		assert($clone->toJson() === '{"2":"oken","3":"wllel","5":"bla"}');
+		assert(count($clone->toArray()) === 3);
+		assert(count($clone->_cast()) === 3);
+		assert(!empty(serialize($clone)));
+		assert($lang->empty() === $lang);
+		assert(count($userId->all()) === 4);
+		assert($userId[2] === 'admin (#2)');
+		assert($userAdd2->isNotEmpty());
+		assert($userId->isNotEmpty());
+		assert($userId->empty() === $userId);
+		assert($userAdd2->isEmpty());
+		assert($userId->isEmpty());
+		assert($userId->isCount(0));
+		assert($userAdd2->count() === 0);
+		assert($userId[2] === 'admin (#2)');
+		assert($userAdd2->count() === 1);
+		
+		return true;
+	}
+}
+?>
