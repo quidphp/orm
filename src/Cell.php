@@ -12,11 +12,11 @@ class Cell extends Main\Root
 	
 	
 	// config
-	public static $config = [];
+	public static $config = array();
 	
 	
 	// dynamique
-	protected $value = []; // contient la valeur de base et de changement de la cellule
+	protected $value = array(); // contient la valeur de base et de changement de la cellule
 	protected $col = null; // conserve l'objet de la colonne, ceci ne crée pas une référence récursive
 	protected $row = null; // lien vers la row
 	
@@ -367,7 +367,7 @@ class Cell extends Main\Root
 	// possible de retourner les textes si lang est true
 	public function completeValidation(bool $lang=false) 
 	{
-		$array = [];
+		$array = array();
 		$array['exception'] = $this->exception($lang);
 		$array['required'] = $this->required($lang);
 		$array['validate'] = $this->validate($lang);
@@ -416,21 +416,21 @@ class Cell extends Main\Root
 
 		foreach ($array as $method => $value) 
 		{
-			$method = (\is_numeric($method))? $value:$method;
+			$method = (is_numeric($method))? $value:$method;
 			
-			if(\is_string($method) && Base\Sql::isWhereSymbol($method))
+			if(is_string($method) && Base\Sql::isWhereSymbol($method))
 			$return = $this->isCompare($method,$value);
 			
-			elseif(\in_array($method,[null,'null'],true))
+			elseif(in_array($method,array(null,'null'),true))
 			$return = $this->isNull();
 			
 			elseif($method === 'notNull')
 			$return = $this->isNotNull();
 			
-			elseif(\in_array($method,[false,'empty'],true))
+			elseif(in_array($method,array(false,'empty'),true))
 			$return = $this->isEmpty();
 			
-			elseif(\in_array($method,[true,'notEmpty'],true))
+			elseif(in_array($method,array(true,'notEmpty'),true))
 			$return = $this->isNotEmpty();
 			
 			else
@@ -494,7 +494,7 @@ class Cell extends Main\Root
 		if($this->hasCommittedCallback('onCommitted') || $this->hasException())
 		$return = true;
 		
-		elseif(\array_key_exists('initial',$this->value) && \array_key_exists('change',$this->value))
+		elseif(array_key_exists('initial',$this->value) && array_key_exists('change',$this->value))
 		{
 			if($this->value['change'] !== $this->value['initial'])
 			$return = true;
@@ -808,7 +808,7 @@ class Cell extends Main\Root
 	{
 		$return = null;
 		
-		if(\array_key_exists('change',$this->value))
+		if(array_key_exists('change',$this->value))
 		$return = $this->value['change'];
 		
 		else
@@ -838,7 +838,7 @@ class Cell extends Main\Root
 		$option = (array) $option;
 		$option['cell'] = $this;
 		
-		if(\is_scalar($value))
+		if(is_scalar($value))
 		$value = Base\Scalar::cast($value);
 		
 		$onGet = $this->col()->onGet($this,$option);
@@ -878,7 +878,7 @@ class Cell extends Main\Root
 		$array = $this->export($option);
 		
 		if(!empty($array))
-		$return = \current($array);
+		$return = current($array);
 		
 		return $return;
 	}
@@ -899,10 +899,10 @@ class Cell extends Main\Root
 		elseif($value === false)
 		$return = $return->value();
 		
-		elseif(\is_int($value))
+		elseif(is_int($value))
 		$return = $return->htmlExcerpt($value);
 		
-		elseif(\is_string($value))
+		elseif(is_string($value))
 		$return = $return->$value(...$args);
 		
 		return $return;
@@ -928,7 +928,7 @@ class Cell extends Main\Root
 		{
 			$value = $col->preValidatePrepare($value);
 			$preValidate = $col->preValidate($value);
-			if(\is_array($preValidate))
+			if(is_array($preValidate))
 			static::throw('preValidate',$this->name(),$preValidate);
 		}
 		
@@ -955,7 +955,7 @@ class Cell extends Main\Root
 	{
 		$col = $this->col();
 		
-		if(\array_key_exists('change',$this->value))
+		if(array_key_exists('change',$this->value))
 		unset($this->value['change']);
 		
 		$this->value['initial'] = $value;
@@ -984,7 +984,7 @@ class Cell extends Main\Root
 	// lance le callback onCellSet dans col
 	public function reset():self
 	{
-		if(\array_key_exists('change',$this->value))
+		if(array_key_exists('change',$this->value))
 		unset($this->value['change']);
 		
 		$this->col()->onCellSet($this);
@@ -1060,8 +1060,8 @@ class Cell extends Main\Root
 		$table = $this->table();
 		$value = $this->db()->selectColumns($this->col(),$table,$this->row());
 		
-		if(!empty($value) && \is_array($value))
-		$this->setInitial(\current($value));
+		if(!empty($value) && is_array($value))
+		$this->setInitial(current($value));
 		
 		else
 		static::throw('rowDoesNotExists');
@@ -1075,7 +1075,7 @@ class Cell extends Main\Root
 	// l'objet devient inutilisable
 	public function terminate():self 
 	{
-		$this->value = [];
+		$this->value = array();
 		$this->col = null;
 		$this->row = null;
 		$this->db = null;

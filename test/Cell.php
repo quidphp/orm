@@ -13,8 +13,8 @@ class Cell extends Base\Test
 		// prepare
 		$db = Orm\Db::inst();
 		$table = "ormCell";
-		\assert($db->truncate($table) instanceof \PDOStatement);
-		\assert($db->inserts($table,['id','date','name','dateAdd','userAdd','dateModify','userModify','integer','enum','set','user_ids'],[1,\time(),'james',10,2,12,13,12,5,"2,3",[2,1]],[2,\time(),'james2',10,11,12,13,12,5,"2,4","2,3"]) === [1,2]);
+		assert($db->truncate($table) instanceof \PDOStatement);
+		assert($db->inserts($table,array('id','date','name','dateAdd','userAdd','dateModify','userModify','integer','enum','set','user_ids'),array(1,time(),'james',10,2,12,13,12,5,"2,3",array(2,1)),array(2,time(),'james2',10,11,12,13,12,5,"2,4","2,3")) === array(1,2));
 		$tb = $db[$table];
 		$row = $tb[1];
 
@@ -31,337 +31,337 @@ class Cell extends Base\Test
 		// toString
 		
 		// invoke
-		\assert($cell(true) === 'james');
-		\assert($cell(2) === 'ja');
-		\assert($cell() === $cell);
+		assert($cell(true) === 'james');
+		assert($cell(2) === 'ja');
+		assert($cell() === $cell);
 		
 		// onCommitted
 
 		// cast
-		\assert($cell->set(true) === $cell);
-		\assert($cell->value() === '1');
-		\assert($cell->set(2) === $cell);
-		\assert($cell->_cast() === '2');
+		assert($cell->set(true) === $cell);
+		assert($cell->value() === '1');
+		assert($cell->set(2) === $cell);
+		assert($cell->_cast() === '2');
 
 		// is
-		\assert($cell->is('numeric'));
+		assert($cell->is('numeric'));
 
 		// isNot
-		\assert($cell->isNot('array'));
+		assert($cell->isNot('array'));
 
 		// isEqual
-		\assert($cell->isEqual('2'));
+		assert($cell->isEqual('2'));
 
 		// isNotEqual
-		\assert($cell->isNotEqual(2));
+		assert($cell->isNotEqual(2));
 
 		// isCompare
-		\assert($cell->isCompare('>',1));
-		\assert(!$cell->isCompare('>',2));
-		\assert($cell->isCompare('>=',2));
+		assert($cell->isCompare('>',1));
+		assert(!$cell->isCompare('>',2));
+		assert($cell->isCompare('>=',2));
 
 		// isEmpty
-		\assert(!$cell->isEmpty());
+		assert(!$cell->isEmpty());
 
 		// isNotEmpty
-		\assert($cell->isNotEmpty());
+		assert($cell->isNotEmpty());
 
 		// isNull
-		\assert(!$cell->isNull());
+		assert(!$cell->isNull());
 
 		// isNotNull
-		\assert($cell->isNotNull());
+		assert($cell->isNotNull());
 
 		// isPrimary
-		\assert(!$cell->isPrimary());
+		assert(!$cell->isPrimary());
 
 		// acceptsNull
-		\assert(!$cell->acceptsNull());
+		assert(!$cell->acceptsNull());
 
 		// isRequired
-		\assert($cell->isRequired());
+		assert($cell->isRequired());
 
 		// isStillRequired
-		\assert(!$cell->isStillRequired());
-		\assert($cell->set(' ') === $cell);
-		\assert($cell->isStillRequired());
-		\assert($cell->value() === ' ');
+		assert(!$cell->isStillRequired());
+		assert($cell->set(' ') === $cell);
+		assert($cell->isStillRequired());
+		assert($cell->value() === ' ');
 		$cell->set(2);
 
 		// isDate
-		\assert(!$cell->isDate());
-		\assert($dateAdd->isDate());
+		assert(!$cell->isDate());
+		assert($dateAdd->isDate());
 
 		// isRelation
-		\assert(!$cell->isRelation());
+		assert(!$cell->isRelation());
 
 		// isEnum
-		\assert(!$cell->isEnum());
+		assert(!$cell->isEnum());
 
 		// isSet
-		\assert(!$cell->isSet());
+		assert(!$cell->isSet());
 
 		// isMedia
-		\assert(!$cell->isMedia());
-		\assert($media->isMedia());
+		assert(!$cell->isMedia());
+		assert($media->isMedia());
 
 		// isVisible
-		\assert($cell->isVisible());
-		\assert($dateAdd->isVisible());
+		assert($cell->isVisible());
+		assert($dateAdd->isVisible());
 		$dateAdd->set(0);
-		\assert(!$dateAdd->isVisible());
+		assert(!$dateAdd->isVisible());
 
 		// isVisibleGeneral
-		\assert($cell->isVisibleGeneral());
-		\assert($dateAdd->isVisibleGeneral());
+		assert($cell->isVisibleGeneral());
+		assert($dateAdd->isVisibleGeneral());
 
 		// isEditable
-		\assert($cell->isEditable() === true);
+		assert($cell->isEditable() === true);
 
 		// generalExcerptMin
-		\assert($cell->generalExcerptMin() === 100);
-		\assert($userAdd->generalExcerptMin() === null);
+		assert($cell->generalExcerptMin() === 100);
+		assert($userAdd->generalExcerptMin() === null);
 
 		// tag
-		\assert($cell->tag() === 'inputText');
-		\assert($dateAdd->tag() === 'inputText');
-		\assert($dateAdd->tag(null,true) === 'div');
-		\assert($dateAdd->tag(['tag'=>'span'],true) === 'span');
+		assert($cell->tag() === 'inputText');
+		assert($dateAdd->tag() === 'inputText');
+		assert($dateAdd->tag(null,true) === 'div');
+		assert($dateAdd->tag(array('tag'=>'span'),true) === 'span');
 
 		// isFormTag
-		\assert($cell->isFormTag() === true);
-		\assert($dateAdd->isFormTag() === true);
-		\assert(!$dateAdd->isFormTag(['tag'=>'div']));
+		assert($cell->isFormTag() === true);
+		assert($dateAdd->isFormTag() === true);
+		assert(!$dateAdd->isFormTag(array('tag'=>'div')));
 
 		// rules
-		\assert($cell->rules() === ['required'=>'required','validate'=>['string','maxLength'=>100]]);
-		\assert($cell->rules(true)['validate'][0] === 'Must be a string');
-		\assert(\count($date->rules()) === 2);
-		\assert(\count($date->rules(false,true)) === 3);
+		assert($cell->rules() === array('required'=>'required','validate'=>array('string','maxLength'=>100)));
+		assert($cell->rules(true)['validate'][0] === 'Must be a string');
+		assert(count($date->rules()) === 2);
+		assert(count($date->rules(false,true)) === 3);
 
 		// compare
 		$dateStart->set(1235);
 		$dateEnd->set(1234);
-		\assert($dateStart->compare(true) === ['Must be equal or smaller than End date']);
+		assert($dateStart->compare(true) === array('Must be equal or smaller than End date'));
 		$dateStart->set(1234);
-		\assert($dateStart->compare(true));
+		assert($dateStart->compare(true));
 		$dateEnd->set(null);
-		\assert($dateStart->compare(true));
+		assert($dateStart->compare(true));
 		$dateStart->set(null);
 		$dateEnd->set(1234);
-		\assert($dateStart->compare(true));
+		assert($dateStart->compare(true));
 
 		// required
-		\assert($cell->required());
-		\assert($cell->set(0) === $cell);
-		\assert($cell->required() === true);
-		\assert($cell->set('') === $cell);
-		\assert($cell->required() === 'required');
+		assert($cell->required());
+		assert($cell->set(0) === $cell);
+		assert($cell->required() === true);
+		assert($cell->set('') === $cell);
+		assert($cell->required() === 'required');
 
 		// unique
-		\assert($cell->unique());
+		assert($cell->unique());
 
 		// editable
-		\assert($cell->editable() === true);
+		assert($cell->editable() === true);
 
 		// validate
-		\assert($cell->validate() === true);
+		assert($cell->validate() === true);
 
 		// completeValidation
-		\assert($cell->completeValidation() === ['required']);
-		\assert($cell->set(2) === $cell);
-		\assert($cell->completeValidation() === true);
+		assert($cell->completeValidation() === array('required'));
+		assert($cell->set(2) === $cell);
+		assert($cell->completeValidation() === true);
 
 		// isColKindInt
-		\assert(!$cell->isColKindInt());
+		assert(!$cell->isColKindInt());
 
 		// isColKindChar
-		\assert($cell->isColKindChar());
+		assert($cell->isColKindChar());
 
 		// isColKindText
-		\assert(!$cell->isColKindText());
+		assert(!$cell->isColKindText());
 
 		// isWhere
-		\assert($cell->isWhere(['='=>'2']));
-		\assert($cell->isWhere([true,'notNull']));
+		assert($cell->isWhere(array('='=>'2')));
+		assert($cell->isWhere(array(true,'notNull')));
 
 		// hasDefault
-		\assert($cell->hasDefault());
+		assert($cell->hasDefault());
 
 		// isLinked
-		\assert($cell->isLinked());
+		assert($cell->isLinked());
 
 		// alive
-		\assert($cell->alive());
+		assert($cell->alive());
 
 		// sameRow
-		\assert($cell->sameRow($tb[1]->cell('id')));
-		\assert(!$cell->sameRow($tb[2]->cell('id')));
+		assert($cell->sameRow($tb[1]->cell('id')));
+		assert(!$cell->sameRow($tb[2]->cell('id')));
 
 		// isIncluded
-		\assert($cell->isIncluded(false) === false);
-		\assert($cell->isIncluded());
+		assert($cell->isIncluded(false) === false);
+		assert($cell->isIncluded());
 
 		// hasChanged
-		\assert($cell->reset());
-		\assert(!$cell->hasChanged());
+		assert($cell->reset());
+		assert(!$cell->hasChanged());
 		$cell->set(2);
-		\assert($cell->hasChanged());
+		assert($cell->hasChanged());
 
 		// setCol
 
 		// setRow
 
 		// name
-		\assert($cell->name() === 'name');
+		assert($cell->name() === 'name');
 
 		// col
-		\assert($cell->col() instanceof Orm\Col);
+		assert($cell->col() instanceof Orm\Col);
 
 		// priority
-		\assert($cell->priority() === 30);
+		assert($cell->priority() === 30);
 
 		// setPriority
-		\assert($cell->setPriority() === 5);
+		assert($cell->setPriority() === 5);
 
 		// colType
-		\assert($cell->colType() === 'varchar');
+		assert($cell->colType() === 'varchar');
 
 		// colKind
-		\assert($cell->colKind() === 'char');
+		assert($cell->colKind() === 'char');
 
 		// colLength
-		\assert($cell->colLength() === 100);
+		assert($cell->colLength() === 100);
 
 		// colDefault
-		\assert($cell->colDefault() === '');
+		assert($cell->colDefault() === '');
 
 		// colUnique
-		\assert(!$cell->colUnique());
+		assert(!$cell->colUnique());
 
 		// attr
-		\assert(\count($cell->attr()) === 26);
-		\assert($cell->attr('kind') === 'char');
+		assert(count($cell->attr()) === 26);
+		assert($cell->attr('kind') === 'char');
 		
 		// attrCall
 		
 		// attrNotEmpty
-		\assert($cell->attrNotEmpty('kind'));
-		\assert(!$cell->attrNotEmpty('kindz'));
+		assert($cell->attrNotEmpty('kind'));
+		assert(!$cell->attrNotEmpty('kindz'));
 
 		// rowPrimary
-		\assert($cell->rowPrimary() === 1);
+		assert($cell->rowPrimary() === 1);
 
 		// id
-		\assert($cell->id() === 1);
+		assert($cell->id() === 1);
 
 		// row
-		\assert($cell->row() instanceof Orm\Row);
+		assert($cell->row() instanceof Orm\Row);
 
 		// label
-		\assert($cell->label() === 'Name');
-		\assert($cell->label('%:') === 'Name:');
-		\assert($cell->label(1) === 'N');
-		\assert($cell->label(5) === 'Name');
+		assert($cell->label() === 'Name');
+		assert($cell->label('%:') === 'Name:');
+		assert($cell->label(1) === 'N');
+		assert($cell->label(5) === 'Name');
 
 		// description
-		\assert($cell->description() === "Name to represent the element");
-		\assert($cell->description('%:') === "Name to represent the element:");
+		assert($cell->description() === "Name to represent the element");
+		assert($cell->description('%:') === "Name to represent the element:");
 
 		// details
-		\assert($cell->details() === ['Cannot be empty','Length must be at maximum 100 characters']);
-		\assert($cell->details(false) === ['required',['maxLength'=>100]]);
+		assert($cell->details() === array('Cannot be empty','Length must be at maximum 100 characters'));
+		assert($cell->details(false) === array('required',array('maxLength'=>100)));
 
 		// form
-		\assert(\strlen($cell->form()) === 76);
-		\assert($dateAdd->set(1234235434) === $dateAdd);
-		\assert($dateAdd->form() === "<input maxlength='11' name='dateAdd' type='text' value='1234235434'/>");
+		assert(strlen($cell->form()) === 76);
+		assert($dateAdd->set(1234235434) === $dateAdd);
+		assert($dateAdd->form() === "<input maxlength='11' name='dateAdd' type='text' value='1234235434'/>");
 
 		// formHidden
-		\assert($cell->formHidden() === "<input data-required='1' name='name' type='hidden' value='2'/>");
-		\assert($cell->formHidden(['data-required'=>null]) === "<input name='name' type='hidden' value='2'/>");
+		assert($cell->formHidden() === "<input data-required='1' name='name' type='hidden' value='2'/>");
+		assert($cell->formHidden(array('data-required'=>null)) === "<input name='name' type='hidden' value='2'/>");
 
 		// formPlaceholder
-		\assert(\strlen($cell->formPlaceholder('placeholder')) === 102);
-		\assert(\strlen($cell->formPlaceholder()) === 95);
+		assert(strlen($cell->formPlaceholder('placeholder')) === 102);
+		assert(strlen($cell->formPlaceholder()) === 95);
 
 		// formComplex
-		\assert($dateAdd->formComplex() === "<div>February 9, 2009 22:10:34</div>");
+		assert($dateAdd->formComplex() === "<div>February 9, 2009 22:10:34</div>");
 
 		// formWrap
-		\assert(\strlen($cell->formWrap('br')) === 141);
-		\assert(\strlen($cell->formWrap('br',3)) === 140);
+		assert(strlen($cell->formWrap('br')) === 141);
+		assert(strlen($cell->formWrap('br',3)) === 140);
 
 		// formPlaceholderWrap
-		\assert(\strlen($cell->formPlaceholderWrap('br',null,'placeholder')) === 167);
-		\assert(\strlen($cell->formPlaceholderWrap('br')) === 160);
+		assert(strlen($cell->formPlaceholderWrap('br',null,'placeholder')) === 167);
+		assert(strlen($cell->formPlaceholderWrap('br')) === 160);
 
 		// formComplexWrap
 
 		// hasFormLabelId
-		\assert($cell->hasFormLabelId());
-		\assert($dateAdd->hasFormLabelId());
-		\assert(!$dateAdd->hasFormLabelId(null,true));
+		assert($cell->hasFormLabelId());
+		assert($dateAdd->hasFormLabelId());
+		assert(!$dateAdd->hasFormLabelId(null,true));
 
 		// com
 
 		// htmlExcerpt
 		$cell->set('<b>okkkkk</b>');
-		\assert($cell->htmlExcerpt(4) === "o<span class='excerptSuffix'>...</span>");
-		\assert($cell->htmlExcerpt(2) === "ok");
+		assert($cell->htmlExcerpt(4) === "o<span class='excerptSuffix'>...</span>");
+		assert($cell->htmlExcerpt(2) === "ok");
 
 		// htmlOutput
-		\assert($cell->htmlOutput() === '&lt;b&gt;okkkkk&lt;/b&gt;');
+		assert($cell->htmlOutput() === '&lt;b&gt;okkkkk&lt;/b&gt;');
 
 		// htmlUnicode
-		\assert($cell->htmlUnicode() === '&lt;b&gt;okkkkk&lt;/b&gt;');
+		assert($cell->htmlUnicode() === '&lt;b&gt;okkkkk&lt;/b&gt;');
 
 		// htmlReplace
-		\assert(\count($cell->htmlReplace()) === 6);
+		assert(count($cell->htmlReplace()) === 6);
 
 		// htmlStr
-		\assert($cell->htmlStr("<div class='%name%'>%label%: %value%</div>") === "<div class='name'>Name: <b>okkkkk</b></div>");
+		assert($cell->htmlStr("<div class='%name%'>%label%: %value%</div>") === "<div class='name'>Name: <b>okkkkk</b></div>");
 
 		// value
 		$cell->set(2);
-		\assert($cell->value() === '2');
+		assert($cell->value() === '2');
 		$cell->set(true);
-		\assert($cell->value() === '1');
+		assert($cell->value() === '1');
 		$cell->set(2);
 
 		// valueInitial
-		\assert($cell->valueInitial() === 'james');
+		assert($cell->valueInitial() === 'james');
 
 		// get
-		\assert($cell->get() === '2abcde');
-		\assert($cell->set('ok')->value() === 'ok');
-		\assert($cell->value() === 'ok');
-		\assert($cell->get() === 'okabcde');
-		\assert($cell->get() === 'okabcde');
-		\assert($cell->set('okabcde')->value() === 'ok');
-		$row = $tb->insert(['date'=>\time(),'name'=>3,'user_id'=>1,'enum'=>3],['strict'=>true]);
-		\assert($row['name']->value() === '3');
-		\assert($row['name']->get() === '3abcde');
+		assert($cell->get() === '2abcde');
+		assert($cell->set('ok')->value() === 'ok');
+		assert($cell->value() === 'ok');
+		assert($cell->get() === 'okabcde');
+		assert($cell->get() === 'okabcde');
+		assert($cell->set('okabcde')->value() === 'ok');
+		$row = $tb->insert(array('date'=>time(),'name'=>3,'user_id'=>1,'enum'=>3),array('strict'=>true));
+		assert($row['name']->value() === '3');
+		assert($row['name']->get() === '3abcde');
 
 		// export
-		\assert($cell->export() === ['okabcde']);
+		assert($cell->export() === array('okabcde'));
 
 		// exportCommon
 
 		// exportOne
-		\assert($cell->exportOne() === 'okabcde');
+		assert($cell->exportOne() === 'okabcde');
 
 		// pair
-		\assert($cell->pair() instanceof Orm\Cell);
-		\assert($cell->pair(1) === "o");
-		\assert($cell->pair(true) === 'ok');
-		\assert($cell->pair(false) === 'ok');
-		\assert($cell->pair('htmlStr',"%label%") === 'Name');
-		\assert($userAdd->pair(true) instanceof Orm\Row);
+		assert($cell->pair() instanceof Orm\Cell);
+		assert($cell->pair(1) === "o");
+		assert($cell->pair(true) === 'ok');
+		assert($cell->pair(false) === 'ok');
+		assert($cell->pair('htmlStr',"%label%") === 'Name');
+		assert($userAdd->pair(true) instanceof Orm\Row);
 
 		// set
-		\assert($cell->set(3) instanceof Orm\Cell);
-		\assert($date->set('03-03-2017',['preValidate'=>true]) === $date);
+		assert($cell->set(3) instanceof Orm\Cell);
+		assert($date->set('03-03-2017',array('preValidate'=>true)) === $date);
 
 		// setInitial
 		$cell->setInitial('ok');
@@ -369,32 +369,32 @@ class Cell extends Base\Test
 		// setSelf
 
 		// reset
-		\assert($cell->valueInitial() === 'ok');
+		assert($cell->valueInitial() === 'ok');
 		$cell->reset();
-		\assert($cell->value() === 'ok');
+		assert($cell->value() === 'ok');
 
 		// unset
-		\assert($cell->unset() instanceof Orm\Cell);
-		\assert($cell->value() === '');
-		\assert($cell->isEmpty());
-		\assert(!$cell->isNull());
+		assert($cell->unset() instanceof Orm\Cell);
+		assert($cell->value() === '');
+		assert($cell->isEmpty());
+		assert(!$cell->isNull());
 		$cell->set(0);
-		\assert($cell->isEmpty());
-		\assert(!$cell->isNull());
-		\assert($cell->unset() instanceof Orm\Cell);
-		\assert($cell->valueInitial() === 'ok');
+		assert($cell->isEmpty());
+		assert(!$cell->isNull());
+		assert($cell->unset() instanceof Orm\Cell);
+		assert($cell->valueInitial() === 'ok');
 		$active->set(9);
 		$row->update();
 		$active->set(3);
-		\assert($active->unset()->value() === 2);
+		assert($active->unset()->value() === 2);
 
 		// isUnique
-		\assert($active->isUnique() === false);
-		\assert($cell->isUnique() === true);
+		assert($active->isUnique() === false);
+		assert($cell->isUnique() === true);
 
 		// duplicate
-		\assert($active->duplicate() === [2,3]);
-		\assert($cell->duplicate() === []);
+		assert($active->duplicate() === array(2,3));
+		assert($cell->duplicate() === array());
 
 		// update
 
@@ -402,13 +402,13 @@ class Cell extends Base\Test
 
 		// refresh
 		$row = $cell->row();
-		$db->update($tb,['name'=>'ok'],$row);
-		\assert($cell->value() === '');
-		\assert($cell->refresh()->value() === 'ok');
-		$db->update($tb,['name'=>''],$row);
-		\assert($cell->alive());
-		\assert($cell->refresh()->value() === '');
-		\assert($cell->set('ok') === $cell);
+		$db->update($tb,array('name'=>'ok'),$row);
+		assert($cell->value() === '');
+		assert($cell->refresh()->value() === 'ok');
+		$db->update($tb,array('name'=>''),$row);
+		assert($cell->alive());
+		assert($cell->refresh()->value() === '');
+		assert($cell->set('ok') === $cell);
 
 		// terminate
 
@@ -420,15 +420,15 @@ class Cell extends Base\Test
 
 		// tableAccess
 		$active = $tb[2]['dateAdd'];
-		\assert(!$tb[2]->unlink()->hasDb());
-		\assert(!$active->hasDb());
-		\assert($cell->checkLink() === $cell);
-		\assert($cell->sameTable($tb));
-		\assert($cell->sameTable($tb[1]->cell('id')));
+		assert(!$tb[2]->unlink()->hasDb());
+		assert(!$active->hasDb());
+		assert($cell->checkLink() === $cell);
+		assert($cell->sameTable($tb));
+		assert($cell->sameTable($tb[1]->cell('id')));
 
 		// cleanup
-		\assert($row->unlink());
-		\assert($db->truncate($table) instanceof \PDOStatement);
+		assert($row->unlink());
+		assert($db->truncate($table) instanceof \PDOStatement);
 		
 		return true;
 	}

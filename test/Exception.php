@@ -15,21 +15,21 @@ class Exception extends Base\Test
 		$e = new Orm\Exception('blabla');
 
 		// setQuery
-		\assert($e->setQuery('query') === $e);
+		assert($e->setQuery('query') === $e);
 
 		// getQuery
-		\assert($e->getQuery() === 'query');
+		assert($e->getQuery() === 'query');
 
 		// content
-		\assert($e->content() === 'query');
+		assert($e->content() === 'query');
 
 		// showQuery
 		Orm\Exception::showQuery(true);
-		\assert(!$e instanceof Main\Contract\Catchable);
+		assert(!$e instanceof Main\Contract\Catchable);
 
 		// exception
-		\assert($e->getCode() === 33);
-		\assert($e->getMessage() === 'blabla');
+		assert($e->getCode() === 33);
+		assert($e->getMessage() === 'blabla');
 		
 		return true;
 	}

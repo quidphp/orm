@@ -8,12 +8,12 @@ use Quid\Base;
 class History extends Main\Map
 {
 	// config
-	public static $config = [];
+	public static $config = array();
 	
 	
 	// map
 	protected static $is = 'array'; // les valeurs doivent passés ce test de validation ou exception
-	protected static $allow = ['push','empty']; // méthodes permises
+	protected static $allow = array('push','empty'); // méthodes permises
 	
 	
 	// invoke
@@ -46,7 +46,7 @@ class History extends Main\Map
 	{
 		if(!empty($value['type']))
 		{
-			if(\array_key_exists('cast',$value))
+			if(array_key_exists('cast',$value))
 			unset($value['cast']);
 			
 			if(Db::isOutput($value['type'],'rowCount'))
@@ -70,14 +70,14 @@ class History extends Main\Map
 	// possibilité de filtrer par type
 	public function all(?string $type=null,bool $reverse=false):array
 	{
-		$return = [];
+		$return = array();
 		$data = $this->arr();
 		
-		if(\is_string($type))
+		if(is_string($type))
 		{
 			foreach ($data as $value) 
 			{
-				if(\is_array($value) && !empty($value['type']) && $value['type'] === $type)
+				if(is_array($value) && !empty($value['type']) && $value['type'] === $type)
 				$return[] = $value;
 			}
 		}
@@ -86,7 +86,7 @@ class History extends Main\Map
 		$return = $data;
 		
 		if($reverse === true)
-		$return = \array_reverse($return,false);
+		$return = array_reverse($return,false);
 		
 		return $return;
 	}
@@ -97,11 +97,11 @@ class History extends Main\Map
 	// emule la requête si nécessaire
 	public function keyValue(?string $type=null,bool $reverse=false):array
 	{
-		$return = [];
+		$return = array();
 		
 		foreach ($this->all($type,$reverse) as $value)
 		{
-			if(\is_array($value) && \array_key_exists('sql',$value))
+			if(is_array($value) && array_key_exists('sql',$value))
 			{
 				$sql = $value['sql'];
 				if(!empty($value['prepare']))
@@ -120,22 +120,22 @@ class History extends Main\Map
 	// le type est requis
 	public function typeCount(string $type):array
 	{
-		$return = [];
+		$return = array();
 		
 		foreach ($this->all($type) as $value) 
 		{
-			if(\is_array($value) && !empty($value))
+			if(is_array($value) && !empty($value))
 			{
-				if(!\array_key_exists('query',$return))
+				if(!array_key_exists('query',$return))
 				$return['query'] = 1;
 				else
 				$return['query']++;
 				
-				foreach (['row','column','cell'] as $v) 
+				foreach (array('row','column','cell') as $v) 
 				{
-					if(\array_key_exists($v,$value) && \is_int($value[$v]))
+					if(array_key_exists($v,$value) && is_int($value[$v]))
 					{
-						if(!\array_key_exists($v,$return))
+						if(!array_key_exists($v,$return))
 						$return[$v] = 0;
 						
 						$return[$v] += $value[$v];
@@ -161,7 +161,7 @@ class History extends Main\Map
 	// retourne les données counts de l'historique pour tous les types
 	public function total():array
 	{
-		$return = [];
+		$return = array();
 		
 		foreach (Base\Sql::getQueryTypes() as $type) 
 		{

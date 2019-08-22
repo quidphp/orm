@@ -7,7 +7,7 @@ use Quid\Base;
 class Sql extends PdoSql
 {
 	// config
-	public static $config = [];
+	public static $config = array();
 	
 	
 	// setOutput
@@ -66,11 +66,11 @@ class Sql extends PdoSql
 		
 		if(!empty($required) && !Base\Arr::keysExists($required,$arr))
 		{
-			$strip = Base\Arr::valuesStrip(\array_keys($arr),$required);
+			$strip = Base\Arr::valuesStrip(array_keys($arr),$required);
 			static::throw('missingRequiredClause',$strip);
 		}
 		
-		elseif($db::isRowOutput($output) && !\in_array('*',(array) $arr['what'] ?? null))
+		elseif($db::isRowOutput($output) && !in_array('*',(array) $arr['what'] ?? null))
 		static::throw('rowOutput','whatOnlyAccepts','*');
 		
 		elseif(empty($arr))

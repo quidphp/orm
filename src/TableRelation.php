@@ -12,7 +12,7 @@ class TableRelation extends Relation
 	
 	
 	// config
-	public static $config = [];
+	public static $config = array();
 	
 	
 	// construct
@@ -37,30 +37,30 @@ class TableRelation extends Relation
 		static::throw($this,'doesNotSupportRelation');
 		
 		$attr = $table->attr('relation');
-		if(\is_scalar($attr))
-		$attr = ['what'=>$attr];
+		if(is_scalar($attr))
+		$attr = array('what'=>$attr);
 		
-		if(\is_array($attr) && !empty($attr))
+		if(is_array($attr) && !empty($attr))
 		{
-			if(!\array_key_exists('what',$attr))
+			if(!array_key_exists('what',$attr))
 			$attr['what'] = true;
 			
 			if($attr['what'] === true)
 			{
 				$colName = $table->colName();
-				$value = [];
+				$value = array();
 				if(!empty($colName))
 				$value[] = $colName->name();
 				
 				$attr['what'] = $value;
 			}
 			
-			if(!\is_array($attr['what']))
-			$attr['what'] = [$attr['what']];
+			if(!is_array($attr['what']))
+			$attr['what'] = array($attr['what']);
 			
 			if(!empty($attr['what']))
 			{
-				if(\array_key_exists('method',$attr) && \is_string($attr['method']))
+				if(array_key_exists('method',$attr) && is_string($attr['method']))
 				$attr = $this->prepareAttrWithMethod($table,$attr);
 				
 				else
@@ -74,7 +74,7 @@ class TableRelation extends Relation
 						$attr[$key] = Base\Obj::cast($value); 
 					}
 					
-					if($key === 'where' && !\is_array($attr[$key]))
+					if($key === 'where' && !is_array($attr[$key]))
 					$attr[$key] = (array) $attr[$key];
 				}
 				
@@ -93,20 +93,20 @@ class TableRelation extends Relation
 	// prépare les attributs pour une relation de table standard avec what
 	protected function prepareAttrWithWhat(Table $table,array $attr):array
 	{
-		$return = [];
+		$return = array();
 		$primary = $table->primary();
 		
 		$attr['output'] = $attr['output'] ?? null;
 		if($attr['output'] === null)
 		$attr['output'] = $attr['what'];
-		if(!\is_array($attr['output']))
-		$attr['output'] = [$attr['output']];
+		if(!is_array($attr['output']))
+		$attr['output'] = array($attr['output']);
 
-		if(\array_key_exists('appendPrimary',$attr) && $attr['appendPrimary'] === true && !\in_array($primary,$attr['what'],true))
+		if(array_key_exists('appendPrimary',$attr) && $attr['appendPrimary'] === true && !in_array($primary,$attr['what'],true))
 		{
 			$attr['what'][] = $primary;
 			
-			if(!\in_array($primary,$attr['output'],true))
+			if(!in_array($primary,$attr['output'],true))
 			$attr['output'][] = $primary;
 		}
 
@@ -124,13 +124,13 @@ class TableRelation extends Relation
 	// prépare les attributs pour une relation de table avec output de méthode
 	protected function prepareAttrWithMethod(Table $table,array $attr):array
 	{
-		$return = [];
+		$return = array();
 		$primary = $table->primary();
 		
-		if(\array_key_exists('method',$attr) && \is_string($attr['method']))
+		if(array_key_exists('method',$attr) && is_string($attr['method']))
 		{
 			$attr['where'] = $attr['where'] ?? null;
-			$attr['order'] = $attr['order'] ?? [$primary=>'asc'];
+			$attr['order'] = $attr['order'] ?? array($primary=>'asc');
 			
 			$return = $attr;
 		}
@@ -147,13 +147,13 @@ class TableRelation extends Relation
 	// est utilisé pour traiter appendPrimary dans une relation qui est dans une relation
 	protected function prepareOption(array $return):array 
 	{
-		if(\array_key_exists('appendPrimary',$return) && $return['appendPrimary'] === false)
+		if(array_key_exists('appendPrimary',$return) && $return['appendPrimary'] === false)
 		{
 			$table = $this->table();
 			$primary = $table->primary();
-			$what = (!empty($return['what']) && \is_array($return['what']))? $return['what']:[];
+			$what = (!empty($return['what']) && is_array($return['what']))? $return['what']:array();
 			
-			if(\count($what) > 1 && Base\Arr::valueLast($what) === $primary)
+			if(count($what) > 1 && Base\Arr::valueLast($what) === $primary)
 			$return['what'] = Base\Arr::spliceLast($return['what']);
 		}
 		
@@ -183,7 +183,7 @@ class TableRelation extends Relation
 		$attr = $this->attr();
 		$method = $method ?? $attr['method'] ?? null;
 		
-		if(\is_string($method))
+		if(is_string($method))
 		$return = true;
 		
 		return $return;
@@ -212,10 +212,10 @@ class TableRelation extends Relation
 	public function get(int $primary,bool $cache=true,?array $option=null)
 	{
 		$return = null;
-		$relations = $this->gets([$primary],false,$cache,$option);
+		$relations = $this->gets(array($primary),false,$cache,$option);
 		
 		if(!empty($relations))
-		$return = \current($relations);
+		$return = current($relations);
 		
 		return $return;
 	}
@@ -227,14 +227,14 @@ class TableRelation extends Relation
 	// par défaut les relations sont conservés en cache dans l'objet relation 
 	public function gets(array $primaries,bool $found=false,bool $cache=true,?array $option=null):array
 	{
-		$return = [];
+		$return = array();
 		$attr = $this->attr();
 		$cache = $this->shouldCache($cache,$option);
 		$option = Base\Arr::plus($attr,$option);
 		$option = $this->prepareOption($option);
 		$what = $option['what'];
 		$where = $option['where'] ?? null;
-		$method = (isset($option['method']) && \is_string($option['method']))? $option['method']:null;
+		$method = (isset($option['method']) && is_string($option['method']))? $option['method']:null;
 		
 		$data =& $this->arr();
 		$isMethod = $this->isOutputMethod($method);
@@ -242,9 +242,9 @@ class TableRelation extends Relation
 		if($cache === true && !empty($data))
 		$return = Base\Arr::getsExists($primaries,$data);
 		
-		if(\count($return) !== \count($primaries))
+		if(count($return) !== count($primaries))
 		{
-			$missing = (!empty($return))? Base\Arr::valuesStrip(\array_keys($return),$primaries):$primaries;
+			$missing = (!empty($return))? Base\Arr::valuesStrip(array_keys($return),$primaries):$primaries;
 			
 			if(!empty($missing))
 			{
@@ -254,7 +254,7 @@ class TableRelation extends Relation
 				$db = $this->db();
 				$table = $this->table();
 				$primary = $table->primary();
-				$where[] = [$primary,'in',$missing];
+				$where[] = array($primary,'in',$missing);
 				
 				if($isMethod === true)
 				$result = $db->rows($table,$where);
@@ -265,7 +265,7 @@ class TableRelation extends Relation
 					$result = $db->selectAssocsUnique($what,$table,$where);
 				}
 				
-				if(\is_array($result) || $result instanceof Rows)
+				if(is_array($result) || $result instanceof Rows)
 				{
 					foreach ($result as $key => $value) 
 					{
@@ -303,27 +303,27 @@ class TableRelation extends Relation
 		$where = $option['where'] ?? null;
 		$order = $this->getOrder($option['order'],$option);
 		$limit = $option['limit'] ?? null;
-		$not = (isset($option['not']) && \is_array($option['not']))? $option['not']:null;
-		$method = (isset($option['method']) && \is_string($option['method']))? $option['method']:null;
+		$not = (isset($option['not']) && is_array($option['not']))? $option['not']:null;
+		$method = (isset($option['method']) && is_string($option['method']))? $option['method']:null;
 		
 		$isMethod = $this->isOutputMethod($method);
 
-		if(!($cache === true && \count($data) === $this->size($cache)))
+		if(!($cache === true && count($data) === $this->size($cache)))
 		{
 			$attr = $this->attr();
 			
 			if(!empty($attr))
 			{
-				$new = [];
+				$new = array();
 				$db = $this->db();
 				$table = $this->table();
 				$primary = $table->primary();
 				
 				if(!empty($not))
-				$where[] = [$primary,'notIn',$not];
+				$where[] = array($primary,'notIn',$not);
 				
 				if($cache === true && !empty($data))
-				$where[] = [$primary,'notIn',\array_keys($data)];
+				$where[] = array($primary,'notIn',array_keys($data));
 				
 				if($isMethod === true)
 				$result = $db->rows($table,$where,$order,$limit);
@@ -334,9 +334,9 @@ class TableRelation extends Relation
 					$result = $db->selectAssocsUnique($what,$table,$where,$order,$limit);
 				}
 				
-				if(\is_array($result) || $result instanceof Rows)
+				if(is_array($result) || $result instanceof Rows)
 				{
-					$new = [];
+					$new = array();
 					
 					if($cache === true && !empty($data))
 					$new = $data;
@@ -393,8 +393,8 @@ class TableRelation extends Relation
 				$table = $this->table();
 				$primary = $table->primary();
 				$where = Base\Arr::plus($attr['where'],$where);
-				$where[] = [$primary,'in',$primaries];
-				$count = \count($primaries);
+				$where[] = array($primary,'in',$primaries);
+				$count = count($primaries);
 				
 				if($db->selectCount($table,$where) === $count)
 				$return = true;
@@ -461,13 +461,13 @@ class TableRelation extends Relation
 		$where = $option['where'] ?? null;
 		$order = $this->getOrder($option['order'],$option);
 		$limit = $option['limit'] ?? null;
-		$not = (isset($option['not']) && \is_array($option['not']))? $option['not']:null;
-		$method = (isset($option['method']) && \is_string($option['method']))? $option['method']:null;
+		$not = (isset($option['not']) && is_array($option['not']))? $option['not']:null;
+		$method = (isset($option['method']) && is_string($option['method']))? $option['method']:null;
 		$searchSeparator = $option['searchSeparator'] ?? null;
 		
-		if(\strlen($value))
+		if(strlen($value))
 		{
-			$return = [];
+			$return = array();
 			
 			if($this->size() > 0)
 			{
@@ -475,21 +475,21 @@ class TableRelation extends Relation
 				$isMethod = $this->isOutputMethod($method);
 				
 				if(!empty($not))
-				$where[] = [$primary,'notIn',$not];
-				$whereAfter = ['order'=>$order,'limit'=>$limit];
+				$where[] = array($primary,'notIn',$not);
+				$whereAfter = array('order'=>$order,'limit'=>$limit);
 				
 				if($isMethod === true)
-				$searchOpt = ['output'=>'rows','cols'=>$cols,'what'=>'*','searchSeparator'=>$searchSeparator];
+				$searchOpt = array('output'=>'rows','cols'=>$cols,'what'=>'*','searchSeparator'=>$searchSeparator);
 				
 				else
 				{
 					$what = Base\Arr::append($table->primary(),$cols);
-					$searchOpt = ['output'=>'assocsUnique','what'=>$what,'cols'=>$cols,'searchSeparator'=>$searchSeparator];
+					$searchOpt = array('output'=>'assocsUnique','what'=>$what,'cols'=>$cols,'searchSeparator'=>$searchSeparator);
 				}
 				
 				$result = $table->search($value,$where,$whereAfter,$searchOpt);
 				
-				if(\is_array($result) || $result instanceof Rows)
+				if(is_array($result) || $result instanceof Rows)
 				{
 					foreach ($result as $key => $value) 
 					{
@@ -521,10 +521,10 @@ class TableRelation extends Relation
 		$attrOrder = $attr['order'] ?? null;
 		$table = $this->table();
 		
-		if(\is_array($order))
+		if(is_array($order))
 		$return = $order;
 		
-		elseif(\is_int($order))
+		elseif(is_int($order))
 		{
 			$table = $this->table();
 			$primary = $table->primary();
@@ -532,19 +532,19 @@ class TableRelation extends Relation
 			$field = $this->getOrderFieldOutput($attr);
 			
 			if($order === 1 && !empty($allowed['key']))
-			$return = [$primary=>'asc'];
+			$return = array($primary=>'asc');
 			
 			elseif($order === 2 && !empty($allowed['key']))
-			$return = [$primary=>'desc'];
+			$return = array($primary=>'desc');
 			
-			elseif($order === 3 && \is_string($field) && !empty($allowed['value']))
-			$return = [$field=>'asc'];
+			elseif($order === 3 && is_string($field) && !empty($allowed['value']))
+			$return = array($field=>'asc');
 			
-			elseif($order === 4 && \is_string($field) && !empty($allowed['value']))
-			$return = [$field=>'desc'];
+			elseif($order === 4 && is_string($field) && !empty($allowed['value']))
+			$return = array($field=>'desc');
 		}
 		
-		elseif(\is_array($attrOrder))
+		elseif(is_array($attrOrder))
 		$return = $attrOrder;
 		
 		elseif($attrOrder === null)
@@ -558,9 +558,9 @@ class TableRelation extends Relation
 	// retourne un tableau définissant si la relation peut être ordonner par clé et ou valeur
 	public function allowedOrdering(?array $attr=null):array
 	{
-		$return = ['key'=>true];
+		$return = array('key'=>true);
 		
-		if(\is_string($this->getOrderFieldOutput($attr)))
+		if(is_string($this->getOrderFieldOutput($attr)))
 		$return['value'] = true;
 		
 		return $return;
@@ -579,19 +579,19 @@ class TableRelation extends Relation
 		
 		if(!empty($output))
 		{
-			if(\is_array($output))
-			$field = \current($output);
+			if(is_array($output))
+			$field = current($output);
 			
-			elseif(\is_string($output))
+			elseif(is_string($output))
 			$field = $output;
 			
-			if(\is_string($field) && !empty($field))
+			if(is_string($field) && !empty($field))
 			{
-				if(\strpos($field,'[') !== false && \strpos($field,'_[') === false)
+				if(strpos($field,'[') !== false && strpos($field,'_[') === false)
 				{
 					$segment = Base\Segment::get(null,$field);
-					if(\is_array($segment) && !empty($segment))
-					$return = \current($segment);
+					if(is_array($segment) && !empty($segment))
+					$return = current($segment);
 				}
 				
 				else
@@ -611,7 +611,7 @@ class TableRelation extends Relation
 		$attr = $this->attr();
 		$method = $attr['method'] ?? null;
 		$option = Base\Arr::plus($attr,$option);
-		$method = (isset($option['method']) && \is_string($option['method']))? $option['method']:$method;
+		$method = (isset($option['method']) && is_string($option['method']))? $option['method']:$method;
 		
 		$output = $option['output'] ?? null;
 		$onGet = $option['onGet'] ?? false;
@@ -638,7 +638,7 @@ class TableRelation extends Relation
 		if($onGet === true)
 		{
 			$cols = $this->table()->cols();
-			$array = $cols->value($array,true,true,['appendPrimary'=>false]);
+			$array = $cols->value($array,true,true,array('appendPrimary'=>false));
 		}
 		
 		if($output === true)
@@ -647,7 +647,7 @@ class TableRelation extends Relation
 			$output = $attr['output'];
 		}
 		
-		if(\is_array($output))
+		if(is_array($output))
 		{
 			$r = '';
 			
@@ -658,15 +658,15 @@ class TableRelation extends Relation
 				if($out === null)
 				$v = $array;
 				
-				elseif(\is_string($out) && \strpos($out,'[') !== false)
+				elseif(is_string($out) && strpos($out,'[') !== false)
 				$v = Base\Segment::sets(null,$array,$out);
 				
-				elseif(\is_string($out))
+				elseif(is_string($out))
 				$v = Base\Arr::get($out,$array);
 				
 				if(!empty($v))
 				{
-					if(\is_array($v))
+					if(is_array($v))
 					{
 						foreach ($v as $kk => $vv) 
 						{
@@ -682,10 +682,10 @@ class TableRelation extends Relation
 			$return = $r;
 		}
 		
-		if(\is_scalar($return))
+		if(is_scalar($return))
 		$return = (string) $return;
 		
-		if(empty($return) || !\is_string($return))
+		if(empty($return) || !is_string($return))
 		$return = null;
 		
 		return $return;
@@ -696,20 +696,20 @@ class TableRelation extends Relation
 	// utilisé par la méthode output pour ajouter un élément à la string de sortie
 	protected function outputAdd(string $return,$key,$value,string $separator=' - '):string 
 	{
-		if(\is_scalar($value))
+		if(is_scalar($value))
 		{
 			$table = $this->table();
 			$primary = $table->primary();
 			$value = (string) $value;
 			
-			if(\strlen($value))
+			if(strlen($value))
 			{
-				if($key === $primary && \is_numeric($value) && \strlen($return))
+				if($key === $primary && is_numeric($value) && strlen($return))
 				$return .= " (#$value)";
 				
 				else
 				{
-					$return .= (\strlen($return))? $separator:'';
+					$return .= (strlen($return))? $separator:'';
 					$return .= $value;
 				}
 			}
@@ -726,7 +726,7 @@ class TableRelation extends Relation
 		$return = $row->$method();
 		$return = Base\Obj::cast($return);
 		
-		if(\is_scalar($return))
+		if(is_scalar($return))
 		$return = (string) $return;
 		
 		return $return;

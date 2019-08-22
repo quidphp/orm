@@ -8,7 +8,7 @@ use Quid\Base;
 class ColRelation extends Relation
 {
 	// config
-	public static $config = [];
+	public static $config = array();
 	
 	
 	// dynamique
@@ -83,7 +83,7 @@ class ColRelation extends Relation
 		$return = null;
 		$attr = $this->attr();
 		
-		if(\is_array($attr) && \array_key_exists('where',$attr))
+		if(is_array($attr) && array_key_exists('where',$attr))
 		{
 			$return = $attr['where'];
 			
@@ -134,25 +134,25 @@ class ColRelation extends Relation
 			
 			if(!empty($attr))
 			{
-				if(\is_array($attr) && \array_key_exists('table',$attr))
+				if(is_array($attr) && array_key_exists('table',$attr))
 				$attr = $attr['table'];
 				
-				if(\is_string($attr) && $db->hasTable($attr) && $db->table($attr)->allowsRelation())
+				if(is_string($attr) && $db->hasTable($attr) && $db->table($attr)->allowsRelation())
 				$return = 'table';
 				
 				elseif($attr === 'date' && $col->isDate())
 				$return = 'date';
 				
-				elseif(\is_string($attr))
+				elseif(is_string($attr))
 				$return = 'lang';
 				
-				elseif(\is_int($attr) || (\is_array($attr) && Base\Arr::keysAre(['min','max','inc'],$attr)))
+				elseif(is_int($attr) || (is_array($attr) && Base\Arr::keysAre(array('min','max','inc'),$attr)))
 				$return = 'range';
 				
 				elseif(static::classIsCallable($attr))
 				$return = 'callable';
 				
-				elseif(\is_array($attr))
+				elseif(is_array($attr))
 				$return = 'array';
 				
 				$this->type = $return;
@@ -169,7 +169,7 @@ class ColRelation extends Relation
 	{
 		$return = $this->type();
 		
-		if(!\is_string($return))
+		if(!is_string($return))
 		static::throw($this);
 		
 		return $return;
@@ -190,7 +190,7 @@ class ColRelation extends Relation
 	{
 		$return = $this->col()->attr('orderCode');
 		
-		if(!\is_int($return))
+		if(!is_int($return))
 		{
 			$type = $this->type();
 			
@@ -215,7 +215,7 @@ class ColRelation extends Relation
 	// retourne un tableau définissant si la relation peut être ordonner par clé et ou valeur
 	public function allowedOrdering():array
 	{
-		$return = [];
+		$return = array();
 		$type = $this->type();
 		
 		if($type === 'table')
@@ -285,12 +285,12 @@ class ColRelation extends Relation
 		
 		if($type === 'table')
 		{
-			$option = ['where'=>$this->whereTable()];
+			$option = array('where'=>$this->whereTable());
 			$return = $this->checkRelationTable()->relation()->size($cache,$option);
 		}
 		
 		else
-		$return = \count($this->all($cache));
+		$return = count($this->all($cache));
 		
 		return $return;
 	}
@@ -303,8 +303,8 @@ class ColRelation extends Relation
 	// pour un tableau lang, order par clé si toutes les clés sont numériques
 	public function all(bool $cache=true,?array $option=null):array 
 	{
-		$return = [];
-		$option = Base\Arr::plus(['not'=>null,'limit'=>null],$option);
+		$return = array();
+		$option = Base\Arr::plus(array('not'=>null,'limit'=>null),$option);
 		$data =& $this->arr();
 		$type = $this->checkType();
 		
@@ -318,13 +318,13 @@ class ColRelation extends Relation
 			
 			if($type === 'table')
 			{
-				$option = Base\Arr::plus(['where'=>$this->whereTable()],$option);
+				$option = Base\Arr::plus(array('where'=>$this->whereTable()),$option);
 				$return = $this->checkRelationTable()->relation()->all($cache,$option);
 			}
 			
 			else
 			{
-				$new = [];
+				$new = array();
 				
 				if($type === 'array')
 				$new = $attr;
@@ -334,11 +334,11 @@ class ColRelation extends Relation
 				
 				elseif($type === 'range')
 				{
-					if(\is_int($attr))
-					$attr = ['min'=>1,'max'=>$attr,'inc'=>1];
+					if(is_int($attr))
+					$attr = array('min'=>1,'max'=>$attr,'inc'=>1);
 					
 					$range = Base\Arr::range($attr['min'],$attr['max'],$attr['inc']);
-					$new = \array_combine($range,$range);
+					$new = array_combine($range,$range);
 				}
 				
 				elseif($type === 'lang')
@@ -352,7 +352,7 @@ class ColRelation extends Relation
 					$min = $col->dateMin();
 					$max = $col->dateMax();
 					
-					if(\is_int($min) && \is_int($max))
+					if(is_int($min) && is_int($max))
 					$new = Base\Date::months($max,$min,1,2);
 				}
 				
@@ -360,13 +360,13 @@ class ColRelation extends Relation
 			}
 		}
 		
-		if(!\is_array($return))
+		if(!is_array($return))
 		static::throw();
 		
 		if($cache === true)
 		$data = $return;
 		
-		if(($type !== 'table' || $cache === true) && \is_array($return))
+		if(($type !== 'table' || $cache === true) && is_array($return))
 		$return = $this->notOrderLimit($return,$option);
 		
 		return $return;
@@ -426,24 +426,24 @@ class ColRelation extends Relation
 	public function search(string $value,?array $option=null):?array 
 	{
 		$return = null;
-		$option = Base\Arr::plus(['searchSeparator'=>null],$option);
+		$option = Base\Arr::plus(array('searchSeparator'=>null),$option);
 		$type = $this->checkType();
 		
-		if(\strlen($value))
+		if(strlen($value))
 		{
 			if($type === 'table')
 			{
 				$table = $this->checkRelationTable();
-				$option = Base\Arr::plus(['where'=>$this->whereTable()],$option);
+				$option = Base\Arr::plus(array('where'=>$this->whereTable()),$option);
 				$return = $table->relation()->search($value,$option);
 			}
 			
 			else
 			{
-				$all = $this->all(false,Base\Arr::plus($option,['limit'=>null]));
+				$all = $this->all(false,Base\Arr::plus($option,array('limit'=>null)));
 				$return = Base\Arr::valuesSearch($value,$all,false,false,true,$option['searchSeparator']);
 				
-				if(\is_array($return))
+				if(is_array($return))
 				$return = $this->notOrderLimit($return,$option);
 			}
 		}
@@ -456,12 +456,12 @@ class ColRelation extends Relation
 	// gère not, order et limit pour un tableau de retour
 	protected function notOrderLimit(array $return,?array $option=null):array
 	{
-		if(\is_array($option))
+		if(is_array($option))
 		{
-			if(!empty($option['not']) && \is_array($option['not']))
+			if(!empty($option['not']) && is_array($option['not']))
 			$return = Base\Arr::unsets($option['not'],$return);
 			
-			if(!empty($option['order']) && \is_int($option['order']))
+			if(!empty($option['order']) && is_int($option['order']))
 			$return = Base\Arr::sort($return,$option['order']);
 			
 			if(!empty($option['limit']))
@@ -481,13 +481,13 @@ class ColRelation extends Relation
 		
 		if(!Base\Validate::isReallyEmpty($value))
 		{
-			if(!\is_array($value))
-			$value = [$value];
+			if(!is_array($value))
+			$value = array($value);
 			
 			if($type === 'table')
 			{
 				$table = $this->checkRelationTable();
-				$option = Base\Arr::plus($option,['where'=>$this->whereTable()]);
+				$option = Base\Arr::plus($option,array('where'=>$this->whereTable()));
 				$return = $table->relation()->gets($value,$found,$cache,$option);
 			}
 			
@@ -514,8 +514,8 @@ class ColRelation extends Relation
 		{
 			$relation = $this->keyValue($value,false,$cache,$option);
 			
-			if(\is_array($relation) && !empty($relation))
-			$return = \current($relation);
+			if(is_array($relation) && !empty($relation))
+			$return = current($relation);
 		}
 		
 		else
@@ -531,7 +531,7 @@ class ColRelation extends Relation
 	{
 		$return = null;
 		
-		if($this->isSet() || \is_array($value))
+		if($this->isSet() || is_array($value))
 		$return = $this->keyValue($value,$found,$cache,$option);
 		
 		else
@@ -552,7 +552,7 @@ class ColRelation extends Relation
 		{
 			$table = $this->checkRelationTable();
 			
-			if(!empty($value) && \is_scalar($value))
+			if(!empty($value) && is_scalar($value))
 			$return = $table->row($value);
 		}
 		
@@ -571,10 +571,10 @@ class ColRelation extends Relation
 		$return = null;
 		$table = $this->checkRelationTable();
 		
-		if(!empty($value) && \is_array($value))
-		$return = $table->rows(...\array_values($value));
+		if(!empty($value) && is_array($value))
+		$return = $table->rows(...array_values($value));
 		
-		elseif(!empty($value) && \is_scalar($value))
+		elseif(!empty($value) && is_scalar($value))
 		$return = $table->rows($value);
 		
 		else
@@ -593,7 +593,7 @@ class ColRelation extends Relation
 		$col = $this->col();
 		$value = $col->get($value,$option);
 		
-		if($this->isSet() || \is_array($value))
+		if($this->isSet() || is_array($value))
 		$return = $this->many($value,$found,$cache,$option);
 		
 		else
@@ -610,10 +610,10 @@ class ColRelation extends Relation
 	{
 		$return = $this->get($value,$found,$cache,$option);
 		
-		if(\is_array($return))
-		$return = \implode($separator,$return);
+		if(is_array($return))
+		$return = implode($separator,$return);
 		
-		if(\is_scalar($return))
+		if(is_scalar($return))
 		$return = (string) $return;
 		
 		return $return;
@@ -646,7 +646,7 @@ class ColRelation extends Relation
 		
 		if($this->isSet())
 		{
-			if(!\is_array($value))
+			if(!is_array($value))
 			$value = Base\Set::onGet($value);
 			
 			$return = $this->rows($value);

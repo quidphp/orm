@@ -24,22 +24,22 @@ class Classe extends Base\Test
 		// extenders
 		
 		// tableClasse
-		\assert($classe->tableClasse('ormDb')->count() === 11);
+		assert($classe->tableClasse('ormDb')->count() === 11);
 		
 		// tableClasseCol
-		\assert(\is_a($classe->tableClasseCol($tb,$tb['id']),Orm\Col::class,true));
+		assert(is_a($classe->tableClasseCol($tb,$tb['id']),Orm\Col::class,true));
 		
 		// tableClasseCell
-		\assert(\is_a($classe->tableClasseCell($tb,$tb['id']),Orm\Cell::class,true));
+		assert(is_a($classe->tableClasseCell($tb,$tb['id']),Orm\Cell::class,true));
 		
 		// default
-		\assert(\is_a($classe->default('table'),Orm\Table::class,true));
-		\assert(\is_a($classe->default('row'),Orm\Row::class,true));
-		\assert(\is_a($classe->default('col'),Orm\Col::class,true));
-		\assert(\is_a($classe->default('cell'),Orm\Cell::class,true));
-		\assert(\is_a($classe->default('rows'),Orm\Rows::class,true));
-		\assert(\is_a($classe->default('cols'),Orm\Cols::class,true));
-		\assert(\is_a($classe->default('cells'),Orm\Cells::class,true));
+		assert(is_a($classe->default('table'),Orm\Table::class,true));
+		assert(is_a($classe->default('row'),Orm\Row::class,true));
+		assert(is_a($classe->default('col'),Orm\Col::class,true));
+		assert(is_a($classe->default('cell'),Orm\Cell::class,true));
+		assert(is_a($classe->default('rows'),Orm\Rows::class,true));
+		assert(is_a($classe->default('cols'),Orm\Cols::class,true));
+		assert(is_a($classe->default('cells'),Orm\Cells::class,true));
 
 		// find
 		

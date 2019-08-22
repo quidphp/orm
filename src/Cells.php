@@ -12,11 +12,11 @@ class Cells extends Main\Map
 	
 	
 	// config
-	public static $config = [];
+	public static $config = array();
 	
 	
 	// map
-	protected static $allow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
+	protected static $allow = array('add','unset','remove','empty','filter','sort','clone'); // méthodes permises
 	protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
 	
 	
@@ -34,7 +34,7 @@ class Cells extends Main\Map
 	// retourne les noms de cellules séparés par des virgules
 	public function __toString():string
 	{
-		return \implode(',',$this->names());
+		return implode(',',$this->names());
 	}
 	
 	
@@ -47,29 +47,29 @@ class Cells extends Main\Map
 	{
 		$return = null;
 		
-		if(\is_string($key))
+		if(is_string($key))
 		{
-			if(\array_key_exists($key,$this->data))
+			if(array_key_exists($key,$this->data))
 			$return = $key;
 			
-			elseif(\strpos($key,'\\') !== false && Base\Classe::extendOne(static::keyClassExtends(),$key))
+			elseif(strpos($key,'\\') !== false && Base\Classe::extendOne(static::keyClassExtends(),$key))
 			$return = $key::className(true);
 			
 			else
 			{
 				$key = Base\Sql::shortcut($key);
-				if(\array_key_exists($key,$this->data))
+				if(array_key_exists($key,$this->data))
 				$return = $key;
 			}
 		}
 		
-		elseif(\is_int($key))
+		elseif(is_int($key))
 		$return = Base\Arr::index($key,$this->keys());
 		
 		elseif($key instanceof Col || $key instanceof Cell)
 		$return = $key->name();
 		
-		elseif(\is_array($key))
+		elseif(is_array($key))
 		{
 			foreach ($key as $k) 
 			{
@@ -138,10 +138,10 @@ class Cells extends Main\Map
 		{
 			foreach (Base\Sql::wherePrepareOne($key,$value) as $v) 
 			{
-				if(\is_array($v) && \count($v) >= 2 && \is_string($v[0]))
+				if(is_array($v) && count($v) >= 2 && is_string($v[0]))
 				{
 					$cell = $this->checkGet($v[0]);
-					$arr = (\is_string($v[1]))? [$v[1]=>$v[2] ?? null]:[0=>$v[1]];
+					$arr = (is_string($v[1]))? array($v[1]=>$v[2] ?? null):array(0=>$v[1]);
 					$return = $cell->isWhere($arr);
 					
 					if($return === false)
@@ -169,7 +169,7 @@ class Cells extends Main\Map
 	// retourne les noms de cellules contenus dans l'objet sans la cellule primaire
 	public function namesWithoutPrimary():array
 	{
-		$return = [];
+		$return = array();
 		
 		foreach ($this->arr() as $key => $value) 
 		{
@@ -253,7 +253,7 @@ class Cells extends Main\Map
 			
 			$name = $value->name();
 			
-			if(!\array_key_exists($name,$data))
+			if(!array_key_exists($name,$data))
 			$data[$name] = $value;
 			
 			else
@@ -277,10 +277,10 @@ class Cells extends Main\Map
 	public function isVisible(?Main\Session $session=null):bool 
 	{
 		$return = false;
-		$args = [null,$session];
+		$args = array(null,$session);
 		$hidden = $this->pair('isVisible',...$args);
 		
-		if(!\in_array(false,$hidden,true))
+		if(!in_array(false,$hidden,true))
 		$return = true;
 		
 		return $return;
@@ -292,10 +292,10 @@ class Cells extends Main\Map
 	public function isHidden(?Main\Session $session=null):bool 
 	{
 		$return = false;
-		$args = [null,$session];
+		$args = array(null,$session);
 		$hidden = $this->pair('isVisible',...$args);
 		
-		if(!\in_array(true,$hidden,true))
+		if(!in_array(true,$hidden,true))
 		$return = true;
 		
 		return $return;
@@ -307,7 +307,7 @@ class Cells extends Main\Map
 	// ne retourne pas la clé primaire
 	public function isRequired(bool $value=true):self 
 	{
-		return $this->filter(['isRequired'=>$value]);
+		return $this->filter(array('isRequired'=>$value));
 	}
 	
 	
@@ -363,15 +363,15 @@ class Cells extends Main\Map
 	
 	// preValidate
 	// permet de pré-valider un tableau de valeur avant de set dans la cellule
-	public function preValidate(array $set=[],bool $lang=false,bool $filter=true):array
+	public function preValidate(array $set=array(),bool $lang=false,bool $filter=true):array
 	{
-		$return = [];
+		$return = array();
 		
 		foreach ($this->arr() as $key => $cell) 
 		{
 			$v = true;
 			
-			if(\array_key_exists($key,$set))
+			if(array_key_exists($key,$set))
 			{
 				$v = $set[$key];
 				$v = $cell->col()->preValidate($v,$lang);
@@ -514,7 +514,7 @@ class Cells extends Main\Map
 	// retourne un objet avec toutes les cellules non vides
 	public function notEmpty():self
 	{
-		return $this->filter(['isNotEmpty'=>true]);
+		return $this->filter(array('isNotEmpty'=>true));
 	}
 	
 	
@@ -532,7 +532,7 @@ class Cells extends Main\Map
 	// possible de faire une prévalidation via option
 	public function set($key,$value,?array $option=null):parent 
 	{
-		$option = Base\Arr::plus(['tryCatch'=>false],$option);
+		$option = Base\Arr::plus(array('tryCatch'=>false),$option);
 		$cell = $this->checkGet($key);
 		
 		if($option['tryCatch'] === true)
@@ -544,7 +544,7 @@ class Cells extends Main\Map
 			
 			catch (Main\CatchableException $e) 
 			{
-				$e->onCatched(['com'=>false]);
+				$e->onCatched(array('com'=>false));
 				$cell->setException($e);
 			}
 		}
@@ -602,7 +602,7 @@ class Cells extends Main\Map
 	public function included(?array $option=null):self 
 	{
 		$return = new static();
-		$option = Base\Arr::plus($option,['preValidate'=>false]);
+		$option = Base\Arr::plus($option,array('preValidate'=>false));
 		
 		foreach ($this->arr() as $cell) 
 		{
@@ -660,7 +660,7 @@ class Cells extends Main\Map
 	public function form(bool $str=false)
 	{
 		$return = $this->pair('form');
-		return ($str === true)? \implode($return):$return;
+		return ($str === true)? implode($return):$return;
 	}
 	
 	
@@ -670,7 +670,7 @@ class Cells extends Main\Map
 	public function formPlaceholder(bool $str=false)
 	{
 		$return = $this->pair('formPlaceholder');
-		return ($str === true)? \implode($return):$return;
+		return ($str === true)? implode($return):$return;
 	}
 	
 	
@@ -679,7 +679,7 @@ class Cells extends Main\Map
 	public function formComplex(bool $str=false)
 	{
 		$return = $this->pair('formComplex');
-		return ($str === true)? \implode($return):$return;
+		return ($str === true)? implode($return):$return;
 	}
 	
 	
@@ -688,7 +688,7 @@ class Cells extends Main\Map
 	public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
 	{
 		$return = $this->pair('formWrap',$wrap,$pattern);
-		return ($str === true)? \implode($return):$return;
+		return ($str === true)? implode($return):$return;
 	}
 	
 	
@@ -698,7 +698,7 @@ class Cells extends Main\Map
 	public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
 	{
 		$return = $this->pair('formPlaceholderWrap',$wrap,$pattern);
-		return ($str === true)? \implode($return):$return;
+		return ($str === true)? implode($return):$return;
 	}
 	
 	
@@ -707,7 +707,7 @@ class Cells extends Main\Map
 	public function formComplexWrap(?string $wrap=null,$pattern=null,bool $str=false)
 	{
 		$return = $this->pair('formComplexWrap',$wrap,$pattern);
-		return ($str === true)? \implode($return):$return;
+		return ($str === true)? implode($return):$return;
 	}
 	
 	
@@ -734,7 +734,7 @@ class Cells extends Main\Map
 		$return = $this->pair('htmlStr',$html,$option);
 		
 		if($str === true)
-		$return = \implode($return);
+		$return = implode($return);
 		
 		return $return;
 	}
@@ -745,14 +745,14 @@ class Cells extends Main\Map
 	// par exemple pour une ligne de csv
 	public function writeFile(Main\File $file,?array $option=null):self 
 	{
-		$option = Base\Arr::plus(['latin1'=>false,'context'=>'noHtml'],$option);
-		$array = [];
+		$option = Base\Arr::plus(array('latin1'=>false,'context'=>'noHtml'),$option);
+		$array = array();
 		
 		foreach ($this->toArray() as $key => $cell) 
 		{
 			foreach ($cell->export($option) as $value) 
 			{
-				if(\is_string($value) && $option['latin1'] === true)
+				if(is_string($value) && $option['latin1'] === true)
 				$value = Base\Encoding::fromUtf8($value);
 				
 				$array[] = $value;
@@ -769,7 +769,7 @@ class Cells extends Main\Map
 	// retourne un tableau utilisé par onPrepareKey
 	public static function keyClassExtends():array
 	{
-		return [Cell::class,Col::class];
+		return array(Cell::class,Col::class);
 	}
 }
 ?>

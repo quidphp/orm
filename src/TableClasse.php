@@ -8,11 +8,11 @@ use Quid\Base;
 class TableClasse extends Main\Map
 {
 	// config
-	public static $config = [];
+	public static $config = array();
 	
 	
 	// map
-	protected static $allow = ['jsonSerialize','serialize','clone']; // méthodes permises
+	protected static $allow = array('jsonSerialize','serialize','clone'); // méthodes permises
 	
 	
 	// table
@@ -43,7 +43,7 @@ class TableClasse extends Main\Map
 	// retourne la classe de la colonne
 	public function col($key):?string 
 	{
-		return $this->get(['col',$key]);
+		return $this->get(array('col',$key));
 	}
 	
 	
@@ -51,7 +51,7 @@ class TableClasse extends Main\Map
 	// change la classe d'une colonne
 	public function setCol($key,string $class):self
 	{
-		$key = $this->onPrepareKey(['col',$key]);
+		$key = $this->onPrepareKey(array('col',$key));
 		$data =& $this->arr();
 		$data[$key] = $class;
 		
@@ -71,7 +71,7 @@ class TableClasse extends Main\Map
 	// retourne la classe de la cellule
 	public function cell($key):?string 
 	{
-		return $this->get(['cell',$key]);
+		return $this->get(array('cell',$key));
 	}
 	
 	
@@ -79,7 +79,7 @@ class TableClasse extends Main\Map
 	// conserve la classe d'une cellule
 	public function setCell($key,string $class):self
 	{
-		$key = $this->onPrepareKey(['cell',$key]);
+		$key = $this->onPrepareKey(array('cell',$key));
 		$data =& $this->arr();
 		$data[$key] = $class;
 		
