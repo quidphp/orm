@@ -644,7 +644,7 @@ class TableRelation extends Relation
 		if($output === true)
 		{
 			$attr = $this->attr();
-			$output = $attr['output'];
+			$output = $attr['output'] ?? null;
 		}
 		
 		if(is_array($output))
