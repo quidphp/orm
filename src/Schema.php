@@ -37,7 +37,7 @@ class Schema extends Main\Map
 	// si cache est false, ignore la cache et ensuite écrase la
 	public function tables(bool $cache=true):array 
 	{
-		$return = array();
+		$return = [];
 		$tables = null;
 		$data =& $this->arr();
 		
