@@ -17,14 +17,14 @@ class PdoSql extends Base\Test
 		$pdo = new Orm\Pdo(...$credentials);
 		$primary = $pdo->primary();
 		assert($pdo->truncate($table) instanceof \PDOStatement);
-		assert($pdo->inserts($table,array('id','active','name_en','dateAdd'),array(1,1,'james',10),array(2,2,'james2',20),array(3,3,'james3',30),array(4,4,'james4',40),array(5,5,'james5',50)) === array(1,2,3,4,5));
+		assert($pdo->inserts($table,['id','active','name_en','dateAdd'],[1,1,'james',10],[2,2,'james2',20],[3,3,'james3',30],[4,4,'james4',40],[5,5,'james5',50]) === [1,2,3,4,5]);
 
 		// construct
 		$sql = new Orm\PdoSql($pdo);
 		$nav = $sql->clone()->what('*')->table($table)->page(2,2);
 
 		// invoke
-		assert($sql->setType('select')->whats('id','name_en')->table($table)('assoc') === array('id'=>1,'name_en'=>'james'));
+		assert($sql->setType('select')->whats('id','name_en')->table($table)('assoc') === ['id'=>1,'name_en'=>'james']);
 
 		// toString
 		assert(count($sql->toArray()) === 5);
@@ -108,12 +108,12 @@ class PdoSql extends Base\Test
 
 		// one
 		$sql->setType('select')->one('what',$primary,'count()')->one('table','table');
-		assert($sql->get('what') === array(array('id','count()')));
+		assert($sql->get('what') === [['id','count()']]);
 		assert($sql->emulate() === "SELECT COUNT(`id`) FROM `table`");
-		$sql->setType('insert')->one('insertSet',array('test'=>'ok'));
+		$sql->setType('insert')->one('insertSet',['test'=>'ok']);
 
 		// many
-		$sql->setType('select')->many('what','james',array($primary,'count()'))->one('table','tablez');
+		$sql->setType('select')->many('what','james',[$primary,'count()'])->one('table','tablez');
 		assert($sql->emulate() === "SELECT `james`, COUNT(`id`) FROM `tablez`");
 
 		// prependOne
@@ -121,7 +121,7 @@ class PdoSql extends Base\Test
 		assert($sql->emulate() === "SELECT `ok`, `test` FROM `OKz` WHERE `active` > 3 AND `id` = 2 AND `active` = 1");
 
 		// prependMany
-		$sql->empty()->table($table)->what('test')->prependMany('what','ok',array('test'=>'ok'),array('james','sum()'));
+		$sql->empty()->table($table)->what('test')->prependMany('what','ok',['test'=>'ok'],['james','sum()']);
 		assert($sql->emulate() === "SELECT SUM(`james`), `ok` AS `test`, `ok`, `test` FROM `main`");
 
 		// exists
@@ -131,22 +131,22 @@ class PdoSql extends Base\Test
 
 		// set
 		assert($sql->setType('select')->empty()->whats('*','james','ok.lol')->table($table));
-		assert($sql->get('what') === array('*','james','ok.lol'));
-		assert($sql->set('what',array('*',$primary)) instanceof Orm\PdoSql);
-		assert($sql->get('what') === array('*','id'));
+		assert($sql->get('what') === ['*','james','ok.lol']);
+		assert($sql->set('what',['*',$primary]) instanceof Orm\PdoSql);
+		assert($sql->get('what') === ['*','id']);
 		assert($sql->unset('what') instanceof Orm\PdoSql);
 		assert($sql->get('what') === null);
 		assert($sql->unset('from')->isEmpty());
 
 		// make
-		$sql->select('*')->table($table)->wheres(2,true,array('active'=>'name_en','Ok'=>2),'or','(',array('name_en','find',array(2,'lol')),'or',array('ok'=>'lol'),')');
+		$sql->select('*')->table($table)->wheres(2,true,['active'=>'name_en','Ok'=>2],'or','(',['name_en','find',[2,'lol']],'or',['ok'=>'lol'],')');
 		assert(count($sql->make()) === 6);
 
 		// what
 		$sql->empty()->what('test','sum()');
 
 		// whats
-		$sql->whats('james','ok',array('test2','count()'));
+		$sql->whats('james','ok',['test2','count()']);
 
 		// table
 		$sql->table('OK');
@@ -157,20 +157,20 @@ class PdoSql extends Base\Test
 		assert($sql->make()['sql'] === 'SELECT SUM(`test`), `james`, `ok`, COUNT(`test2`) FROM `james`');
 
 		// into
-		assert($sql->insert()->into('james')->datas(array('test'=>null))->emulate() === "INSERT INTO `james` (`test`) VALUES (NULL)");
+		assert($sql->insert()->into('james')->datas(['test'=>null])->emulate() === "INSERT INTO `james` (`test`) VALUES (NULL)");
 
 		// join
-		$sql->select('*')->table($table)->join('james',array('id'=>'meh',array('james','[>]','test.ok')));
+		$sql->select('*')->table($table)->join('james',['id'=>'meh',['james','[>]','test.ok']]);
 		assert($sql->emulate() === "SELECT * FROM `main` JOIN `james` ON(`id` = 'meh' AND `james` > test.ok)");
 		$sql->select('*')->table($table)->join('james')->on('james','[=]','ok.lol')->on('james','`findInSet`','lol.lol');
 		assert($sql->emulate() === "SELECT * FROM `main` JOIN `james` ON(`james` = ok.lol AND FIND_IN_SET(lol.`lol`, `james`))");
 
 		// innerJoin
-		$sql->select('*')->table($table)->innerJoin('james',array('id'=>'meh',array('james','[>]','test.ok')));
+		$sql->select('*')->table($table)->innerJoin('james',['id'=>'meh',['james','[>]','test.ok']]);
 		assert($sql->emulate() === "SELECT * FROM `main` INNER JOIN `james` ON(`id` = 'meh' AND `james` > test.ok)");
 
 		// outerJoin
-		$sql->select('*')->table($table)->outerJoin('james',array('id'=>'meh',array('james','[>]','test.ok')));
+		$sql->select('*')->table($table)->outerJoin('james',['id'=>'meh',['james','[>]','test.ok']]);
 		assert($sql->emulate() === "SELECT * FROM `main` LEFT OUTER JOIN `james` ON(`id` = 'meh' AND `james` > test.ok)");
 		$sql->select('*')->table($table)->outerJoin('james')->on('james','[=]','ok.lol')->on('james','`findInSet`','lol.lol');
 		assert($sql->emulate() === "SELECT * FROM `main` LEFT OUTER JOIN `james` ON(`james` = ok.lol AND FIND_IN_SET(lol.`lol`, `james`))");
@@ -184,17 +184,17 @@ class PdoSql extends Base\Test
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE `id` > 2 AND `james` IS NULL AND BINARY `ok` LIKE concat('lolz', '%')");
 		$sql->select('*')->table($table)->where(2)->where(true)->where('active','=',2);
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE `id` = 2 AND `active` = 1 AND `active` = 2");
-		$sql->select('*')->table($table)->where(2)->where(true)->where('active','=',2)->wheres(array('active'=>3));
+		$sql->select('*')->table($table)->where(2)->where(true)->where('active','=',2)->wheres(['active'=>3]);
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE `id` = 2 AND `active` = 3 AND `active` = 2");
-		$sql->select('*')->table($table)->where('test',null)->where('test',true)->orders(array('id'=>'desc'))->order('test','asc');
+		$sql->select('*')->table($table)->where('test',null)->where('test',true)->orders(['id'=>'desc'])->order('test','asc');
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE `test` IS NULL AND (`test` != '' AND `test` IS NOT NULL) ORDER BY `id` DESC, `test` ASC");
 
 		// wheres
-		$sql->select('*')->table($table)->wheres(2,true,array('active'=>'name_en','Ok'=>2),'or','(',array('name_en','findInSet',array(2,'lol')),'or',array('ok'=>'lol'),')');
+		$sql->select('*')->table($table)->wheres(2,true,['active'=>'name_en','Ok'=>2],'or','(',['name_en','findInSet',[2,'lol']],'or',['ok'=>'lol'],')');
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE `id` = 2 AND `active` = 'name_en' AND `Ok` = 2 OR ((FIND_IN_SET(2, `name_en`) AND FIND_IN_SET('lol', `name_en`)) OR `ok` = 'lol')");
 
 		// wheresOne
-		$sql->select('*')->table($table)->wheresOne(array('active'=>1,array('james','in',array(1,23,3))));
+		$sql->select('*')->table($table)->wheresOne(['active'=>1,['james','in',[1,23,3]]]);
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE `active` = 1 AND `james` IN(1, 23, 3)");
 
 		// whereSeparator
@@ -202,23 +202,23 @@ class PdoSql extends Base\Test
 		// whereAnd
 
 		// whereOr
-		$sql->select('*')->table($table)->whereOr('=',array('test','james','deux'),2);
+		$sql->select('*')->table($table)->whereOr('=',['test','james','deux'],2);
 		assert($sql->emulate() === 'SELECT * FROM `main` WHERE (`test` = 2 OR `james` = 2 OR `deux` = 2)');
 
 		// whereSeparatorMany
-		$sql->select('*')->table($table)->whereSeparatorMany('XOR','||','=',array('test','james','deux'),array(1,2,3));
+		$sql->select('*')->table($table)->whereSeparatorMany('XOR','||','=',['test','james','deux'],[1,2,3]);
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE (`test` = 1 XOR `james` = 1 XOR `deux` = 1) || (`test` = 2 XOR `james` = 2 XOR `deux` = 2) || (`test` = 3 XOR `james` = 3 XOR `deux` = 3)");
 
 		// whereAndMany
-		$sql->select('*')->table($table)->whereAndMany('=',array('test','james','deux'),array(1,2,3));
+		$sql->select('*')->table($table)->whereAndMany('=',['test','james','deux'],[1,2,3]);
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE (`test` = 1 AND `james` = 1 AND `deux` = 1) AND (`test` = 2 AND `james` = 2 AND `deux` = 2) AND (`test` = 3 AND `james` = 3 AND `deux` = 3)");
-		$sql->select('*')->table($table)->whereAndMany('=',array('test','james','deux'),array(1,2,3),'or');
+		$sql->select('*')->table($table)->whereAndMany('=',['test','james','deux'],[1,2,3],'or');
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE (`test` = 1 AND `james` = 1 AND `deux` = 1) OR (`test` = 2 AND `james` = 2 AND `deux` = 2) OR (`test` = 3 AND `james` = 3 AND `deux` = 3)");
 
 		// whereOrMany
-		$sql->select('*')->table($table)->whereOrMany('=',array('test','james','deux'),array(1,2,3));
+		$sql->select('*')->table($table)->whereOrMany('=',['test','james','deux'],[1,2,3]);
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE (`test` = 1 OR `james` = 1 OR `deux` = 1) AND (`test` = 2 OR `james` = 2 OR `deux` = 2) AND (`test` = 3 OR `james` = 3 OR `deux` = 3)");
-		$sql->select('*')->table($table)->whereOrMany('=',array('test','james','deux'),array(1,2,3),'or');
+		$sql->select('*')->table($table)->whereOrMany('=',['test','james','deux'],[1,2,3],'or');
 		assert($sql->emulate() === "SELECT * FROM `main` WHERE (`test` = 1 OR `james` = 1 OR `deux` = 1) OR (`test` = 2 OR `james` = 2 OR `deux` = 2) OR (`test` = 3 OR `james` = 3 OR `deux` = 3)");
 
 		// whereAfter
@@ -234,7 +234,7 @@ class PdoSql extends Base\Test
 		assert($sql->emulate() === "SELECT * FROM `main` ORDER BY `id` ASC, `id` DESC, `james` ASC");
 
 		// orders
-		$sql->select('*')->table($table)->orders($primary,array('james'=>'asc','lol'=>'desc'),true);
+		$sql->select('*')->table($table)->orders($primary,['james'=>'asc','lol'=>'desc'],true);
 		assert($sql->emulate() === "SELECT * FROM `main` ORDER BY `id` ASC, `james` ASC, `lol` DESC, `id` ASC");
 
 		// limit
@@ -242,13 +242,13 @@ class PdoSql extends Base\Test
 		assert($sql->emulate() === "SELECT * FROM `main` LIMIT 2 OFFSET 3");
 		$sql->select('*')->table($table)->limit('2,3');
 		assert($sql->emulate() === "SELECT * FROM `main` LIMIT 2,3");
-		$sql->select('*')->table($table)->limit(array(2,3));
+		$sql->select('*')->table($table)->limit([2,3]);
 		assert($sql->emulate() === "SELECT * FROM `main` LIMIT 2 OFFSET 3");
-		$sql->select('*')->table($table)->limit(array(true,3));
+		$sql->select('*')->table($table)->limit([true,3]);
 		assert($sql->emulate() === "SELECT * FROM `main` LIMIT ".PHP_INT_MAX." OFFSET 3");
-		$sql->select('*')->table($table)->limit(array('page'=>4,'limit'=>2));
+		$sql->select('*')->table($table)->limit(['page'=>4,'limit'=>2]);
 		assert($sql->emulate() === 'SELECT * FROM `main` LIMIT 2 OFFSET 6');
-		$sql->select('*')->table($table)->limit(array('limit'=>2,'page'=>4));
+		$sql->select('*')->table($table)->limit(['limit'=>2,'page'=>4]);
 		assert($sql->emulate() === 'SELECT * FROM `main` LIMIT 2 OFFSET 6');
 
 		// page
@@ -259,7 +259,7 @@ class PdoSql extends Base\Test
 		assert($sql->emulate() === "INSERT INTO `main` (`test`) VALUES (3)");
 
 		// insertSets
-		$sql->insert($table)->insertSets(array('test'=>2,'james'=>4))->insertSets(array('test'=>3));
+		$sql->insert($table)->insertSets(['test'=>2,'james'=>4])->insertSets(['test'=>3]);
 		assert($sql->emulate() === "INSERT INTO `main` (`test`, `james`) VALUES (3, 4)");
 
 		// updateSet
@@ -267,7 +267,7 @@ class PdoSql extends Base\Test
 		assert($sql->emulate() === "UPDATE `main` SET `test` = 3 WHERE `id` = 2");
 
 		// updateSets
-		$sql->update($table)->where(2)->where(true)->updateSets(array('test'=>2,'james'=>4))->updateSets(array('test'=>3));
+		$sql->update($table)->where(2)->where(true)->updateSets(['test'=>2,'james'=>4])->updateSets(['test'=>3]);
 		assert($sql->emulate() === "UPDATE `main` SET `test` = 3, `james` = 4 WHERE `id` = 2 AND `active` = 1");
 
 		// data
@@ -275,31 +275,31 @@ class PdoSql extends Base\Test
 		assert($sql->emulate() === "INSERT INTO `main` (`test`) VALUES (3)");
 
 		// datas
-		$sql->update($table)->where(2)->where(true)->datas(array('test'=>2,'james'=>4))->updateSets(array('test'=>3));
+		$sql->update($table)->where(2)->where(true)->datas(['test'=>2,'james'=>4])->updateSets(['test'=>3]);
 		assert($sql->emulate() === "UPDATE `main` SET `test` = 3, `james` = 4 WHERE `id` = 2 AND `active` = 1");
 
 		// col
-		$sql->alter($table)->col(array('james','int'),array('ok','varchar'));
+		$sql->alter($table)->col(['james','int'],['ok','varchar']);
 		assert($sql->emulate() === "ALTER TABLE `main` ADD COLUMN `james` INT(11) NULL DEFAULT NULL, ADD COLUMN `ok` VARCHAR(255) NULL DEFAULT NULL");
 
 		// createCol
-		$sql->create($table)->createCol(array('james','int'),array('ok','varchar'));
+		$sql->create($table)->createCol(['james','int'],['ok','varchar']);
 		assert($sql->emulate() === "CREATE TABLE `main` (`james` INT(11) NULL DEFAULT NULL, `ok` VARCHAR(255) NULL DEFAULT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4");
 
 		// createKey
-		$sql->create($table)->createCol(array('james','int'))->createKey(array('key','myKey'),array('primary',$primary));
+		$sql->create($table)->createCol(['james','int'])->createKey(['key','myKey'],['primary',$primary]);
 		assert($sql->emulate() === "CREATE TABLE `main` (`james` INT(11) NULL DEFAULT NULL, KEY (`myKey`), PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4");
 
 		// addCol
-		$sql->alter($table)->addCol(array('james','int'),array('ok','varchar'));
+		$sql->alter($table)->addCol(['james','int'],['ok','varchar']);
 		assert($sql->emulate() === "ALTER TABLE `main` ADD COLUMN `james` INT(11) NULL DEFAULT NULL, ADD COLUMN `ok` VARCHAR(255) NULL DEFAULT NULL");
 
 		// addKey
-		$sql->alter($table)->addKey(array('unique','ok',array('lol','Lol2')));
+		$sql->alter($table)->addKey(['unique','ok',['lol','Lol2']]);
 		assert($sql->emulate() === "ALTER TABLE `main` ADD UNIQUE KEY `ok` (`lol`, `Lol2`)");
 
 		// alterCol
-		$sql->alter($table)->alterCol(array('james','int','rename'=>'james2'));
+		$sql->alter($table)->alterCol(['james','int','rename'=>'james2']);
 		assert($sql->emulate() === "ALTER TABLE `main` CHANGE `james` `james2` INT(11) NULL DEFAULT NULL");
 
 		// dropCol
@@ -324,22 +324,22 @@ class PdoSql extends Base\Test
 		assert($sql->show('TABLES LIKE %lol%')->emulate() === "SHOW TABLES LIKE %lol%");
 
 		// insert
-		assert($sql->insert('james')->datas(array('test'=>2,'ok'=>'bla'))->emulate() === "INSERT INTO `james` (`test`, `ok`) VALUES (2, 'bla')");
-		assert($sql->insert($table)->insertSets(array())->trigger() === 6);
-		assert($sql->insert($table)->insertSets(array())->trigger() === 7);
-		assert($sql->insert($table)->insertSets(array())->make()['sql'] === 'INSERT INTO `main` () VALUES ()');
+		assert($sql->insert('james')->datas(['test'=>2,'ok'=>'bla'])->emulate() === "INSERT INTO `james` (`test`, `ok`) VALUES (2, 'bla')");
+		assert($sql->insert($table)->insertSets([])->trigger() === 6);
+		assert($sql->insert($table)->insertSets([])->trigger() === 7);
+		assert($sql->insert($table)->insertSets([])->make()['sql'] === 'INSERT INTO `main` () VALUES ()');
 
 		// update
-		assert($sql->update('james')->datas(array('test'=>2,'ok'=>'bla'))->where(2)->emulate() === "UPDATE `james` SET `test` = 2, `ok` = 'bla' WHERE `id` = 2");
+		assert($sql->update('james')->datas(['test'=>2,'ok'=>'bla'])->where(2)->emulate() === "UPDATE `james` SET `test` = 2, `ok` = 'bla' WHERE `id` = 2");
 
 		// delete
 		assert($sql->delete('james')->where('james',false)->emulate() === "DELETE FROM `james` WHERE (`james` = '' OR `james` IS NULL)");
 
 		// create
-		assert($sql->create('james')->col(array('james','varchar'))->emulate() === "CREATE TABLE `james` (`james` VARCHAR(255) NULL DEFAULT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4");
+		assert($sql->create('james')->col(['james','varchar'])->emulate() === "CREATE TABLE `james` (`james` VARCHAR(255) NULL DEFAULT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4");
 
 		// alter
-		assert($sql->alter('james')->col(array('james','varchar'))->emulate() === "ALTER TABLE `james` ADD COLUMN `james` VARCHAR(255) NULL DEFAULT NULL");
+		assert($sql->alter('james')->col(['james','varchar'])->emulate() === "ALTER TABLE `james` ADD COLUMN `james` VARCHAR(255) NULL DEFAULT NULL");
 
 		// truncate
 		assert($sql->truncate('james')->emulate() === "TRUNCATE TABLE `james`");
@@ -348,7 +348,7 @@ class PdoSql extends Base\Test
 		assert($sql->drop('james')->emulate() === "DROP TABLE `james`");
 
 		// parseLimit
-		assert($nav->parseLimit() === array('offset'=>2,'limit'=>2,'page'=>2));
+		assert($nav->parseLimit() === ['offset'=>2,'limit'=>2,'page'=>2]);
 
 		// getOffset
 		assert($nav->getOffset() === 2);
@@ -385,13 +385,13 @@ class PdoSql extends Base\Test
 		assert($nav->pageFromIndex(-1) === null);
 
 		// pages
-		assert($nav->pages() === array(1,2,3,4));
+		assert($nav->pages() === [1,2,3,4]);
 
 		// pagesPosition
-		assert($nav->pagesPosition() === array(1=>-1,2=>0,3=>1,4=>2));
+		assert($nav->pagesPosition() === [1=>-1,2=>0,3=>1,4=>2]);
 
 		// pagesClose
-		assert($nav->pagesClose(1) === array(1,2,3,4));
+		assert($nav->pagesClose(1) === [1,2,3,4]);
 
 		// pageSpecificCount
 		assert($nav->pageSpecificCount() === 2);
@@ -419,8 +419,8 @@ class PdoSql extends Base\Test
 		assert(count($nav->pagesWithSpecific()) === 4);
 
 		// pageWithSpecific
-		assert($nav->pageWithSpecific(1) === array(1,2));
-		assert($nav->pageWithSpecific() === array(3,4));
+		assert($nav->pageWithSpecific(1) === [1,2]);
+		assert($nav->pageWithSpecific() === [3,4]);
 
 		// pageFirstSpecific
 		assert($nav->pageFirstSpecific(4) === 7);
@@ -475,7 +475,7 @@ class PdoSql extends Base\Test
 		assert($sql->trigger()[0]['id'] === 1);
 
 		// triggerCount
-		assert($sql->insert($table)->datas(array())->trigger() === 8);
+		assert($sql->insert($table)->datas([])->trigger() === 8);
 		assert($sql->select('*')->from($table) === $sql);
 		assert($sql->triggerCount() === 8);
 		assert($sql->limit(1000) === $sql);
@@ -500,7 +500,7 @@ class PdoSql extends Base\Test
 		assert($nav->isTriggerCountNotEmpty());
 
 		// emulate
-		$sql->select('*')->table($table)->wheres(2,true,array('active'=>'name_en','Ok'=>2),'or','(',array('name_en','findInSet',array(2,'lol')),'or',array('ok'=>'lol'),')');
+		$sql->select('*')->table($table)->wheres(2,true,['active'=>'name_en','Ok'=>2],'or','(',['name_en','findInSet',[2,'lol']],'or',['ok'=>'lol'],')');
 		assert(strlen($sql->emulate()) === 156);
 
 		// debug
@@ -510,7 +510,7 @@ class PdoSql extends Base\Test
 		$sql->empty();
 		$sql['what'] = '*';
 		$sql['from'] = 'james';
-		$sql['where'] = array('active'=>1);
+		$sql['where'] = ['active'=>1];
 		assert($sql->emulate() === 'SELECT * FROM `james` WHERE `active` = 1');
 		unset($sql['where']);
 		assert($sql->emulate() === 'SELECT * FROM `james`');
@@ -519,9 +519,9 @@ class PdoSql extends Base\Test
 		assert($sql->emulate() === 'SELECT * FROM `james`');
 		assert(count($sql) === 2);
 		$sql->insert('james');
-		$sql['data'] = array('test'=>2,'ok'=>'lol');
+		$sql['data'] = ['test'=>2,'ok'=>'lol'];
 		assert($sql->emulate() === "INSERT INTO `james` (`test`, `ok`) VALUES (2, 'lol')");
-		$sql['data'] = array();
+		$sql['data'] = [];
 		assert($sql->emulate() === 'INSERT INTO `james` () VALUES ()');
 
 		// cleanup

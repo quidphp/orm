@@ -15,7 +15,7 @@ class ColSchema extends Base\Test
 		// is
 		assert(!Orm\ColSchema::is('123abc'));
 		assert(Orm\ColSchema::is('a123abc'));
-		assert(!Orm\ColSchema::is(array(1,2,34)));
+		assert(!Orm\ColSchema::is([1,2,34]));
 		assert(!Orm\ColSchema::is('-csrf-'));
 
 		// hasPattern
@@ -30,8 +30,8 @@ class ColSchema extends Base\Test
 		assert(Orm\ColSchema::isRelation('table_ids'));
 
 		// pattern
-		assert(Orm\ColSchema::pattern('name_fr') === array('fr','*_fr'));
-		assert(Orm\ColSchema::pattern('test_id') === array('enum','*_id'));
+		assert(Orm\ColSchema::pattern('name_fr') === ['fr','*_fr']);
+		assert(Orm\ColSchema::pattern('test_id') === ['enum','*_id']);
 
 		// addPattern
 		assert(Orm\ColSchema::addPattern('de','james') === 'james_de');
@@ -67,65 +67,65 @@ class ColSchema extends Base\Test
 		assert(Orm\ColSchema::table('table_ids') === 'table');
 
 		// possible
-		assert(Orm\ColSchema::possible('name') === array('name_en','name_fr','name_id','name_ids'));
-		assert(Orm\ColSchema::possible('name',true) === array('name_en','name_id','name_ids'));
+		assert(Orm\ColSchema::possible('name') === ['name_en','name_fr','name_id','name_ids']);
+		assert(Orm\ColSchema::possible('name',true) === ['name_en','name_id','name_ids']);
 
 		// group
-		assert(Orm\ColSchema::group(array('date'=>true,'kind'=>'int')) === 'date');
-		assert(Orm\ColSchema::group(array('relation'=>true,'kind'=>'int')) === 'relation');
-		assert(Orm\ColSchema::group(array('media'=>true,'kind'=>'int')) === 'media');
-		assert(Orm\ColSchema::group(array('key'=>'primary','kind'=>'int')) === 'primary');
-		assert(Orm\ColSchema::group(array('kind'=>'int')) === 'int');
-		assert(Orm\ColSchema::group(array('kind'=>'char')) === 'char');
-		assert(Orm\ColSchema::group(array('kind'=>'float')) === 'float');
+		assert(Orm\ColSchema::group(['date'=>true,'kind'=>'int']) === 'date');
+		assert(Orm\ColSchema::group(['relation'=>true,'kind'=>'int']) === 'relation');
+		assert(Orm\ColSchema::group(['media'=>true,'kind'=>'int']) === 'media');
+		assert(Orm\ColSchema::group(['key'=>'primary','kind'=>'int']) === 'primary');
+		assert(Orm\ColSchema::group(['kind'=>'int']) === 'int');
+		assert(Orm\ColSchema::group(['kind'=>'char']) === 'char');
+		assert(Orm\ColSchema::group(['kind'=>'float']) === 'float');
 
 		// prepareAttr
-		$attr = array('test'=>2,'Field'=>'id','Type'=>'int(11) unsigned','Null'=>'NO','Key'=>'PRI','Default'=>null,'Extra'=>'auto_increment');
-		assert(Orm\ColSchema::prepareAttr($attr) === array('type'=>'int','kind'=>'int','unsigned'=>true,'length'=>11,'null'=>null,'key'=>'primary','required'=>true,'group'=>'primary','validate'=>array('int','>='=>0,'<='=>4294967294,'maxLength'=>11)));
-		$attr = array('Field'=>'id','Type'=>'int(11) unsigned','Null'=>'YES','Key'=>'PRI','Default'=>null,'Extra'=>'auto_increment');
-		assert(Orm\ColSchema::prepareAttr($attr) === array('type'=>'int','kind'=>'int','unsigned'=>true,'length'=>11,'null'=>null,'default'=>null,'key'=>'primary','required'=>true,'group'=>'primary','validate'=>array('int','>='=>0,'<='=>4294967294,'maxLength'=>11)));
-		$attr = array('Field'=>'name','Type'=>'varchar(55)','Null'=>'YES','Key'=>'','Default'=>null);
-		assert(Orm\ColSchema::prepareAttr($attr) === array('type'=>'varchar','kind'=>'char','search'=>true,'length'=>55,'null'=>true,'default'=>null,'group'=>'char','validate'=>array('string','maxLength'=>55)));
-		$attr = array('Field'=>'name','Type'=>'varchar(55)','Null'=>'No','Key'=>'','Default'=>null);
-		assert(Orm\ColSchema::prepareAttr($attr) === array('type'=>'varchar','kind'=>'char','search'=>true,'length'=>55,'null'=>false,'group'=>'char','validate'=>array('string','maxLength'=>55)));
-		$attr = array('Field'=>'content','Type'=>'text','Null'=>'YES','Key'=>'','Default'=>null);
-		assert(Orm\ColSchema::prepareAttr($attr) === array('type'=>'text','kind'=>'text','search'=>true,'length'=>65535,'null'=>true,'default'=>null,'group'=>'text','validate'=>array('string','maxLength'=>65535)));
-		$attr = array('Field'=>'dateAdd','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null);
+		$attr = ['test'=>2,'Field'=>'id','Type'=>'int(11) unsigned','Null'=>'NO','Key'=>'PRI','Default'=>null,'Extra'=>'auto_increment'];
+		assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'int','kind'=>'int','unsigned'=>true,'length'=>11,'null'=>null,'key'=>'primary','required'=>true,'group'=>'primary','validate'=>['int','>='=>0,'<='=>4294967294,'maxLength'=>11]]);
+		$attr = ['Field'=>'id','Type'=>'int(11) unsigned','Null'=>'YES','Key'=>'PRI','Default'=>null,'Extra'=>'auto_increment'];
+		assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'int','kind'=>'int','unsigned'=>true,'length'=>11,'null'=>null,'default'=>null,'key'=>'primary','required'=>true,'group'=>'primary','validate'=>['int','>='=>0,'<='=>4294967294,'maxLength'=>11]]);
+		$attr = ['Field'=>'name','Type'=>'varchar(55)','Null'=>'YES','Key'=>'','Default'=>null];
+		assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'varchar','kind'=>'char','search'=>true,'length'=>55,'null'=>true,'default'=>null,'group'=>'char','validate'=>['string','maxLength'=>55]]);
+		$attr = ['Field'=>'name','Type'=>'varchar(55)','Null'=>'No','Key'=>'','Default'=>null];
+		assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'varchar','kind'=>'char','search'=>true,'length'=>55,'null'=>false,'group'=>'char','validate'=>['string','maxLength'=>55]]);
+		$attr = ['Field'=>'content','Type'=>'text','Null'=>'YES','Key'=>'','Default'=>null];
+		assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'text','kind'=>'text','search'=>true,'length'=>65535,'null'=>true,'default'=>null,'group'=>'text','validate'=>['string','maxLength'=>65535]]);
+		$attr = ['Field'=>'dateAdd','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null];
 		$attr['priority'] = 10;
-		assert(Orm\ColSchema::prepareAttr($attr)  === array('type'=>'int','kind'=>'int','length'=>11,'null'=>false,'group'=>'int','priority'=>10,'validate'=>array('int','>='=>-2147483647,'<='=>2147483647,'maxLength'=>11)));
-		$attr = array('Field'=>'name_fr','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null);
+		assert(Orm\ColSchema::prepareAttr($attr)  === ['type'=>'int','kind'=>'int','length'=>11,'null'=>false,'group'=>'int','priority'=>10,'validate'=>['int','>='=>-2147483647,'<='=>2147483647,'maxLength'=>11]]);
+		$attr = ['Field'=>'name_fr','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null];
 		assert(Orm\ColSchema::prepareAttr($attr)['panel'] === 'fr');
-		$attr = array('Field'=>'user_id','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null);
+		$attr = ['Field'=>'user_id','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null];
 		assert(Orm\ColSchema::prepareAttr($attr)['relation'] === 'user');
 		assert(Orm\ColSchema::prepareAttr($attr)['enum'] === true);
-		$attr = array('Field'=>'user_ids','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null);
+		$attr = ['Field'=>'user_ids','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null];
 		assert(Orm\ColSchema::prepareAttr($attr)['set'] === true);
-		$attr = array('Field'=>'price','Type'=>'float','Null'=>'YES','Key'=>'','Default'=>null,'Extra'=>'');
-		assert(Orm\ColSchema::prepareAttr($attr) === array('type'=>'float','kind'=>'float','null'=>true,'default'=>null,'group'=>'float','validate'=>array('float')));
-		$attr = array('test'=>2,'Field'=>'id','Type'=>'blob','Null'=>'NO','Key'=>'PRI','Default'=>null,'Extra'=>'auto_increment');
+		$attr = ['Field'=>'price','Type'=>'float','Null'=>'YES','Key'=>'','Default'=>null,'Extra'=>''];
+		assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'float','kind'=>'float','null'=>true,'default'=>null,'group'=>'float','validate'=>['float']]);
+		$attr = ['test'=>2,'Field'=>'id','Type'=>'blob','Null'=>'NO','Key'=>'PRI','Default'=>null,'Extra'=>'auto_increment'];
 		assert(Orm\ColSchema::prepareAttr($attr) === null);
-		$attr = array('Field'=>'price','Type'=>'float unsigned','Null'=>'YES','Key'=>'','Default'=>null,'Extra'=>'');
-		assert(Orm\ColSchema::prepareAttr($attr)['validate'] = array('float','>='=>0));
+		$attr = ['Field'=>'price','Type'=>'float unsigned','Null'=>'YES','Key'=>'','Default'=>null,'Extra'=>''];
+		assert(Orm\ColSchema::prepareAttr($attr)['validate'] = ['float','>='=>0]);
 
 		// parseType
-		assert(Orm\ColSchema::parseType('tinyint(1) unsigned') === array('type'=>'tinyint','kind'=>'int','unsigned'=>true,'length'=>1));
-		assert(Orm\ColSchema::parseType('char(25)') === array('type'=>'char','kind'=>'char','search'=>true,'length'=>25));
-		assert(Orm\ColSchema::parseType('varchar(25)') === array('type'=>'varchar','kind'=>'char','search'=>true,'length'=>25));
-		assert(Orm\ColSchema::parseType('tinytext') === array('type'=>'tinytext','kind'=>'text','search'=>true,'length'=>255));
-		assert(Orm\ColSchema::parseType('float') === array('type'=>'float','kind'=>'float'));
+		assert(Orm\ColSchema::parseType('tinyint(1) unsigned') === ['type'=>'tinyint','kind'=>'int','unsigned'=>true,'length'=>1]);
+		assert(Orm\ColSchema::parseType('char(25)') === ['type'=>'char','kind'=>'char','search'=>true,'length'=>25]);
+		assert(Orm\ColSchema::parseType('varchar(25)') === ['type'=>'varchar','kind'=>'char','search'=>true,'length'=>25]);
+		assert(Orm\ColSchema::parseType('tinytext') === ['type'=>'tinytext','kind'=>'text','search'=>true,'length'=>255]);
+		assert(Orm\ColSchema::parseType('float') === ['type'=>'float','kind'=>'float']);
 		assert(Orm\ColSchema::parseType('enum') === null);
 		assert(Orm\ColSchema::parseType('float unsigned')['unsigned'] === true);
 
 		// parseValidate
-		assert(Orm\ColSchema::parseValidate(array('type'=>'varchar','kind'=>'char','search'=>true,'length'=>25)) === array('string','maxLength'=>25));
-		assert(Orm\ColSchema::parseValidate(array('type'=>'int','kind'=>'int','length'=>11)) === array('int','>='=>-2147483647,'<='=>2147483647,'maxLength'=>11));
-		assert(Orm\ColSchema::parseValidate(array('type'=>'float','kind'=>'float')) === array('float'));
+		assert(Orm\ColSchema::parseValidate(['type'=>'varchar','kind'=>'char','search'=>true,'length'=>25]) === ['string','maxLength'=>25]);
+		assert(Orm\ColSchema::parseValidate(['type'=>'int','kind'=>'int','length'=>11]) === ['int','>='=>-2147483647,'<='=>2147483647,'maxLength'=>11]);
+		assert(Orm\ColSchema::parseValidate(['type'=>'float','kind'=>'float']) === ['float']);
 
 		// parseValidateInt
-		assert(Orm\ColSchema::parseValidateInt(array('type'=>'int')) === array('>='=>-2147483647,'<='=>2147483647));
+		assert(Orm\ColSchema::parseValidateInt(['type'=>'int']) === ['>='=>-2147483647,'<='=>2147483647]);
 
 		// parseValidateUnsigned
-		assert(Orm\ColSchema::parseValidateUnsigned(array('type'=>'float','unsigned'=>true)) === array('>='=>0));
+		assert(Orm\ColSchema::parseValidateUnsigned(['type'=>'float','unsigned'=>true]) === ['>='=>0]);
 
 		// kindDefault
 		assert(Orm\ColSchema::kindDefault('char') === '');
@@ -138,10 +138,10 @@ class ColSchema extends Base\Test
 		assert(Orm\ColSchema::kindTag('text') === 'textarea');
 
 		// formTag
-		assert(Orm\ColSchema::formTag(array('kind'=>'int','tag'=>'textarea')) === 'textarea');
-		assert(Orm\ColSchema::formTag(array('kind'=>'int')) === 'inputText');
-		assert(Orm\ColSchema::formTag(array('kind'=>'float')) === 'inputText');
-		assert(Orm\ColSchema::formTag(array()) === null);
+		assert(Orm\ColSchema::formTag(['kind'=>'int','tag'=>'textarea']) === 'textarea');
+		assert(Orm\ColSchema::formTag(['kind'=>'int']) === 'inputText');
+		assert(Orm\ColSchema::formTag(['kind'=>'float']) === 'inputText');
+		assert(Orm\ColSchema::formTag([]) === null);
 
 		// textLength
 		assert(Orm\ColSchema::textLength('text') === 65535);

@@ -33,7 +33,7 @@ class Schema extends Base\Test
 
 		// dbAccess
 		assert(!empty($schema->get('user/id')));
-		assert(!empty($schema->get(array('session','data'))));
+		assert(!empty($schema->get(['session','data'])));
 		assert($schema->db() instanceof Orm\Db);
 		
 		return true;

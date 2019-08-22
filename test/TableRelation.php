@@ -16,12 +16,12 @@ class TableRelation extends Base\Test
 		$table2 = 'page';
 		assert($db->truncate($table) instanceof \PDOStatement);
 		assert($db->truncate($table2) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','active','name_en','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',10,11,12,13),array(2,2,'james2',20,21,22,23)) === array(1,2));
-		assert($db->inserts($table2,array('id','active','name_en','content_en'),array(1,1,'test','ok'),array(2,2,'test2','ok2')));
+		assert($db->inserts($table,['id','active','name_en','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,11,12,13],[2,2,'james2',20,21,22,23]) === [1,2]);
+		assert($db->inserts($table2,['id','active','name_en','content_en'],[1,1,'test','ok'],[2,2,'test2','ok2']));
 		$tb = $db[$table];
 		$tb2 = $db[$table2];
-		$insert = $tb->insert(array('date'=>time(),'name_fr'=>'nomFr'));
-		$insert2 = $tb->insert(array('date'=>time(),'name_en'=>'LOL2','name_fr'=>'nomFr'));
+		$insert = $tb->insert(['date'=>time(),'name_fr'=>'nomFr']);
+		$insert2 = $tb->insert(['date'=>time(),'name_en'=>'LOL2','name_fr'=>'nomFr']);
 		$user = $db['user']->relation();
 		$session = $db['session']->relation();
 		$rel = $tb->relation();
@@ -59,21 +59,21 @@ class TableRelation extends Base\Test
 		assert($rel2->get(1) === 'test');
 
 		// gets
-		assert(array_keys($rel->gets(array(1,3,2))) === array(1,3,2));
-		assert(count($rel->gets(array(3,2,1))) === 3);
-		assert(count($rel->gets(array(1,2,3))) === 3);
-		assert($user->gets(array(3,1)) === array(3=>'editor (#3)',1=>'nobody (#1)'));
-		assert($user->gets(array(1,3)) === array(1=>'nobody (#1)',3=>'editor (#3)'));
-		assert($rel2->gets(array(1,2)) === array(1=>'test',2=>'test2'));
+		assert(array_keys($rel->gets([1,3,2])) === [1,3,2]);
+		assert(count($rel->gets([3,2,1])) === 3);
+		assert(count($rel->gets([1,2,3])) === 3);
+		assert($user->gets([3,1]) === [3=>'editor (#3)',1=>'nobody (#1)']);
+		assert($user->gets([1,3]) === [1=>'nobody (#1)',3=>'editor (#3)']);
+		assert($rel2->gets([1,2]) === [1=>'test',2=>'test2']);
 
 		// all
-		assert(array_keys($rel->all()) === array(2,1,3,4));
+		assert(array_keys($rel->all()) === [2,1,3,4]);
 		assert(count($rel->all()) === 4);
-		assert($user->all(false) === array(4=>'inactive (#4)',3=>'editor (#3)',2=>'admin (#2)',1=>'nobody (#1)'));
-		assert($user->all() === array(4=>'inactive (#4)',3=>'editor (#3)',2=>'admin (#2)',1=>'nobody (#1)'));
-		assert($user->all(false,array('limit'=>2)) === array(4=>'inactive (#4)',3=>'editor (#3)'));
+		assert($user->all(false) === [4=>'inactive (#4)',3=>'editor (#3)',2=>'admin (#2)',1=>'nobody (#1)']);
+		assert($user->all() === [4=>'inactive (#4)',3=>'editor (#3)',2=>'admin (#2)',1=>'nobody (#1)']);
+		assert($user->all(false,['limit'=>2]) === [4=>'inactive (#4)',3=>'editor (#3)']);
 		assert($user->count() === 2);
-		assert($rel2->all(false) === array(1=>'test',2=>'test2'));
+		assert($rel2->all(false) === [1=>'test',2=>'test2']);
 
 		// exists
 		assert($user->exists(3,4,1));
@@ -95,27 +95,27 @@ class TableRelation extends Base\Test
 		// inWhere
 
 		// search
-		assert($user->search('nob',array('limit'=>1)) === array(1=>'nobody (#1)'));
-		assert($user->search('adm min') === array(2=>'admin (#2)'));
-		assert($user->search('adm + min',array('searchSeparator'=>'+')) === array(2=>'admin (#2)'));
-		assert($user->search('well') === array());
-		assert($rel2->search('test') === array(1=>'test',2=>'test2'));
-		assert($rel2->search('test2') === array(2=>'test2'));
+		assert($user->search('nob',['limit'=>1]) === [1=>'nobody (#1)']);
+		assert($user->search('adm min') === [2=>'admin (#2)']);
+		assert($user->search('adm + min',['searchSeparator'=>'+']) === [2=>'admin (#2)']);
+		assert($user->search('well') === []);
+		assert($rel2->search('test') === [1=>'test',2=>'test2']);
+		assert($rel2->search('test2') === [2=>'test2']);
 
 		// defaultOrderCode
 		assert($user->defaultOrderCode() === 2);
 
 		// getOrder
-		assert($user->getOrder() === array('id'=>'desc'));
-		assert($user->getOrder(array('james'=>'asc')) === array('james'=>'asc'));
-		assert($user->getOrder(1) === array('id'=>'asc'));
-		assert($user->getOrder(2) === array('id'=>'desc'));
-		assert($user->getOrder(3) === array('username'=>'asc'));
-		assert($user->getOrder(4) === array('username'=>'desc'));
+		assert($user->getOrder() === ['id'=>'desc']);
+		assert($user->getOrder(['james'=>'asc']) === ['james'=>'asc']);
+		assert($user->getOrder(1) === ['id'=>'asc']);
+		assert($user->getOrder(2) === ['id'=>'desc']);
+		assert($user->getOrder(3) === ['username'=>'asc']);
+		assert($user->getOrder(4) === ['username'=>'desc']);
 
 		// allowOrderingByValue
-		assert($user->allowedOrdering() === array('key'=>true,'value'=>true));
-		assert($rel->allowedOrdering() === array('key'=>true,'value'=>true));
+		assert($user->allowedOrdering() === ['key'=>true,'value'=>true]);
+		assert($rel->allowedOrdering() === ['key'=>true,'value'=>true]);
 
 		// getOrderFieldOutput
 		assert($user->getOrderFieldOutput() === 'username');
@@ -130,10 +130,10 @@ class TableRelation extends Base\Test
 		// outputMethod
 
 		// attr
-		assert($rel->attr() === array('what'=>array('id','name_en','dateAdd'),'appendPrimary'=>true,'onGet'=>true,'output'=>array('[dateAdd] [name_en] _ [id]'),'order'=>array('name_en'=>'desc'),'where'=>array()));
-		assert($user->attr()['order'] === array('id'=>'desc'));
-		assert($user->attr()['what'] === array('username','email','id'));
-		assert($session->attr()['what'] === array('id'));
+		assert($rel->attr() === ['what'=>['id','name_en','dateAdd'],'appendPrimary'=>true,'onGet'=>true,'output'=>['[dateAdd] [name_en] _ [id]'],'order'=>['name_en'=>'desc'],'where'=>[]]);
+		assert($user->attr()['order'] === ['id'=>'desc']);
+		assert($user->attr()['what'] === ['username','email','id']);
+		assert($session->attr()['what'] === ['id']);
 
 		// arrMap
 		assert($user->isNotEmpty());

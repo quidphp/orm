@@ -14,7 +14,7 @@ class Cell extends Base\Test
 		$db = Orm\Db::inst();
 		$table = "ormCell";
 		assert($db->truncate($table) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','date','name','dateAdd','userAdd','dateModify','userModify','integer','enum','set','user_ids'),array(1,time(),'james',10,2,12,13,12,5,"2,3",array(2,1)),array(2,time(),'james2',10,11,12,13,12,5,"2,4","2,3")) === array(1,2));
+		assert($db->inserts($table,['id','date','name','dateAdd','userAdd','dateModify','userModify','integer','enum','set','user_ids'],[1,time(),'james',10,2,12,13,12,5,"2,3",[2,1]],[2,time(),'james2',10,11,12,13,12,5,"2,4","2,3"]) === [1,2]);
 		$tb = $db[$table];
 		$row = $tb[1];
 
@@ -126,15 +126,15 @@ class Cell extends Base\Test
 		assert($cell->tag() === 'inputText');
 		assert($dateAdd->tag() === 'inputText');
 		assert($dateAdd->tag(null,true) === 'div');
-		assert($dateAdd->tag(array('tag'=>'span'),true) === 'span');
+		assert($dateAdd->tag(['tag'=>'span'],true) === 'span');
 
 		// isFormTag
 		assert($cell->isFormTag() === true);
 		assert($dateAdd->isFormTag() === true);
-		assert(!$dateAdd->isFormTag(array('tag'=>'div')));
+		assert(!$dateAdd->isFormTag(['tag'=>'div']));
 
 		// rules
-		assert($cell->rules() === array('required'=>'required','validate'=>array('string','maxLength'=>100)));
+		assert($cell->rules() === ['required'=>'required','validate'=>['string','maxLength'=>100]]);
 		assert($cell->rules(true)['validate'][0] === 'Must be a string');
 		assert(count($date->rules()) === 2);
 		assert(count($date->rules(false,true)) === 3);
@@ -142,7 +142,7 @@ class Cell extends Base\Test
 		// compare
 		$dateStart->set(1235);
 		$dateEnd->set(1234);
-		assert($dateStart->compare(true) === array('Must be equal or smaller than End date'));
+		assert($dateStart->compare(true) === ['Must be equal or smaller than End date']);
 		$dateStart->set(1234);
 		assert($dateStart->compare(true));
 		$dateEnd->set(null);
@@ -168,7 +168,7 @@ class Cell extends Base\Test
 		assert($cell->validate() === true);
 
 		// completeValidation
-		assert($cell->completeValidation() === array('required'));
+		assert($cell->completeValidation() === ['required']);
 		assert($cell->set(2) === $cell);
 		assert($cell->completeValidation() === true);
 
@@ -182,8 +182,8 @@ class Cell extends Base\Test
 		assert(!$cell->isColKindText());
 
 		// isWhere
-		assert($cell->isWhere(array('='=>'2')));
-		assert($cell->isWhere(array(true,'notNull')));
+		assert($cell->isWhere(['='=>'2']));
+		assert($cell->isWhere([true,'notNull']));
 
 		// hasDefault
 		assert($cell->hasDefault());
@@ -269,8 +269,8 @@ class Cell extends Base\Test
 		assert($cell->description('%:') === "Name to represent the element:");
 
 		// details
-		assert($cell->details() === array('Cannot be empty','Length must be at maximum 100 characters'));
-		assert($cell->details(false) === array('required',array('maxLength'=>100)));
+		assert($cell->details() === ['Cannot be empty','Length must be at maximum 100 characters']);
+		assert($cell->details(false) === ['required',['maxLength'=>100]]);
 
 		// form
 		assert(strlen($cell->form()) === 76);
@@ -279,7 +279,7 @@ class Cell extends Base\Test
 
 		// formHidden
 		assert($cell->formHidden() === "<input data-required='1' name='name' type='hidden' value='2'/>");
-		assert($cell->formHidden(array('data-required'=>null)) === "<input name='name' type='hidden' value='2'/>");
+		assert($cell->formHidden(['data-required'=>null]) === "<input name='name' type='hidden' value='2'/>");
 
 		// formPlaceholder
 		assert(strlen($cell->formPlaceholder('placeholder')) === 102);
@@ -339,12 +339,12 @@ class Cell extends Base\Test
 		assert($cell->get() === 'okabcde');
 		assert($cell->get() === 'okabcde');
 		assert($cell->set('okabcde')->value() === 'ok');
-		$row = $tb->insert(array('date'=>time(),'name'=>3,'user_id'=>1,'enum'=>3),array('strict'=>true));
+		$row = $tb->insert(['date'=>time(),'name'=>3,'user_id'=>1,'enum'=>3],['strict'=>true]);
 		assert($row['name']->value() === '3');
 		assert($row['name']->get() === '3abcde');
 
 		// export
-		assert($cell->export() === array('okabcde'));
+		assert($cell->export() === ['okabcde']);
 
 		// exportCommon
 
@@ -361,7 +361,7 @@ class Cell extends Base\Test
 
 		// set
 		assert($cell->set(3) instanceof Orm\Cell);
-		assert($date->set('03-03-2017',array('preValidate'=>true)) === $date);
+		assert($date->set('03-03-2017',['preValidate'=>true]) === $date);
 
 		// setInitial
 		$cell->setInitial('ok');
@@ -393,8 +393,8 @@ class Cell extends Base\Test
 		assert($cell->isUnique() === true);
 
 		// duplicate
-		assert($active->duplicate() === array(2,3));
-		assert($cell->duplicate() === array());
+		assert($active->duplicate() === [2,3]);
+		assert($cell->duplicate() === []);
 
 		// update
 
@@ -402,10 +402,10 @@ class Cell extends Base\Test
 
 		// refresh
 		$row = $cell->row();
-		$db->update($tb,array('name'=>'ok'),$row);
+		$db->update($tb,['name'=>'ok'],$row);
 		assert($cell->value() === '');
 		assert($cell->refresh()->value() === 'ok');
-		$db->update($tb,array('name'=>''),$row);
+		$db->update($tb,['name'=>''],$row);
 		assert($cell->alive());
 		assert($cell->refresh()->value() === '');
 		assert($cell->set('ok') === $cell);

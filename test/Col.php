@@ -14,7 +14,7 @@ class Col extends Base\Test
 		$db = Orm\Db::inst();
 		$table = "ormCol";
 		assert($db->truncate($table) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','active','name','password','email','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james','james','james@gmail.com',10,11,12,13),array(2,2,'james2','james2','james2@gmail.com',20,21,22,23)) === array(1,2));
+		assert($db->inserts($table,['id','active','name','password','email','dateAdd','userAdd','dateModify','userModify'],[1,1,'james','james','james@gmail.com',10,11,12,13],[2,2,'james2','james2','james2@gmail.com',20,21,22,23]) === [1,2]);
 		$tb = $db[$table];
 		$col = $tb['name'];
 		$id = $tb->cols()->get('id');
@@ -242,7 +242,7 @@ class Col extends Base\Test
 		assert($col->isVisible(null));
 		assert(!$dateAdd->isVisible(null));
 		assert($dateAdd->isVisible(12345));
-		assert(!$col->isVisible(null,array('tag'=>'inputHidden')));
+		assert(!$col->isVisible(null,['tag'=>'inputHidden']));
 
 		// isVisibleGeneral
 		assert($col->isVisibleGeneral());
@@ -266,9 +266,9 @@ class Col extends Base\Test
 		assert($lang->tag() === 'inputText');
 		assert($multi->tag() === 'textarea');
 		assert($check->tag() === 'textarea');
-		assert($col->tag(array('tag'=>'div')) === 'div');
-		assert($col->tag(array('tag'=>'textarea')) === 'textarea');
-		assert($col->tag(array('tag'=>'inputEmail')) === 'inputEmail');
+		assert($col->tag(['tag'=>'div']) === 'div');
+		assert($col->tag(['tag'=>'textarea']) === 'textarea');
+		assert($col->tag(['tag'=>'inputEmail']) === 'inputEmail');
 
 		// isFormTag
 		assert($email->isFormTag());
@@ -278,8 +278,8 @@ class Col extends Base\Test
 		assert($lang->isFormTag());
 		assert($multi->isFormTag());
 		assert($check->isFormTag());
-		assert(!$col->isFormTag(array('tag'=>'div')));
-		assert($col->isFormTag(array('tag'=>'textarea')));
+		assert(!$col->isFormTag(['tag'=>'div']));
+		assert($col->isFormTag(['tag'=>'textarea']));
 
 		// complexTag
 		assert($lang->complexTag() === 'radio');
@@ -290,23 +290,23 @@ class Col extends Base\Test
 		assert($lang->pair('name') === 'relationLang');
 
 		// rulePreValidate
-		assert($col->rulePreValidate() === array());
-		assert($date->rulePreValidate() === array('dateToDay'));
-		assert($date->rulePreValidate(true) === array('Must be a valid date (MM-DD-YYYY)'));
+		assert($col->rulePreValidate() === []);
+		assert($date->rulePreValidate() === ['dateToDay']);
+		assert($date->rulePreValidate(true) === ['Must be a valid date (MM-DD-YYYY)']);
 
 		// ruleValidate
-		assert($col->ruleValidate() === array('string','maxLength'=>100));
+		assert($col->ruleValidate() === ['string','maxLength'=>100]);
 		assert($col->ruleValidate(true)[0] === 'Must be a string');
 
 		// rulePreValidateCommon
 
 		// attrCompare
-		assert($col->attrCompare() === array());
+		assert($col->attrCompare() === []);
 		assert($dateStart->attrCompare()['<='] instanceof Orm\Col);
 
 		// ruleCompare
-		assert($col->ruleCompare() === array());
-		assert($dateStart->ruleCompare() === array('<='=>$dateEnd));
+		assert($col->ruleCompare() === []);
+		assert($dateStart->ruleCompare() === ['<='=>$dateEnd]);
 		assert($dateStart->ruleCompare(true)[0] === 'Must be equal or smaller than End date');
 
 		// ruleRequired
@@ -325,11 +325,11 @@ class Col extends Base\Test
 		assert($range->ruleEditable(true) === 'Cannot be modified');
 
 		// ruleMaxLength
-		assert($col->ruleMaxLength() === array('maxLength'=>100));
+		assert($col->ruleMaxLength() === ['maxLength'=>100]);
 		assert($col->ruleMaxLength(true) === 'Length must be at maximum 100 characters');
 
 		// rules
-		assert($col->rules() === array('required'=>'required','unique'=>'unique','validate'=>array('string','maxLength'=>100)));
+		assert($col->rules() === ['required'=>'required','unique'=>'unique','validate'=>['string','maxLength'=>100]]);
 		assert($col->rules(true)['unique'] === 'Must be unique');
 		assert(count($col->rules(true)) === 3);
 		assert(count($date->rules()) === 2);
@@ -348,7 +348,7 @@ class Col extends Base\Test
 		// rulesWrapClosure
 
 		// ruleLangOption
-		assert($col->ruleLangOption() === array('path'=>array('tables','ormCol','name')));
+		assert($col->ruleLangOption() === ['path'=>['tables','ormCol','name']]);
 
 		// pattern
 		assert($col->pattern() === null);
@@ -361,24 +361,24 @@ class Col extends Base\Test
 		// preValidate
 		assert($col->preValidate('ok'));
 		assert($date->preValidate(null));
-		assert($date->preValidate('ok') === array('dateToDay'));
+		assert($date->preValidate('ok') === ['dateToDay']);
 		assert($date->preValidate('02-02-2017'));
 
 		// validate
 		assert($col->validate('OK'));
-		assert($col->validate('OKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOK') === array(array('maxLength'=>100)));
-		assert($col->validate(123) === array('string'));
-		assert($col->validate(123,true) === array('Must be a string'));
-		assert($col->validate('OKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOK',true) === array('Length must be at maximum 100 characters'));
+		assert($col->validate('OKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOK') === [['maxLength'=>100]]);
+		assert($col->validate(123) === ['string']);
+		assert($col->validate(123,true) === ['Must be a string']);
+		assert($col->validate('OKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOKsaddsadsaadsOK',true) === ['Length must be at maximum 100 characters']);
 
 		// triggerValidate
 
 		// compare
 		assert($dateStart->compare(1234));
-		assert($dateStart->compare(1234,array('dateEnd'=>1245)));
-		assert($dateStart->compare(1234,array('dateEnd'=>1233))['<='] === $dateEnd);
-		assert($dateStart->compare(1234,array('dateEnd'=>1233),true) === array('Must be equal or smaller than End date'));
-		assert($dateStart->compare(1234,array('dateEnd'=>1234),true));
+		assert($dateStart->compare(1234,['dateEnd'=>1245]));
+		assert($dateStart->compare(1234,['dateEnd'=>1233])['<='] === $dateEnd);
+		assert($dateStart->compare(1234,['dateEnd'=>1233],true) === ['Must be equal or smaller than End date']);
+		assert($dateStart->compare(1234,['dateEnd'=>1234],true));
 
 		// isUnique
 		assert(!$col->isUnique('james',2));
@@ -389,11 +389,11 @@ class Col extends Base\Test
 		assert($col->unique('james',1) === true);
 
 		// duplicate
-		assert($col->duplicate('james') === array(1));
-		assert($col->duplicate('james',array(1,2)) === array());
-		assert($col->duplicate('james',array(2)) === array(1));
-		assert($col->duplicate('james',1) === array());
-		assert($col->duplicate(null) === array());
+		assert($col->duplicate('james') === [1]);
+		assert($col->duplicate('james',[1,2]) === []);
+		assert($col->duplicate('james',[2]) === [1]);
+		assert($col->duplicate('james',1) === []);
+		assert($col->duplicate(null) === []);
 
 		// replace
 		assert($email->replace('gmail.com','hotmail.com') === 2);
@@ -405,10 +405,10 @@ class Col extends Base\Test
 		assert($col->required('') === 'required');
 
 		// completeValidation
-		assert($col->completeValidation(2) === array('string'));
-		assert($col->completeValidation(0) === array('string'));
-		assert($col->completeValidation('') === array('required'));
-		assert($col->completeValidation('',array(),true) === array('Cannot be empty'));
+		assert($col->completeValidation(2) === ['string']);
+		assert($col->completeValidation(0) === ['string']);
+		assert($col->completeValidation('') === ['required']);
+		assert($col->completeValidation('',[],true) === ['Cannot be empty']);
 
 		// makeCompleteValidation
 
@@ -486,11 +486,11 @@ class Col extends Base\Test
 		assert($id->autoCast(0) === 0);
 		assert($id->autoCast('') === 0);
 		assert($id->autoCast(null) === 0);
-		assert($id->autoCast(array(1,2,3)) === '[1,2,3]');
+		assert($id->autoCast([1,2,3]) === '[1,2,3]');
 		assert($dateAdd->autoCast('1,3') === 1);
 		assert($dateAdd->autoCast(1.3) === 1);
 		assert($dateAdd->autoCast('') === null);
-		assert($col->autoCast(array(1,2,3)) === '[1,2,3]');
+		assert($col->autoCast([1,2,3]) === '[1,2,3]');
 		assert($col->autoCast(0) === '0');
 		assert($col->autoCast('') === null);
 		assert($float->autoCast(2) === 2.0);
@@ -505,13 +505,13 @@ class Col extends Base\Test
 		assert($float->autoCast(false) === (float) 0);
 
 		// insertCallable
-		assert(is_int($dateAdd->insertCallable(null,array(),array())));
-		assert($col->insertCallable(null,array(),array()) === null);
+		assert(is_int($dateAdd->insertCallable(null,[],[])));
+		assert($col->insertCallable(null,[],[]) === null);
 
 		// updateCallable
 
 		// insert
-		assert(is_int($dateAdd->insert(null,array())));
+		assert(is_int($dateAdd->insert(null,[])));
 
 		// patternType
 		assert($col->patternType() === null);
@@ -534,11 +534,11 @@ class Col extends Base\Test
 
 		// details
 		assert(count($col->details()) === 3);
-		assert($email->details() === array('Cannot be empty','Length must be at maximum 100 characters'));
-		assert($email->details(false) === array('required',array('maxLength'=>100)));
+		assert($email->details() === ['Cannot be empty','Length must be at maximum 100 characters']);
+		assert($email->details(false) === ['required',['maxLength'=>100]]);
 
 		// makeDetails
-		assert($col->makeDetails() === array());
+		assert($col->makeDetails() === []);
 
 		// collation
 		assert($email->collation() === 'utf8mb4_general_ci');
@@ -548,18 +548,18 @@ class Col extends Base\Test
 		assert($email->panel() === 'default');
 
 		// formAttr
-		assert($email->formAttr() === array('data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email'));
-		assert($email->formAttr(array('data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email')) === array('data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email'));
-		assert($email->formAttr(array('placeholder'=>'myplace','data-required'=>'ok'))['data-required'] === 'ok');
-		assert(count($email->formAttr(array('placeholder'=>'myplace','data-required'=>'ok'))) === 5);
-		assert(count($email->formAttr(array('placeholder'=>'myplace','ok','ok2','name'=>'james2','data-required'=>'ok'))) === 7);
+		assert($email->formAttr() === ['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']);
+		assert($email->formAttr(['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']) === ['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']);
+		assert($email->formAttr(['placeholder'=>'myplace','data-required'=>'ok'])['data-required'] === 'ok');
+		assert(count($email->formAttr(['placeholder'=>'myplace','data-required'=>'ok'])) === 5);
+		assert(count($email->formAttr(['placeholder'=>'myplace','ok','ok2','name'=>'james2','data-required'=>'ok'])) === 7);
 
 		// formComplexAttr
 		assert(count($dateAdd->formAttr()) === 2);
 		assert(count($dateAdd->formComplexAttr()) === 0);
 
 		// form
-		assert($col->form('val',array('name'=>'test','data-required'=>null)) === "<input name='test' maxlength='100' type='text' value='val'/>");
+		assert($col->form('val',['name'=>'test','data-required'=>null]) === "<input name='test' maxlength='100' type='text' value='val'/>");
 		assert($col->form() === "<input data-required='1' maxlength='100' name='name' type='text'/>");
 		assert($dateAdd->form() === "<input maxlength='11' name='dateAdd' type='text'/>");
 		assert($email->form() === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='default@def.james'/>");
@@ -567,13 +567,13 @@ class Col extends Base\Test
 		assert($email->form(false) === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='0'/>");
 		assert($email->form('test@gmail.com') === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='test@gmail.com'/>");
 		assert($password->form() === "<input data-required='1' data-pattern='^(?=.{5,30})(?=.*\d)(?=.*[A-z]).*' maxlength='100' name='password' type='password' value='lol2'/>");
-		assert(strlen($col->form(array(1=>'no',2=>'yes'),array('tag'=>'checkbox'))) === 249);
-		assert($col->form(array(1=>'no',2=>'yes'),array('name'=>'ok','tag'=>'select','data-required'=>null)) === "<select name='ok'><option value='1'>no</option><option value='2'>yes</option></select>");
-		assert(strlen($col->form(array(1=>'no',2=>'yes'),array('data-required'=>null,'name'=>'ok','tag'=>'radio'))) === 191);
+		assert(strlen($col->form([1=>'no',2=>'yes'],['tag'=>'checkbox'])) === 249);
+		assert($col->form([1=>'no',2=>'yes'],['name'=>'ok','tag'=>'select','data-required'=>null]) === "<select name='ok'><option value='1'>no</option><option value='2'>yes</option></select>");
+		assert(strlen($col->form([1=>'no',2=>'yes'],['data-required'=>null,'name'=>'ok','tag'=>'radio'])) === 191);
 
 		// formHidden
 		assert($email->formHidden() === "<input data-required='1' name='email' type='hidden'/>");
-		assert($email->formHidden(true,array('data-required'=>null)) === "<input name='email' type='hidden' value='default@def.james'/>");
+		assert($email->formHidden(true,['data-required'=>null]) === "<input name='email' type='hidden' value='default@def.james'/>");
 
 		// formPlaceholder
 		assert($email->formPlaceholder(true,'myPlaceholder') === "<input placeholder='myPlaceholder' data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='default@def.james'/>");
@@ -588,9 +588,9 @@ class Col extends Base\Test
 		assert($dateAdd->formComplexNothing() === "<div class='nothing'>Nothing</div>");
 
 		// formWrap
-		assert(strlen($email->formWrap('br',null,true,array('name'=>'notEmail'))) === 251);
-		assert(strlen($email->formWrap('br',null,true,array('type'=>'text','name'=>'notEmail'))) === 251);
-		assert(strlen($email->formWrap('br',null,true,array('tag'=>'textarea','name'=>'notEmail'))) === 227);
+		assert(strlen($email->formWrap('br',null,true,['name'=>'notEmail'])) === 251);
+		assert(strlen($email->formWrap('br',null,true,['type'=>'text','name'=>'notEmail'])) === 251);
+		assert(strlen($email->formWrap('br',null,true,['tag'=>'textarea','name'=>'notEmail'])) === 227);
 		assert(strlen($email->formWrap('table')) === 279);
 		assert(strlen($email->formWrap('table',null,'james@ok')) === 270);
 		assert(strlen($email->formWrap('table',"%:",'james@ok')) === 271);
@@ -639,7 +639,7 @@ class Col extends Base\Test
 		assert($date->relation() instanceof Orm\ColRelation);
 
 		// primaries
-		assert($id->primaries(1) === array(1));
+		assert($id->primaries(1) === [1]);
 
 		// cell
 		assert($email->cell() === null);

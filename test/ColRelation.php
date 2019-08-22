@@ -14,7 +14,7 @@ class ColRelation extends Base\Test
 		$db = Orm\Db::inst();
 		$table = "ormCol";
 		assert($db->truncate($table) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','dateAdd','dateModify'),array(1,time(),time()),array(2,time()+3000000,time()+2000000)) === array(1,2));
+		assert($db->inserts($table,['id','dateAdd','dateModify'],[1,time(),time()],[2,time()+3000000,time()+2000000]) === [1,2]);
 		$tb = $db[$table];
 		$user = $db['user'];
 		$userId = $tb['user_id']->relation();
@@ -92,9 +92,9 @@ class ColRelation extends Base\Test
 		assert($multi->defaultOrderCode() === 3);
 
 		// allowedOrdering
-		assert($userAdd->allowedOrdering() === array('key'=>true,'value'=>true));
-		assert($multi->allowedOrdering() === array('value'=>true));
-		assert($relationCall->allowedOrdering() === array('value'=>true));
+		assert($userAdd->allowedOrdering() === ['key'=>true,'value'=>true]);
+		assert($multi->allowedOrdering() === ['value'=>true]);
+		assert($relationCall->allowedOrdering() === ['value'=>true]);
 
 		// relationTable
 		assert($userAdd->relationTable() instanceof Orm\Table);
@@ -123,7 +123,7 @@ class ColRelation extends Base\Test
 		assert($relationCall->size() === 3);
 
 		// all
-		assert($array->all() === array('test',3,4,9=>'ok'));
+		assert($array->all() === ['test',3,4,9=>'ok']);
 		assert(count($range->all()) === 11);
 		assert(count($lang->all()) === 3);
 		assert(count($multi->all()) === 3);
@@ -135,24 +135,24 @@ class ColRelation extends Base\Test
 		assert(count($userId->all(false)) === 4);
 		assert(count($userAdd->all()) === 4);
 		assert(count($userAdd2->all()) === 4);
-		assert(array_keys($userAdd->all(false)) === array(4,3,2,1));
-		assert($range->all(false,array('limit'=>3)) === array(0,2=>2,4=>4));
-		assert($range->all(false,array('limit'=>array(2=>2))) === array(4=>4,6=>6));
+		assert(array_keys($userAdd->all(false)) === [4,3,2,1]);
+		assert($range->all(false,['limit'=>3]) === [0,2=>2,4=>4]);
+		assert($range->all(false,['limit'=>[2=>2]]) === [4=>4,6=>6]);
 		assert($range->count() === 11);
 		assert($range->size() === 11);
 		assert($range->size(false) === 11);
-		assert(count($userAdd2->all(false,array('not'=>array(1)))) === 3);
+		assert(count($userAdd2->all(false,['not'=>[1]])) === 3);
 		assert(count($dateAdd->all()) >= 2);
-		assert(key($lang->all(false,array('order'=>4))) === 3);
-		assert(key($userAdd->all(false,array('order'=>1))) === 1);
-		assert(key($userAdd->all(false,array('order'=>2))) === 4);
-		assert(key($userAdd->all(false,array('order'=>3))) === 2);
-		assert(key($userAdd->all(false,array('order'=>4))) === 1);
-		assert(key($userAdd->all(true,array('order'=>1))) === 1);
-		assert(key($userAdd->all(true,array('order'=>2))) === 4);
-		assert(key($userAdd->all(true,array('order'=>3))) === 2);
-		assert(key($userAdd->all(true,array('order'=>4))) === 1);
-		assert($relationCall->all() === array('test','test2','test3'));
+		assert(key($lang->all(false,['order'=>4])) === 3);
+		assert(key($userAdd->all(false,['order'=>1])) === 1);
+		assert(key($userAdd->all(false,['order'=>2])) === 4);
+		assert(key($userAdd->all(false,['order'=>3])) === 2);
+		assert(key($userAdd->all(false,['order'=>4])) === 1);
+		assert(key($userAdd->all(true,['order'=>1])) === 1);
+		assert(key($userAdd->all(true,['order'=>2])) === 4);
+		assert(key($userAdd->all(true,['order'=>3])) === 2);
+		assert(key($userAdd->all(true,['order'=>4])) === 1);
+		assert($relationCall->all() === ['test','test2','test3']);
 
 		// exists
 		assert(!$lang->exists('oken'));
@@ -174,30 +174,30 @@ class ColRelation extends Base\Test
 		assert(!$userId->in('nobody (#1)','adminz (#2)'));
 
 		// search
-		assert($userId->search('nobo ody') === array(1=>'nobody (#1)'));
-		assert($userId->search('adm') === array(2=>'admin (#2)'));
-		assert($userId->search('zzz') === array());
-		assert($lang->search('wll LEL') === array(3=>'wllel'));
-		assert($lang->search('wll + LEL',array('searchSeparator'=>'+')) === array(3=>'wllel'));
-		assert($lang->search('wll') === array(3=>'wllel'));
-		assert($lang->search('cxzzcxzxc') === array());
-		assert($lang->search('e',array('limit'=>1)) === array(2=>'oken'));
-		assert($lang->search('e',array('not'=>array(2),'limit'=>1)) === array(3=>'wllel'));
+		assert($userId->search('nobo ody') === [1=>'nobody (#1)']);
+		assert($userId->search('adm') === [2=>'admin (#2)']);
+		assert($userId->search('zzz') === []);
+		assert($lang->search('wll LEL') === [3=>'wllel']);
+		assert($lang->search('wll + LEL',['searchSeparator'=>'+']) === [3=>'wllel']);
+		assert($lang->search('wll') === [3=>'wllel']);
+		assert($lang->search('cxzzcxzxc') === []);
+		assert($lang->search('e',['limit'=>1]) === [2=>'oken']);
+		assert($lang->search('e',['not'=>[2],'limit'=>1]) === [3=>'wllel']);
 		assert($lang->empty() === $lang);
-		assert($lang->search('e',array('limit'=>array(2=>1))) === array(3=>'wllel'));
-		assert($lang->search('e',array('limit'=>array(1=>1))) === array(2=>'oken'));
-		assert(key($lang->search('e',array('order'=>2))) === 3);
-		assert(key($lang->search('e',array('order'=>3))) === 2);
+		assert($lang->search('e',['limit'=>[2=>1]]) === [3=>'wllel']);
+		assert($lang->search('e',['limit'=>[1=>1]]) === [2=>'oken']);
+		assert(key($lang->search('e',['order'=>2])) === 3);
+		assert(key($lang->search('e',['order'=>3])) === 2);
 
 		// notOrderLimit
 
 		// keyValue
-		assert($lang->keyValue(2) === array(2=>'oken'));
-		assert($userId->keyValue(2) === array(2=>'admin (#2)'));
-		assert($userIds->keyValue(2) === array(2=>'admin (#2)'));
-		assert(count($userIds->keyValue(array(1,2,3))) === 3);
-		assert(count($userIds->keyValue(array(2,1,3,1000))) === 4);
-		assert(count($userIds->keyValue(array(1,2,3,1000),true)) === 3);
+		assert($lang->keyValue(2) === [2=>'oken']);
+		assert($userId->keyValue(2) === [2=>'admin (#2)']);
+		assert($userIds->keyValue(2) === [2=>'admin (#2)']);
+		assert(count($userIds->keyValue([1,2,3])) === 3);
+		assert(count($userIds->keyValue([2,1,3,1000])) === 4);
+		assert(count($userIds->keyValue([1,2,3,1000],true)) === 3);
 
 		// one
 		assert($lang->one(2) === 'oken');
@@ -206,24 +206,24 @@ class ColRelation extends Base\Test
 		assert($userAdd->one(2) === 'admin (#2)');
 
 		// many
-		assert($multi->many(2) === array(2=>'oken'));
-		assert($multi->many(array(2,3)) === array(2=>'oken',3=>'wllel'));
-		assert($multi->many(array(2,3,1000)) === array(2=>'oken',3=>'wllel',1000=>null));
-		assert($multi->many(array(2,3,1000),true) === array(2=>'oken',3=>'wllel'));
-		assert($userIds->many(1) === array(1=>'nobody (#1)'));
-		assert($userIds->many(array(2,1,1000)) === array(2=>'admin (#2)',1=>'nobody (#1)',1000=>null));
-		assert($userIds->many(array(2,1,1000),true) === array(2=>'admin (#2)',1=>'nobody (#1)'));
+		assert($multi->many(2) === [2=>'oken']);
+		assert($multi->many([2,3]) === [2=>'oken',3=>'wllel']);
+		assert($multi->many([2,3,1000]) === [2=>'oken',3=>'wllel',1000=>null]);
+		assert($multi->many([2,3,1000],true) === [2=>'oken',3=>'wllel']);
+		assert($userIds->many(1) === [1=>'nobody (#1)']);
+		assert($userIds->many([2,1,1000]) === [2=>'admin (#2)',1=>'nobody (#1)',1000=>null]);
+		assert($userIds->many([2,1,1000],true) === [2=>'admin (#2)',1=>'nobody (#1)']);
 
 		// row
 		assert($userAdd->row(2) instanceof Orm\Row);
 
 		// rows
 		assert($userAdd->rows(2) instanceof Orm\Rows);
-		assert($userIds->rows(array(3,2,1)) instanceof Orm\Rows);
-		assert($userIds->rows(array(3,2,1,100))->isCount(3));
+		assert($userIds->rows([3,2,1]) instanceof Orm\Rows);
+		assert($userIds->rows([3,2,1,100])->isCount(3));
 
 		// get
-		assert($multi->get('2,3') === array(2=>'oken',3=>'wllel'));
+		assert($multi->get('2,3') === [2=>'oken',3=>'wllel']);
 		assert($lang->get(8) === null);
 		assert($lang->get(2) === 'oken');
 
@@ -234,11 +234,11 @@ class ColRelation extends Base\Test
 		assert($lang->getStr(8) === null);
 
 		// getKeyValue
-		assert($lang->getKeyValue(2) === array(2=>'oken'));
+		assert($lang->getKeyValue(2) === [2=>'oken']);
 
 		// getRow
 		assert($userAdd->getRow(2) instanceof Orm\Row);
-		assert($userIds->getRow(array(3,2,1)) instanceof Orm\Rows);
+		assert($userIds->getRow([3,2,1]) instanceof Orm\Rows);
 		assert($userAdd->getRow(1000) === null);
 		assert($userIds->getRow(1000)->isEmpty());
 

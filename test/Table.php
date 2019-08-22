@@ -15,7 +15,7 @@ class Table extends Base\Test
 		$db = Orm\Db::inst();
 		$table = "ormTable";
 		assert($db->truncate($table) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','active','name_en','dateAdd','userAdd','dateModify','userModify','name_fr','email','date'),array(1,1,'james',10,11,12,13,'james_fr','james@james.com',123312213),array(2,2,'james2',20,21,22,23,'james_fr','james@james.com',123312213)) === array(1,2));
+		assert($db->inserts($table,['id','active','name_en','dateAdd','userAdd','dateModify','userModify','name_fr','email','date'],[1,1,'james',10,11,12,13,'james_fr','james@james.com',123312213],[2,2,'james2',20,21,22,23,'james_fr','james@james.com',123312213]) === [1,2]);
 		$tables = $db->tables();
 		$tb = $db[$table];
 		$tb->rowsUnlink();
@@ -42,7 +42,7 @@ class Table extends Base\Test
 		// onTruncated
 
 		// toArray
-		assert($tb->toArray() === array(1=>'james',2=>'james2'));
+		assert($tb->toArray() === [1=>'james',2=>'james2']);
 
 		// cast
 		assert($tb->_cast() === $table);
@@ -90,10 +90,10 @@ class Table extends Base\Test
 		assert(!$tb->isSearchTermValid(null));
 		assert(!$tb->isSearchTermValid('a'));
 		assert($tb->isSearchTermValid('abc'));
-		assert(!$tb->isSearchTermValid(array()));
-		assert($tb->isSearchTermValid(array('abc','bcd')));
-		assert($tb->isSearchTermValid(array('ab','c')));
-		assert(!$tb->isSearchTermValid(array('a','c')));
+		assert(!$tb->isSearchTermValid([]));
+		assert($tb->isSearchTermValid(['abc','bcd']));
+		assert($tb->isSearchTermValid(['ab','c']));
+		assert(!$tb->isSearchTermValid(['a','c']));
 
 		// sameTable
 		assert($tb->sameTable($tb[1]));
@@ -125,32 +125,32 @@ class Table extends Base\Test
 		assert($tb->priority() !== $deep->priority());
 
 		// where
-		assert($tb->where() === array());
-		assert($tb->where(array('ok'=>'yeah')) === array('ok'=>'yeah'));
-		assert($tb->where(true) === array('active'=>1,array('name_en',true),array('name_fr',true),array('email',true),array('date',true)));
-		assert(count($tb->where(array('active'=>4,true))) === 10);
-		assert(count($tb->where(array(true,'active'=>4,true))) === 10);
+		assert($tb->where() === []);
+		assert($tb->where(['ok'=>'yeah']) === ['ok'=>'yeah']);
+		assert($tb->where(true) === ['active'=>1,['name_en',true],['name_fr',true],['email',true],['date',true]]);
+		assert(count($tb->where(['active'=>4,true])) === 10);
+		assert(count($tb->where([true,'active'=>4,true])) === 10);
 		assert(is_int($tb3->where()[0][2]));
-		assert(count($tb3->where(array('ok'=>'yeah'))) === 2);
+		assert(count($tb3->where(['ok'=>'yeah'])) === 2);
 		
 		// filter
-		assert($tb->filter() === array());
+		assert($tb->filter() === []);
 
 		// commonWhereFilter
 
 		// commonWhereFilterArg
 
 		// whereFilterTrue
-		assert($tb->whereFilterTrue() === array('active'=>1,array('name_en',true),array('name_fr',true),array('email',true),array('date',true)));
-		assert($logSql->whereFilterTrue() === array(array('type',true),array('context',true),array('request',true),array('userCommit',true)));
+		assert($tb->whereFilterTrue() === ['active'=>1,['name_en',true],['name_fr',true],['email',true],['date',true]]);
+		assert($logSql->whereFilterTrue() === [['type',true],['context',true],['request',true],['userCommit',true]]);
 		assert(count($tb3->whereFilterTrue()) === 1);
 		
 		// whereFilter
-		assert($tb->whereFilter() === array());
+		assert($tb->whereFilter() === []);
 		assert(is_int($tb3->whereFilter()[0][2]));
 		
 		// whereAll
-		assert($tb->whereAll() === array(array('id','>=',1)));
+		assert($tb->whereAll() === [['id','>=',1]]);
 		
 		// like
 		assert($tb->like() === 'like');
@@ -159,9 +159,9 @@ class Table extends Base\Test
 		assert($tb->searchMinLength() === 3);
 
 		// order
-		assert($tb->order() === array('id'=>'desc'));
+		assert($tb->order() === ['id'=>'desc']);
 		assert(count($tb->order(false)) === 2);
-		assert($db['lang']->order(false) === array('order'=>$db['lang']['id'],'direction'=>'desc'));
+		assert($db['lang']->order(false) === ['order'=>$db['lang']['id'],'direction'=>'desc']);
 		assert($tb->order('direction') === 'desc');
 
 		// limit
@@ -211,7 +211,7 @@ class Table extends Base\Test
 		// colMake
 
 		// colAttr
-		assert($tb2->colAttr('myRelation') === array('relation'=>array('test',3,4,9=>'ok')));
+		assert($tb2->colAttr('myRelation') === ['relation'=>['test',3,4,9=>'ok']]);
 
 		// cols
 		assert(count($tb->cols()) === 12);
@@ -223,8 +223,8 @@ class Table extends Base\Test
 		assert($tb->col($tb->col('dateModify')) instanceof Orm\Col);
 		assert($tb->col($tb[1]['id']) instanceof Orm\Col);
 		assert($tb->col(0) === $tb->col('id'));
-		assert($tb->col(array(1000,0)) === $tb->col('id'));
-		assert($tb->col(array('Lol','id')) === $tb->col('id'));
+		assert($tb->col([1000,0]) === $tb->col('id'));
+		assert($tb->col(['Lol','id']) === $tb->col('id'));
 
 		// colPattern
 		assert($tb->colPattern('name')->name() === 'name_en');
@@ -282,8 +282,8 @@ class Table extends Base\Test
 		assert($tb->rowsLoad() instanceof Orm\Rows);
 
 		// rowsValue
-		assert($tb->rowsValue(2) === array(0=>2));
-		assert($tb->rowsValue(true) === array(0=>1));
+		assert($tb->rowsValue(2) === [0=>2]);
+		assert($tb->rowsValue(true) === [0=>1]);
 
 		// rows
 		assert($tb->rows(true) instanceof Orm\Rows);
@@ -307,7 +307,7 @@ class Table extends Base\Test
 
 		// rowsIn
 		$tb->rowsUnlink(2);
-		assert($tb->rows()->primaries() === array(1));
+		assert($tb->rows()->primaries() === [1]);
 		assert($tb->rowsIn(2,1)->count() === 1);
 		assert($tb->rows(2,1)->count() === 2);
 
@@ -329,12 +329,12 @@ class Table extends Base\Test
 		assert($tb->rowsDelete(1)->count() === 1);
 		assert($tb->rowsDelete()->count() === 0);
 		assert($tb->rows(1,2,3,4)->count() === 0);
-		assert($db->inserts($table,array('id','active','name_en','dateAdd','userAdd','dateModify','userModify','name_fr','email','date'),array(1,1,'james',10,11,12,13,'james_fr','james@test.com',121221121),array(2,2,'james2',20,21,22,23,'james_fr','james@test.com',121221121)) === array(1,2));
+		assert($db->inserts($table,['id','active','name_en','dateAdd','userAdd','dateModify','userModify','name_fr','email','date'],[1,1,'james',10,11,12,13,'james_fr','james@test.com',121221121],[2,2,'james2',20,21,22,23,'james_fr','james@test.com',121221121]) === [1,2]);
 		assert($tb->rowsLoad()->count() === 2);
 
 		// rowsUnlink
 		assert($tb->rows(1,2,3,4)->count() === 2);
-		assert($tb->rows()->primaries() === array(1,2));
+		assert($tb->rows()->primaries() === [1,2]);
 		$tb->rowsUnlink(1);
 		assert($tb->rows()->count() === 1);
 		assert($tb->rows(1,2,3,4)->count() === 2);
@@ -355,15 +355,15 @@ class Table extends Base\Test
 		// rowMake
 
 		// rowValue
-		assert($tb->rowValue(array('active'=>1)) === 1);
+		assert($tb->rowValue(['active'=>1]) === 1);
 		assert($tb->rowValue(true) === 1);
 
 		// row
 		assert($tb->row('1') instanceof Orm\Row);
 		assert($tb->row(1) instanceof Orm\Row);
 		assert($tb->row(25) === null);
-		assert($tb->row(array('id'=>1)) instanceof Orm\Row);
-		assert($tb->row(array('id'=>array(1,2))) instanceof Orm\Row);
+		assert($tb->row(['id'=>1]) instanceof Orm\Row);
+		assert($tb->row(['id'=>[1,2]]) instanceof Orm\Row);
 
 		// rowVisible
 		assert($tb->rowVisible('1') instanceof Orm\Row);
@@ -401,32 +401,32 @@ class Table extends Base\Test
 		assert($tb->selectPrimary(200000) === null);
 
 		// selects
-		assert($tb->selects(array('active'=>false))->isEmpty());
+		assert($tb->selects(['active'=>false])->isEmpty());
 
 		// selectPrimaries
-		assert($tb->selectPrimaries(array(1,2,1000)) === array(1,2));
+		assert($tb->selectPrimaries([1,2,1000]) === [1,2]);
 
 		// grab
-		assert($tb->grab(array('id'=>23))->isEmpty());
+		assert($tb->grab(['id'=>23])->isEmpty());
 
 		// grabVisible
 		assert($tb->grabVisible() instanceof Orm\Rows);
 
 		// insert
-		$insert = $tb->insert(array('date'=>time(),'active'=>null,'name_fr'=>'nomFr'));
+		$insert = $tb->insert(['date'=>time(),'active'=>null,'name_fr'=>'nomFr']);
 		assert($insert['active']->value() === null);
 		assert(is_int($insert['dateAdd']->value()));
 		assert($insert->isLinked());
 		assert($insert['name_en']->value() === 'LOL');
 		assert($insert->id() === 3);
-		$insert2 = $tb->insert(array('date'=>time(),'name_en'=>'LOL2','name_fr'=>'nomFr'));
+		$insert2 = $tb->insert(['date'=>time(),'name_en'=>'LOL2','name_fr'=>'nomFr']);
 		assert($insert2['name_en']->value() === 'LOL2');
 		assert($insert2->id() === 4);
-		$x = $tb->insert(array('date'=>time(),'name_en'=>'test','name_fr'=>'james'),array('default'=>true));
+		$x = $tb->insert(['date'=>time(),'name_en'=>'test','name_fr'=>'james'],['default'=>true]);
 		assert($x->delete() === 1);
-		$pre = $tb->insert(array('date'=>'03-03-17','name_en'=>'test','name_fr'=>'nomFr'),array('com'=>true,'preValidate'=>true,'default'=>true));
+		$pre = $tb->insert(['date'=>'03-03-17','name_en'=>'test','name_fr'=>'nomFr'],['com'=>true,'preValidate'=>true,'default'=>true]);
 		assert(strlen($tb->db()->com()->flush()) === 285);
-		$idInsert = $tb->insert(array('id'=>999,'date'=>'03-03-17','name_fr'=>'test'));
+		$idInsert = $tb->insert(['id'=>999,'date'=>'03-03-17','name_fr'=>'test']);
 		assert($idInsert->primary() === 999);
 		assert($tb->autoIncrement(false) === 1000);
 		assert($idInsert->delete() === 1);
@@ -464,21 +464,21 @@ class Table extends Base\Test
 		assert($tb->relation() instanceof Orm\TableRelation);
 
 		// segment
-		assert(current($tb->segment("[name_%lang%] [id] [id] [dateAdd]",false,null,array('id'=>'asc'))) === 'james 1 1 10');
-		assert(current($tb->segment("[name_%lang%] [id] [id] [dateAdd]",true,null,array('id'=>'asc'))) !== 'james 1 1 10');
+		assert(current($tb->segment("[name_%lang%] [id] [id] [dateAdd]",false,null,['id'=>'asc'])) === 'james 1 1 10');
+		assert(current($tb->segment("[name_%lang%] [id] [id] [dateAdd]",true,null,['id'=>'asc'])) !== 'james 1 1 10');
 
 		// keyValue
-		assert($tb->keyValue(0,array('james','name_en')) === array(2=>'james2',1=>'james',3=>'LOL',4=>'LOL2'));
-		assert(is_string($tb->keyValue(0,array('james','dateAdd'),true,3)[3]));
-		assert($tb->keyValue(0,array('james','name_[lang]'),true)[1] === 'james');
+		assert($tb->keyValue(0,['james','name_en']) === [2=>'james2',1=>'james',3=>'LOL',4=>'LOL2']);
+		assert(is_string($tb->keyValue(0,['james','dateAdd'],true,3)[3]));
+		assert($tb->keyValue(0,['james','name_[lang]'],true)[1] === 'james');
 
 		// search
-		assert($tb->search('james2') === array(2));
-		assert($tb->search('james',null,array(array('id'=>'asc')),array('method'=>'like')) === array(1,2));
-		assert($tb->search(array(array('james','james2')),null,null,array('method'=>'or|like')) === array(2,1));
-		assert($tb->search('james mes2',null,null,array('method'=>'like')) === array(2));
-		assert($tb->search('james + mes2',null,null,array('method'=>'like','searchSeparator'=>'+')) === array(2));
-		$rows = $tb->search('james mes2',null,null,array('output'=>'rows','what'=>'*'));
+		assert($tb->search('james2') === [2]);
+		assert($tb->search('james',null,[['id'=>'asc']],['method'=>'like']) === [1,2]);
+		assert($tb->search([['james','james2']],null,null,['method'=>'or|like']) === [2,1]);
+		assert($tb->search('james mes2',null,null,['method'=>'like']) === [2]);
+		assert($tb->search('james + mes2',null,null,['method'=>'like','searchSeparator'=>'+']) === [2]);
+		$rows = $tb->search('james mes2',null,null,['output'=>'rows','what'=>'*']);
 		assert($rows instanceof Orm\Rows);
 		$rows->unlink();
 
@@ -499,7 +499,7 @@ class Table extends Base\Test
 
 		// alterAutoIncrement
 		$tb->alterAutoIncrement(1000);
-		$row = $tb->insert(array('date'=>time(),'name_fr'=>'welll'));
+		$row = $tb->insert(['date'=>time(),'name_fr'=>'welll']);
 		assert($row->primary() === 1000);
 		$tb->alterAutoIncrement(0);
 		$row->unlink();
@@ -518,14 +518,14 @@ class Table extends Base\Test
 
 		// info
 		assert(count($tb->info()) === 4);
-		assert($tb->info()['row'] === array(1,3,4));
+		assert($tb->info()['row'] === [1,3,4]);
 
 		// sql
-		assert($tb->sql(array('search'=>'what','page'=>2,'limit'=>10)) instanceof Orm\Sql);
-		assert($tb->sql(array('where'=>array('active'=>1),'page'=>2,'limit'=>1))->trigger()->isCount(1));
-		assert($tb->sql(array('where'=>array(array('active','in',array(1,2,3,4))),'page'=>1,'limit'=>10))->trigger()->isCount(3));
-		assert($tb->sql(array('order'=>'james','direction'=>'desc'))->get('order')[1] === array('id','asc'));
-		assert(count($tb->sql(array('order'=>'id','direction'=>'desc'))->get('order')) === 1);
+		assert($tb->sql(['search'=>'what','page'=>2,'limit'=>10]) instanceof Orm\Sql);
+		assert($tb->sql(['where'=>['active'=>1],'page'=>2,'limit'=>1])->trigger()->isCount(1));
+		assert($tb->sql(['where'=>[['active','in',[1,2,3,4]]],'page'=>1,'limit'=>10])->trigger()->isCount(3));
+		assert($tb->sql(['order'=>'james','direction'=>'desc'])->get('order')[1] === ['id','asc']);
+		assert(count($tb->sql(['order'=>'id','direction'=>'desc'])->get('order')) === 1);
 
 		// hierarchy
 
@@ -538,7 +538,7 @@ class Table extends Base\Test
 		assert($tb->sourceOne(true,true,$i)['id'] === 3);
 		$target = new class(true) extends Main\File implements Main\Contract\Import {
 			use Main\File\_csv;
-			public static $config = array();
+			public static $config = [];
 			public function __construct(...$args) 
 			{
 				static::__config();
@@ -567,7 +567,7 @@ class Table extends Base\Test
 		// attr
 		assert(count($tb->attr()) === 20); // un de plus car @app n'est pas enlevé
 		assert($tb->attr('test') === 'ok');
-		assert($tb->attr('key') === array('key',0));
+		assert($tb->attr('key') === ['key',0]);
 		assert($tb->attrCall('test') === 'ok');
 		assert($tb->attrNotEmpty('test'));
 

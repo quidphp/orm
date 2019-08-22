@@ -14,7 +14,7 @@ class Cells extends Base\Test
 		$db = Orm\Db::inst();
 		$table = "ormCells";
 		assert($db->truncate($table) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','active','name_en','date','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',time(),10,11,12,13),array(2,2,'james2',time(),20,21,22,23)) === array(1,2));
+		assert($db->inserts($table,['id','active','name_en','date','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',time(),10,11,12,13],[2,2,'james2',time(),20,21,22,23]) === [1,2]);
 		$tb = $db[$table];
 		$row = $tb[1];
 		$row2 = $tb[2];
@@ -29,7 +29,7 @@ class Cells extends Base\Test
 		// onPrepareKey
 		assert($cells->get($tb->col('id')) === $cells['id']);
 		assert($cells->get(0)->name() === 'id');
-		assert($cells->get(array('LOL',1000,1))->name() === 'name_en');
+		assert($cells->get(['LOL',1000,1])->name() === 'name_en');
 
 		// onPrepareReturns
 		assert($cells->gets('id','active','name_[lang]')->count() === 3);
@@ -40,8 +40,8 @@ class Cells extends Base\Test
 		// offsetSet
 
 		// isWhere
-		assert($cells->isWhere(array(array('id',true),array('name_en',true),array('dateAdd','=',10))));
-		assert(!$cells->isWhere(array(array('id',true),array('name_en',true),array('dateAdd','>',10))));
+		assert($cells->isWhere([['id',true],['name_en',true],['dateAdd','=',10]]));
+		assert(!$cells->isWhere([['id',true],['name_en',true],['dateAdd','>',10]]));
 
 		// names
 		assert(count($cells->names()) === 9);
@@ -89,39 +89,39 @@ class Cells extends Base\Test
 		assert($cells->rules(false,false) !== $cells->rules(false,true));
 
 		// preValidatePrepare
-		assert($cells->preValidatePrepare(array('email'=>'ok')));
+		assert($cells->preValidatePrepare(['email'=>'ok']));
 
 		// preValidate
-		assert($cells->preValidate() === array());
-		assert($cells->preValidate(array('date'=>'12-03-2017')) === array());
-		assert($cells->preValidate(array('date'=>'')) === array());
-		assert($cells->preValidate(array('date'=>null)) === array());
-		assert($cells->preValidate(array('date'=>0))['date'] === array('dateToDay'));
-		assert(count($cells->preValidate(array('date'=>0),true,false)) === 9);
+		assert($cells->preValidate() === []);
+		assert($cells->preValidate(['date'=>'12-03-2017']) === []);
+		assert($cells->preValidate(['date'=>'']) === []);
+		assert($cells->preValidate(['date'=>null]) === []);
+		assert($cells->preValidate(['date'=>0])['date'] === ['dateToDay']);
+		assert(count($cells->preValidate(['date'=>0],true,false)) === 9);
 
 		// validate
 		assert($cells->validate(false,false)['name_en'] === true);
 		$cells['email']->set('testtest.com');
-		assert($cells->validate()['email'] === array('email'));
-		assert($cells->validate(true,true)['email'] === array('Must be a valid email (x@x.com)'));
+		assert($cells->validate()['email'] === ['email']);
+		assert($cells->validate(true,true)['email'] === ['Must be a valid email (x@x.com)']);
 
 		// required
 		assert($cells->required(false,false)['id'] === true);
 		assert($cells->required(true,false)['id'] === true);
 
 		// unique
-		assert($cells->unique() === array());
+		assert($cells->unique() === []);
 
 		// compare
-		assert($cells->compare() === array());
+		assert($cells->compare() === []);
 
 		// completeValidation
-		assert($cells->completeValidation()['email'] === array('email'));
+		assert($cells->completeValidation()['email'] === ['email']);
 		$cells['email']->set('test@test.com');
 		assert(empty($cells->completeValidation()['email']));
 		$cells['email']->set(null);
 		assert($cells->required(true)['email'] === 'Cannot be empty');
-		assert($cells->completeValidation()['email'] === array('required'));
+		assert($cells->completeValidation()['email'] === ['required']);
 		$cells['email']->set('testtest.com');
 
 		// update
@@ -144,7 +144,7 @@ class Cells extends Base\Test
 		assert($cells->set('active',3)->keyValue()['active'] === 3);
 
 		// sets
-		assert($cells->sets(array('active'=>4))['active']->value() === 4);
+		assert($cells->sets(['active'=>4])['active']->value() === 4);
 		assert($cells->hasChanged());
 
 		// changed
@@ -217,7 +217,7 @@ class Cells extends Base\Test
 		// mapObj
 		assert($cells->pair('form')['name_en'] === "<input data-required='1' maxlength='100' name='name_en' type='text' value='bla'/>");
 		assert($cells->pairStr('label') === "IdEnglish nameActiveEmailDateAdded byDate addedModified byLast modification");
-		assert($cells->filter(array('colKind'=>'char'))->isCount(2));
+		assert($cells->filter(['colKind'=>'char'])->isCount(2));
 		assert(count($cells->group('colKind')) === 2);
 		$sort = $clone->sortBy('name');
 		assert($sort->first()->name() === 'active');

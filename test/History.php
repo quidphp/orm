@@ -5,7 +5,7 @@ use Quid\Orm;
 use Quid\Base;
 
 // dbHistory
-class DbHistory extends Base\Test
+class History extends Base\Test
 {
 	// trigger
 	public static function trigger(array $data):bool
@@ -17,9 +17,9 @@ class DbHistory extends Base\Test
 		$pdo = new Orm\Pdo(...$credentials);
 		$history = $pdo->history()->empty();
 		assert($pdo->truncate($table) instanceof \PDOStatement);
-		assert($pdo->inserts($table,array('id','name_en','dateAdd'),array(1,'james',10),array(2,'james2',11),array(3,'james3',10)) === array(1,2,3));
+		assert($pdo->inserts($table,['id','name_en','dateAdd'],[1,'james',10],[2,'james2',11],[3,'james3',10]) === [1,2,3]);
 		$pdo->selectAlls($table);
-		$pdo->selectAlls($table,null,array('id'=>'desc'));
+		$pdo->selectAlls($table,null,['id'=>'desc']);
 
 		// construct
 
@@ -40,11 +40,11 @@ class DbHistory extends Base\Test
 		// uni
 		assert($history->keyValue(null,true) !== $history->keyValue());
 		assert(count($history->keyValue()) === 6);
-		assert($history->keyValue('truncate') === array('TRUNCATE TABLE `main`'));
+		assert($history->keyValue('truncate') === ['TRUNCATE TABLE `main`']);
 
 		// typeCount
-		assert($history->typeCount('select') === array('query'=>2,'row'=>6,'column'=>8,'cell'=>24));
-		assert($history->typeCount('truncate') === array('query'=>1));
+		assert($history->typeCount('select') === ['query'=>2,'row'=>6,'column'=>8,'cell'=>24]);
+		assert($history->typeCount('truncate') === ['query'=>1]);
 
 		// typeIndex
 		assert($history->typeIndex('truncate')['sql'] === 'TRUNCATE TABLE `main`');

@@ -17,8 +17,8 @@ class Tables extends Base\Test
 		$table2 = "ormDb";
 		assert($db->truncate($table) instanceof \PDOStatement);
 		assert($db->truncate($table2) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','active','name','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',10,2,12,2),array(2,1,'james2',20,2,22,2)) === array(1,2));
-		assert($db->inserts($table2,array('id','name_[lang]','dateAdd'),array(1,'james',10),array(2,'james2',11),array(3,'james3',10)) === array(1,2,3));
+		assert($db->inserts($table,['id','active','name','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,2,12,2],[2,1,'james2',20,2,22,2]) === [1,2]);
+		assert($db->inserts($table2,['id','name_[lang]','dateAdd'],[1,'james',10],[2,'james2',11],[3,'james3',10]) === [1,2,3]);
 		$tables = $db->tables();
 		$tb = $tables[$table];
 		$tb2 = $tables[$table2];
@@ -53,8 +53,8 @@ class Tables extends Base\Test
 		// add
 
 		// label
-		assert($tables->label(null,'en',array('def'=>true))['ormTable'] === 'Super Orm En');
-		assert($tables->label('%:','en',array('def'=>true))['ormTable'] === 'Super Orm En:');
+		assert($tables->label(null,'en',['def'=>true])['ormTable'] === 'Super Orm En');
+		assert($tables->label('%:','en',['def'=>true])['ormTable'] === 'Super Orm En:');
 
 		// description
 		assert($tables->description()['ormTable'] === 'Super Orm Desc En');
@@ -62,7 +62,7 @@ class Tables extends Base\Test
 		assert($tables->description('%:')['ormTable'] === 'Super Orm Desc En:');
 
 		// labels
-		assert(Base\Arr::isMulti($tables->labels(null,array('error'=>false))));
+		assert(Base\Arr::isMulti($tables->labels(null,['error'=>false])));
 
 		// descriptions
 		assert(Base\Arr::isMulti($tables->descriptions()));
@@ -115,7 +115,7 @@ class Tables extends Base\Test
 		// childsRecursive
 		assert($tables->childsRecursive('ormTable') === null);
 		assert(count($tables->childsRecursive('ormTable',false)) === 1);
-		assert($tables->childsRecursive('ormRowsIndex',false) === array('ormRowsIndexDeep'=>null));
+		assert($tables->childsRecursive('ormRowsIndex',false) === ['ormRowsIndexDeep'=>null]);
 		assert(!empty($tables->childsRecursive('doesNotExist',false)));
 		assert(empty($tables->childsRecursive('doesNotExist')));
 
@@ -146,7 +146,7 @@ class Tables extends Base\Test
 		assert(count($tables->childs('ormDb')) === 1);
 
 		// relationChilds
-		assert($tables->relationChilds('tables',1) === array());
+		assert($tables->relationChilds('tables',1) === []);
 
 		// keyClassExtends
 		assert(count($tables::keyClassExtends()) === 5);
@@ -158,9 +158,9 @@ class Tables extends Base\Test
 		assert($tables->not($tables->gets('user','session'))->count() === ($tables->count()-2));
 		assert($tables->not($tables['user'],$tables['session'])->count() === ($tables->count()-2));
 		assert($tables->not('user','session')->count() === ($tables->count()-2));
-		assert($tables->filter(array('name'=>'ormTable'))->isCount(1));
-		assert($tables->first(array('name'=>'ormTable')) instanceof Orm\Table);
-		assert($tables->filter(array('hasPermission'=>false),'update')->isCount(7));
+		assert($tables->filter(['name'=>'ormTable'])->isCount(1));
+		assert($tables->first(['name'=>'ormTable']) instanceof Orm\Table);
+		assert($tables->filter(['hasPermission'=>false],'update')->isCount(7));
 		assert(count($tables->group('name')) === 26);
 		$sort = $clone->sortBy('priority',false);
 		assert($sort->first()->name() === 'ormDb');
@@ -172,7 +172,7 @@ class Tables extends Base\Test
 
 		// map
 		assert($tables->get(0)->name() === 'page');
-		assert($tables->get(array(1000,'ormCell'))->name() === 'ormCell');
+		assert($tables->get([1000,'ormCell'])->name() === 'ormCell');
 		assert($tables->get($tb->col('id')) === $tb);
 		assert($tables->get($tb[1]) === $tb);
 		assert($tables->get($tb[1]['id']) === $tb);

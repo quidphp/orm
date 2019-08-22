@@ -7,7 +7,7 @@ use Quid\Base;
 class Sql extends PdoSql
 {
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// setOutput

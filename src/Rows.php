@@ -12,11 +12,11 @@ class Rows extends Main\Map
 	
 	
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// map
-	protected static $allow = array('add','unset','remove','empty','filter','sort','clone'); // méthodes permises
+	protected static $allow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
 	protected static $sortDefault = 'primary'; // défini la méthode pour sort par défaut
 	
 	
@@ -247,7 +247,7 @@ class Rows extends Main\Map
 			if(!array_key_exists($primary,$data))
 			{
 				if($inOrder === true)
-				$data = Base\Arr::insertInOrder(array($primary=>$value),$data);
+				$data = Base\Arr::insertInOrder([$primary=>$value],$data);
 				
 				else
 				$data[$primary] = $value;
@@ -340,7 +340,7 @@ class Rows extends Main\Map
 	// envoie une exception si la cellule n'existe pas
 	public function cell($key):array 
 	{
-		$return = array();
+		$return = [];
 		$this->checkCell($key);
 		
 		foreach ($this->arr() as $id => $row) 
@@ -360,7 +360,7 @@ class Rows extends Main\Map
 	// retourne seulement la cellule si elle n'est pas vide
 	public function cellNotEmpty($key):array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->cell($key) as $k => $v) 
 		{
@@ -443,7 +443,7 @@ class Rows extends Main\Map
 	// par défaut utilise value de cellule, si get est true utilise get
 	public function cellValue($value,bool $get=false):array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $key => $row) 
 		{
@@ -459,7 +459,7 @@ class Rows extends Main\Map
 	// éventuellement cette méthode devra être remplacé par la classe tablesCells
 	public function htmlStr($key,string $html,bool $str=false)
 	{
-		$return = array();
+		$return = [];
 		$cells = $this->cell($key);
 		
 		foreach ($cells as $id => $cell) 
@@ -479,7 +479,7 @@ class Rows extends Main\Map
 	// par défaut utilise value de cellule, si get est true utilise get
 	public function segment(string $value,bool $get=false,bool $str=false)
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $key => $row) 
 		{
@@ -498,7 +498,7 @@ class Rows extends Main\Map
 	// si get est true, value est passé dans get plutôt que value
 	public function keyValue($key,$value,bool $get=false):array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $row) 
 		{
@@ -539,11 +539,11 @@ class Rows extends Main\Map
 		{
 			$data =& $return->arr();
 			
-			$sorts = array();
+			$sorts = [];
 			foreach ($array as $key => $value) 
 			{
 				$this->checkCell($key);
-				$sorts[] = array('cellValue',$value,$key);
+				$sorts[] = ['cellValue',$value,$key];
 			}
 			
 			$data = Base\Obj::sorts($sorts,$data);
@@ -750,7 +750,7 @@ class Rows extends Main\Map
 	// retourne un tableau avec les résultats pour les lignes ayant changés
 	public function updateRowChanged(?array $option=null):array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $id => $row) 
 		{
@@ -791,7 +791,7 @@ class Rows extends Main\Map
 	// écrit plusieurs lignes dans l'objet file fourni en argument
 	public function writeFile(Main\File $file,?array $option=null):self
 	{
-		$option = Base\Arr::plus(array('header'=>false),$option);
+		$option = Base\Arr::plus(['header'=>false],$option);
 		
 		foreach ($this->arr() as $row) 
 		{

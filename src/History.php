@@ -8,12 +8,12 @@ use Quid\Base;
 class History extends Main\Map
 {
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// map
 	protected static $is = 'array'; // les valeurs doivent passés ce test de validation ou exception
-	protected static $allow = array('push','empty'); // méthodes permises
+	protected static $allow = ['push','empty']; // méthodes permises
 	
 	
 	// invoke
@@ -70,7 +70,7 @@ class History extends Main\Map
 	// possibilité de filtrer par type
 	public function all(?string $type=null,bool $reverse=false):array
 	{
-		$return = array();
+		$return = [];
 		$data = $this->arr();
 		
 		if(is_string($type))
@@ -97,7 +97,7 @@ class History extends Main\Map
 	// emule la requête si nécessaire
 	public function keyValue(?string $type=null,bool $reverse=false):array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->all($type,$reverse) as $value)
 		{
@@ -120,7 +120,7 @@ class History extends Main\Map
 	// le type est requis
 	public function typeCount(string $type):array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->all($type) as $value) 
 		{
@@ -131,7 +131,7 @@ class History extends Main\Map
 				else
 				$return['query']++;
 				
-				foreach (array('row','column','cell') as $v) 
+				foreach (['row','column','cell'] as $v) 
 				{
 					if(array_key_exists($v,$value) && is_int($value[$v]))
 					{
@@ -161,7 +161,7 @@ class History extends Main\Map
 	// retourne les données counts de l'historique pour tous les types
 	public function total():array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach (Base\Sql::getQueryTypes() as $type) 
 		{

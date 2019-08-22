@@ -14,7 +14,7 @@ class Row extends Base\Test
 		$db = Orm\Db::inst();
 		$table = "ormRow";
 		assert($db->truncate($table) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','active','name_en','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',1521762409,2,12,2),array(2,2,'james2',20,2,22,2)) === array(1,2));
+		assert($db->inserts($table,['id','active','name_en','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',1521762409,2,12,2],[2,2,'james2',20,2,22,2]) === [1,2]);
 		$tb = $db[$table];
 		assert($tb instanceof Orm\Table);
 		$row = $tb->row(1);
@@ -128,7 +128,7 @@ class Row extends Base\Test
 		assert(count($row->get('id','active')) === 2);
 
 		// set
-		assert($row->set(array('active'=>1)) === $row);
+		assert($row->set(['active'=>1]) === $row);
 
 		// label
 		assert($db['user'][1]->label() === 'User #1');
@@ -142,8 +142,8 @@ class Row extends Base\Test
 		// cellsLoad
 
 		// cellsRefresh
-		assert($row->cellsRefresh(array('id'=>1,'active'=>3,'bla'=>'megh')) === $row);
-		assert($row->cells()->sets(array('id'=>1,'active'=>3)) === $row->cells());
+		assert($row->cellsRefresh(['id'=>1,'active'=>3,'bla'=>'megh']) === $row);
+		assert($row->cells()->sets(['id'=>1,'active'=>3]) === $row->cells());
 
 		// cells
 		assert($row->cells() instanceof Orm\Cells);
@@ -176,20 +176,20 @@ class Row extends Base\Test
 		// keyValue
 		$row['active'] = 2;
 		$row['name_en'] = 'bla';
-		assert($row->keyValue('id','name_[lang]') === array(1=>'bla'));
-		assert($row->keyValue('id','dateAdd') === array(1=>1521762409));
-		assert($row->keyValue('id',array('lol','dateAdd')) === array(1=>1521762409));
-		assert($row->keyValue('id',array('lol','dateAdd'),true) === array(1=>'March 22, 2018 19:46:49'));
+		assert($row->keyValue('id','name_[lang]') === [1=>'bla']);
+		assert($row->keyValue('id','dateAdd') === [1=>1521762409]);
+		assert($row->keyValue('id',['lol','dateAdd']) === [1=>1521762409]);
+		assert($row->keyValue('id',['lol','dateAdd'],true) === [1=>'March 22, 2018 19:46:49']);
 
 		// relationKeyValue
 		assert($row->relationKeyValue() === 'bla (#1)');
 
 		// relationChilds
-		assert($row->relationChilds() === array());
+		assert($row->relationChilds() === []);
 
 		// isActive
 		assert($row->isActive(2));
-		assert($logSql->insert(array('type'=>1))->isActive());
+		assert($logSql->insert(['type'=>1])->isActive());
 
 		// deactivate
 		$row['date']->set(time());
@@ -200,7 +200,7 @@ class Row extends Base\Test
 
 		// cellActive
 		assert($row->cellActive()->name() === 'active');
-		assert($logSql->insert(array('type'=>1))->cellActive() === null);
+		assert($logSql->insert(['type'=>1])->cellActive() === null);
 		
 		// cellKey
 		assert($row->cellKey()->name() === 'id');
@@ -224,35 +224,35 @@ class Row extends Base\Test
 		assert($row->toRows()->first() === $row);
 
 		// refresh
-		$rowz = $tb->insert(array('date'=>time(),'name_en'=>'well'));
+		$rowz = $tb->insert(['date'=>time(),'name_en'=>'well']);
 		assert($db->delete($tb,$rowz) === 1);
 		assert($rowz->isLinked());
 		$rowz->refresh();
 		assert(!$rowz->isLinked());
 
 		// preValidate
-		assert($row->preValidate(array('date'=>'a','active'=>array('a')),array('strict'=>false,'com'=>true)) === array('active'=>array('a')));
+		assert($row->preValidate(['date'=>'a','active'=>['a']],['strict'=>false,'com'=>true]) === ['active'=>['a']]);
 		assert(strlen($row->db()->com()->flush()) === 253);
 
 		// setUpdateMethod
-		assert($row->setUpdateMethod('updateAll',array('date'=>time(),'active'=>1)) === 1);
+		assert($row->setUpdateMethod('updateAll',['date'=>time(),'active'=>1]) === 1);
 
 		// setUpdate
-		assert($row->setUpdate(array('active'=>null)) === 1);
+		assert($row->setUpdate(['active'=>null]) === 1);
 
 		// setUpdateValid
-		assert($row->setUpdateValid(array('active'=>1),array('com'=>true)) === 1);
-		assert($row->setUpdateValid(array('active'=>1),array('com'=>true)) === 0);
+		assert($row->setUpdateValid(['active'=>1],['com'=>true]) === 1);
+		assert($row->setUpdateValid(['active'=>1],['com'=>true]) === 0);
 		$row->db()->com()->flush();
 
 		// setUpdateChangedIncluded
 
 		// setUpdateChangedIncludedValid
-		assert($row->setUpdateChangedIncludedValid(array('active'=>1),array('com'=>true)) === 0);
+		assert($row->setUpdateChangedIncludedValid(['active'=>1],['com'=>true]) === 0);
 		assert(strlen($row->db()->com()->flush()) === 178);
-		assert($row->setUpdateChangedIncludedValid(array('active'=>null),array('com'=>true)) === 1);
+		assert($row->setUpdateChangedIncludedValid(['active'=>null],['com'=>true]) === 1);
 		assert(strlen($row->db()->com()->flush()) === 183);
-		assert($row->setUpdateChangedIncludedValid(array('active'=>'a','name_en'=>'ok'),array('com'=>true)) === 1);
+		assert($row->setUpdateChangedIncludedValid(['active'=>'a','name_en'=>'ok'],['com'=>true]) === 1);
 		assert(strlen($row->db()->com()->flush()) === 353);
 		$row['active'] = 1;
 
@@ -268,7 +268,7 @@ class Row extends Base\Test
 
 		// updateValid
 		$row['active'] = 'a';
-		assert($row->updateValid(array('com'=>true)) === 0);
+		assert($row->updateValid(['com'=>true]) === 0);
 		assert(strlen($row->db()->com()->flush()) === 340);
 		$row['active'] = null;
 
@@ -284,7 +284,7 @@ class Row extends Base\Test
 		assert(!$row->hasChanged());
 
 		// updateChangedIncludedValid
-		assert($row->updateChangedIncludedValid(array('com'=>true)) === 0);
+		assert($row->updateChangedIncludedValid(['com'=>true]) === 0);
 		assert(strlen($row->db()->com()->flush()) === 178);
 
 		// updateAll
@@ -298,7 +298,7 @@ class Row extends Base\Test
 		// updateBeforeFinalValidate
 
 		// updateAssoc
-		assert($row->updateAssoc(array('active'=>4)) === 1);
+		assert($row->updateAssoc(['active'=>4]) === 1);
 		assert($row['active']->value() === 4);
 
 		// updateCom
@@ -310,7 +310,7 @@ class Row extends Base\Test
 		// delete
 		assert($row->isLinked());
 		assert($tb->row(1) === $row);
-		assert($row->delete(array('com'=>true)) === 1);
+		assert($row->delete(['com'=>true]) === 1);
 		assert(strlen($tb->db()->com()->flush()) === 183);
 		assert(!$tb->hasRow(1));
 		assert($tb->row(1) === null);
@@ -321,7 +321,7 @@ class Row extends Base\Test
 		// deleteAfter
 
 		// deleteOrDeactivate
-		$row4 = $tb->insert(array('date'=>time(),'name_en'=>'sure'));
+		$row4 = $tb->insert(['date'=>time(),'name_en'=>'sure']);
 		assert($row4->deleteOrDeactivate() === 1);
 
 		// terminate
@@ -339,7 +339,7 @@ class Row extends Base\Test
 		// configReplaceMode
 
 		// tableAccess
-		$row3 = $tb->insert(array('date'=>time(),'name_en'=>'sure'));
+		$row3 = $tb->insert(['date'=>time(),'name_en'=>'sure']);
 		assert($row3->isLinked());
 		assert($row3->checkLink() === $row3);
 		assert($row->hasDb() === false);

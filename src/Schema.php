@@ -12,11 +12,11 @@ class Schema extends Main\Map
 	
 	
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// map
-	protected static $allow = array('empty','jsonSerialize','serialize','clone'); // méthodes permises
+	protected static $allow = ['empty','jsonSerialize','serialize','clone']; // méthodes permises
 
 
 	// construct
@@ -54,7 +54,7 @@ class Schema extends Main\Map
 				foreach ($tables as $table) 
 				{
 					if(!array_key_exists($table,$data))
-					$data[$table] = array();
+					$data[$table] = [];
 				}
 				
 				$return = $tables;
@@ -109,7 +109,7 @@ class Schema extends Main\Map
 		if(is_string($table) && is_string($col))
 		{
 			if($cache === true)
-			$return = $this->get(array($table,$col));
+			$return = $this->get([$table,$col]);
 			
 			if(empty($return) || $cache === false)
 			{

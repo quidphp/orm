@@ -12,11 +12,11 @@ class Cells extends Main\Map
 	
 	
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// map
-	protected static $allow = array('add','unset','remove','empty','filter','sort','clone'); // méthodes permises
+	protected static $allow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
 	protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
 	
 	
@@ -141,7 +141,7 @@ class Cells extends Main\Map
 				if(is_array($v) && count($v) >= 2 && is_string($v[0]))
 				{
 					$cell = $this->checkGet($v[0]);
-					$arr = (is_string($v[1]))? array($v[1]=>$v[2] ?? null):array(0=>$v[1]);
+					$arr = (is_string($v[1]))? [$v[1]=>$v[2] ?? null]:[0=>$v[1]];
 					$return = $cell->isWhere($arr);
 					
 					if($return === false)
@@ -169,7 +169,7 @@ class Cells extends Main\Map
 	// retourne les noms de cellules contenus dans l'objet sans la cellule primaire
 	public function namesWithoutPrimary():array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $key => $value) 
 		{
@@ -277,7 +277,7 @@ class Cells extends Main\Map
 	public function isVisible(?Main\Session $session=null):bool 
 	{
 		$return = false;
-		$args = array(null,$session);
+		$args = [null,$session];
 		$hidden = $this->pair('isVisible',...$args);
 		
 		if(!in_array(false,$hidden,true))
@@ -292,7 +292,7 @@ class Cells extends Main\Map
 	public function isHidden(?Main\Session $session=null):bool 
 	{
 		$return = false;
-		$args = array(null,$session);
+		$args = [null,$session];
 		$hidden = $this->pair('isVisible',...$args);
 		
 		if(!in_array(true,$hidden,true))
@@ -307,7 +307,7 @@ class Cells extends Main\Map
 	// ne retourne pas la clé primaire
 	public function isRequired(bool $value=true):self 
 	{
-		return $this->filter(array('isRequired'=>$value));
+		return $this->filter(['isRequired'=>$value]);
 	}
 	
 	
@@ -363,9 +363,9 @@ class Cells extends Main\Map
 	
 	// preValidate
 	// permet de pré-valider un tableau de valeur avant de set dans la cellule
-	public function preValidate(array $set=array(),bool $lang=false,bool $filter=true):array
+	public function preValidate(array $set=[],bool $lang=false,bool $filter=true):array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $key => $cell) 
 		{
@@ -514,7 +514,7 @@ class Cells extends Main\Map
 	// retourne un objet avec toutes les cellules non vides
 	public function notEmpty():self
 	{
-		return $this->filter(array('isNotEmpty'=>true));
+		return $this->filter(['isNotEmpty'=>true]);
 	}
 	
 	
@@ -532,7 +532,7 @@ class Cells extends Main\Map
 	// possible de faire une prévalidation via option
 	public function set($key,$value,?array $option=null):parent 
 	{
-		$option = Base\Arr::plus(array('tryCatch'=>false),$option);
+		$option = Base\Arr::plus(['tryCatch'=>false],$option);
 		$cell = $this->checkGet($key);
 		
 		if($option['tryCatch'] === true)
@@ -544,7 +544,7 @@ class Cells extends Main\Map
 			
 			catch (Main\CatchableException $e) 
 			{
-				$e->onCatched(array('com'=>false));
+				$e->onCatched(['com'=>false]);
 				$cell->setException($e);
 			}
 		}
@@ -602,7 +602,7 @@ class Cells extends Main\Map
 	public function included(?array $option=null):self 
 	{
 		$return = new static();
-		$option = Base\Arr::plus($option,array('preValidate'=>false));
+		$option = Base\Arr::plus($option,['preValidate'=>false]);
 		
 		foreach ($this->arr() as $cell) 
 		{
@@ -745,8 +745,8 @@ class Cells extends Main\Map
 	// par exemple pour une ligne de csv
 	public function writeFile(Main\File $file,?array $option=null):self 
 	{
-		$option = Base\Arr::plus(array('latin1'=>false,'context'=>'noHtml'),$option);
-		$array = array();
+		$option = Base\Arr::plus(['latin1'=>false,'context'=>'noHtml'],$option);
+		$array = [];
 		
 		foreach ($this->toArray() as $key => $cell) 
 		{
@@ -769,7 +769,7 @@ class Cells extends Main\Map
 	// retourne un tableau utilisé par onPrepareKey
 	public static function keyClassExtends():array
 	{
-		return array(Cell::class,Col::class);
+		return [Cell::class,Col::class];
 	}
 }
 ?>

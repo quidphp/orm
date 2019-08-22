@@ -8,27 +8,27 @@ use Quid\Base;
 class ColSchema extends Main\Root
 {
 	// config
-	public static $config = array(
-		'intMax'=>array( // détermine les valeurs maximales pour unt int
-			'int'=>2147483647),
-		'textLength'=>array(
+	public static $config = [
+		'intMax'=>[ // détermine les valeurs maximales pour unt int
+			'int'=>2147483647],
+		'textLength'=>[
 			'tinytext'=>255,
 			'text'=>65535,
 			'mediumtext'=>16777215,
-			'longtext'=>4294967295),
-		'patternChars'=>array('_','*'), // caractères pour définir les patterns
-		'pattern'=>array( // pattern pour les noms de colonnes, défini le nom de table d'une relation ainsi que le panel
-			'en'=>array('*_en'),
-			'fr'=>array('*_fr'),
-			'enum'=>array('*_id'),
-			'set'=>array('*_ids')),
-		'relation'=>array('enum','set'), // détermine les patterns considérés comme relation
-		'panel'=>array( // détermine les panels à utiliser à partir des patterns
+			'longtext'=>4294967295],
+		'patternChars'=>['_','*'], // caractères pour définir les patterns
+		'pattern'=>[ // pattern pour les noms de colonnes, défini le nom de table d'une relation ainsi que le panel
+			'en'=>['*_en'],
+			'fr'=>['*_fr'],
+			'enum'=>['*_id'],
+			'set'=>['*_ids']],
+		'relation'=>['enum','set'], // détermine les patterns considérés comme relation
+		'panel'=>[ // détermine les panels à utiliser à partir des patterns
 			'en'=>'en',
 			'fr'=>'fr',
 			'enum'=>'relation',
-			'set'=>'relation')
-	);
+			'set'=>'relation']
+	];
 	
 	
 	// _construct
@@ -86,7 +86,7 @@ class ColSchema extends Main\Root
 					{
 						if(is_string($v) && Base\Str::isPattern($v,$value,$chars[1]))
 						{
-							$return = array($key,$v);
+							$return = [$key,$v];
 							break;
 						}
 					}
@@ -205,7 +205,7 @@ class ColSchema extends Main\Root
 	// retourne un tableau
 	public static function possible(string $value,bool $currentLang=false):array 
 	{
-		$return = array();
+		$return = [];
 		$char = static::$config['patternChars'][1];
 		
 		if(!empty($value))
@@ -401,7 +401,7 @@ class ColSchema extends Main\Root
 	// gère les règles de validation selon le kind et le length
 	public static function parseValidate(array $array):array 
 	{
-		$return = array();
+		$return = [];
 		
 		if(!empty($array['kind']))
 		{
@@ -475,7 +475,7 @@ class ColSchema extends Main\Root
 		$return = null;
 		
 		if(array_key_exists('unsigned',$array) && $array['unsigned'] === true)
-		$return = array('>='=>0);
+		$return = ['>='=>0];
 		
 		return $return;
 	}

@@ -12,11 +12,11 @@ class Cell extends Main\Root
 	
 	
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// dynamique
-	protected $value = array(); // contient la valeur de base et de changement de la cellule
+	protected $value = []; // contient la valeur de base et de changement de la cellule
 	protected $col = null; // conserve l'objet de la colonne, ceci ne crée pas une référence récursive
 	protected $row = null; // lien vers la row
 	
@@ -367,7 +367,7 @@ class Cell extends Main\Root
 	// possible de retourner les textes si lang est true
 	public function completeValidation(bool $lang=false) 
 	{
-		$array = array();
+		$array = [];
 		$array['exception'] = $this->exception($lang);
 		$array['required'] = $this->required($lang);
 		$array['validate'] = $this->validate($lang);
@@ -421,16 +421,16 @@ class Cell extends Main\Root
 			if(is_string($method) && Base\Sql::isWhereSymbol($method))
 			$return = $this->isCompare($method,$value);
 			
-			elseif(in_array($method,array(null,'null'),true))
+			elseif(in_array($method,[null,'null'],true))
 			$return = $this->isNull();
 			
 			elseif($method === 'notNull')
 			$return = $this->isNotNull();
 			
-			elseif(in_array($method,array(false,'empty'),true))
+			elseif(in_array($method,[false,'empty'],true))
 			$return = $this->isEmpty();
 			
-			elseif(in_array($method,array(true,'notEmpty'),true))
+			elseif(in_array($method,[true,'notEmpty'],true))
 			$return = $this->isNotEmpty();
 			
 			else
@@ -1075,7 +1075,7 @@ class Cell extends Main\Root
 	// l'objet devient inutilisable
 	public function terminate():self 
 	{
-		$this->value = array();
+		$this->value = [];
 		$this->col = null;
 		$this->row = null;
 		$this->db = null;

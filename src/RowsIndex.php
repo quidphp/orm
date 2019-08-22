@@ -12,12 +12,12 @@ class RowsIndex extends Rows
 	
 	
 	// config
-	public static $config = array();
+	public static $config = [];
 	
 	
 	// map
-	protected static $allow = array('add','unset','remove','empty','sequential','filter','sort','clone'); // méthodes permises
-	protected static $after = array('sequential'); // sequential après chaque appel qui modifie, sequential ne crée pas de clone
+	protected static $allow = ['add','unset','remove','empty','sequential','filter','sort','clone']; // méthodes permises
+	protected static $after = ['sequential']; // sequential après chaque appel qui modifie, sequential ne crée pas de clone
 	
 	
 	// isTable
@@ -96,7 +96,7 @@ class RowsIndex extends Rows
 	// retourne un tableau multidimensionnel avec toutes les ids de lignes séparés par le nom de table
 	public function primaries():array
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $value) 
 		{
@@ -104,7 +104,7 @@ class RowsIndex extends Rows
 			$table = $value->table()->name();
 			
 			if(!array_key_exists($table,$return))
-			$return[$table] = array();
+			$return[$table] = [];
 			
 			$return[$table][] = $id;
 		}
@@ -187,7 +187,7 @@ class RowsIndex extends Rows
 	// les objets retournés retournés sont dans les bonnes classes rows pour les tables
 	public function groupByTable():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $value) 
 		{
@@ -217,7 +217,7 @@ class RowsIndex extends Rows
 	// retourne un tableau avec toutes les tables contenus dans l'objet
 	public function tables():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->arr() as $value) 
 		{
@@ -235,7 +235,7 @@ class RowsIndex extends Rows
 	// retourne un tableau avec tous les noms de tables présent dans l'objet
 	public function tableNames():array 
 	{
-		$return = array();
+		$return = [];
 		
 		foreach ($this->tables() as $value) 
 		{

@@ -14,7 +14,7 @@ class Cols extends Base\Test
 		$db = Orm\Db::inst();
 		$table = "ormCols";
 		assert($db->truncate($table) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','active','name_en','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',10,11,12,13),array(2,2,'james2',20,21,22,23)) === array(1,2));
+		assert($db->inserts($table,['id','active','name_en','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,11,12,13],[2,2,'james2',20,21,22,23]) === [1,2]);
 		$tb = $db[$table];
 		$tb2 = $db['ormDb'];
 		$cols = $tb->cols();
@@ -59,10 +59,10 @@ class Cols extends Base\Test
 		assert(count($cols->withoutPrimary()) === 8);
 
 		// default
-		assert($cols->default() === array('name_en'=>'LOL','active'=>1,'email'=>'default@def.james','date'=>null,'userAdd'=>null,'dateAdd'=>null,'userModify'=>null,'dateModify'=>null));
+		assert($cols->default() === ['name_en'=>'LOL','active'=>1,'email'=>'default@def.james','date'=>null,'userAdd'=>null,'dateAdd'=>null,'userModify'=>null,'dateModify'=>null]);
 
 		// value
-		assert($cols->value(array('id'=>4,'dateAdd'=>123123213,'james'=>'OK'),true) === array('id'=>4,'dateAdd'=>'November 25, 1973 19:53:33'));
+		assert($cols->value(['id'=>4,'dateAdd'=>123123213,'james'=>'OK'],true) === ['id'=>4,'dateAdd'=>'November 25, 1973 19:53:33']);
 
 		// isVisible
 		assert(!$cols->isVisible());
@@ -71,12 +71,12 @@ class Cols extends Base\Test
 		assert(!$cols->isHidden());
 
 		// isRequired
-		assert($cols->isRequired() === array('name_en'=>'LOL','email'=>'default@def.james','date'=>null));
-		assert($cols->isRequired(array('email'=>null)) === array('name_en'=>'LOL','email'=>null,'date'=>null));
+		assert($cols->isRequired() === ['name_en'=>'LOL','email'=>'default@def.james','date'=>null]);
+		assert($cols->isRequired(['email'=>null]) === ['name_en'=>'LOL','email'=>null,'date'=>null]);
 
 		// isStillRequired
-		assert($cols->isStillRequired() === array('date'=>null));
-		assert($cols->isStillRequired(array('email'=>null)) === array('email'=>null,'date'=>null));
+		assert($cols->isStillRequired() === ['date'=>null]);
+		assert($cols->isStillRequired(['email'=>null]) === ['email'=>null,'date'=>null]);
 
 		// isStillRequiredEmpty
 		assert(!$cols->isStillRequiredEmpty());
@@ -86,33 +86,33 @@ class Cols extends Base\Test
 		assert($cols->rules(false,false) !== $cols->rules(false,true));
 
 		// preValidatePrepare
-		assert($cols->preValidatePrepare(array('email'=>'ok')) === array('email'=>'ok'));
+		assert($cols->preValidatePrepare(['email'=>'ok']) === ['email'=>'ok']);
 
 		// preValidate
-		assert($cols->preValidate() === array());
-		assert($cols->preValidate(array('date'=>'as')) === array('date'=>array('dateToDay')));
-		assert($cols->preValidate(array('date'=>'02-02-2017')) === array());
+		assert($cols->preValidate() === []);
+		assert($cols->preValidate(['date'=>'as']) === ['date'=>['dateToDay']]);
+		assert($cols->preValidate(['date'=>'02-02-2017']) === []);
 
 		// validate
-		assert($cols->validate(array('name_en'=>NULL,'dateAdd'=>1234)) === array());
-		assert($cols->validate(array('name_en'=>123)) === array('name_en'=>array('string')));
-		assert($cols->validate(array('name_en'=>123),true)['name_en'] === array('Must be a string'));
+		assert($cols->validate(['name_en'=>NULL,'dateAdd'=>1234]) === []);
+		assert($cols->validate(['name_en'=>123]) === ['name_en'=>['string']]);
+		assert($cols->validate(['name_en'=>123],true)['name_en'] === ['Must be a string']);
 
 		// required
-		assert($cols->required(array('date'=>2,'email'=>'','name_en'=>'OK')) === array('email'=>'required'));
-		assert($cols->required(array('name_en'=>''))['name_en'] === 'required');
-		assert($cols->required(array('name_en'=>''),true)['name_en'] === 'Cannot be empty');
+		assert($cols->required(['date'=>2,'email'=>'','name_en'=>'OK']) === ['email'=>'required']);
+		assert($cols->required(['name_en'=>''])['name_en'] === 'required');
+		assert($cols->required(['name_en'=>''],true)['name_en'] === 'Cannot be empty');
 
 		// unique
-		assert($cols->unique(array('email'=>'bla')) === array());
+		assert($cols->unique(['email'=>'bla']) === []);
 
 		// compare
-		assert($cols->compare(array('email'=>'bla')) === array());
+		assert($cols->compare(['email'=>'bla']) === []);
 
 		// completeValidation
-		assert($cols->completeValidation(array('email'=>''))['email'] === array('required','email'));
-		assert($cols->completeValidation(array('email'=>'asd'))['email'] === array('email'));
-		assert(count($cols->completeValidation(array('email'=>''),true,false)) === 9);
+		assert($cols->completeValidation(['email'=>''])['email'] === ['required','email']);
+		assert($cols->completeValidation(['email'=>'asd'])['email'] === ['email']);
+		assert(count($cols->completeValidation(['email'=>''],true,false)) === 9);
 
 		// triggerValidate
 
@@ -123,10 +123,10 @@ class Cols extends Base\Test
 		assert($cols->insert('name_en',2) === '2');
 
 		// inserts
-		assert(is_int($cols->inserts(array('test'=>2))['dateAdd']));
-		assert(count($cols->inserts(array('name_en'=>2),array('required'=>false))) === 3);
-		assert(count($cols->inserts(array('name_en'=>2))) === 5);
-		assert(count($cols->inserts(array('name_en'=>2),array('default'=>true))) === 8);
+		assert(is_int($cols->inserts(['test'=>2])['dateAdd']));
+		assert(count($cols->inserts(['name_en'=>2],['required'=>false])) === 3);
+		assert(count($cols->inserts(['name_en'=>2])) === 5);
+		assert(count($cols->inserts(['name_en'=>2],['default'=>true])) === 8);
 
 		// label
 		assert($cols->label()['active'] === 'Active');
@@ -185,9 +185,9 @@ class Cols extends Base\Test
 
 		// mapObj
 		assert($cols->pair('isRequired')['id'] === false);
-		assert($cols->filter(array('kind'=>'char'))->isCount(2));
-		assert($cols->filter(array('value'=>1),true)->isCount(1));
-		assert(!$cols->filter(array('value'=>1),false)->isCount(1));
+		assert($cols->filter(['kind'=>'char'])->isCount(2));
+		assert($cols->filter(['value'=>1],true)->isCount(1));
+		assert(!$cols->filter(['value'=>1],false)->isCount(1));
 		assert(count($cols->group('kind')) === 2);
 		assert(count($cols->group('panel')) === 2);
 		$sort = $clone->sortBy('name',false);

@@ -11,24 +11,24 @@ class Classe extends Main\Map
 	
 	
 	// config
-	public static $config = array(
-		'option'=>array(
-			'default'=>array( // classe par défaut
+	public static $config = [
+		'option'=>[
+			'default'=>[ // classe par défaut
 				'table'=>Table::class,
 				'col'=>Col::class,
 				'row'=>Row::class,
 				'cell'=>Cell::class,
 				'cols'=>Cols::class,
 				'rows'=>Rows::class,
-				'cells'=>Cells::class),
-			'colGroup'=>array(), // classe pour colonne selon le group
-			'colAttr'=>array()), // classe pour colonne selon un attribut
-		'extendersKeys'=>array('table','rows','row','cols','col','cells','cell'), // défini les clés à garder de l'extenders
-	);
+				'cells'=>Cells::class],
+			'colGroup'=>[], // classe pour colonne selon le group
+			'colAttr'=>[]], // classe pour colonne selon un attribut
+		'extendersKeys'=>['table','rows','row','cols','col','cells','cell'], // défini les clés à garder de l'extenders
+	];
 	
 	
 	// map
-	protected static $allow = array('jsonSerialize','serialize','clone'); // méthodes permises
+	protected static $allow = ['jsonSerialize','serialize','clone']; // méthodes permises
 	
 	
 	// dynamique
@@ -83,11 +83,11 @@ class Classe extends Main\Map
 		
 		if(empty($return))
 		{			
-			$array = array();
+			$array = [];
 			
 			foreach (static::extendersKeys() as $key) 
 			{
-				if(!in_array($key,array('col','cell'),true))
+				if(!in_array($key,['col','cell'],true))
 				$array[$key] = $this->find($key,$table);
 			}
 			
@@ -162,7 +162,7 @@ class Classe extends Main\Map
 	// doit retourner une string, sinon une exception sera lancé
 	public function default(string $type):string 
 	{
-		return $this->getOption(array('default',$type));
+		return $this->getOption(['default',$type]);
 	}
 	
 	
@@ -251,7 +251,7 @@ class Classe extends Main\Map
 		$return = $this->colFromAttr($table->colAttr($col),true);
 		
 		if(empty($return) && array_key_exists('group',$attr) && is_string($attr['group']))
-		$return = $this->getOption(array('colGroup',$attr['group']));
+		$return = $this->getOption(['colGroup',$attr['group']]);
 		
 		return $return;
 	}
@@ -271,15 +271,15 @@ class Classe extends Main\Map
 			$return = $value['class'];
 			
 			elseif(array_key_exists('media',$value))
-			$return = $this->getOption(array('colAttr','media'));
+			$return = $this->getOption(['colAttr','media']);
 			
 			elseif(array_key_exists('relation',$value))
 			{
 				if(array_key_exists('set',$value) && $value['set'] === true)
-				$return = $this->getOption(array('colAttr','set'));
+				$return = $this->getOption(['colAttr','set']);
 				
 				elseif((array_key_exists('enum',$value) && $value['enum'] === true) || $defaultEnum === true)
-				$return = $this->getOption(array('colAttr','enum'));
+				$return = $this->getOption(['colAttr','enum']);
 			}
 		}
 

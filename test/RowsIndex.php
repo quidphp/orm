@@ -16,8 +16,8 @@ class RowsIndex extends Base\Test
 		$table2 = "ormRows";
 		assert($db->truncate($table) instanceof \PDOStatement);
 		assert($db->truncate($table2) instanceof \PDOStatement);
-		assert($db->inserts($table,array('id','activez','name','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',10,2,12,2),array(2,2,'james2',20,2,22,2),array(3,3,'james2',30,2,32,2)) === array(1,2,3));
-		assert($db->inserts($table2,array('id','active','name','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',10,2,12,2),array(2,2,'james2',20,2,22,2),array(3,3,'james2',30,2,32,2)) === array(1,2,3));
+		assert($db->inserts($table,['id','activez','name','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,2,12,2],[2,2,'james2',20,2,22,2],[3,3,'james2',30,2,32,2]) === [1,2,3]);
+		assert($db->inserts($table2,['id','active','name','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,2,12,2],[2,2,'james2',20,2,22,2],[3,3,'james2',30,2,32,2]) === [1,2,3]);
 		$tb = $db->table($table);
 		$tb->rowsLoad();
 		$tb2 = $db->table($table2);
@@ -39,10 +39,10 @@ class RowsIndex extends Base\Test
 		assert(count($rows->cell('id')) === 3);
 
 		// primaries
-		assert($rows->primaries() === array($table=>array(1,2,3)));
+		assert($rows->primaries() === [$table=>[1,2,3]]);
 
 		// ids
-		assert($rows->ids() === array($table=>array(1,2,3)));
+		assert($rows->ids() === [$table=>[1,2,3]]);
 
 		// add
 		$rows->add(...$tb2->rows()->toArray());
@@ -67,7 +67,7 @@ class RowsIndex extends Base\Test
 		assert(count($rows->tables()) === 2);
 
 		// tableNames
-		assert($rows->tableNames() === array($table,$table2));
+		assert($rows->tableNames() === [$table,$table2]);
 
 		// tableDb
 		assert($rows->tableDb($tb) instanceof Orm\Db);
@@ -85,7 +85,7 @@ class RowsIndex extends Base\Test
 		assert($rows->add(...$tb->rows()->values())->isCount(6));
 
 		// tableUpdate
-		assert($rows->tableUpdate($table) === array(1=>1,2=>1,3=>1));
+		assert($rows->tableUpdate($table) === [1=>1,2=>1,3=>1]);
 
 		// sequential
 		assert($rows->sequential() === $rows);
@@ -102,14 +102,14 @@ class RowsIndex extends Base\Test
 
 		// rows
 		assert($rows->delete() === 6);
-		assert($db->inserts($table,array('id','activez','name','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',10,11,12,13),array(2,2,'james3',20,21,22,23),array(3,3,'james2',30,31,32,33)) === array(1,2,3));
-		assert($db->inserts($table2,array('id','active','name','dateAdd','userAdd','dateModify','userModify'),array(1,1,'james',10,11,12,13),array(2,2,'james3',20,21,22,23),array(3,3,'james2',30,31,32,33)) === array(1,2,3));
+		assert($db->inserts($table,['id','activez','name','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,11,12,13],[2,2,'james3',20,21,22,23],[3,3,'james2',30,31,32,33]) === [1,2,3]);
+		assert($db->inserts($table2,['id','active','name','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,11,12,13],[2,2,'james3',20,21,22,23],[3,3,'james2',30,31,32,33]) === [1,2,3]);
 		assert($rows->add($tb->rows(1,2,3))->isCount(3));
 		assert($rows->add($tb2->rows(1,2,3))->isCount(6));
 		assert(count($rows->group('cellName')) === 3);
-		assert($rows->order(array('name'=>'DESC'))->first()['name']->value() === 'james3');
+		assert($rows->order(['name'=>'DESC'])->first()['name']->value() === 'james3');
 		assert($rows->limit(2,5)->isCount(4));
-		assert($rows->where(array(array('name','!','james'),array('id','>',2)))->isCount(2));
+		assert($rows->where([['name','!','james'],['id','>',2]])->isCount(2));
 		assert(count($rows->keyValue(0,1)) === 6);
 		assert(count($rows->segment('[id] [name]')) === 6);
 
