@@ -424,7 +424,7 @@ class PdoSql extends Main\Map
 		}
 		
 		else
-		static::throw("noValidTargetReference",$clause);
+		static::throw('noValidTargetReference',$clause);
 		
 		return $this;
 	}
@@ -873,7 +873,7 @@ class PdoSql extends Main\Map
 		
 		if(!empty($method))
 		{
-			$method .= "s";
+			$method .= 's';
 			$this->$method(...$values);
 		}
 		
@@ -1405,7 +1405,7 @@ class PdoSql extends Main\Map
 		$innerSql->set('join','(SELECT @rownum := 0) r');
 		$innerSql->set('where',$where);
 		$innerSql->set('order',$order);
-		$innerSql = $innerSql->_cast()." x";
+		$innerSql = $innerSql->_cast().' x';
 		
 		$sql = clone $this;
 		$sql->select('x.position');

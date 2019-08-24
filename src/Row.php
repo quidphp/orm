@@ -708,7 +708,7 @@ class Row extends Main\ArrObj
 	public function namePrimary(?string $pattern=null):string
 	{
 		$return = '';
-		$pattern = (is_string($pattern))? $pattern:"%name% (#%primary%)";
+		$pattern = (is_string($pattern))? $pattern:'%name% (#%primary%)';
 		$replace['%name%'] = $this->cellName();
 		$replace['%primary%'] = $this->primary();
 		$return = Base\Str::replace($replace,$pattern);

@@ -187,7 +187,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 		$return = $this->row($key);
 		
 		if(!is_object($return))
-		static::throw("arrayAccess","doesNotExist");
+		static::throw('arrayAccess','doesNotExist');
 		
 		return $return;
 	}

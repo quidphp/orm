@@ -205,7 +205,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// arrayAccess offsetSet n'est pas permis pour la classe
 	public function offsetSet($key,$value):void
 	{
-		static::throw("arrayAccess","notAllowed");
+		static::throw('arrayAccess','notAllowed');
 		
 		return;
 	}
@@ -215,7 +215,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// arrayAccess offsetUnset n'est pas permis pour la classe
 	public function offsetUnset($key):void
 	{
-		static::throw("arrayAccess","notAllowed");
+		static::throw('arrayAccess','notAllowed');
 		
 		return;
 	}

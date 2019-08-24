@@ -318,7 +318,7 @@ class Pdo extends Main\Root
 	// retourne le nom de l'objet db
 	public function name():string 
 	{
-		return $this->checkReady()->dsn()."@".$this->username();
+		return $this->checkReady()->dsn().'@'.$this->username();
 	}
 	
 	
@@ -1101,7 +1101,7 @@ class Pdo extends Main\Root
 		
 		if(Base\Sql::isQuery($type))
 		{
-			$method = "make".ucfirst(strtolower($type));
+			$method = 'make'.ucfirst(strtolower($type));
 			$return = $this->$method($array,$output,$option);
 		}
 		
@@ -2080,7 +2080,7 @@ class Pdo extends Main\Root
 		
 		if(!empty($table) && $limit > 0)
 		{
-			$order = [$primary=>"DESC"];
+			$order = [$primary=>'DESC'];
 			$limit = [$limit,($limit-1)];
 			
 			$cell = $this->makeSelect([$primary,$table,null,$order,$limit],'column');
@@ -2184,7 +2184,7 @@ class Pdo extends Main\Root
 			$parse['charset'] = $charset;
 			
 			if(!Base\Str::isEnd($charset,$return['dsn']))
-			$parse['dsn'] .= ";charset=".$charset;
+			$parse['dsn'] .= ';charset='.$charset;
 			
 			foreach(Base\Str::explode(';',$parse['path'],2,true,true) as $x)
 			{

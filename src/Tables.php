@@ -122,7 +122,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 		$this->add($value);
 		
 		else
-		static::throw("arrayAccess","onlyAllowedWithNullKey");
+		static::throw('arrayAccess','onlyAllowedWithNullKey');
 		
 		return;
 	}

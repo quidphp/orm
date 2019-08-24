@@ -120,7 +120,7 @@ class Cols extends Main\Map
 		$this->add($value);
 		
 		else
-		static::throw("arrayAccess","onlyAllowedWithNullKey");
+		static::throw('arrayAccess','onlyAllowedWithNullKey');
 		
 		return;
 	}

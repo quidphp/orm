@@ -1984,7 +1984,7 @@ class Col extends Main\Root
 		
 		$isForm = Base\Html::isFormTag($tag);
 		$attr = $this->formComplexAttr($attr);
-		$method = ($isForm === true)? $tag:$tag."Cond";
+		$method = ($isForm === true)? $tag:$tag.'Cond';
 		
 		$return = Base\Html::$method($value,$attr,$option);
 		
@@ -2189,7 +2189,7 @@ class Col extends Main\Root
 	{
 		$replace = $this->htmlReplace($value,$option);
 		$replace = Base\Obj::cast($replace);
-		$replace = Base\Arr::keysWrap("%","%",$replace);
+		$replace = Base\Arr::keysWrap('%','%',$replace);
 		$return = Base\Str::replace($replace,$return);
 		
 		return $return;
