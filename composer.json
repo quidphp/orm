@@ -1,9 +1,9 @@
 {
-	"name": "quid5/orm",
+	"name": "quidphp/orm",
     "type": "library",
-    "description": "A modern PHP framework and CMS",
-    "keywords": ["quid5","quid","framework","cms"],
-    "homepage": "https://quid5.com",
+    "description": "QuidPHP - A modern framework and CMS",
+    "keywords": ["quidphp","quid","framework","cms"],
+    "homepage": "https://quidphp.com",
     "license": "MIT",
     "authors": [
         {
