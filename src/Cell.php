@@ -15,7 +15,10 @@ use Quid\Base;
 class Cell extends Main\Root
 {
 	// trait
-	use _colCell; use _tableAccess;
+	use _colCell;
+	use _tableAccess;
+	
+	
 	// config
 	public static $config = [];
 

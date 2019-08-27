@@ -15,7 +15,11 @@ use Quid\Base;
 class Rows extends Main\Map
 {
 	// trait
-	use Main\Map\_obj; use Main\Map\_readOnly; use Main\Map\_sort;
+	use Main\Map\_obj;
+	use Main\Map\_readOnly;
+	use Main\Map\_sort;
+	
+	
 	// config
 	public static $config = [];
 

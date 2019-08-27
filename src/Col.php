@@ -15,7 +15,11 @@ use Quid\Base;
 class Col extends Main\Root
 {
 	// trait
-	use Main\_attr; use _colCell; use _tableAccess;
+	use Main\_attr;
+	use _colCell;
+	use _tableAccess;
+	
+	
 	// config
 	public static $config = [
 		'ignore'=>null, // défini si la colonne est ignoré

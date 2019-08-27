@@ -15,7 +15,10 @@ use Quid\Base;
 class Table extends Main\ArrObj implements Main\Contract\Import
 {
 	// trait
-	use _dbAccess; use Main\_attr;
+	use _dbAccess;
+	use Main\_attr;
+	
+	
 	// config
 	public static $config = [
 		'ignore'=>null, // défini si la table est ignoré
