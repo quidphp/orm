@@ -18,8 +18,8 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 	use Main\Map\_obj;
 	use Main\Map\_readOnly;
 	use Main\Map\_sort;
-	
-	
+
+
 	// config
 	public static $config = [];
 

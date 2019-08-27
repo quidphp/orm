@@ -18,8 +18,8 @@ class Cells extends Main\Map
 	use Main\Map\_obj;
 	use Main\Map\_readOnly;
 	use Main\Map\_sort;
-	
-	
+
+
 	// config
 	public static $config = [];
 

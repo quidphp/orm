@@ -17,8 +17,8 @@ class Pdo extends Main\Root
 	// trait
 	use Main\_option;
 	use Main\_inst;
-	
-	
+
+
 	// config
 	public static $config = [
 		'option'=>[ // tableau d'options

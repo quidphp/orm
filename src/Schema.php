@@ -17,8 +17,8 @@ class Schema extends Main\Map
 	// trait
 	use Main\Map\_arrs;
 	use _dbAccess;
-	
-	
+
+
 	// config
 	public static $config = [];
 
