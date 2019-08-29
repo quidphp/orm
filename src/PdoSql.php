@@ -12,7 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // pdoSql
-// class used to build an sql query in a object-oriented way, uses the PDO class (not linked to the ORM components)
+// class used to build an sql query in a object-oriented way, not linked to the ORM components
 class PdoSql extends Main\Map
 {
 	// trait
