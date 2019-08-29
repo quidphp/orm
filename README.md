@@ -6,7 +6,7 @@
 [![Code Size](https://img.shields.io/github/languages/code-size/quidphp/orm)](https://github.com/quidphp/orm)
 
 ## About
-**Quid\Orm** is LOREM IPSUM. It is part of the [QuidPHP](https://github.com/quidphp/project) package and can also be used standalone. 
+**Quid\Orm** is a library that provides database abstraction using PDO and an easy-to-use Object-Relational Mapper (ORM). It is part of the [QuidPHP](https://github.com/quidphp/project) package and can also be used standalone. 
 
 ## License
 **Quid\Orm** is available as an open-source software under the [MIT license](LICENSE).
