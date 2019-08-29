@@ -53,7 +53,7 @@ $ composer require quidphp/orm
 - [Exception](src/Exception.php) | Class used for a database query exception
 - [History](src/History.php) | Class used to store the history of requests made to the PDO object
 - [Pdo](src/Pdo.php) | Class used to query the database using the PDO object
-- [PdoSql](src/PdoSql.php) | Class used to build an sql query in a object-oriented way, uses the PDO class (not linked to the ORM components)
+- [PdoSql](src/PdoSql.php) | Class used to build an sql query in a object-oriented way, not linked to the ORM components
 - [Relation](src/Relation.php) | Class that is extended by ColRelation and Relation
 - [Row](src/Row.php) | Class to represent an existing row within a table
 - [Rows](src/Rows.php) | Class for a collection of many rows within a same table
