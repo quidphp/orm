@@ -16,6 +16,7 @@
 ``` bash
 $ composer require quidphp/orm
 ```
+Once installed, the **Quid\Orm** namespace will be available within your PHP application.
 
 ## Requirement
 **Quid\Orm** requires the following:
