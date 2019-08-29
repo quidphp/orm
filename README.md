@@ -41,7 +41,7 @@ $ composer require quidphp/orm
 - *Dynamic singleton*: Table, Col, Row and Cell objects can only exist once for a same source.
 
 ## Overview
-**Quid\Orm** contains more than 20 classes and traits. Here is an overview:
+**Quid\Orm** contains 25 classes and traits. Here is an overview:
 - [Cell](src/Cell.php) | Class to represent an existing cell within a row
 - [Cells](src/Cells.php) | Class for a collection of many cells within a same row
 - [Classe](src/Classe.php) | Class required to identify which class needs to be used by the different ORM components of a database
