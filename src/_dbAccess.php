@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Quid\Orm;
 
 // _dbAccess
+// trait that grants database access to the class using
 trait _dbAccess
 {
 	// dynamique

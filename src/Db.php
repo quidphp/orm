@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // db
+// class used to query the database and to link the results to the different ORM components
 class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 {
 	// trait

@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // pdo
+// class used to query the database using the PDO object
 class Pdo extends Main\Root
 {
 	// trait

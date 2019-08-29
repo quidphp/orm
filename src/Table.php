@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // table
+// class to represent an existing table within a database
 class Table extends Main\ArrObj implements Main\Contract\Import
 {
 	// trait

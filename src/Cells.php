@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // cells
+// class for a collection of many cells within a same row
 class Cells extends Main\Map
 {
 	// trait

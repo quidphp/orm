@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // tables
+// class for a collection of many tables within a same database
 class Tables extends Main\Map implements Main\Contract\Hierarchy
 {
 	// trait

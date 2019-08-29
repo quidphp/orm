@@ -11,6 +11,7 @@ namespace Quid\Orm;
 use Quid\Main;
 
 // _colCell
+// trait that provides common methods for Col and Cell objects
 trait _colCell
 {
 	// dynamique

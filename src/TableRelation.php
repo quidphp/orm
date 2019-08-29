@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // tableRelation
+// class to access the relation data of a table
 class TableRelation extends Relation
 {
 	/// trait

@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // cols
+// class for a collection of many columns within a same table
 class Cols extends Main\Map
 {
 	// trait

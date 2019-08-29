@@ -11,6 +11,7 @@ namespace Quid\Orm;
 use Quid\Base;
 
 // colRelation
+// class to access the relation data of a column
 class ColRelation extends Relation
 {
 	// config

@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // rows
+// class for a collection of many rows within a same table
 class Rows extends Main\Map
 {
 	// trait

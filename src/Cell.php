@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // cell
+// class to represent an existing cell within a row
 class Cell extends Main\Root
 {
 	// trait

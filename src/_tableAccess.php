@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Quid\Orm;
 
 // _tableAccess
+// trait that grants table access to the class using
 trait _tableAccess
 {
 	// trait

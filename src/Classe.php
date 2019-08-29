@@ -11,6 +11,7 @@ namespace Quid\Orm;
 use Quid\Main;
 
 // classe
+// class required to identify which class needs to be used by the different ORM components of a database
 class Classe extends Main\Map
 {
 	// trait

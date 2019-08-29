@@ -11,6 +11,7 @@ namespace Quid\Orm;
 use Quid\Base;
 
 // sql
+// class used to build a sql query in a object-oriented way, uses the DB class (linked to the ORM components)
 class Sql extends PdoSql
 {
 	// config

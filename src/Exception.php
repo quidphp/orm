@@ -11,6 +11,7 @@ namespace Quid\Orm;
 use Quid\Main;
 
 // exception
+// class used for a database query exception
 class Exception extends Main\Exception
 {
 	// config

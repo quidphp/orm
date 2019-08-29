@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // colSchema
+// class used to parse the information schema of a column
 class ColSchema extends Main\Root
 {
 	// config

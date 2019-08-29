@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // row
+// class to represent an existing row within a table
 class Row extends Main\ArrObj
 {
 	// trait

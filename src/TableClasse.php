@@ -11,6 +11,7 @@ namespace Quid\Orm;
 use Quid\Main;
 
 // tableClasse
+// class required to identify which class needs to be used by the different ORM components of a table
 class TableClasse extends Main\Map
 {
 	// config

@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // schema
+// class that provides a schema for a database with tables and columns information
 class Schema extends Main\Map
 {
 	// trait

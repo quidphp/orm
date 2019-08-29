@@ -12,6 +12,7 @@ use Quid\Main;
 use Quid\Base;
 
 // col
+// class to represent an existing column within a table
 class Col extends Main\Root
 {
 	// trait
