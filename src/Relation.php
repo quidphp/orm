@@ -11,7 +11,7 @@ namespace Quid\Orm;
 use Quid\Main;
 
 // relation
-// class that is extended by ColRelation and Relation
+// abstract class that is extended by ColRelation and Relation
 abstract class Relation extends Main\ArrMap
 {
 	// trait

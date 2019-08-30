@@ -55,7 +55,7 @@ Once installed, the **Quid\Orm** namespace will be available within your PHP app
 - [History](src/History.php) | Class used to store the history of requests made to the PDO object
 - [Pdo](src/Pdo.php) | Class used to query the database using the PDO object
 - [PdoSql](src/PdoSql.php) | Class used to build an sql query in a object-oriented way, not linked to the ORM components
-- [Relation](src/Relation.php) | Class that is extended by ColRelation and Relation
+- [Relation](src/Relation.php) | Abstract class that is extended by ColRelation and Relation
 - [Row](src/Row.php) | Class to represent an existing row within a table
 - [Rows](src/Rows.php) | Class for a collection of many rows within a same table
 - [RowsIndex](src/RowsIndex.php) | Class for a collection of many rows within different tables (keys are indexed)
