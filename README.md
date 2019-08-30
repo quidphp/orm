@@ -23,15 +23,17 @@ Once installed, the **Quid\Orm** namespace will be available within your PHP app
 - PHP 7.2+ with PDO and pdo_mysql
 
 ## Dependency
-**QuidPHP/Orm** has the following dependency:
-- [Quid\Base](https://github.com/quidphp/base)
-- [Quid\Main](https://github.com/quidphp/main)
+**QuidPHP/Orm** has the following dependencies:
+- [quidphp/base](https://github.com/quidphp/base) | Quid\Base - PHP library that provides a large set of low-level static methods
+- [quidphp/main](https://github.com/quidphp/main) | Quid\Main - PHP library that provides a set of base objects and collections 
 
-## Testing
-**QuidPHP/Orm** testsuite can be run by creating a new [Quid\Project](https://github.com/quidphp/project). All tests and assertions are part of the [Quid\Test](https://github.com/quidphp/test) repository.
+All dependencies will be resolved by using the [Composer](https://getcomposer.org) installation process.
 
 ## Comment
-**QuidPHP/Orm** code is commented and all methods are explained. However, the method and property comments are currently written in French.
+**QuidPHP/Orm** code is commented and all methods are explained. However, most of the comments are currently written in French.
+
+## Testing
+**QuidPHP/Orm** testsuite can be run by creating a new [quidphp/project](https://github.com/quidphp/project). All tests and assertions are part of the [quidphp/test](https://github.com/quidphp/test) repository.
 
 ## Convention
 **QuidPHP/Orm** is built on the following conventions:
