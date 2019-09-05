@@ -18,7 +18,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Quid\\Orm\\": "src/"
+            "Quid\\Orm\\": "src/",
+			"Quid\\Test\\Orm\\": "test/"
         }
     }
 }

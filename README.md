@@ -32,9 +32,6 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 ## Comment
 **QuidPHP/Orm** code is commented and all methods are explained. However, most of the comments are currently written in French.
 
-## Testing
-**QuidPHP/Orm** testsuite can be run by creating a new [quidphp/project](https://github.com/quidphp/project). All tests and assertions are part of the [quidphp/test](https://github.com/quidphp/test) repository.
-
 ## Convention
 **QuidPHP/Orm** is built on the following conventions:
 - *Traits*: Traits filenames start with an underscore (_).
@@ -70,3 +67,30 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [_colCell](src/_colCell.php) | Trait that provides common methods for Col and Cell objects
 - [_dbAccess](src/_dbAccess.php) | Trait that grants database access to the class using
 - [_tableAccess](src/_tableAccess.php) | Trait that grants table access to the class using
+
+## Testing
+**QuidPHP/Orm** contains 22 test classes:
+- [Cell](test/Cell.php) | Class for testing Quid\Orm\Cell
+- [Cells](test/Cells.php) | Class for testing Quid\Orm\Cells
+- [Classe](test/Classe.php) | Class for testing Quid\Orm\Classe
+- [Col](test/Col.php) | Class for testing Quid\Orm\Col
+- [ColRelation](test/ColRelation.php) | Class for testing Quid\Orm\ColRelation
+- [ColSchema](test/ColSchema.php) | Class for testing Quid\Orm\ColSchema
+- [Cols](test/Cols.php) | Class for testing Quid\Orm\Cols
+- [Db](test/Db.php) | Class for testing Quid\Orm\Db
+- [Exception](test/Exception.php) | Class for testing Quid\Orm\Exception
+- [History](test/History.php) | Class for testing Quid\Orm\History
+- [Pdo](test/Pdo.php) | Class for testing Quid\Orm\Pdo
+- [PdoSql](test/PdoSql.php) | Class for testing Quid\Orm\PdoSql
+- [Relation](test/Relation.php) | Class for testing Quid\Orm\Relation
+- [Row](test/Row.php) | Class for testing Quid\Orm\Row
+- [Rows](test/Rows.php) | Class for testing Quid\Orm\Rows
+- [RowsIndex](test/RowsIndex.php) | Class for testing Quid\Orm\RowsIndex
+- [Schema](test/Schema.php) | Class for testing Quid\Orm\Schema
+- [Sql](test/Sql.php) | Class for testing Quid\Orm\Sql
+- [Table](test/Table.php) | Class for testing Quid\Orm\Table
+- [TableClasse](test/TableClasse.php) | Class for testing Quid\Orm\TableClasse
+- [TableRelation](test/TableRelation.php) | Class for testing Quid\Orm\TableRelation
+- [Tables](test/Tables.php) | Class for testing Quid\Orm\Tables
+
+**QuidPHP/Orm** testsuite can be run by creating a new [quidphp/project](https://github.com/quidphp/project).
