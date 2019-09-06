@@ -4,7 +4,7 @@ declare(strict_types=1);
 /*
  * This file is part of the QuidPHP package.
  * Website: https://quidphp.com
- * License: https://github.com/quidphp/base/blob/master/LICENSE
+ * License: https://github.com/quidphp/orm/blob/master/LICENSE
  */
 
 namespace Quid\Orm;
@@ -160,8 +160,8 @@ class Syntax extends Main\Root
 	{
 		return;
 	}
-	
-	
+
+
 	// isQuery
 	// retourne vrai si la valeur est un type de query
 	public static function isQuery($value):bool
