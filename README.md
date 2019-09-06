@@ -7,7 +7,7 @@
 
 ## About
 **QuidPHP/Orm** is a PHP library that provides database abstraction using PDO and an easy-to-use Object-Relational Mapper (ORM). It is part of the [QuidPHP](https://github.com/quidphp/project) package and can also be used standalone. 
- 
+
 ## License
 **QuidPHP/Orm** is available as an open-source software under the [MIT license](LICENSE).
 
