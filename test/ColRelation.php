@@ -155,11 +155,11 @@ class ColRelation extends Base\Test
 		assert(key($userAdd->all(false,['order'=>1])) === 1);
 		assert(key($userAdd->all(false,['order'=>2])) === 4);
 		assert(key($userAdd->all(false,['order'=>3])) === 2);
-		assert(key($userAdd->all(false,['order'=>4])) === 1);
+		assert(key($userAdd->all(false,['order'=>4])) === 3);
 		assert(key($userAdd->all(true,['order'=>1])) === 1);
 		assert(key($userAdd->all(true,['order'=>2])) === 4);
 		assert(key($userAdd->all(true,['order'=>3])) === 2);
-		assert(key($userAdd->all(true,['order'=>4])) === 1);
+		assert(key($userAdd->all(true,['order'=>4])) === 3);
 		assert($relationCall->all() === ['test','test2','test3']);
 
 		// exists

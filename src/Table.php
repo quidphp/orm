@@ -538,7 +538,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 		$return = $value;
 
 		else
-		$return = Base\Sql::whereAppend($return,$value);
+		$return = Syntax::whereAppend($return,$value);
 
 		return $return;
 	}
@@ -564,13 +564,13 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 			elseif(is_array($return) && in_array(true,$return,true))
 			{
 				$true = true;
-				$return = Base\Sql::removeDefault($return);
-				$return = Base\Sql::whereAppend($return,$this->whereFilterTrue());
+				$return = Syntax::removeDefault($return);
+				$return = Syntax::whereAppend($return,$this->whereFilterTrue());
 			}
 		}
 
 		$return = Base\Call::digStaticMethod($return);
-		$return = Base\Sql::removeDefault($return);
+		$return = Syntax::removeDefault($return);
 
 		return $return;
 	}
@@ -1640,7 +1640,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 	public function grabVisible($where=true,$limit=null):Rows
 	{
 		$return = null;
-		$where = Base\Sql::addDefault($where);
+		$where = Syntax::addDefault($where);
 		$return = $this->grab($where,$limit,true);
 
 		return $return;

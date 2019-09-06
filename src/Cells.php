@@ -67,7 +67,7 @@ class Cells extends Main\Map
 
 			else
 			{
-				$key = Base\Sql::shortcut($key);
+				$key = Syntax::shortcut($key);
 				if(array_key_exists($key,$this->data))
 				$return = $key;
 			}
@@ -146,7 +146,7 @@ class Cells extends Main\Map
 
 		foreach ($array as $key => $value)
 		{
-			foreach (Base\Sql::wherePrepareOne($key,$value) as $v)
+			foreach (Syntax::wherePrepareOne($key,$value) as $v)
 			{
 				if(is_array($v) && count($v) >= 2 && is_string($v[0]))
 				{

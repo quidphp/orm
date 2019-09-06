@@ -88,7 +88,6 @@ class Table extends Base\Test
 
 		// permission
 		assert(count($tb->permission()) >= 10);
-		assert(is_array($tb->permission('colPopup')));
 		assert($tb->permission('select'));
 
 		// isSearchable
@@ -573,7 +572,7 @@ class Table extends Base\Test
 		// configReplaceMode
 
 		// attr
-		assert(count($tb->attr()) === 20); // un de plus car @app n'est pas enlevé
+		assert(count($tb->attr()) >= 18);
 		assert($tb->attr('test') === 'ok');
 		assert($tb->attr('key') === ['key',0]);
 		assert($tb->attrCall('test') === 'ok');

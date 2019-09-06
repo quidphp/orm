@@ -178,8 +178,8 @@ class Db extends Base\Test
 		assert($db->fromPointer('ormDb/2','-') === null);
 
 		// prepareRow
-		assert($db->prepareRow(Base\Sql::makeSelect(['*',$table,['name_[lang]'=>'james']]),'rows')['id'] === [1]);
-		assert($db->prepareRow(Base\Sql::makeSelect(['*',$table,['name_[lang]'=>'james']]),'row')['id'] === 1);
+		assert($db->prepareRow(Orm\Syntax::makeSelect(['*',$table,['name_[lang]'=>'james']]),'rows')['id'] === [1]);
+		assert($db->prepareRow(Orm\Syntax::makeSelect(['*',$table,['name_[lang]'=>'james']]),'row')['id'] === 1);
 
 		// row
 		assert($db->row($tb,2) instanceof Orm\Row);

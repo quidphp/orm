@@ -273,8 +273,6 @@ class Cell extends Base\Test
 		assert($cell->label(5) === 'Name');
 
 		// description
-		assert($cell->description() === 'Name to represent the element');
-		assert($cell->description('%:') === 'Name to represent the element:');
 
 		// details
 		assert($cell->details() === ['Cannot be empty','Length must be at maximum 100 characters']);

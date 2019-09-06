@@ -1,8 +1,8 @@
 {
 	"name": "quidphp/orm",
     "type": "library",
-    "description": "QuidPHP - A modern framework and CMS",
-    "keywords": ["quidphp","quid","framework","cms"],
+    "description": "PHP library that provides database access and a comprehensive Object-Relational Mapper",
+    "keywords": ["quidphp","quid","framework"],
     "homepage": "https://quidphp.com",
     "license": "MIT",
     "authors": [

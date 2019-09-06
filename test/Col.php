@@ -187,7 +187,7 @@ class Col extends Base\Test
 		assert($col->isGeneral());
 
 		// generalExcerptMin
-		assert($email->generalExcerptMin() === null);
+		assert($col->generalExcerptMin() === 100);
 
 		// hasDefault
 		assert($col->hasDefault());

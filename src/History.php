@@ -113,7 +113,7 @@ class History extends Main\Map
 			{
 				$sql = $value['sql'];
 				if(!empty($value['prepare']))
-				$sql = Base\Sql::emulate($sql,$value['prepare']);
+				$sql = Syntax::emulate($sql,$value['prepare']);
 
 				$return[] = $sql;
 			}
@@ -171,7 +171,7 @@ class History extends Main\Map
 	{
 		$return = [];
 
-		foreach (Base\Sql::getQueryTypes() as $type)
+		foreach (Syntax::getQueryTypes() as $type)
 		{
 			$array = $this->typeCount($type);
 

@@ -809,7 +809,7 @@ class Col extends Main\Root
 	// retourne la direction par défaut de la colonne
 	public function direction(bool $lower=false):string
 	{
-		$return = Base\Sql::getOrderDirection($this->attr('direction'));
+		$return = Syntax::getOrderDirection($this->attr('direction'));
 
 		if($lower === true)
 		$return = strtolower($return);

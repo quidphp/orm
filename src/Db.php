@@ -347,7 +347,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 		$exception = new $class($message,null,$option);
 
 		if(!empty($values[0]) && is_array($values[0]) && !empty($values[0]['sql']))
-		$exception->setQuery(Base\Sql::emulate($values[0]['sql'],$values[0]['prepare'] ?? null));
+		$exception->setQuery(Syntax::emulate($values[0]['sql'],$values[0]['prepare'] ?? null));
 
 		throw $exception;
 
@@ -772,7 +772,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne un objet row ou null après avoir traité un tableau pour une requête sql
 	public function row(...$values):?Row
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'row');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'row');
 	}
 
 
@@ -781,7 +781,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// s'il y a une row, elle ira chercher les dernières valeurs dans la base de donnée
 	public function rowRefresh(...$values):?Row
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowRefresh');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowRefresh');
 	}
 
 
@@ -790,7 +790,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne seulement la row si elle a déjà été chargé
 	public function rowIn(...$values):?Row
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowIn');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowIn');
 	}
 
 
@@ -799,7 +799,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne seulement la row si elle a déjà été chargé, la ligne se mettra à jour avant d'être retourner
 	public function rowInRefresh(...$values):?Row
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowInRefresh');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowInRefresh');
 	}
 
 
@@ -808,7 +808,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne seulement la row si elle n'est pas chargé
 	public function rowOut(...$values):?Row
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowOut');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowOut');
 	}
 
 
@@ -816,7 +816,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// retourne un objet rows ou null après avoir traité un tableau pour une requête sql
 	public function rows(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rows');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rows');
 	}
 
 
@@ -825,7 +825,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// s'il y a des rows, les lignes se mettront à jour avant d'être retourner
 	public function rowsRefresh(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsRefresh');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsRefresh');
 	}
 
 
@@ -834,7 +834,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// les rows sont seulement retournés si elles existent déjà
 	public function rowsIn(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsIn');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsIn');
 	}
 
 
@@ -843,7 +843,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// les rows sont seulement retournés si elles existent déjà et se mettront à jour avant d'être retourner
 	public function rowsInRefresh(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsInRefresh');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsInRefresh');
 	}
 
 
@@ -852,7 +852,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 	// les rows sont seulement retournés si elles n'existent pas déjà
 	public function rowsOut(...$values):?Rows
 	{
-		return $this->query(Base\Sql::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsOut');
+		return $this->query(Syntax::makeSelect(Base\Arr::unshift($values,[$this->primary()]),$this->getSqlOption()),'rowsOut');
 	}
 
 

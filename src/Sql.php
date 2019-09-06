@@ -69,7 +69,7 @@ class Sql extends PdoSql
 	{
 		$return = null;
 		$arr = $this->arr();
-		$required = Base\Sql::getQueryRequired($this->getType());
+		$required = Syntax::getQueryRequired($this->getType());
 		$db = $this->db();
 
 		if(!empty($required) && !Base\Arr::keysExists($required,$arr))

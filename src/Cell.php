@@ -427,7 +427,7 @@ class Cell extends Main\Root
 		{
 			$method = (is_numeric($method))? $value:$method;
 
-			if(is_string($method) && Base\Sql::isWhereSymbol($method))
+			if(is_string($method) && Syntax::isWhereSymbol($method))
 			$return = $this->isCompare($method,$value);
 
 			elseif(in_array($method,[null,'null'],true))

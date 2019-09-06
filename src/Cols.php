@@ -67,7 +67,7 @@ class Cols extends Main\Map
 
 			else
 			{
-				$key = Base\Sql::shortcut($key);
+				$key = Syntax::shortcut($key);
 				if(array_key_exists($key,$this->data))
 				$return = $key;
 			}

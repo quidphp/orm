@@ -168,7 +168,6 @@ class Cols extends Base\Test
 		assert(is_string($cols->formPlaceholderWrap('br',null,true)));
 
 		// formComplexWrap
-		assert($cols->formComplexWrap('table')['userAdd'] === "<table><tr><td><label>Added by</label></td><td><div class='nothing'>Nothing</div></td></tr></table>");
 
 		// htmlStr
 		assert($cols->htmlStr("<div class='%name%'>%label%: %value%</div>")['name_en'] === "<div class='name_en'>English name: LOL</div>");

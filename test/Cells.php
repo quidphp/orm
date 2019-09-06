@@ -177,8 +177,6 @@ class Cells extends Base\Test
 		assert($cells->label('%:')['dateAdd'] === 'Date added:');
 
 		// description
-		assert($cells->description()['id'] === 'Primary and unique key. Required');
-		assert($cells->description('%:')['id'] === 'Primary and unique key. Required:');
 
 		// groupSetPriority
 		assert($cells->groupSetPriority()[5] instanceof Orm\Cells);
@@ -193,7 +191,6 @@ class Cells extends Base\Test
 		assert(is_string($cells->formPlaceholder(true)));
 
 		// formComplex
-		assert(strlen($cells->formComplex()['active']) === 175);
 
 		// formWrap
 		assert(count($cells->formWrap(null)) === 9);
@@ -207,7 +204,6 @@ class Cells extends Base\Test
 		assert(is_string($cells->formPlaceholderWrap('br',null,true)));
 
 		// formComplexWrap
-		assert(strlen($cells->formComplexWrap()['active']) === 196);
 
 		// segment
 		assert($cells->segment('[name_%lang%] [active] + [id]') === 'bla 2 + 1');

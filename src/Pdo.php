@@ -629,7 +629,7 @@ class Pdo extends Main\Root
 	public function makeStatement($value,?array $attr=[]):?\PDOStatement
 	{
 		$return = null;
-		$value = Base\Sql::parseReturn($value);
+		$value = Syntax::parseReturn($value);
 
 		try
 		{
@@ -708,7 +708,7 @@ class Pdo extends Main\Root
 	public function outputStatement($value,$output,\PDOStatement $statement)
 	{
 		$return = null;
-		$value = Base\Sql::parseReturn($value);
+		$value = Syntax::parseReturn($value);
 
 		if(!empty($value))
 		{
@@ -777,7 +777,7 @@ class Pdo extends Main\Root
 	{
 		$return = null;
 		$count = $statement->columnCount();
-		$arg = Base\Sql::shortcut(array_values((array) $arg));
+		$arg = Syntax::shortcut(array_values((array) $arg));
 
 		if($count > 2)
 		{
@@ -809,7 +809,7 @@ class Pdo extends Main\Root
 	{
 		$return = null;
 		$count = $statement->columnCount();
-		$arg = Base\Sql::shortcut(array_values((array) $arg));
+		$arg = Syntax::shortcut(array_values((array) $arg));
 
 		if($count > 2)
 		{
@@ -839,7 +839,7 @@ class Pdo extends Main\Root
 	public function fetchColumnStatement($arg,\PDOStatement $statement)
 	{
 		$return = null;
-		$arg = Base\Sql::shortcut(array_values((array) $arg));
+		$arg = Syntax::shortcut(array_values((array) $arg));
 
 		if(!empty($arg) && !Base\Arr::onlyNumeric($arg) && !empty($fetch = $statement->fetch(\PDO::FETCH_ASSOC)))
 		$return = Base\Arr::get($arg[0],$fetch);
@@ -860,7 +860,7 @@ class Pdo extends Main\Root
 	public function fetchColumnsStatement($arg,\PDOStatement $statement):?array
 	{
 		$return = null;
-		$arg = Base\Sql::shortcut(array_values((array) $arg));
+		$arg = Syntax::shortcut(array_values((array) $arg));
 
 		if(!empty($arg) && !Base\Arr::onlyNumeric($arg) && !empty($fetch = $statement->fetchAll(\PDO::FETCH_ASSOC)))
 		$return = Base\Column::value($arg[0],$fetch);
@@ -933,7 +933,7 @@ class Pdo extends Main\Root
 		if($this->getOption('debug') || $output === 'debug')
 		$return = $this->debug($value);
 
-		elseif(!empty($value = Base\Sql::parseReturn($value)))
+		elseif(!empty($value = Syntax::parseReturn($value)))
 		{
 			$beforeAfter = (is_array($output) && array_key_exists('beforeAfter',$output) && in_array($value['type'],['insert','update','delete'],true))? true:false;
 
@@ -986,7 +986,7 @@ class Pdo extends Main\Root
 	{
 		$return = null;
 
-		if(in_array($type,['before','after'],true) && Base\Sql::isReturnSelect($value))
+		if(in_array($type,['before','after'],true) && Syntax::isReturnSelect($value))
 		{
 			if($type === 'before')
 			$return = $this->query($value['select'],$output);
@@ -1108,7 +1108,7 @@ class Pdo extends Main\Root
 	{
 		$return = null;
 
-		if(Base\Sql::isQuery($type))
+		if(Syntax::isQuery($type))
 		{
 			$method = 'make'.ucfirst(strtolower($type));
 			$return = $this->$method($array,$output,$option);
@@ -1124,7 +1124,7 @@ class Pdo extends Main\Root
 	// par exemple pour select assoc, limit 1 est ajouté
 	public function makeSelect(array $array,$output=true,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeSelect(static::selectLimit($output,$array),$this->getSqlOption($option)),$output);
+		return $this->query(Syntax::makeSelect(static::selectLimit($output,$array),$this->getSqlOption($option)),$output);
 	}
 
 
@@ -1132,7 +1132,7 @@ class Pdo extends Main\Root
 	// construit et soumet une requête show généré par la classe sql
 	public function makeShow(array $array,$output=true,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeShow($array,$this->getSqlOption($option)),$output);
+		return $this->query(Syntax::makeShow($array,$this->getSqlOption($option)),$output);
 	}
 
 
@@ -1144,7 +1144,7 @@ class Pdo extends Main\Root
 	{
 		$return = null;
 		$option = $this->getSqlOption($option);
-		$sql = Base\Sql::makeInsert($array,$option);
+		$sql = Syntax::makeInsert($array,$option);
 
 		if(!empty($sql))
 		{
@@ -1165,7 +1165,7 @@ class Pdo extends Main\Root
 	{
 		$return = null;
 		$option = $this->getSqlOption($option);
-		$sql = Base\Sql::makeUpdate($array,$option);
+		$sql = Syntax::makeUpdate($array,$option);
 
 		if(!empty($sql))
 		{
@@ -1186,7 +1186,7 @@ class Pdo extends Main\Root
 	{
 		$return = null;
 		$option = $this->getSqlOption($option);
-		$sql = Base\Sql::makeDelete($array,$option);
+		$sql = Syntax::makeDelete($array,$option);
 
 		if(!empty($sql))
 		{
@@ -1205,13 +1205,13 @@ class Pdo extends Main\Root
 	// il y aura seulement un rollback si le tableau sql contient select, une table et un id numérique
 	public function prepareRollback(string $type,array $return,?array $option=null):array
 	{
-		if(in_array($type,['insert','update','delete'],true) && Base\Sql::isReturnRollback($return))
+		if(in_array($type,['insert','update','delete'],true) && Syntax::isReturnRollback($return))
 		{
 			$table = $return['select']['table'];
 			$id = $return['select']['id'];
 
 			if($type === 'insert')
-			$return['rollback'] = Base\Sql::makeDelete([$table,$id],$option);
+			$return['rollback'] = Syntax::makeDelete([$table,$id],$option);
 
 			else
 			{
@@ -1220,10 +1220,10 @@ class Pdo extends Main\Root
 				if(!empty($assoc))
 				{
 					if($type === 'update')
-					$return['rollback'] = Base\Sql::makeUpdate([$table,$assoc,$id],$option);
+					$return['rollback'] = Syntax::makeUpdate([$table,$assoc,$id],$option);
 
 					elseif($type === 'delete')
-					$return['rollback'] = Base\Sql::makeInsert([$table,$assoc,$id],$option);
+					$return['rollback'] = Syntax::makeInsert([$table,$assoc,$id],$option);
 
 					$return['rollback']['content'] = $assoc;
 				}
@@ -1238,7 +1238,7 @@ class Pdo extends Main\Root
 	// construit et soumet une requête create généré par la classe sql
 	public function makeCreate(array $array,$output=true,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeCreate($array,$this->getSqlOption($option)),$output);
+		return $this->query(Syntax::makeCreate($array,$this->getSqlOption($option)),$output);
 	}
 
 
@@ -1246,7 +1246,7 @@ class Pdo extends Main\Root
 	// construit et soumet une requête alter généré par la classe sql
 	public function makeAlter(array $array,$output=true,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeAlter($array,$this->getSqlOption($option)),$output);
+		return $this->query(Syntax::makeAlter($array,$this->getSqlOption($option)),$output);
 	}
 
 
@@ -1254,7 +1254,7 @@ class Pdo extends Main\Root
 	// construit et soumet une requête truncate généré par la classe sql
 	public function makeTruncate(array $array,$output=true,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeTruncate($array,$this->getSqlOption($option)),$output);
+		return $this->query(Syntax::makeTruncate($array,$this->getSqlOption($option)),$output);
 	}
 
 
@@ -1262,7 +1262,7 @@ class Pdo extends Main\Root
 	// construit et soumet une requête drop généré par la classe sql
 	public function makeDrop(array $array,$output=true,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeDrop($array,$this->getSqlOption($option)),$output);
+		return $this->query(Syntax::makeDrop($array,$this->getSqlOption($option)),$output);
 	}
 
 
@@ -1663,7 +1663,7 @@ class Pdo extends Main\Root
 	// output est column
 	public function selectCount(...$values):?int
 	{
-		return $this->query(Base\Sql::makeSelectCount(static::selectLimit('column',$values),$this->getSqlOption()),'column');
+		return $this->query(Syntax::makeSelectCount(static::selectLimit('column',$values),$this->getSqlOption()),'column');
 	}
 
 
@@ -1672,7 +1672,7 @@ class Pdo extends Main\Root
 	// what est *
 	public function selectAll(...$values)
 	{
-		return $this->query(Base\Sql::makeSelectAll(static::selectLimit('assoc',$values),$this->getSqlOption()),'assoc');
+		return $this->query(Syntax::makeSelectAll(static::selectLimit('assoc',$values),$this->getSqlOption()),'assoc');
 	}
 
 
@@ -1681,7 +1681,7 @@ class Pdo extends Main\Root
 	// what est *
 	public function selectAlls(...$values):?array
 	{
-		return $this->query(Base\Sql::makeSelectAll($values,$this->getSqlOption()),'assocs');
+		return $this->query(Syntax::makeSelectAll($values,$this->getSqlOption()),'assocs');
 	}
 
 
@@ -1690,7 +1690,7 @@ class Pdo extends Main\Root
 	// what est *, key est le champ qui sera utilisé pour la clé du tableau de retour, peut aussi être un index
 	public function selectAllsKey($key,...$values):?array
 	{
-		return $this->query(Base\Sql::makeSelectAll($values,$this->getSqlOption()),['assocsKey','key'=>Base\Obj::cast($key,3)]);
+		return $this->query(Syntax::makeSelectAll($values,$this->getSqlOption()),['assocsKey','key'=>Base\Obj::cast($key,3)]);
 	}
 
 
@@ -1699,7 +1699,7 @@ class Pdo extends Main\Root
 	// what est *, les clés du tableau sont primary
 	public function selectAllsPrimary(...$values):?array
 	{
-		return $this->query(Base\Sql::makeSelectAll($values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
+		return $this->query(Syntax::makeSelectAll($values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
 	}
 
 
@@ -1708,7 +1708,7 @@ class Pdo extends Main\Root
 	// what et function doivent être fourni
 	public function selectFunction($what,string $function,...$values)
 	{
-		return $this->query(Base\Sql::makeSelectFunction($what,$function,static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
+		return $this->query(Syntax::makeSelectFunction($what,$function,static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
 	}
 
 
@@ -1717,7 +1717,7 @@ class Pdo extends Main\Root
 	// what et function doivent être fourni
 	public function selectFunctions($what,string $function,...$values)
 	{
-		return $this->query(Base\Sql::makeSelectFunction($what,$function,$values,$this->getSqlOption()),'columns');
+		return $this->query(Syntax::makeSelectFunction($what,$function,$values,$this->getSqlOption()),'columns');
 	}
 
 
@@ -1726,7 +1726,7 @@ class Pdo extends Main\Root
 	// what est distinct what
 	public function selectDistinct($what,...$values)
 	{
-		return $this->query(Base\Sql::makeSelectDistinct($what,$values,$this->getSqlOption()),'columns');
+		return $this->query(Syntax::makeSelectDistinct($what,$values,$this->getSqlOption()),'columns');
 	}
 
 
@@ -1735,7 +1735,7 @@ class Pdo extends Main\Root
 	// what peut être string ou array pour 1 colonne
 	public function selectColumn($what,...$values)
 	{
-		return $this->query(Base\Sql::makeSelectColumn($what,static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
+		return $this->query(Syntax::makeSelectColumn($what,static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
 	}
 
 
@@ -1744,7 +1744,7 @@ class Pdo extends Main\Root
 	// what peut être string ou array pour 1 colonne
 	public function selectColumns($what,...$values):?array
 	{
-		return $this->query(Base\Sql::makeSelectColumn($what,$values,$this->getSqlOption()),'columns');
+		return $this->query(Syntax::makeSelectColumn($what,$values,$this->getSqlOption()),'columns');
 	}
 
 
@@ -1752,7 +1752,7 @@ class Pdo extends Main\Root
 	// construit et soumet une requête select avec output keyValue
 	public function selectKeyPair($key,$pair,...$values):?array
 	{
-		return $this->query(Base\Sql::makeselectKeyPair($key,$pair,static::selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
+		return $this->query(Syntax::makeselectKeyPair($key,$pair,static::selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
 	}
 
 
@@ -1760,7 +1760,7 @@ class Pdo extends Main\Root
 	// construit et soumet une requête select avec output keyValues
 	public function selectKeyPairs($key,$pair,...$values):?array
 	{
-		return $this->query(Base\Sql::makeselectKeyPair($key,$pair,$values,$this->getSqlOption()),'keyPairs');
+		return $this->query(Syntax::makeselectKeyPair($key,$pair,$values,$this->getSqlOption()),'keyPairs');
 	}
 
 
@@ -1769,7 +1769,7 @@ class Pdo extends Main\Root
 	// what est primary
 	public function selectPrimary(...$values)
 	{
-		return $this->query(Base\Sql::makeselectPrimary(static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
+		return $this->query(Syntax::makeselectPrimary(static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
 	}
 
 
@@ -1778,7 +1778,7 @@ class Pdo extends Main\Root
 	// what est primary
 	public function selectPrimaries(...$values):?array
 	{
-		return $this->query(Base\Sql::makeselectPrimary($values,$this->getSqlOption()),'columns');
+		return $this->query(Syntax::makeselectPrimary($values,$this->getSqlOption()),'columns');
 	}
 
 
@@ -1787,7 +1787,7 @@ class Pdo extends Main\Root
 	// la key est primary
 	public function selectPrimaryPair($pair,...$values):?array
 	{
-		return $this->query(Base\Sql::makeselectPrimaryPair($pair,static::selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
+		return $this->query(Syntax::makeselectPrimaryPair($pair,static::selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
 	}
 
 
@@ -1796,7 +1796,7 @@ class Pdo extends Main\Root
 	// la key est primary
 	public function selectPrimaryPairs($pair,...$values):?array
 	{
-		return $this->query(Base\Sql::makeselectPrimaryPair($pair,$values,$this->getSqlOption()),'keyPairs');
+		return $this->query(Syntax::makeselectPrimaryPair($pair,$values,$this->getSqlOption()),'keyPairs');
 	}
 
 
@@ -1805,7 +1805,7 @@ class Pdo extends Main\Root
 	// key doit être une string avec segment []
 	public function selectSegment(string $key,...$values):?string
 	{
-		return $this->query(Base\Sql::makeSelectSegment($key,static::selectLimit('segment',$values,1),$this->getSqlOption()),['segment','arg'=>$key]);
+		return $this->query(Syntax::makeSelectSegment($key,static::selectLimit('segment',$values,1),$this->getSqlOption()),['segment','arg'=>$key]);
 	}
 
 
@@ -1815,7 +1815,7 @@ class Pdo extends Main\Root
 	// key doit être une string avec segment []
 	public function selectSegments(string $key,...$values):?array
 	{
-		return $this->query(Base\Sql::makeSelectSegment($key,$values,$this->getSqlOption()),['segments','arg'=>$key]);
+		return $this->query(Syntax::makeSelectSegment($key,$values,$this->getSqlOption()),['segments','arg'=>$key]);
 	}
 
 
@@ -1824,7 +1824,7 @@ class Pdo extends Main\Root
 	// key doit être une string avec segment []
 	public function selectSegmentAssoc(string $key,...$values):?array
 	{
-		return $this->query(Base\Sql::makeSelectSegment($key,static::selectLimit('segment',$values,1),$this->getSqlOption()),'assoc');
+		return $this->query(Syntax::makeSelectSegment($key,static::selectLimit('segment',$values,1),$this->getSqlOption()),'assoc');
 	}
 
 
@@ -1833,7 +1833,7 @@ class Pdo extends Main\Root
 	// l'argument key doit être une string avec segment []
 	public function selectSegmentAssocs(string $key,...$values):?array
 	{
-		return $this->query(Base\Sql::makeSelectSegment($key,$values,$this->getSqlOption()),'assocs');
+		return $this->query(Syntax::makeSelectSegment($key,$values,$this->getSqlOption()),'assocs');
 	}
 
 
@@ -1843,7 +1843,7 @@ class Pdo extends Main\Root
 	// l'argument key doit être une string avec segment []
 	public function selectSegmentAssocsKey(string $key,...$values):?array
 	{
-		return $this->query(Base\Sql::makeSelectSegment($key,$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
+		return $this->query(Syntax::makeSelectSegment($key,$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
 	}
 
 
@@ -1853,7 +1853,7 @@ class Pdo extends Main\Root
 	// output est column
 	public function showDatabase($value,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeShowDatabase(Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
+		return $this->query(Syntax::makeShowDatabase(Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
 	}
 
 
@@ -1863,7 +1863,7 @@ class Pdo extends Main\Root
 	// output est columns
 	public function showDatabases($value=null,?array $option=null):?array
 	{
-		return $this->query(Base\Sql::makeShowDatabase($value,$this->getSqlOption($option)),'columns');
+		return $this->query(Syntax::makeShowDatabase($value,$this->getSqlOption($option)),'columns');
 	}
 
 
@@ -1873,7 +1873,7 @@ class Pdo extends Main\Root
 	// output est column
 	public function showVariable($value,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeShowVariable(Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>1]);
+		return $this->query(Syntax::makeShowVariable(Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>1]);
 	}
 
 
@@ -1883,7 +1883,7 @@ class Pdo extends Main\Root
 	// output est keyValues
 	public function showVariables($value=null,?array $option=null):?array
 	{
-		return $this->query(Base\Sql::makeShowVariable($value,$this->getSqlOption($option)),'keyPairs');
+		return $this->query(Syntax::makeShowVariable($value,$this->getSqlOption($option)),'keyPairs');
 	}
 
 
@@ -1893,7 +1893,7 @@ class Pdo extends Main\Root
 	// output est column
 	public function showTable($value,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeShowTable(Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
+		return $this->query(Syntax::makeShowTable(Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
 	}
 
 
@@ -1903,7 +1903,7 @@ class Pdo extends Main\Root
 	// output est columns
 	public function showTables($value=null,?array $option=null):?array
 	{
-		return $this->query(Base\Sql::makeShowTable($value,$this->getSqlOption($option)),'columns');
+		return $this->query(Syntax::makeShowTable($value,$this->getSqlOption($option)),'columns');
 	}
 
 
@@ -1911,7 +1911,7 @@ class Pdo extends Main\Root
 	// output est assoc
 	public function showTableStatus($value,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeShowTableStatus(Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
+		return $this->query(Syntax::makeShowTableStatus(Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
 	}
 
 
@@ -1933,7 +1933,7 @@ class Pdo extends Main\Root
 	// output est assocs
 	public function showTablesStatus($value=null,?array $option=null):?array
 	{
-		return $this->query(Base\Sql::makeShowTableStatus($value,$this->getSqlOption($option)),'assocs');
+		return $this->query(Syntax::makeShowTableStatus($value,$this->getSqlOption($option)),'assocs');
 	}
 
 
@@ -1982,7 +1982,7 @@ class Pdo extends Main\Root
 	// output est assoc
 	public function showTableColumn($table,$value,?array $option=null):?array
 	{
-		return $this->query(Base\Sql::makeShowTableColumn($table,Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
+		return $this->query(Syntax::makeShowTableColumn($table,Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
 	}
 
 
@@ -1991,7 +1991,7 @@ class Pdo extends Main\Root
 	// output est column avec champ field
 	public function showTableColumnField($table,$value,?array $option=null)
 	{
-		return $this->query(Base\Sql::makeShowTableColumn($table,Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>'Field']);
+		return $this->query(Syntax::makeShowTableColumn($table,Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>'Field']);
 	}
 
 
@@ -2000,7 +2000,7 @@ class Pdo extends Main\Root
 	// output est assocsKey, la clé est field
 	public function showTableColumns($value,?array $option=null):?array
 	{
-		return $this->query(Base\Sql::makeShowTableColumn($value,null,$this->getSqlOption($option)),['assocsKey','key'=>'Field']);
+		return $this->query(Syntax::makeShowTableColumn($value,null,$this->getSqlOption($option)),['assocsKey','key'=>'Field']);
 	}
 
 
@@ -2009,7 +2009,7 @@ class Pdo extends Main\Root
 	// output est rowCount
 	public function showCountTableColumns($value,?array $option=null):?int
 	{
-		return $this->query(Base\Sql::makeSelect(['*',$value,'limit'=>0],$this->getSqlOption($option)),'columnCount');
+		return $this->query(Syntax::makeSelect(['*',$value,'limit'=>0],$this->getSqlOption($option)),'columnCount');
 	}
 
 
@@ -2018,7 +2018,7 @@ class Pdo extends Main\Root
 	// output est columns, la clé est field
 	public function showTableColumnsField($value,?array $option=null):?array
 	{
-		return $this->query(Base\Sql::makeShowTableColumn($value,null,$this->getSqlOption($option)),['columns','arg'=>'Field']);
+		return $this->query(Syntax::makeShowTableColumn($value,null,$this->getSqlOption($option)),['columns','arg'=>'Field']);
 	}
 
 
@@ -2110,7 +2110,7 @@ class Pdo extends Main\Root
 	// output est statement
 	public function alterAutoIncrement($table,int $value=0,?array $option=null):?\PDOStatement
 	{
-		return $this->query(Base\Sql::makeAlterAutoIncrement($table,$value,$this->getSqlOption($option)),null);
+		return $this->query(Syntax::makeAlterAutoIncrement($table,$value,$this->getSqlOption($option)),null);
 	}
 
 
@@ -2118,7 +2118,7 @@ class Pdo extends Main\Root
 	// émule une requête sql en utilisant la méthode quote de pdo
 	public function emulate(string $return,?array $prepare=null,bool $replaceDoubleEscape=true):string
 	{
-		return Base\Sql::emulate($return,$prepare,[$this,'quote'],$replaceDoubleEscape);
+		return Syntax::emulate($return,$prepare,[$this,'quote'],$replaceDoubleEscape);
 	}
 
 
@@ -2127,7 +2127,7 @@ class Pdo extends Main\Root
 	// la requête est émulé en utilisant la méthode quote de pdo
 	public function debug($value,bool $replaceDoubleEscape=true):?array
 	{
-		return Base\Sql::debug($value,[$this,'quote'],$replaceDoubleEscape);
+		return Syntax::debug($value,[$this,'quote'],$replaceDoubleEscape);
 	}
 
 
@@ -2369,7 +2369,7 @@ class Pdo extends Main\Root
 		if(!empty($output) && array_key_exists('selectLimit',$output))
 		{
 			$array = ($offset > 0)? Base\Arr::unshift($return,$offset):$return;
-			$makeParse = Base\Sql::makeParse('select','limit',$array);
+			$makeParse = Syntax::makeParse('select','limit',$array);
 
 			if($makeParse === null)
 			$return['limit'] = $output['selectLimit'];

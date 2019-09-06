@@ -191,7 +191,7 @@ class Pdo extends Base\Test
 		// statementException
 
 		// infoStatement
-		$sql = Base\Sql::select('*',$table,[2,'name_en'=>'james2']);
+		$sql = Orm\Syntax::select('*',$table,[2,'name_en'=>'james2']);
 		$statement = $pdo->statement($sql);
 		assert(count($pdo->infoStatement($sql,$statement)) === 14);
 
@@ -203,7 +203,7 @@ class Pdo extends Base\Test
 		assert(count($pdo->getColumnMeta($statement)) === 4);
 
 		// fetchKeyPairStatement
-		$sql = Base\Sql::select('*',$table);
+		$sql = Orm\Syntax::select('*',$table);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchKeyPairStatement(null,$statement) === [1=>'james']);
 		assert($pdo->fetchKeyPairStatement(null,$statement) !== [1=>'james']);
@@ -211,21 +211,21 @@ class Pdo extends Base\Test
 		assert($pdo->fetchKeyPairStatement(['name_en','id'],$statement) === ['james'=>1]);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchKeyPairStatement([1,0],$statement) === ['james'=>1]);
-		$statement = $pdo->statement(Base\Sql::select('id,name_en',$table));
+		$statement = $pdo->statement(Orm\Syntax::select('id,name_en',$table));
 		assert($pdo->fetchKeyPairStatement(null,$statement) === [1=>'james']);
 
 		// fetchKeyPairsStatement
-		$sql = Base\Sql::select('*',$table);
+		$sql = Orm\Syntax::select('*',$table);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchKeyPairsStatement(null,$statement) === [1=>'james',2=>'james2',3=>'james3']);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchKeyPairsStatement(['name_en','id'],$statement) === ['james'=>1,'james2'=>2,'james3'=>3]);
-		$sql = Base\Sql::select('id,name_en',$table);
+		$sql = Orm\Syntax::select('id,name_en',$table);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchKeyPairsStatement(null,$statement) === [1=>'james',2=>'james2',3=>'james3']);
 
 		// fetchColumnStatement
-		$sql = Base\Sql::select('*',$table);
+		$sql = Orm\Syntax::select('*',$table);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchColumnStatement(null,$statement) === 1);
 		$statement = $pdo->statement($sql);
@@ -234,7 +234,7 @@ class Pdo extends Base\Test
 		assert($pdo->fetchColumnStatement([0],$statement) === 1);
 
 		// fetchColumnsStatement
-		$sql = Base\Sql::select('*',$table);
+		$sql = Orm\Syntax::select('*',$table);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchColumnsStatement(null,$statement) === [1,2,3]);
 		$statement = $pdo->statement($sql);
@@ -243,17 +243,17 @@ class Pdo extends Base\Test
 		assert($pdo->fetchColumnsStatement([0],$statement) === [1,2,3]);
 
 		// fetchSegmentStatement
-		$sql = Base\Sql::select('*',$table);
+		$sql = Orm\Syntax::select('*',$table);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchSegmentStatement(['[id] [name_%lang%]'],$statement) === '1 james');
 
 		// fetchSegmentsStatement
-		$sql = Base\Sql::select('*',$table,null,['id'=>'desc']);
+		$sql = Orm\Syntax::select('*',$table,null,['id'=>'desc']);
 		$statement = $pdo->statement($sql);
 		assert($pdo->fetchSegmentsStatement(['[id] [name_%lang%]'],$statement) === [3=>'3 james3',2=>'2 james2',1=>'1 james']);
 
 		// query
-		$statement = $pdo->query(Base\Sql::select('*',$table),null);
+		$statement = $pdo->query(Orm\Syntax::select('*',$table),null);
 		assert($pdo->query("SELECT * FROMz $table",'debug')['sql'] === 'SELECT * FROMz main');
 		assert($pdo->setDebug(true)->query("SELECT * FROMz $table")['sql'] === 'SELECT * FROMz main');
 		assert($pdo->setDebug());
@@ -330,7 +330,7 @@ class Pdo extends Base\Test
 		assert($pdo->alterAutoIncrement($table,0) instanceof \PdoStatement);
 
 		// prepareRollback
-		assert($pdo->prepareRollback('update',Base\Sql::make('update',[$table,['name'=>'bla'],2]))['rollback']['id'] === 2);
+		assert($pdo->prepareRollback('update',Orm\Syntax::make('update',[$table,['name'=>'bla'],2]))['rollback']['id'] === 2);
 
 		// makeCreate
 		assert(($x = $pdo->makeCreate([$table2,[['id','int','length'=>12,'null'=>null,'autoIncrement'=>true,'unsigned'=>true],['name_en','varchar','length'=>200,'default'=>"L'article de james"]],[['key','name_en'],['primary','id']]])) instanceof \PDOStatement);
@@ -442,9 +442,9 @@ class Pdo extends Base\Test
 
 		// showkeyValues
 		assert(count($pdo->showkeyValues('Field','Type',"COLUMNS FROM $table")) === 4);
-		Base\Sql::setShortcut('pe','pe');
+		Orm\Syntax::setShortcut('pe','pe');
 		assert(count($pdo->showkeyValues('Field','Ty[pe]',"COLUMNS FROM $table")) === 4);
-		Base\Sql::unsetShortcut('pe');
+		Orm\Syntax::unsetShortcut('pe');
 		assert($pdo->showkeyValues('Field','Ty[pe]',"COLUMNS FROM $table") === []);
 
 		// showCount
@@ -687,11 +687,11 @@ class Pdo extends Base\Test
 		assert($pdo->alterAutoIncrement('main',20) instanceof \PDOStatement);
 
 		// emulate
-		$sql = Base\Sql::select('*',$table,[2,'active'=>'bla'],true,4);
+		$sql = Orm\Syntax::select('*',$table,[2,'active'=>'bla'],true,4);
 		assert($pdo->emulate($sql['sql'],$sql['prepare']) === "SELECT * FROM `main` WHERE `id` = 2 AND `active` = 'bla' ORDER BY `id` ASC LIMIT 4");
 
 		// debug
-		assert(count($pdo->debug(Base\Sql::select('*',$table,[2,'active'=>'bla'],true,4))) === 7);
+		assert(count($pdo->debug(Orm\Syntax::select('*',$table,[2,'active'=>'bla'],true,4))) === 7);
 
 		// sql
 		assert($pdo->sql() instanceof Orm\PdoSql);

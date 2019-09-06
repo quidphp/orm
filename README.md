@@ -41,7 +41,7 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - *Dynamic singleton*: Table, Col, Row and Cell objects can only exist once for a same source.
 
 ## Overview
-**QuidPHP/Orm** contains 25 classes and traits. Here is an overview:
+**QuidPHP/Orm** contains 26 classes and traits. Here is an overview:
 - [Cell](src/Cell.php) | Class to represent an existing cell within a row
 - [Cells](src/Cells.php) | Class for a collection of many cells within a same row
 - [Classe](src/Classe.php) | Class required to identify which class needs to be used by the different ORM components of a database
@@ -60,6 +60,7 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [RowsIndex](src/RowsIndex.php) | Class for a collection of many rows within different tables (keys are indexed)
 - [Schema](src/Schema.php) | Class that provides a schema for a database with tables and columns information
 - [Sql](src/Sql.php) | Class used to build a sql query in a object-oriented way, uses the DB class (linked to the ORM components)
+- [Syntax](src/Syntax.php) | Class with static methods to generate SQL syntax strings (compatible with MySQL and MariaDB)
 - [Table](src/Table.php) | Class to represent an existing table within a database
 - [TableClasse](src/TableClasse.php) | Class required to identify which class needs to be used by the different ORM components of a table
 - [TableRelation](src/TableRelation.php) | Class to access the relation data of a table
@@ -69,7 +70,7 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [_tableAccess](src/_tableAccess.php) | Trait that grants table access to the class using
 
 ## Testing
-**QuidPHP/Orm** contains 22 test classes:
+**QuidPHP/Orm** contains 23 test classes:
 - [Cell](test/Cell.php) | Class for testing Quid\Orm\Cell
 - [Cells](test/Cells.php) | Class for testing Quid\Orm\Cells
 - [Classe](test/Classe.php) | Class for testing Quid\Orm\Classe
@@ -88,6 +89,7 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [RowsIndex](test/RowsIndex.php) | Class for testing Quid\Orm\RowsIndex
 - [Schema](test/Schema.php) | Class for testing Quid\Orm\Schema
 - [Sql](test/Sql.php) | Class for testing Quid\Orm\Sql
+- [Syntax](test/Syntax.php) | Class for testing Quid\Orm\Syntax
 - [Table](test/Table.php) | Class for testing Quid\Orm\Table
 - [TableClasse](test/TableClasse.php) | Class for testing Quid\Orm\TableClasse
 - [TableRelation](test/TableRelation.php) | Class for testing Quid\Orm\TableRelation

@@ -134,7 +134,7 @@ class PdoSql extends Main\Map
 		if($type === null)
 		$type = static::$config['default'];
 
-		if(Base\Sql::isQuery($type))
+		if(Syntax::isQuery($type))
 		{
 			$db = $this->db();
 			$this->empty();
@@ -279,7 +279,7 @@ class PdoSql extends Main\Map
 			$type = $this->getType();
 			$output = $this->getOutput();
 
-			if(!Base\Sql::hasQueryClause($type,$value))
+			if(!Syntax::hasQueryClause($type,$value))
 			{
 				if($value === 'on')
 				{
@@ -339,7 +339,7 @@ class PdoSql extends Main\Map
 	{
 		$return = null;
 		$arr = $this->arr();
-		$required = Base\Sql::getQueryRequired($this->getType());
+		$required = Syntax::getQueryRequired($this->getType());
 
 		if(!empty($required) && !Base\Arr::keysExists($required,$arr))
 		{
@@ -518,7 +518,7 @@ class PdoSql extends Main\Map
 		if($this->getType() === 'select')
 		$data = $db::selectLimit($output,$data);
 
-		$return = Base\Sql::make($this->getType(),$data,$option);
+		$return = Syntax::make($this->getType(),$data,$option);
 
 		return $return;
 	}
@@ -664,7 +664,7 @@ class PdoSql extends Main\Map
 	// par défaut une parenthèse enroberra ces entrées where
 	public function whereSeparator(string $separator,$method,$cols,$value=null,bool $parenthesis=true):self
 	{
-		if(Base\Sql::isWhereSeparator($separator))
+		if(Syntax::isWhereSeparator($separator))
 		{
 			$cols = Base\Obj::cast($cols,6);
 
@@ -718,7 +718,7 @@ class PdoSql extends Main\Map
 	// possible de spécifier un séparateur et un séparateur interne
 	public function whereSeparatorMany(string $separator,string $innerSeparator,$method,$cols,array $values,bool $parenthesis=true):self
 	{
-		if(Base\Sql::isWhereSeparator($innerSeparator))
+		if(Syntax::isWhereSeparator($innerSeparator))
 		{
 			$i = 0;
 			foreach ($values as $value)
@@ -1401,10 +1401,10 @@ class PdoSql extends Main\Map
 		$where = $this->get('where');
 		$order = $this->get('order');
 
-		$tableName = Base\Sql::tick($table).' t';
+		$tableName = Syntax::tick($table).' t';
 		$what = ['t.'.$primary];
 		if(!empty($where))
-		$what = Base\Arr::appendUnique($what,Base\Sql::whatFromWhere($where,'t'));
+		$what = Base\Arr::appendUnique($what,Syntax::whatFromWhere($where,'t'));
 		$what[] = ['@rownum := @rownum + 1','position'];
 
 		$innerSql = clone $this;
