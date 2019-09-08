@@ -78,7 +78,7 @@ class Sql extends PdoSql
 			static::throw('missingRequiredClause',$strip);
 		}
 
-		elseif($db::isRowOutput($output) && !in_array('*',(array) $arr['what'] ?? null))
+		elseif($db::isRowOutput($output) && !in_array('*',(array) $arr['what'] ?? null,true))
 		static::throw('rowOutput','whatOnlyAccepts','*');
 
 		elseif(empty($arr))
