@@ -16,30 +16,30 @@ use Quid\Base;
 // class for testing Quid\Orm\Exception
 class Exception extends Base\Test
 {
-	// trigger
-	public static function trigger(array $data):bool
-	{
-		// construct
-		$e = new Orm\Exception('blabla');
+    // trigger
+    public static function trigger(array $data):bool
+    {
+        // construct
+        $e = new Orm\Exception('blabla');
 
-		// setQuery
-		assert($e->setQuery('query') === $e);
+        // setQuery
+        assert($e->setQuery('query') === $e);
 
-		// getQuery
-		assert($e->getQuery() === 'query');
+        // getQuery
+        assert($e->getQuery() === 'query');
 
-		// content
-		assert($e->content() === 'query');
+        // content
+        assert($e->content() === 'query');
 
-		// showQuery
-		Orm\Exception::showQuery(true);
-		assert(!$e instanceof Main\Contract\Catchable);
+        // showQuery
+        Orm\Exception::showQuery(true);
+        assert(!$e instanceof Main\Contract\Catchable);
 
-		// exception
-		assert($e->getCode() === 33);
-		assert($e->getMessage() === 'blabla');
+        // exception
+        assert($e->getCode() === 33);
+        assert($e->getMessage() === 'blabla');
 
-		return true;
-	}
+        return true;
+    }
 }
 ?>

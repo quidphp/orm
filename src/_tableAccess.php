@@ -13,59 +13,59 @@ namespace Quid\Orm;
 // trait that grants table access to the class using
 trait _tableAccess
 {
-	// trait
-	use _dbAccess;
+    // trait
+    use _dbAccess;
 
 
-	// dynamique
-	protected $table = null; // objet table
+    // dynamique
+    protected $table = null; // objet table
 
 
-	// setLink
-	// set la table et db à l'objet
-	// envoie une exception si l'objet existe déjà
-	// méthode protégé
-	protected function setLink(Table $value,bool $checkLink=false):self
-	{
-		$this->setDb($value->db());
-		$this->table = $value->name();
+    // setLink
+    // set la table et db à l'objet
+    // envoie une exception si l'objet existe déjà
+    // méthode protégé
+    protected function setLink(Table $value,bool $checkLink=false):self
+    {
+        $this->setDb($value->db());
+        $this->table = $value->name();
 
-		if($checkLink === true && $this->isLinked())
-		static::throw('alreadyInstantiated');
+        if($checkLink === true && $this->isLinked())
+        static::throw('alreadyInstantiated');
 
-		return $this;
-	}
-
-
-	// tableName
-	// retourne la propriété protégé table
-	public function tableName():string
-	{
-		return $this->table;
-	}
+        return $this;
+    }
 
 
-	// tables
-	// retourne l'objet tables
-	public function tables():Tables
-	{
-		return $this->db()->tables();
-	}
+    // tableName
+    // retourne la propriété protégé table
+    public function tableName():string
+    {
+        return $this->table;
+    }
 
 
-	// table
-	// retourne l'objet table
-	public function table():Table
-	{
-		return $this->db()->table($this->table);
-	}
+    // tables
+    // retourne l'objet tables
+    public function tables():Tables
+    {
+        return $this->db()->tables();
+    }
 
 
-	// sameTable
-	// retourne vrai si l'objet et celui fourni ont la même table
-	public function sameTable($table):bool
-	{
-		return ($this->db()->hasTable($table) && $this->table() === $this->db()->table($table))? true:false;
-	}
+    // table
+    // retourne l'objet table
+    public function table():Table
+    {
+        return $this->db()->table($this->table);
+    }
+
+
+    // sameTable
+    // retourne vrai si l'objet et celui fourni ont la même table
+    public function sameTable($table):bool
+    {
+        return ($this->db()->hasTable($table) && $this->table() === $this->db()->table($table))? true:false;
+    }
 }
 ?>

@@ -14,31 +14,31 @@ use Quid\Main;
 // abstract class that is extended by ColRelation and Relation
 abstract class Relation extends Main\ArrMap
 {
-	// trait
-	use _tableAccess;
+    // trait
+    use _tableAccess;
 
 
-	// config
-	public static $config = [];
+    // config
+    public static $config = [];
 
 
-	// set
-	// set pas permis
-	public function set():void
-	{
-		static::throw('notAllowed');
+    // set
+    // set pas permis
+    public function set():void
+    {
+        static::throw('notAllowed');
 
-		return;
-	}
+        return;
+    }
 
 
-	// unset
-	// unset pas permis
-	public function unset():void
-	{
-		static::throw('notAllowed');
+    // unset
+    // unset pas permis
+    public function unset():void
+    {
+        static::throw('notAllowed');
 
-		return;
-	}
+        return;
+    }
 }
 ?>

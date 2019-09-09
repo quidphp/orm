@@ -14,14 +14,14 @@ use Quid\Base;
 // class for testing Quid\Orm\Relation
 class Relation extends Base\Test
 {
-	// trigger
-	public static function trigger(array $data):bool
-	{
-		// set
+    // trigger
+    public static function trigger(array $data):bool
+    {
+        // set
 
-		// unset
+        // unset
 
-		return true;
-	}
+        return true;
+    }
 }
 ?>

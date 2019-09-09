@@ -14,52 +14,52 @@ use Quid\Main;
 // class used for a database query exception
 class Exception extends Main\Exception
 {
-	// config
-	public static $config = [
-		'code'=>33, // code de l'exception
-		'query'=>false // affiche la query
-	];
+    // config
+    public static $config = [
+        'code'=>33, // code de l'exception
+        'query'=>false // affiche la query
+    ];
 
 
-	// dynamique
-	protected $query = null; // conserve la requête sql sous forme de string
+    // dynamique
+    protected $query = null; // conserve la requête sql sous forme de string
 
 
-	// setQuery
-	// lie la query à l'exception
-	// méthode protégé
-	public function setQuery(string $value)
-	{
-		$this->query = $value;
+    // setQuery
+    // lie la query à l'exception
+    // méthode protégé
+    public function setQuery(string $value)
+    {
+        $this->query = $value;
 
-		return $this;
-	}
-
-
-	// getQuery
-	// retourne la query
-	public function getQuery():?string
-	{
-		return $this->query;
-	}
+        return $this;
+    }
 
 
-	// content
-	// retourne la query si showQuery est true, sinon retourne null
-	public function content():?string
-	{
-		return (static::$config['query'] === true)? $this->query:null;
-	}
+    // getQuery
+    // retourne la query
+    public function getQuery():?string
+    {
+        return $this->query;
+    }
 
 
-	// showQuery
-	// affiche ou non la requête sql dans le message
-	public static function showQuery(bool $value):void
-	{
-		static::$config['query'] = $value;
+    // content
+    // retourne la query si showQuery est true, sinon retourne null
+    public function content():?string
+    {
+        return (static::$config['query'] === true)? $this->query:null;
+    }
 
-		return;
-	}
+
+    // showQuery
+    // affiche ou non la requête sql dans le message
+    public static function showQuery(bool $value):void
+    {
+        static::$config['query'] = $value;
+
+        return;
+    }
 }
 
 // config
