@@ -115,7 +115,7 @@ class Row extends Base\Test
 		assert($row->id() === 1);
 
 		// attr
-		assert(count($row->attr()) === 19); // un de plus car @app n'est pas enlevé
+		assert(count($row->attr()) >= 18);
 
 		// attrCall
 
