@@ -2185,11 +2185,11 @@ class Pdo extends Main\Root
     public static function parseDsn(string $dsn,string $charset):?array
     {
         $return = null;
-        
+
         if(strlen($dsn) && strlen($charset))
         {
             $parse = parse_url($dsn);
-            
+
             if(is_array($parse) && !empty($parse['scheme']) && !empty($parse['path']))
             {
                 $parse['driver'] = $parse['scheme'];
@@ -2198,17 +2198,17 @@ class Pdo extends Main\Root
 
                 if(!Base\Str::isEnd($charset,$return['dsn']))
                 $parse['dsn'] .= ';charset='.$charset;
-                
+
                 foreach(Base\Str::explode(';',$parse['path'],null,true,true) as $x)
                 {
                     $keyValue = Base\Str::explodekeyValue('=',$x,true,true);
                     if(!empty($keyValue))
                     $parse = Base\Arr::append($parse,$keyValue);
                 }
-                
+
                 if(empty($parse['port']))
                 $parse['port'] = static::defaultPort();
-                
+
                 if(!empty($parse['host']) && !empty($parse['dbname']))
                 $return = $parse;
             }
@@ -2386,15 +2386,15 @@ class Pdo extends Main\Root
         return $return;
     }
 
-    
+
     // defaultPort
     // retourne le port par défaut pour l'engin sql
-    public static function defaultPort():int 
+    public static function defaultPort():int
     {
         return static::$config['port'];
     }
-    
-    
+
+
     // allDrivers
     // retourne les drivers pdo disponibles
     public static function allDrivers():array

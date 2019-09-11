@@ -765,10 +765,10 @@ class Pdo extends Base\Test
         // selectLimit
         assert(Orm\Pdo::selectLimit('assoc',['what'=>'ok']) === ['what'=>'ok','limit'=>1]);
         assert(Orm\Pdo::selectLimit('assocs',['what'=>'ok']) === ['what'=>'ok']);
-        
+
         // defaultPort
         assert(Orm\Pdo::defaultPort() === 3306);
-        
+
         // allDrivers
         assert(in_array('mysql',Orm\Pdo::allDrivers(),true));
 
