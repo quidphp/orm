@@ -720,7 +720,7 @@ class Pdo extends Base\Test
 
         // parseDsn
         $dsn = 'mysql:host=localhost;dbname=quid995';
-        assert(count(Orm\Pdo::parseDsn($dsn,'utf8mb4')) === 7);
+        assert(count(Orm\Pdo::parseDsn($dsn,'utf8mb4')) === 8);
         assert(Orm\Pdo::parseDsn($dsn,'utf8')['dbname'] === 'quid995');
 
         // parseDataType
@@ -765,7 +765,10 @@ class Pdo extends Base\Test
         // selectLimit
         assert(Orm\Pdo::selectLimit('assoc',['what'=>'ok']) === ['what'=>'ok','limit'=>1]);
         assert(Orm\Pdo::selectLimit('assocs',['what'=>'ok']) === ['what'=>'ok']);
-
+        
+        // defaultPort
+        assert(Orm\Pdo::defaultPort() === 3306);
+        
         // allDrivers
         assert(in_array('mysql',Orm\Pdo::allDrivers(),true));
 
