@@ -23,7 +23,7 @@ Once installed, the **Quid\Orm** namespace will be available within your PHP app
 
 ## Requirement
 **QuidPHP/Orm** requires the following:
-- PHP 7.2+ with PDO and pdo_mysql
+- PHP 7.3+ with PDO and pdo_mysql
 
 ## Dependency
 **QuidPHP/Orm** has the following dependencies:
