@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
 
 // tables
 // class for a collection of many tables within a same database

@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Test\Orm;
-use Quid\Orm;
 use Quid\Base;
+use Quid\Orm;
 
 // colSchema
 // class for testing Quid\Orm\ColSchema

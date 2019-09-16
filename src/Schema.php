@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
 
 // schema
 // class that provides a schema for a database with tables and columns information

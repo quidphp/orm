@@ -8,9 +8,9 @@ declare(strict_types=1);
  */
 
 namespace Quid\Test\Orm;
-use Quid\Orm;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
+use Quid\Orm;
 
 // sql
 // class for testing Quid\Orm\Sql

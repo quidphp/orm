@@ -8,8 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
 
 // pdoSql
 // class used to build an sql query in a object-oriented way, not linked to the ORM components
