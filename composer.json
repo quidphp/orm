@@ -1,25 +1,23 @@
 {
 	"name": "quidphp/orm",
-    "type": "library",
-    "description": "PHP library that provides database access and a comprehensive Object-Relational Mapper",
-    "keywords": ["quidphp","quid","framework"],
-    "homepage": "https://quidphp.com",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Pierre-Philippe Emond",
-            "email": "emondpph@gmail.com"
-        }
-    ],
-    "require": {
-        "php": ">=7.3.0",
+	"type": "library",
+	"description": "PHP library that provides database access and a comprehensive Object-Relational Mapper",
+	"keywords": ["quidphp","quid","framework"],
+	"homepage": "https://quidphp.com",
+	"license": "MIT",
+	"authors": [{
+		"name": "Pierre-Philippe Emond",
+		"email": "emondpph@gmail.com"
+	}],
+	"require": {
+		"php": ">=7.3.0",
 		"quidphp/base": "*",
 		"quidphp/main": "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "Quid\\Orm\\": "src/",
+	},
+	"autoload": {
+		"psr-4": {
+			"Quid\\Orm\\": "src/",
 			"Quid\\Test\\Orm\\": "test/"
-        }
-    }
+		}
+	}
 }
