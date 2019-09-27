@@ -456,7 +456,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         $attr = $callable(static::class,$dbAttr,$baseAttr,$tableAttr,$rowAttr);
         $attr['parent'] = $this->makeAttrParent($attr['parent'] ?? null);
-        
+
         $attr = $this->onMakeAttr($attr);
         $this->checkAttr($attr);
         $this->attr = $attr;
@@ -465,18 +465,18 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         return $this;
     }
 
-    
+
     // makeAttrParent
     // gère l'attribut parent si c'est un nom de classe de table ou de row
-    protected function makeAttrParent(?string $return):?string 
+    protected function makeAttrParent(?string $return):?string
     {
         if(is_string($return) && Base\Classe::extendOne(Tables::keyClassExtends(),$return))
         $return = $return::className(true);
-        
+
         return $return;
     }
-    
-    
+
+
     // checkAttr
     // fait un check sur les attributs, vérifie parent et priority
     // méthode protégé
@@ -1418,7 +1418,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                     $rows->readOnly(false);
                     $return = new $class($primary,$this);
                     $rows->add($return);
-                    
+
                     if(is_array($data) && !empty($data))
                     $return->cellsLoad($data);
 

@@ -90,11 +90,11 @@ class Db extends Base\Test
         assert($db->getOption('log') === true);
 
         // statementException
-        
+
         // getExceptionClass
-        
+
         // setExceptionClass
-        
+
         // makeTables
 
         // tablesLoad

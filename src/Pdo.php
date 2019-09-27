@@ -1167,7 +1167,7 @@ class Pdo extends Main\Root
         $return = null;
         $option = $this->getSqlOption($option);
         $sql = Syntax::makeUpdate($array,$option);
-        
+
         if(!empty($sql))
         {
             if($this->getOption('rollback'))

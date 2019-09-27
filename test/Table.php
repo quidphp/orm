@@ -120,9 +120,9 @@ class Table extends Base\Test
         assert($tb->name() === $table);
 
         // makeAttr
-        
+
         // makeAttrParent
-        
+
         // checkAttr
 
         // parent

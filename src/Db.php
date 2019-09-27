@@ -347,7 +347,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         $class = $this->getExceptionClass();
         $message = $exception->getMessage();
         $exception = new $class($message,null,$option);
-        
+
         if(!empty($values[0]) && is_array($values[0]) && !empty($values[0]['sql']))
         $exception->setQuery(Syntax::emulate($values[0]['sql'],$values[0]['prepare'] ?? null));
 
@@ -356,32 +356,32 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         return;
     }
 
-    
+
     // getExceptionClass
     // retourne la classe d'exception courante à utiliser pour l'objet
-    public function getExceptionClass():string 
+    public function getExceptionClass():string
     {
         return $this->exception ?? Exception::class;
     }
-    
-    
+
+
     // setExceptionClass
     // change la classe courante pour exception
-    public function setExceptionClass($value):void 
+    public function setExceptionClass($value):void
     {
         if(is_bool($value))
         $value = ($value === true)? CatchableException::class:Exception::class;
-        
+
         if(is_string($value) && is_subclass_of($value,\Exception::class,true))
         $this->exception = $value;
-        
+
         else
         static::throw();
-        
+
         return;
     }
-    
-    
+
+
     // makeTables
     // créer les objets dbClasse et tables
     // enregistre la méthode onCloseDown
