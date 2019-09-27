@@ -1420,7 +1420,7 @@ class Col extends Main\Root
         $this->name = $name;
 
         else
-        static::throw('invalid',$name);
+        static::throw($name,'needsLowerCaseFirstChar','noComplexChars');
 
         return $this;
     }

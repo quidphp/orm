@@ -655,7 +655,7 @@ class Pdo extends Main\Root
 
         catch (\PDOException $e)
         {
-            static::statementException(null,$e->getMessage(),$value);
+            $this->statementException(null,$e,$value);
         }
 
         return $return;
@@ -664,9 +664,9 @@ class Pdo extends Main\Root
 
     // statementException
     // lance une exception de db attrapable
-    public static function statementException(?array $option=null,string $message,...$values):void
+    public function statementException(?array $option=null,\Exception $exception,...$values):void
     {
-        static::throw($message,null,$option);
+        static::throw($exception->getMessage(),null,$option);
 
         return;
     }
@@ -1167,7 +1167,7 @@ class Pdo extends Main\Root
         $return = null;
         $option = $this->getSqlOption($option);
         $sql = Syntax::makeUpdate($array,$option);
-
+        
         if(!empty($sql))
         {
             if($this->getOption('rollback'))

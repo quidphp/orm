@@ -95,7 +95,7 @@ class Row extends Main\ArrObj
 
 
     // onDeleted
-    // appelé après une suppression réussie via row/delete
+    // appelé avant une suppression réussie via row/delete
     // méthode protégé qui peut être étendu
     protected function onDeleted(array $option)
     {

@@ -138,7 +138,7 @@ class Sql extends PdoSql
 
 
     // triggerRow
-    // trigge l'objet sql et retourne un objet rows
+    // trigge l'objet sql et retourne un objet row
     public function triggerRow():Row
     {
         return $this->set('what','*')->trigger('row');

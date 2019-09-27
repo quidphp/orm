@@ -23,7 +23,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // config
     public static $config = [
         'ignore'=>null, // défini si la table est ignoré
-        'parent'=>null, // nom du parent de la classe table
+        'parent'=>null, // nom du parent de la classe table, possible aussi de mettre une classe
         'priority'=>null, // code de priorité de la table
         'search'=>true, // la table est cherchable
         'searchMinLength'=>3, // longueur minimum pour une recherche
@@ -419,7 +419,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $this->name = $name;
 
         else
-        static::throw('invalid',$name);
+        static::throw($name,'needsLowerCaseFirstChar','noComplexChars');
 
         return $this;
     }
@@ -455,7 +455,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         }
 
         $attr = $callable(static::class,$dbAttr,$baseAttr,$tableAttr,$rowAttr);
-
+        $attr['parent'] = $this->makeAttrParent($attr['parent'] ?? null);
+        
         $attr = $this->onMakeAttr($attr);
         $this->checkAttr($attr);
         $this->attr = $attr;
@@ -464,7 +465,18 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         return $this;
     }
 
-
+    
+    // makeAttrParent
+    // gère l'attribut parent si c'est un nom de classe de table ou de row
+    protected function makeAttrParent(?string $return):?string 
+    {
+        if(is_string($return) && Base\Classe::extendOne(Tables::keyClassExtends(),$return))
+        $return = $return::className(true);
+        
+        return $return;
+    }
+    
+    
     // checkAttr
     // fait un check sur les attributs, vérifie parent et priority
     // méthode protégé
@@ -1406,7 +1418,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                     $rows->readOnly(false);
                     $return = new $class($primary,$this);
                     $rows->add($return);
-
+                    
                     if(is_array($data) && !empty($data))
                     $return->cellsLoad($data);
 
