@@ -62,6 +62,6 @@ class Exception extends Main\Exception
     }
 }
 
-// config
-Exception::__config();
+// init
+Exception::__init();
 ?>

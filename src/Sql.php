@@ -153,6 +153,6 @@ class Sql extends PdoSql
     }
 }
 
-// config
-Sql::__config();
+// init
+Sql::__init();
 ?>

@@ -550,7 +550,7 @@ class Table extends Base\Test
             public static $config = [];
             public function __construct(...$args)
             {
-                static::__config();
+                static::__init();
                 parent::__construct(...$args);
             }
         };
@@ -571,7 +571,7 @@ class Table extends Base\Test
         // isIgnored
         assert(!Orm\Table::isIgnored());
 
-        // configReplaceMode
+        // initReplaceMode
 
         // attr
         assert(count($tb->attr()) >= 18);

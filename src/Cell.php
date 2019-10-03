@@ -1094,11 +1094,11 @@ class Cell extends Main\Root
     }
 
 
-    // configReplaceMode
+    // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
-    public static function configReplaceMode():array
+    public static function initReplaceMode():array
     {
-        return Col::configReplaceMode();
+        return Col::initReplaceMode();
     }
 }
 ?>

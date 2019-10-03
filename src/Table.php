@@ -446,7 +446,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $rowAttr = $rowClass::config();
         $baseAttr = [];
         $tableAttr = $db->tableAttr($this);
-        $callable = static::getConfigCallable();
+        $callable = static::getInitCallable();
 
         foreach (static::$config as $key => $value)
         {
@@ -2592,14 +2592,14 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     }
 
 
-    // configReplaceMode
+    // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
-    public static function configReplaceMode():array
+    public static function initReplaceMode():array
     {
         return static::$replaceMode ?? [];
     }
 }
 
-// config
-Table::__config();
+// init
+Table::__init();
 ?>

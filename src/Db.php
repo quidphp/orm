@@ -1005,6 +1005,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     }
 }
 
-// config
-Db::__config();
+// init
+Db::__init();
 ?>

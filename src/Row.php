@@ -1532,11 +1532,11 @@ class Row extends Main\ArrObj
     }
 
 
-    // configReplaceMode
+    // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
-    public static function configReplaceMode():array
+    public static function initReplaceMode():array
     {
-        return Table::configReplaceMode();
+        return Table::initReplaceMode();
     }
 }
 ?>

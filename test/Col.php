@@ -656,7 +656,7 @@ class Col extends Base\Test
 
         // drop
 
-        // configReplaceMode
+        // initReplaceMode
 
         // attr
         assert(count($col->attr()) === 25);

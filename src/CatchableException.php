@@ -21,6 +21,6 @@ class CatchableException extends Exception implements Main\Contract\Catchable
     ];
 }
 
-// config
-CatchableException::__config();
+// init
+CatchableException::__init();
 ?>

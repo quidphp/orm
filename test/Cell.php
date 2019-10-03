@@ -418,7 +418,7 @@ class Cell extends Base\Test
 
         // terminate
 
-        // configReplaceMode
+        // initReplaceMode
 
         // route
 

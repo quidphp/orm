@@ -1464,7 +1464,7 @@ class Col extends Main\Root
         $defaultAttr = $db->colAttr($name);
         $tableAttr = $table->colAttr($name);
         $baseAttr = [];
-        $callable = static::getConfigCallable();
+        $callable = static::getInitCallable();
 
         foreach (static::$config as $key => $value)
         {
@@ -2256,14 +2256,14 @@ class Col extends Main\Root
     }
 
 
-    // configReplaceMode
+    // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
-    public static function configReplaceMode():array
+    public static function initReplaceMode():array
     {
         return static::$replaceMode ?? [];
     }
 }
 
-// config
-Col::__config();
+// init
+Col::__init();
 ?>

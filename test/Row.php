@@ -344,7 +344,7 @@ class Row extends Base\Test
 
         // commitFinalValidate
 
-        // configReplaceMode
+        // initReplaceMode
 
         // tableAccess
         $row3 = $tb->insert(['date'=>time(),'name_en'=>'sure']);
