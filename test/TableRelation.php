@@ -136,10 +136,10 @@ class TableRelation extends Base\Test
         // outputAdd
 
         // outputMethod
-        
+
         // outputPrimary
         assert(Orm\TableRelation::outputPrimary(2,'test') === 'test (#2)');
-        
+
         // attr
         assert($rel->attr() === ['what'=>['id','name_en','dateAdd'],'appendPrimary'=>true,'onGet'=>true,'output'=>['[dateAdd] [name_en] _ [id]'],'order'=>['name_en'=>'desc'],'where'=>[]]);
         assert($user->attr()['order'] === ['id'=>'desc']);

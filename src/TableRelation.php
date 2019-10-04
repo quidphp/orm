@@ -739,15 +739,15 @@ class TableRelation extends Relation
 
         return $return;
     }
-    
-    
+
+
     // outputPrimary
     // utilisé pour ajouter le id entre paranthèse avec #
-    public static function outputPrimary($value,string $return):string 
+    public static function outputPrimary($value,string $return):string
     {
         if(is_numeric($value) && strlen($return))
         $return .= " (#$value)";
-        
+
         return $return;
     }
 }
