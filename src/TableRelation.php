@@ -712,8 +712,8 @@ class TableRelation extends Relation
 
             if(strlen($value))
             {
-                if($key === $primary && is_numeric($value) && strlen($return))
-                $return .= " (#$value)";
+                if($key === $primary)
+                $return = static::outputPrimary($value,$return);
 
                 else
                 {
@@ -737,6 +737,17 @@ class TableRelation extends Relation
         if(is_scalar($return))
         $return = (string) $return;
 
+        return $return;
+    }
+    
+    
+    // outputPrimary
+    // utilisé pour ajouter le id entre paranthèse avec #
+    public static function outputPrimary($value,string $return):string 
+    {
+        if(is_numeric($value) && strlen($return))
+        $return .= " (#$value)";
+        
         return $return;
     }
 }
