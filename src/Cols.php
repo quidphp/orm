@@ -690,21 +690,13 @@ class Cols extends Main\Map
     // par exemple pour une première ligne de csv
     public function writeFile(Main\File $file,Cells $cells,?array $option=null):self
     {
-        $option = Base\Arr::plus(['latin1'=>false],$option);
         $array = [];
 
         foreach ($this->toArray() as $key => $col)
         {
             $cell = $cells->checkGet($key);
             $export = $col->export($cell,$option);
-
-            foreach ($export as $label)
-            {
-                if(is_string($label) && $option['latin1'] === true)
-                $label = Base\Encoding::fromUtf8($label);
-
-                $array[] = $label;
-            }
+            $array = Base\Arr::append($array,$export);
         }
 
         $file->write($array,$option);

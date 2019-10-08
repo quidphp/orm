@@ -1853,7 +1853,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             $this->insertCom($completeValidation,null,null,null,['table']);
 
             elseif($option['strict'] === true)
-            static::throw($this,Base\Json::encode($completeValidation));
+            static::throw($this,$completeValidation);
         }
 
         return $return;
@@ -1881,7 +1881,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             $this->insertCom($finalValidation,null,null,null,['table']);
 
             elseif($option['strict'] === true)
-            static::throw($this,Base\Json::encode($finalValidation));
+            static::throw($this,$finalValidation);
         }
 
         return $return;

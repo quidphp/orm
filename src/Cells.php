@@ -755,18 +755,13 @@ class Cells extends Main\Map
     // par exemple pour une ligne de csv
     public function writeFile(Main\File $file,?array $option=null):self
     {
-        $option = Base\Arr::plus(['latin1'=>false,'context'=>'noHtml'],$option);
+        $option = Base\Arr::plus(['context'=>'noHtml'],$option);
         $array = [];
 
         foreach ($this->toArray() as $key => $cell)
         {
-            foreach ($cell->export($option) as $value)
-            {
-                if(is_string($value) && $option['latin1'] === true)
-                $value = Base\Encoding::fromUtf8($value);
-
-                $array[] = $value;
-            }
+            $export = $cell->export($option);
+            $array = Base\Arr::append($array,$export);
         }
 
         $file->write($array,$option);

@@ -1045,7 +1045,7 @@ class Row extends Main\ArrObj
             $this->updateCom($completeValidation);
 
             elseif($option['strict'] === true)
-            static::throw('invalid',$this->table(),$this,Base\Json::encode($completeValidation));
+            static::throw('invalid',$this->table(),$this,$completeValidation);
 
             $names = Base\Arr::valuesStrip(array_keys($completeValidation),$return->names());
 
@@ -1107,7 +1107,7 @@ class Row extends Main\ArrObj
             $this->updateCom($finalValidation);
 
             elseif($option['strict'] === true)
-            static::throw('invalid',$this->table(),$this,Base\Json::encode($finalValidation));
+            static::throw('invalid',$this->table(),$this,$finalValidation);
         }
 
         return $return;
