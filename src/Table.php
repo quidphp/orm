@@ -2129,7 +2129,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         return $return;
     }
 
-    
+
     // delete
     // fait une requête delete sur la table
     // les rows effacés sont unlink après le delete
@@ -2138,17 +2138,17 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return = null;
         $db = $this->db();
         $primaries = $this->selectPrimaries(...$values);
-        
+
         if(!empty($primaries))
         {
             $return = $db->delete($this,...$values);
             $this->rowsUnlink(...$primaries);
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // deleteTrim
     // trim la table après une limite
     // les rows sont unlink si unlink est true, sinon elles sont refresh

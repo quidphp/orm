@@ -495,10 +495,10 @@ class Table extends Base\Test
         assert($db['ormCol']->truncate() === true);
 
         // truncateAfter
-        
+
         // delete
-        assert($tb->delete(array(array('id','>',1000))) === null);
-        
+        assert($tb->delete([['id','>',1000]]) === null);
+
         // deleteTrim
         assert($tb->deleteTrim(1000,false) === null);
         assert($tb->deleteTrim(4,false) === 0);
