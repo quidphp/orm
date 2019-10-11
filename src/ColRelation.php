@@ -485,7 +485,7 @@ class ColRelation extends Relation
     {
         $return = null;
         $type = $this->checkType();
-        
+
         if(!Base\Validate::isReallyEmpty($value))
         {
             if(!is_array($value))
@@ -599,7 +599,7 @@ class ColRelation extends Relation
         $return = null;
         $col = $this->col();
         $value = $col->get($value,$option);
-        
+
         if($this->isSet() || is_array($value))
         $return = $this->many($value,$found,$cache,$option);
 

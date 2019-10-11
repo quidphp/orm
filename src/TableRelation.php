@@ -249,21 +249,21 @@ class TableRelation extends Relation
 
         if($cache === true && !empty($data))
         $return = Base\Arr::getsExists($primaries,$data);
-        
+
         if(count($return) !== count($primaries))
         {
             $missing = (!empty($return))? Base\Arr::valuesStrip(array_keys($return),$primaries):$primaries;
-            
+
             if(!empty($missing))
             {
                 if(!empty($return) && $found === false)
                 $return = Base\Arr::gets($primaries,$data);
-                
+
                 $db = $this->db();
                 $table = $this->table();
                 $primary = $table->primary();
                 $where[] = [$primary,'in',$missing];
-                
+
                 if($isMethod === true)
                 $result = $db->rows($table,$where);
 
@@ -624,7 +624,7 @@ class TableRelation extends Relation
         $output = $option['output'] ?? null;
         $onGet = $option['onGet'] ?? false;
         $isMethod = $this->isOutputMethod($method);
-        
+
         if($isMethod === true)
         $return = $this->outputMethod($value,$method);
 
@@ -662,7 +662,7 @@ class TableRelation extends Relation
             foreach ($output as $out)
             {
                 $v = null;
-                
+
                 if($out === null)
                 $v = $array;
 
@@ -671,7 +671,7 @@ class TableRelation extends Relation
 
                 elseif(is_string($out))
                 $v = Base\Arr::get($out,$array);
-                
+
                 if(!empty($v))
                 {
                     if(is_array($v))
@@ -689,7 +689,7 @@ class TableRelation extends Relation
 
             $return = $r;
         }
-        
+
         if(is_scalar($return))
         $return = (string) $return;
 
