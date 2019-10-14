@@ -477,7 +477,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     protected function tableMake(string $class,string $value,TableClasse $tableClasse,array $attr):self
     {
         $value = new $class($value,$this,$tableClasse,$attr);
-
+        
         if($value->attr('ignore') !== true)
         $this->tables()->add($value);
 
@@ -755,7 +755,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // fromPointer
     // retourne la row ou null à partir d'un pointer
     // possible de fournir un tableau de tables valides en troisième argument
-    public function fromPointer(string $value,?string $separator=null,?array $validTables=null):?Row
+    public function fromPointer(string $value,?array $validTables=null,?string $separator=null):?Row
     {
         $return = null;
         $pointer = Base\Str::pointer($value,$separator);

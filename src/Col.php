@@ -509,7 +509,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne doit apparaître dans general
     public function isGeneral():bool
     {
-        return ($this->attr('general') === true)? true:false;
+        return ($this->attrCall('general') === true)? true:false;
     }
 
 
@@ -1853,18 +1853,9 @@ class Col extends Main\Root
 
     // collation
     // retourne la collation de la colonne
-    // si la collation n'est pas défini que kind est char ou texte, retourne celle de la table
     public function collation():?string
     {
-        $return = $this->attr('collation');
-
-        if(empty($return))
-        {
-            if($this->isKindChar() || $this->isKindText())
-            $return = $this->table()->collation();
-        }
-
-        return $return;
+        return $this->attr('collate');
     }
 
 
@@ -2255,7 +2246,7 @@ class Col extends Main\Root
         return $this;
     }
 
-
+    
     // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
     public static function initReplaceMode():array

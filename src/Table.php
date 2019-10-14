@@ -844,7 +844,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             if($count === true)
             {
                 $return = $this->cache(__METHOD__,function() {
-                    return $this->db()->showCountTableColumns($this);
+                    return $this->db()->selectTableColumnCount($this);
                 },$cache);
             }
         }
@@ -1400,6 +1400,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // construit ou met à jour un objet row à partir de la valeur primaire
     // tableau data est facultatif
     // retourne la ligne ou null
+    // les lignes ne sont pas ajoutés dans l'ordre
     // méthode protégé
     protected function rowMake(int $primary,?array $data=null):?Row
     {
@@ -2151,17 +2152,17 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // deleteTrim
     // trim la table après une limite
-    // les rows sont unlink si unlink est true, sinon elles sont refresh
-    public function deleteTrim(int $limit,bool $unlink=true):?int
+    // les rows effacés sont unlinks
+    public function deleteTrim(int $limit):?int
     {
-        $return = $this->db()->deleteTrim($this,$limit);
-
-        if(is_int($return))
+        $return = null;
+        $db = $this->db();
+        $primaries = $db->getDeleteTrimPrimaries($this,$limit);
+        
+        if(!empty($primaries))
         {
-            if($unlink === true)
-            $this->rowsUnlink();
-            else
-            $this->rowsRefresh();
+            $return = $db->deleteTrim($this,$limit);
+            $this->rowsUnlink(...$primaries);
         }
 
         return $return;

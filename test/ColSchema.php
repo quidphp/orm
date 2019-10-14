@@ -94,8 +94,8 @@ class ColSchema extends Base\Test
         assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'int','kind'=>'int','unsigned'=>true,'length'=>11,'null'=>null,'default'=>null,'key'=>'primary','required'=>true,'group'=>'primary','validate'=>['int','>='=>0,'<='=>4294967294,'maxLength'=>11]]);
         $attr = ['Field'=>'name','Type'=>'varchar(55)','Null'=>'YES','Key'=>'','Default'=>null];
         assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'varchar','kind'=>'char','search'=>true,'length'=>55,'null'=>true,'default'=>null,'group'=>'char','validate'=>['string','maxLength'=>55]]);
-        $attr = ['Field'=>'name','Type'=>'varchar(55)','Null'=>'No','Key'=>'','Default'=>null];
-        assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'varchar','kind'=>'char','search'=>true,'length'=>55,'null'=>false,'group'=>'char','validate'=>['string','maxLength'=>55]]);
+        $attr = ['Field'=>'name','Type'=>'varchar(55)','Collation'=>'utf8','Null'=>'No','Key'=>'','Default'=>null];
+        assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'varchar','kind'=>'char','search'=>true,'length'=>55,'null'=>false,'collate'=>'utf8','group'=>'char','validate'=>['string','maxLength'=>55]]);
         $attr = ['Field'=>'content','Type'=>'text','Null'=>'YES','Key'=>'','Default'=>null];
         assert(Orm\ColSchema::prepareAttr($attr) === ['type'=>'text','kind'=>'text','search'=>true,'length'=>65535,'null'=>true,'default'=>null,'group'=>'text','validate'=>['string','maxLength'=>65535]]);
         $attr = ['Field'=>'dateAdd','Type'=>'int(11)','Null'=>'No','Key'=>'','Default'=>null];

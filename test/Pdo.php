@@ -329,9 +329,6 @@ class Pdo extends Base\Test
         assert($pdo->makeDelete([$table,100],['beforeAfter'=>'assoc']) === ['before'=>['id'=>100,'name_en'=>'OK','active'=>null,'dateAdd'=>null],'query'=>1,'after'=>null]);
         assert($pdo->alterAutoIncrement($table,0) instanceof \PdoStatement);
 
-        // prepareRollback
-        assert($pdo->prepareRollback('update',Orm\Syntax::make('update',[$table,['name'=>'bla'],2]))['rollback']['id'] === 2);
-
         // makeCreate
         assert(($x = $pdo->makeCreate([$table2,[['id','int','length'=>12,'null'=>null,'autoIncrement'=>true,'unsigned'=>true],['name_en','varchar','length'=>200,'default'=>"L'article de james"]],[['key','name_en'],['primary','id']]])) instanceof \PDOStatement);
         assert($x->columnCount() === 0);
@@ -345,6 +342,9 @@ class Pdo extends Base\Test
 
         // makeDrop
         assert($pdo->makeDrop([$table2]) instanceof \PDOStatement);
+        
+        // prepareRollback
+        assert($pdo->prepareRollback('update',Orm\Syntax::make('update',[$table,['name'=>'bla'],2]))['rollback']['id'] === 2);
 
         // select
         assert(count($pdo->select(true,$table,null,['id'=>'DESC'],'1,2')) === 2);
@@ -366,12 +366,6 @@ class Pdo extends Base\Test
         assert(count($pdo->select(true,$table,[['id','or|findInSet',[1,2]]])) === 2);
         assert($pdo->delete($table,['id'=>4]) === 1);
 
-        // selectNum
-        assert(Base\Arr::isIndexed($pdo->selectNum(true,$table)));
-
-        // selectNums
-        assert(count($pdo->selectNums(true,$table)) === 3);
-
         // selectAssoc
         assert($pdo->selectAssoc('id',$table) === ['id'=>1]);
         assert($pdo->selectAssoc('id',$table,1000) === null);
@@ -390,21 +384,11 @@ class Pdo extends Base\Test
         // selectAssocsPrimary
         assert($pdo->selectAssocsPrimary('*',$table)[1]['id'] === 1);
 
-        // selectNumsKey
-        assert($pdo->selectNumsKey(1,'*',$table)['james'][1] === 'james');
-
-        // selectObjsKey
-        assert($pdo->selectObjsKey('name_en','*',$table)['james'] instanceof \stdclass);
-        assert($pdo->selectObjsKey(1,'*',$table)['james'] instanceof \stdclass);
-
         // selectColumnIndex
         assert($pdo->selectColumnIndex(0,'*',$table,null,['id'=>'desc']) === 3);
 
         // selectColumnsIndex
         assert($pdo->selectColumnsIndex(0,'*',$table,null,['id'=>'desc']) === [3,2,1]);
-
-        // selectColumnsGroup
-        assert(count($pdo->selectColumnsGroup(3,'*',$table)) === 2);
 
         // selectRowCount
         assert($pdo->selectRowCount('id',$table) === 3);
@@ -435,17 +419,17 @@ class Pdo extends Base\Test
         // showColumns
         assert($pdo->showColumns('Field',"COLUMNS FROM $table") === ['id','name_en','active','dateAdd']);
         assert($pdo->showColumns(2,"COLUMNS FROM $table") === ['NO','YES','YES','YES']);
+        
+        // showKeyValue
+        assert($pdo->showKeyValue('Field','Type',"COLUMNS FROM $table") === ['id'=>'int(11) unsigned']);
+        assert($pdo->showKeyValue(0,1,"COLUMNS FROM $table") === ['id'=>'int(11) unsigned']);
 
-        // showkeyValue
-        assert($pdo->showkeyValue('Field','Type',"COLUMNS FROM $table") === ['id'=>'int(11) unsigned']);
-        assert($pdo->showkeyValue(0,1,"COLUMNS FROM $table") === ['id'=>'int(11) unsigned']);
-
-        // showkeyValues
-        assert(count($pdo->showkeyValues('Field','Type',"COLUMNS FROM $table")) === 4);
+        // showKeyValues
+        assert(count($pdo->showKeyValues('Field','Type',"COLUMNS FROM $table")) === 4);
         Orm\Syntax::setShortcut('pe','pe');
-        assert(count($pdo->showkeyValues('Field','Ty[pe]',"COLUMNS FROM $table")) === 4);
+        assert(count($pdo->showKeyValues('Field','Ty[pe]',"COLUMNS FROM $table")) === 4);
         Orm\Syntax::unsetShortcut('pe');
-        assert($pdo->showkeyValues('Field','Ty[pe]',"COLUMNS FROM $table") === []);
+        assert($pdo->showKeyValues('Field','Ty[pe]',"COLUMNS FROM $table") === []);
 
         // showCount
         assert($pdo->showCount("COLUMNS FROM $table") === 4);
@@ -464,9 +448,7 @@ class Pdo extends Base\Test
         assert($pdo->delete($table,99) === 1);
         assert($pdo->delete($table,100) === 1);
         $pdo->alterAutoIncrement($table);
-
-        // insertCount
-        assert($pdo->insertCount($table,['id'=>11,'name_en'=>'NINE']) === 1);
+        assert($pdo->insert($table,['id'=>11,'name_en'=>'NINE']) === 11);
 
         // insertBeforeAfter
         assert($pdo->insertBeforeAfter($table,['id'=>12,'name_en'=>'douze']) === ['before'=>null,'query'=>12,'after'=>['id'=>12,'name_en'=>'douze','active'=>null,'dateAdd'=>null]]);
@@ -598,6 +580,9 @@ class Pdo extends Base\Test
         // selectSegmentAssocsKey
         assert($pdo->selectSegmentAssocsKey('[name_en] [id] [id]',$table)[1] === ['id'=>1,'name_en'=>'james']);
 
+        // selectTableColumnCount
+        assert($pdo->selectTableColumnCount('main') === 4);
+
         // showDatabase
         assert($pdo->showDatabase($pdo->dbName()) === $pdo->dbName());
 
@@ -622,33 +607,24 @@ class Pdo extends Base\Test
         // showTableStatus
         assert(count($pdo->showTableStatus($table)) >= 18);
 
-        // showTablesStatus
-        assert(count($pdo->showTablesStatus()) > 6);
-        assert(count($pdo->showTablesStatus('log%')) === 6);
-
         // showTableAutoIncrement
         assert($pdo->showTableAutoIncrement($table) === 4);
 
         // showTablesColumns
         assert(Base\Column::is($pdo->showTablesColumns()));
 
-        // showTablesColumnsField
-        assert(Base\Column::is($pdo->showTablesColumnsField()));
-
         // showTableColumn
-        assert($pdo->setDebug(true)->showTableColumn('main','name_[lang]')['sql'] === "SHOW COLUMNS FROM `main` WHERE FIELD = 'name_en'");
+        assert($pdo->setDebug(true)->showTableColumn('main','name_[lang]')['sql'] === "SHOW FULL COLUMNS FROM `main` WHERE FIELD = 'name_en'");
         $pdo->setDebug();
-        assert(count($pdo->showTableColumn('main','id')) === 6);
-
+        assert(count($pdo->showTableColumn('main','id')) === 9);
+        assert(count($pdo->showTableColumn('main','id',array('full'=>false))) === 6);
+        
         // showTableColumnField
         assert($pdo->showTableColumnField('main','id') === 'id');
         assert($pdo->showTableColumnField('main','idzzz') === null);
 
         // showTableColumns
         assert($pdo->showTableColumns('main')['id']['Field'] === 'id');
-
-        // showCountTableColumns
-        assert($pdo->showCountTableColumns('main') === 4);
 
         // showTableColumnsField
         assert($pdo->showTableColumnsField('main') === ['id','name_en','active','dateAdd']);
@@ -670,8 +646,8 @@ class Pdo extends Base\Test
         assert($pdo->updateDecrement('dateAdd',4,$table,1) === 1);
         assert($pdo->updateDecrement('dateAdd',4,$table,1,['beforeAfter'=>'assoc'])['before']['dateAdd'] === 6);
         assert($pdo->selectAssocsPrimary('*',$table)[1]['dateAdd'] === 2);
-
-        // deleteTrim
+        
+        // getDeleteTrimPrimaries
         assert($pdo->insert($table,['id'=>20]));
         assert($pdo->insert($table,['id'=>21]));
         assert($pdo->insert($table,['id'=>22]));
@@ -680,9 +656,16 @@ class Pdo extends Base\Test
         assert($pdo->insert($table,['id'=>25]));
         assert($pdo->insert($table,['id'=>26]));
         assert($pdo->insert($table,['id'=>27]));
+        assert(count($pdo->selectPrimaries($table)) === 11);
+        assert(count($pdo->getDeleteTrimPrimaries($table,3)) === 8);
+        assert($pdo->getDeleteTrimPrimaries($table,0) === null);
+        assert(count($pdo->getDeleteTrimPrimaries($table,1)) === 10);
+        
+        // deleteTrim
         assert($pdo->deleteTrim($table,5) === 6);
         assert($pdo->selectCount($table) === 5);
-
+        assert(count($pdo->getDeleteTrimPrimaries($table,1)) === 4);
+        
         // alterAutoIncrement
         assert($pdo->alterAutoIncrement('main',20) instanceof \PDOStatement);
 

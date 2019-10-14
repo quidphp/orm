@@ -175,11 +175,13 @@ class Db extends Base\Test
         assert($db->query(['type'=>'select','id'=>2,'whereOnlyId'=>true,'table'=>$table],'rowOut') === null);
 
         // fromPointer
-        assert($db->fromPointer('ormDb/2111') === null);
-        assert($db->fromPointer('ormDb/2','/') instanceof Orm\Row);
-        assert($db->fromPointer('ormDb/2','/',['core','ormDb']) instanceof Orm\Row);
-        assert($db->fromPointer('ormDb/2','/',['core','ormDbz']) === null);
-        assert($db->fromPointer('ormDb/2','-') === null);
+        assert($db->fromPointer('ormDb-2111') === null);
+        assert($db->fromPointer('ormDb-2') instanceof Orm\Row);
+        assert($db->fromPointer('ormDb/2',null,'/') instanceof Orm\Row);
+        assert($db->fromPointer('ormDb/2',['core','ormDb'],'/') instanceof Orm\Row);
+        assert($db->fromPointer('ormDb-2',['core','ormDb']) instanceof Orm\Row);
+        assert($db->fromPointer('ormDb-2',['core','ormDbz']) === null);
+        assert($db->fromPointer('ormDb/2') === null);
 
         // prepareRow
         assert($db->prepareRow(Orm\Syntax::makeSelect(['*',$table,['name_[lang]'=>'james']]),'rows')['id'] === [1]);
@@ -345,16 +347,12 @@ class Db extends Base\Test
         assert(count($db->select(true,$tb,[['name_[lang]','%like','ja'],'and',[$tb->col('name_[lang]'),'like%','s2']])) === 1);
         assert(count($db->select(true,$tb,[[$tb->col('id'),'or|findInSet',[1,2]]])) === 2);
         assert($db->makeDelete([$tb,['id'=>[4,100]]]) === 2);
-        assert(Base\Arr::isIndexed($db->selectNum(true,$tb)));
-        assert(count($db->selectNums(true,$tb)) === 3);
         assert($db->selectAssoc($tb->col('id'),$tb,1000) === null);
         assert(count($db->selectAssocs(['id','name_[lang]'],$tb)[0]) === 2);
         assert($db->selectAssocs($tb->col('id'),$tb,1000) === []);
         assert($db->selectAssocsUnique('*',$tb)[2]['name_en'] === 'james2');
         assert($db->selectAssocsKey($tb->col('name_[lang]'),'*',$tb)['james']['name_en'] === 'james');
         assert($db->selectAssocsPrimary('*',$tb)[1]['id'] === 1);
-        assert($db->selectNumsKey(1,'*',$tb)['james'][1] === 'james');
-        assert($db->selectObjsKey($tb->col('name_[lang]'),'*',$tb)['james'] instanceof \stdclass);
         assert($db->selectColumnIndex(0,'*',$tb,null,['id'=>'desc']) === 3);
         assert($db->selectRowCount($tb->col('id'),$tb,null,null,2) === 2);
         assert($db->selectColumnCount($tb->col('id'),$tb) === 1);
@@ -364,8 +362,8 @@ class Db extends Base\Test
         assert($db->showAssocsKey('Field',"COLUMNS FROM $tb")['id']['Field'] === 'id');
         assert($db->showColumn(1,"COLUMNS FROM $tb") === 'int(11) unsigned');
         assert($db->showColumns(2,"COLUMNS FROM $tb") === ['NO','YES','YES']);
-        assert($db->showkeyValue(0,1,"COLUMNS FROM $tb") === ['id'=>'int(11) unsigned']);
-        assert($db->showkeyValues('Field','Ty[pe]',"COLUMNS FROM $tb") === []);
+        assert($db->showKeyValue(0,1,"COLUMNS FROM $tb") === ['id'=>'int(11) unsigned']);
+        assert($db->showKeyValues('Field','Ty[pe]',"COLUMNS FROM $tb") === []);
         assert($db->showCount("COLUMNS FROM $tb") === 3);
         assert($db->showColumnCount("COLUMNS FROM $tb") === 6);
         assert($db->insert($tb,['id'=>9,'name_[lang]'=>'NINE']) === 9);
@@ -409,9 +407,9 @@ class Db extends Base\Test
         assert($db->showTable($tb) === $tb->name());
         assert(count($db->showTables()) >= 1);
         assert(count($db->showTables($tb)) === 1);
-        assert($db->setDebug(true)->showTableColumn($tb,$tb->col('name_[lang]'))['sql'] === "SHOW COLUMNS FROM `ormDb` WHERE FIELD = 'name_en'");
+        assert($db->setDebug(true)->showTableColumn($tb,$tb->col('name_[lang]'))['sql'] === "SHOW FULL COLUMNS FROM `ormDb` WHERE FIELD = 'name_en'");
         $db->setDebug();
-        assert(count($db->showTableColumn($tb,$tb->col('id'))) === 6);
+        assert(count($db->showTableColumn($tb,$tb->col('id'))) === 9);
         assert($db->showTableColumnField($tb,$tb->col('id')) === 'id');
         assert($db->showTableColumns($tb)['id']['Field'] === 'id');
         assert($db->showTableColumnsField($tb) === ['id','name_en','dateAdd']);

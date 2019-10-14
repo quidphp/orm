@@ -655,11 +655,11 @@ class Col extends Base\Test
         // alter
 
         // drop
-
+        
         // initReplaceMode
 
         // attr
-        assert(count($col->attr()) === 25);
+        assert(count($col->attr()) === 26);
         assert($col->attrNotEmpty('kind'));
         assert(!$col->attrNotEmpty('kindz'));
 

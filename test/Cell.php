@@ -248,7 +248,7 @@ class Cell extends Base\Test
         assert(!$cell->colUnique());
 
         // attr
-        assert(count($cell->attr()) === 26);
+        assert(count($cell->attr()) === 27);
         assert($cell->attr('kind') === 'char');
 
         // attrCall

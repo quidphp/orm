@@ -930,7 +930,7 @@ class Pdo extends Main\Root
     public function query($value,$output=true)
     {
         $return = null;
-
+        
         if($this->getOption('debug') || $output === 'debug')
         $return = $this->debug($value);
 
@@ -1201,6 +1201,38 @@ class Pdo extends Main\Root
     }
 
 
+    // makeCreate
+    // construit et soumet une requête create généré par la classe sql
+    public function makeCreate(array $array,$output=true,?array $option=null)
+    {
+        return $this->query(Syntax::makeCreate($array,$this->getSqlOption($option)),$output);
+    }
+
+
+    // makeAlter
+    // construit et soumet une requête alter généré par la classe sql
+    public function makeAlter(array $array,$output=true,?array $option=null)
+    {
+        return $this->query(Syntax::makeAlter($array,$this->getSqlOption($option)),$output);
+    }
+
+
+    // makeTruncate
+    // construit et soumet une requête truncate généré par la classe sql
+    public function makeTruncate(array $array,$output=true,?array $option=null)
+    {
+        return $this->query(Syntax::makeTruncate($array,$this->getSqlOption($option)),$output);
+    }
+
+
+    // makeDrop
+    // construit et soumet une requête drop généré par la classe sql
+    public function makeDrop(array $array,$output=true,?array $option=null)
+    {
+        return $this->query(Syntax::makeDrop($array,$this->getSqlOption($option)),$output);
+    }
+
+    
     // prepareRollback
     // prépare la requête rollback pour une requête insert, update ou delete
     // il y aura seulement un rollback si le tableau sql contient select, une table et un id numérique
@@ -1233,62 +1265,14 @@ class Pdo extends Main\Root
 
         return $return;
     }
-
-
-    // makeCreate
-    // construit et soumet une requête create généré par la classe sql
-    public function makeCreate(array $array,$output=true,?array $option=null)
-    {
-        return $this->query(Syntax::makeCreate($array,$this->getSqlOption($option)),$output);
-    }
-
-
-    // makeAlter
-    // construit et soumet une requête alter généré par la classe sql
-    public function makeAlter(array $array,$output=true,?array $option=null)
-    {
-        return $this->query(Syntax::makeAlter($array,$this->getSqlOption($option)),$output);
-    }
-
-
-    // makeTruncate
-    // construit et soumet une requête truncate généré par la classe sql
-    public function makeTruncate(array $array,$output=true,?array $option=null)
-    {
-        return $this->query(Syntax::makeTruncate($array,$this->getSqlOption($option)),$output);
-    }
-
-
-    // makeDrop
-    // construit et soumet une requête drop généré par la classe sql
-    public function makeDrop(array $array,$output=true,?array $option=null)
-    {
-        return $this->query(Syntax::makeDrop($array,$this->getSqlOption($option)),$output);
-    }
-
-
+    
+    
     // select
     // construit et soumet une requête select généré par la classe sql
     // les arguments sont pack et output est toujours true
     public function select(...$values)
     {
         return $this->makeSelect($values,true);
-    }
-
-
-    // selectNum
-    // construit et soumet une requête select avec output num
-    public function selectNum(...$values):?array
-    {
-        return $this->makeSelect($values,'num');
-    }
-
-
-    // selectNums
-    // construit et soumet une requête select avec output nums
-    public function selectNums(...$values):?array
-    {
-        return $this->makeSelect($values,'nums');
     }
 
 
@@ -1335,24 +1319,6 @@ class Pdo extends Main\Root
     }
 
 
-    // selectNumsKey
-    // construit et soumet une requête select avec output numsKey
-    // index est l'index du champ à utiliser comme clé
-    public function selectNumsKey(int $index,...$values):?array
-    {
-        return $this->makeSelect($values,['numsKey','key'=>$index]);
-    }
-
-
-    // selectObjsKey
-    // construit et soumet une requête select avec output objsKey
-    // key est le champ qui sera utilisé pour la clé du tableau de retour, peut aussi être un index
-    public function selectObjsKey($key,...$values):?array
-    {
-        return $this->makeSelect($values,['objsKey','key'=>Base\Obj::cast($key)]);
-    }
-
-
     // selectColumnIndex
     // construit et soumet une requête select avec output column et un index
     public function selectColumnIndex(int $index,...$values)
@@ -1366,14 +1332,6 @@ class Pdo extends Main\Root
     public function selectColumnsIndex(int $index,...$values):?array
     {
         return $this->makeSelect($values,['columns','arg'=>$index]);
-    }
-
-
-    // selectColumnsGroup
-    // construit et soumet une requête select avec output columnsGroup
-    public function selectColumnsGroup(int $arg=0,...$values):?array
-    {
-        return $this->makeSelect($values,['columnsGroup','arg'=>$arg]);
     }
 
 
@@ -1443,17 +1401,17 @@ class Pdo extends Main\Root
     }
 
 
-    // showkeyValue
+    // showKeyValue
     // construit et soumet une requête show avec output keyValue
-    public function showkeyValue($key,$pair,...$values):?array
+    public function showKeyValue($key,$pair,...$values):?array
     {
         return $this->makeShow($values,['keyPair','arg'=>[Base\Obj::cast($key,3),Base\Obj::cast($pair,3)]]);
     }
 
 
-    // showkeyValues
+    // showKeyValues
     // construit et soumet une requête show avec output keyValues
-    public function showkeyValues($key,$pair,...$values):?array
+    public function showKeyValues($key,$pair,...$values):?array
     {
         return $this->makeShow($values,['keyPairs','arg'=>[Base\Obj::cast($key,3),Base\Obj::cast($pair,3)]]);
     }
@@ -1513,15 +1471,6 @@ class Pdo extends Main\Root
         }
 
         return $return;
-    }
-
-
-    // insertCount
-    // construit et soumet une requête insert généré par la classe sql
-    // les arguments sont pack et output est toujours rowCount
-    public function insertCount(...$values)
-    {
-        return $this->makeInsert($values,'rowCount');
     }
 
 
@@ -1847,7 +1796,16 @@ class Pdo extends Main\Root
         return $this->query(Syntax::makeSelectSegment($key,$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
     }
 
-
+    
+    // selectTableColumnCount
+    // fait une requête pour obtenir le nombre des colonnes dans une table
+    // utilise select car plus rapide, output est rowCount
+    public function selectTableColumnCount($value,?array $option=null):?int
+    {
+        return $this->query(Syntax::makeSelect(['*',$value,'limit'=>0],$this->getSqlOption($option)),'columnCount');
+    }
+    
+    
     // showDatabase
     // retourne le nom de la première database trouvé
     // value doit être une string qui représente like
@@ -1915,7 +1873,7 @@ class Pdo extends Main\Root
         return $this->query(Syntax::makeShowTableStatus(Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
     }
 
-
+    
     // showTableAutoIncrement
     // retourne la valeur auto increment courante de la table
     public function showTableAutoIncrement($value,?array $option=null):?int
@@ -1927,14 +1885,6 @@ class Pdo extends Main\Root
         $return = $status['Auto_increment'];
 
         return $return;
-    }
-
-
-    // showTablesStatus
-    // output est assocs
-    public function showTablesStatus($value=null,?array $option=null):?array
-    {
-        return $this->query(Syntax::makeShowTableStatus($value,$this->getSqlOption($option)),'assocs');
     }
 
 
@@ -1958,26 +1908,6 @@ class Pdo extends Main\Root
     }
 
 
-    // showTablesColumnsFields
-    // retourne un tableau multidimensionnel détailéé de toutes les tables avec les noms de toutes les colonnes
-    public function showTablesColumnsField($value=null,?array $option=null):?array
-    {
-        $return = null;
-        $tables = static::showTables($value,$option);
-
-        if(!empty($tables))
-        {
-            $return = [];
-            foreach ($tables as $table)
-            {
-                $return[$table] = static::showTableColumnsField($table,$option);
-            }
-        }
-
-        return $return;
-    }
-
-
     // showTableColumn
     // fait une requête de type show pour obtenir la description d'une colonne dans une table
     // output est assoc
@@ -1992,6 +1922,7 @@ class Pdo extends Main\Root
     // output est column avec champ field
     public function showTableColumnField($table,$value,?array $option=null)
     {
+        $option = Base\Arr::plus($option,array('full'=>false));
         return $this->query(Syntax::makeShowTableColumn($table,Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>'Field']);
     }
 
@@ -2002,15 +1933,6 @@ class Pdo extends Main\Root
     public function showTableColumns($value,?array $option=null):?array
     {
         return $this->query(Syntax::makeShowTableColumn($value,null,$this->getSqlOption($option)),['assocsKey','key'=>'Field']);
-    }
-
-
-    // showCountTableColumns
-    // fait une requête de type show pour obtenir le nombre des colonnes dans une table
-    // output est rowCount
-    public function showCountTableColumns($value,?array $option=null):?int
-    {
-        return $this->query(Syntax::makeSelect(['*',$value,'limit'=>0],$this->getSqlOption($option)),'columnCount');
     }
 
 
@@ -2079,7 +2001,25 @@ class Pdo extends Main\Root
         return $return;
     }
 
+    
+    // getDeleteTrimPrimaries
+    // retourne les ids de toutes les lignes qui seraient effacés par delete trim
+    public function getDeleteTrimPrimaries($table,int $limit,?array $option=null):?array 
+    {
+        $return = null;
+        $primary = $this->primary();
 
+        if(!empty($table) && $limit > 0)
+        {
+            $order = [$primary=>'DESC'];
+            $limit = [true,$limit];
+            $return = $this->makeSelect([$primary,$table,null,$order,$limit],'columns');
+        }
+
+        return $return;
+    }
+    
+    
     // deleteTrim
     // efface toutes les lignes de la table plus ancienne que la limite
     // output est true

@@ -315,7 +315,10 @@ class ColSchema extends Main\Root
                     elseif($value['Key'] === 'UNI')
                     $return['unique'] = true;
                 }
-
+                
+                if(array_key_exists('Collation',$value) && is_string($value['Collation']))
+                $return['collate'] = $value['Collation'];
+                
                 $return['group'] = static::group($return);
 
                 if(array_key_exists('priority',$value))
@@ -340,7 +343,7 @@ class ColSchema extends Main\Root
                 }
             }
         }
-
+        
         return $return;
     }
 

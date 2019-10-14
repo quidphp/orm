@@ -815,8 +815,8 @@ class Syntax extends Base\Test
         assert(Orm\Syntax::makeShowTableStatus('test_[lang]')['sql'] === "SHOW TABLE STATUS LIKE 'test_en'");
 
         // makeShowTableColumn
-        assert(Orm\Syntax::makeShowTableColumn('myTable','lol')['sql'] === "SHOW COLUMNS FROM `myTable` WHERE FIELD = 'lol'");
-        assert(Orm\Syntax::makeShowTableColumn('myTable')['sql'] === 'SHOW COLUMNS FROM `myTable`');
+        assert(Orm\Syntax::makeShowTableColumn('myTable','lol')['sql'] === "SHOW FULL COLUMNS FROM `myTable` WHERE FIELD = 'lol'");
+        assert(Orm\Syntax::makeShowTableColumn('myTable')['sql'] === 'SHOW FULL COLUMNS FROM `myTable`');
         assert(Orm\Syntax::makeShowTableColumn('myTable')['table'] === 'myTable');
 
         // makeAlterAutoIncrement

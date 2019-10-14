@@ -3298,7 +3298,7 @@ class Syntax extends Main\Root
         $return = null;
         $table = Base\Obj::cast($table,1);
         $value = Base\Obj::cast($value,2);
-        $option = static::option(Base\Arr::plus($option,['prepare'=>false,'full'=>false]));
+        $option = static::option(Base\Arr::plus(['full'=>true],$option,['prepare'=>false]));
 
         if(!empty($table))
         {

@@ -124,7 +124,7 @@ class Row extends Base\Test
         assert($row->attrNotEmpty('priority'));
 
         // pointer
-        assert($row->pointer() === 'ormRow/1');
+        assert($row->pointer() === 'ormRow-1');
 
         // value
         assert(count($row->value()) === 10);

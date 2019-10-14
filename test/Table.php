@@ -132,7 +132,7 @@ class Table extends Base\Test
         $deep = $tables['ormRowsIndexDeep'];
         assert(is_int($tb->priority()));
         assert($tb->priority() !== $deep->priority());
-
+        
         // where
         assert($tb->where() === []);
         assert($tb->where(['ok'=>'yeah']) === ['ok'=>'yeah']);
@@ -181,7 +181,7 @@ class Table extends Base\Test
 
         // status
         assert(count($tb->status()) >= 18);
-
+        
         // engine
         assert($tb->engine() === 'MyISAM');
 
@@ -500,10 +500,13 @@ class Table extends Base\Test
         assert($tb->delete([['id','>',1000]]) === null);
 
         // deleteTrim
-        assert($tb->deleteTrim(1000,false) === null);
-        assert($tb->deleteTrim(4,false) === 0);
-        assert($tb->deleteTrim(3,false) === 1);
-
+        assert($tb->deleteTrim(1000) === null);
+        assert($tb->deleteTrim(4) === null);
+        $tb->selects();
+        assert(count($tb->rows()->keys()) === 4);
+        assert($tb->deleteTrim(3) === 1);
+        assert(count($tb->rows()->keys()) === 3);
+        
         // reservePrimary
         assert($tb->reservePrimary() === 5);
 
@@ -530,7 +533,7 @@ class Table extends Base\Test
 
         // info
         assert(count($tb->info()) === 4);
-        assert($tb->info()['row'] === [1,3,4]);
+        assert($tb->info()['row'] === [3,4,2]);
 
         // sql
         assert($tb->sql(['search'=>'what','page'=>2,'limit'=>10]) instanceof Orm\Sql);
@@ -584,7 +587,6 @@ class Table extends Base\Test
         assert($tb->attrNotEmpty('test'));
 
         // dbAccess
-        $tb[1];
         assert($tb->hasDb());
         assert($tb->checkDb() === $tb);
         assert($tb->checkLink() === $tb);
