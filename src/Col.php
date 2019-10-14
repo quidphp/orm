@@ -2246,7 +2246,7 @@ class Col extends Main\Root
         return $this;
     }
 
-    
+
     // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
     public static function initReplaceMode():array

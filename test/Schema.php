@@ -37,7 +37,7 @@ class Schema extends Base\Test
         assert(count($schema->col($table,'name_en')) === 9);
         assert($schema->col($table,'name_en',false)['Field'] === 'name_en');
         assert($schema->col($table,'name_en',false)['Collation'] === 'utf8mb4_general_ci');
-        
+
         // all
         assert(count($schema->all()) === 25);
 

@@ -477,7 +477,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     protected function tableMake(string $class,string $value,TableClasse $tableClasse,array $attr):self
     {
         $value = new $class($value,$this,$tableClasse,$attr);
-        
+
         if($value->attr('ignore') !== true)
         $this->tables()->add($value);
 

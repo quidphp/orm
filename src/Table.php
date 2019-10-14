@@ -2158,7 +2158,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return = null;
         $db = $this->db();
         $primaries = $db->getDeleteTrimPrimaries($this,$limit);
-        
+
         if(!empty($primaries))
         {
             $return = $db->deleteTrim($this,$limit);

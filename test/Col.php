@@ -655,7 +655,7 @@ class Col extends Base\Test
         // alter
 
         // drop
-        
+
         // initReplaceMode
 
         // attr

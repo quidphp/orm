@@ -930,7 +930,7 @@ class Pdo extends Main\Root
     public function query($value,$output=true)
     {
         $return = null;
-        
+
         if($this->getOption('debug') || $output === 'debug')
         $return = $this->debug($value);
 
@@ -1232,7 +1232,7 @@ class Pdo extends Main\Root
         return $this->query(Syntax::makeDrop($array,$this->getSqlOption($option)),$output);
     }
 
-    
+
     // prepareRollback
     // prépare la requête rollback pour une requête insert, update ou delete
     // il y aura seulement un rollback si le tableau sql contient select, une table et un id numérique
@@ -1265,8 +1265,8 @@ class Pdo extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // select
     // construit et soumet une requête select généré par la classe sql
     // les arguments sont pack et output est toujours true
@@ -1796,7 +1796,7 @@ class Pdo extends Main\Root
         return $this->query(Syntax::makeSelectSegment($key,$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
     }
 
-    
+
     // selectTableColumnCount
     // fait une requête pour obtenir le nombre des colonnes dans une table
     // utilise select car plus rapide, output est rowCount
@@ -1804,8 +1804,8 @@ class Pdo extends Main\Root
     {
         return $this->query(Syntax::makeSelect(['*',$value,'limit'=>0],$this->getSqlOption($option)),'columnCount');
     }
-    
-    
+
+
     // showDatabase
     // retourne le nom de la première database trouvé
     // value doit être une string qui représente like
@@ -1873,7 +1873,7 @@ class Pdo extends Main\Root
         return $this->query(Syntax::makeShowTableStatus(Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
     }
 
-    
+
     // showTableAutoIncrement
     // retourne la valeur auto increment courante de la table
     public function showTableAutoIncrement($value,?array $option=null):?int
@@ -1922,7 +1922,7 @@ class Pdo extends Main\Root
     // output est column avec champ field
     public function showTableColumnField($table,$value,?array $option=null)
     {
-        $option = Base\Arr::plus($option,array('full'=>false));
+        $option = Base\Arr::plus($option,['full'=>false]);
         return $this->query(Syntax::makeShowTableColumn($table,Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>'Field']);
     }
 
@@ -2001,10 +2001,10 @@ class Pdo extends Main\Root
         return $return;
     }
 
-    
+
     // getDeleteTrimPrimaries
     // retourne les ids de toutes les lignes qui seraient effacés par delete trim
-    public function getDeleteTrimPrimaries($table,int $limit,?array $option=null):?array 
+    public function getDeleteTrimPrimaries($table,int $limit,?array $option=null):?array
     {
         $return = null;
         $primary = $this->primary();
@@ -2018,8 +2018,8 @@ class Pdo extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // deleteTrim
     // efface toutes les lignes de la table plus ancienne que la limite
     // output est true

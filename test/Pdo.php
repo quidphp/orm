@@ -342,7 +342,7 @@ class Pdo extends Base\Test
 
         // makeDrop
         assert($pdo->makeDrop([$table2]) instanceof \PDOStatement);
-        
+
         // prepareRollback
         assert($pdo->prepareRollback('update',Orm\Syntax::make('update',[$table,['name'=>'bla'],2]))['rollback']['id'] === 2);
 
@@ -419,7 +419,7 @@ class Pdo extends Base\Test
         // showColumns
         assert($pdo->showColumns('Field',"COLUMNS FROM $table") === ['id','name_en','active','dateAdd']);
         assert($pdo->showColumns(2,"COLUMNS FROM $table") === ['NO','YES','YES','YES']);
-        
+
         // showKeyValue
         assert($pdo->showKeyValue('Field','Type',"COLUMNS FROM $table") === ['id'=>'int(11) unsigned']);
         assert($pdo->showKeyValue(0,1,"COLUMNS FROM $table") === ['id'=>'int(11) unsigned']);
@@ -617,8 +617,8 @@ class Pdo extends Base\Test
         assert($pdo->setDebug(true)->showTableColumn('main','name_[lang]')['sql'] === "SHOW FULL COLUMNS FROM `main` WHERE FIELD = 'name_en'");
         $pdo->setDebug();
         assert(count($pdo->showTableColumn('main','id')) === 9);
-        assert(count($pdo->showTableColumn('main','id',array('full'=>false))) === 6);
-        
+        assert(count($pdo->showTableColumn('main','id',['full'=>false])) === 6);
+
         // showTableColumnField
         assert($pdo->showTableColumnField('main','id') === 'id');
         assert($pdo->showTableColumnField('main','idzzz') === null);
@@ -646,7 +646,7 @@ class Pdo extends Base\Test
         assert($pdo->updateDecrement('dateAdd',4,$table,1) === 1);
         assert($pdo->updateDecrement('dateAdd',4,$table,1,['beforeAfter'=>'assoc'])['before']['dateAdd'] === 6);
         assert($pdo->selectAssocsPrimary('*',$table)[1]['dateAdd'] === 2);
-        
+
         // getDeleteTrimPrimaries
         assert($pdo->insert($table,['id'=>20]));
         assert($pdo->insert($table,['id'=>21]));
@@ -660,12 +660,12 @@ class Pdo extends Base\Test
         assert(count($pdo->getDeleteTrimPrimaries($table,3)) === 8);
         assert($pdo->getDeleteTrimPrimaries($table,0) === null);
         assert(count($pdo->getDeleteTrimPrimaries($table,1)) === 10);
-        
+
         // deleteTrim
         assert($pdo->deleteTrim($table,5) === 6);
         assert($pdo->selectCount($table) === 5);
         assert(count($pdo->getDeleteTrimPrimaries($table,1)) === 4);
-        
+
         // alterAutoIncrement
         assert($pdo->alterAutoIncrement('main',20) instanceof \PDOStatement);
 
