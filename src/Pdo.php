@@ -2141,7 +2141,7 @@ class Pdo extends Main\Root
 
                 foreach(Base\Str::explode(';',$parse['path'],null,true,true) as $x)
                 {
-                    $keyValue = Base\Str::explodekeyValue('=',$x,true,true);
+                    $keyValue = Base\Str::explodeKeyValue('=',$x,true,true);
                     if(!empty($keyValue))
                     $parse = Base\Arr::append($parse,$keyValue);
                 }

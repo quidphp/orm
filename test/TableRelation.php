@@ -54,7 +54,7 @@ class TableRelation extends Base\Test
 
         // size
         assert($rel->size(false) === 4);
-        assert($user->size(false) === 4);
+        assert($user->size(false) === 5);
         assert($rel2->size() === 2);
 
         // tableAccess
@@ -77,9 +77,9 @@ class TableRelation extends Base\Test
         // all
         assert(array_keys($rel->all()) === [2,1,3,4]);
         assert(count($rel->all()) === 4);
-        assert($user->all(false) === [4=>'inactive (#4)',3=>'user (#3)',2=>'admin (#2)',1=>'nobody (#1)']);
-        assert($user->all() === [4=>'inactive (#4)',3=>'user (#3)',2=>'admin (#2)',1=>'nobody (#1)']);
-        assert($user->all(false,['limit'=>2]) === [4=>'inactive (#4)',3=>'user (#3)']);
+        assert($user->all(false) === [5=>'cli (#5)',4=>'inactive (#4)',3=>'user (#3)',2=>'admin (#2)',1=>'nobody (#1)']);
+        assert($user->all() === [5=>'cli (#5)',4=>'inactive (#4)',3=>'user (#3)',2=>'admin (#2)',1=>'nobody (#1)']);
+        assert($user->all(false,['limit'=>2]) === [5=>'cli (#5)',4=>'inactive (#4)']);
         assert($user->count() === 2);
         assert($rel2->all(false) === [1=>'test',2=>'test2']);
 
