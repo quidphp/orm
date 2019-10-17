@@ -80,7 +80,13 @@ class Pdo extends Main\Root
                 'insertId'=>['method'=>'lastInsertId'],
                 'info'=>['method'=>'infoStatement'],
                 '*'=>['method'=>'infoStatement'],
-                'statement'=>[]]]
+                'statement'=>[]]],
+        'importantVariables'=>array(
+            'basedir','datadir','tmpdir','log_error','pid_file','socket','sql_mode','character_sets_dir',
+            'character_set_connection','character_set_database','character_set_filesystem',
+            'character_set_results','character_set_server','character_set_system',
+            'collation_connection','collation_database','collation_server',
+            'default_storage_engine','default_tmp_storage_engine')
     ];
 
 
@@ -486,14 +492,24 @@ class Pdo extends Main\Root
         $return['oracleNull'] = $this->getAttr(\PDO::ATTR_ORACLE_NULLS);
         $return['defaultFetchMode'] = $this->getAttr(\PDO::ATTR_DEFAULT_FETCH_MODE);
         $return['emulatePrepare'] = $this->getAttr(\PDO::ATTR_EMULATE_PREPARES);
-
+        $return['importantVariables'] = $this->importantVariables();
+        
         $return['historyUni'] = $this->history()->keyValue();
         $return['historyCounts'] = $this->history()->total();
 
         return $return;
     }
 
-
+    
+    // importantVariables
+    // retourne un tableau avec toutes les noms et valeurs des variables importantes, tel que défini dans config
+    // output est keyValues
+    public function importantVariables(?array $option=null):?array
+    {
+        return $this->showVariables(static::$config['importantVariables'],$option);
+    }
+    
+    
     // getAttr
     // retourne un attribut de l'objet pdo ou pdoStatement
     public function getAttr(int $key,?\PDOStatement $statement=null)
@@ -1845,7 +1861,7 @@ class Pdo extends Main\Root
         return $this->query(Syntax::makeShowVariable($value,$this->getSqlOption($option)),'keyPairs');
     }
 
-
+    
     // showTable
     // retourne le nom de la première table trouvé
     // value doit être une string qui représente like

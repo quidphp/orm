@@ -846,17 +846,17 @@ class Cell extends Main\Root
         $value = $this->value();
         $option = (array) $option;
         $option['cell'] = $this;
-
+        
         if(is_scalar($value))
         $value = Base\Scalar::cast($value);
 
         $onGet = $this->col()->onGet($this,$option);
-
+        
         if($onGet !== $this)
         $value = $onGet;
 
         $return = $value;
-
+        
         return $return;
     }
 

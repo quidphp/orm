@@ -48,7 +48,9 @@ class Table extends Base\Test
         // onCheckAttr
 
         // onTruncated
-
+        
+        // onPermissionCan
+        
         // toArray
         assert($tb->toArray() === [1=>'james',2=>'james2']);
 
@@ -79,17 +81,11 @@ class Table extends Base\Test
         assert($tb->shouldLogSql('truncate'));
         assert(!$logSql->shouldLogSql('truncate'));
 
-        // hasPermission
-        assert($tb->hasPermission('select'));
-        assert($tb->hasPermission('select','insert'));
-
-        // checkPermission
-        assert($tb->checkPermission('select') === $tb);
-
-        // permission
-        assert(count($tb->permission()) >= 10);
-        assert($tb->permission('select'));
-
+        // permissionAll
+        assert(Base\Arrs::is($tb->permissionAll()));
+        
+        // permissionDefaultRole
+        
         // isSearchable
         assert($tb->isSearchable());
 
@@ -190,7 +186,11 @@ class Table extends Base\Test
 
         // collation
         assert($tb->collation() === 'utf8mb4_general_ci');
-
+        
+        // updateTime
+        assert(is_int($tb->updateTime()));
+        assert(is_string($tb->updateTime(0)));
+        
         // primary
         assert($tb->primary() === 'id');
 
@@ -578,6 +578,8 @@ class Table extends Base\Test
         assert(!Orm\Table::isIgnored());
 
         // initReplaceMode
+        
+        // permission
 
         // attr
         assert(count($tb->attr()) >= 18);

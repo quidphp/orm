@@ -76,12 +76,11 @@ class Db extends Base\Test
 
         // checkPermission
         assert($db->checkPermission('create','session') === $db);
-
+        
         // permission
-        assert(count($db->permission()) >= 10);
+        assert(count($db->permission()) === 9);
         assert($db->permission()['select'] === true);
-        assert(count($db->permission('session')) >= 10);
-
+        
         // setPermission
         assert($db->setPermission(true) === $db);
 
@@ -132,9 +131,6 @@ class Db extends Base\Test
         assert($db->description(null,null,'fr') === null);
 
         // setRole
-
-        // hasRole
-        assert($db->hasRole());
 
         // role
         assert($db->role() instanceof Main\Role);

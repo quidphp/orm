@@ -804,7 +804,7 @@ class Syntax extends Base\Test
 
         // makeShowVariable
         assert(Orm\Syntax::makeShowVariable()['sql'] === 'SHOW VARIABLES');
-        assert(Orm\Syntax::makeShowVariable('automatic')['sql'] === "SHOW VARIABLES LIKE 'automatic'");
+        assert(Orm\Syntax::makeShowVariable('automatic')['sql'] === "SHOW VARIABLES WHERE Variable_name LIKE 'automatic'");
 
         // makeShowTable
         assert(Orm\Syntax::makeShowTable()['sql'] === 'SHOW TABLES');

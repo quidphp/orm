@@ -69,7 +69,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     protected $com = null; // propriété qui contient l'objet com
     protected $role = null; // propriété qui contient l'objet role
     protected $exception = null; // propriété qui conserve la classe d'exception à utiliser
-    protected $permission = [ // permissions racine de la base de donnée, les priorités roles peuvent seulement mettre false des valeurs racine true, pas l'inverse
+    protected $permission = [ // permissions racine de la base de donnée, les permissions des tables peuvent seulement mettre false des valeurs true, pas l'inverse
         'select'=>true,
         'show'=>true,
         'insert'=>true,
@@ -83,10 +83,11 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
     // construct
     // construction de la classe
-    public function __construct(string $dsn,string $username,string $password,Main\Extenders $extenders,?array $option=null)
+    public function __construct(string $dsn,string $username,string $password,Main\Extenders $extenders,Main\Role $role,?array $option=null)
     {
         $this->option($option);
         $this->setDsn($dsn);
+        $this->setRole($role);
         $this->connect($username,$password,$extenders);
 
         return;
@@ -263,8 +264,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
     // hasPermission
     // retourne vrai si la db a la permission pour le type de requête
-    // recherche dans l'objet table pour la permission, envoie une exception si la table n'existe pas
-    // peut aussi chercher pour des permissions customs, non défini dans la propriété permission
+    // si vrai, peut chercher dans l'objet table pour une permission supplémentaire, envoie une exception si la table n'existe pas
     public function hasPermission(string $type,$table=null):bool
     {
         $return = true;
@@ -272,8 +272,12 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         if(array_key_exists($type,$this->permission) && $this->permission[$type] === false)
         $return = false;
 
-        if($return === true && $this->hasRole())
-        $return = $this->role()->canDb($type,$table);
+        if($return === true && $table !== null)
+        {
+            $table = $this->table($table);
+            $role = $this->role();
+            $return = $table->permissionCan($type,$role);
+        }
 
         return $return;
     }
@@ -289,35 +293,15 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         return $this;
     }
 
-
+    
     // permission
-    // retourne le tableau des permissions pour la base de données
-    // prend en compte les données du role
-    // les priorités roles peuvent seulement mettre false des valeurs racine true, pas l'inverse
-    // les priorités roles peuvent créer des permissions supplémentaires, n'existant pas dans db
-    public function permission($table=null):array
+    // retourne le tableau des permissions racines de la base de données
+    public function permission():array 
     {
-        $return = $this->permission;
-
-        if($this->hasRole())
-        {
-            foreach ($this->role()->table($table) as $key => $value)
-            {
-                if(array_key_exists($key,$return) && is_bool($value))
-                {
-                    if($return[$key] === true && $value === false)
-                    $return[$key] = false;
-                }
-
-                else
-                $return[$key] = $value;
-            }
-        }
-
-        return $return;
+        return $this->permission;
     }
-
-
+    
+    
     // setPermission
     // change la valeur de option permission, si value est null, toggle
     public function setPermission(?bool $value=null):self
@@ -610,20 +594,12 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
 
     // setRole
-    // lit ou enlève l'objet rôle à db
-    public function setRole(?Main\Role $value):self
+    // lit un objet rôle à db
+    public function setRole(Main\Role $value):self
     {
         $this->role = $value;
 
         return $this;
-    }
-
-
-    // hasRole
-    // retourne vrai si un objet rôle est lié à la db
-    public function hasRole():bool
-    {
-        return ($this->role instanceof Main\Role)? true:false;
     }
 
 
@@ -970,7 +946,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     {
         $return = parent::info();
         $return['tablesInfo'] = $this->tables()->info();
-        $return['variables'] = $this->showVariables();
 
         return $return;
     }

@@ -3239,13 +3239,28 @@ class Syntax extends Main\Root
     public static function makeShowVariable($value=null,?array $option=null):?array
     {
         $return = null;
-        $value = Base\Obj::cast($value,2);
+        $value = Base\Obj::cast($value);
         $option = static::option(Base\Arr::plus($option,['prepare'=>false]));
         $array['what'] = 'VARIABLES';
-
+        $array['where'] = '';
+        
         if(is_string($value))
-        $array['where'] = 'LIKE '.static::value($value,null,$option)['sql'];
-
+        $value = (array) $value;
+        
+        if(is_array($value))
+        {
+            foreach ($value as $v) 
+            {
+                if(empty($array['where']))
+                $array['where'] .= 'WHERE Variable_name LIKE ';
+                
+                else
+                $array['where'] .= ' OR Variable_name LIKE ';
+                
+                $array['where'] .= static::value($v,null,$option)['sql'];
+            }
+        }
+        
         $return = static::makeShow($array,$option);
 
         return $return;
