@@ -3243,24 +3243,24 @@ class Syntax extends Main\Root
         $option = static::option(Base\Arr::plus($option,['prepare'=>false]));
         $array['what'] = 'VARIABLES';
         $array['where'] = '';
-        
+
         if(is_string($value))
         $value = (array) $value;
-        
+
         if(is_array($value))
         {
-            foreach ($value as $v) 
+            foreach ($value as $v)
             {
                 if(empty($array['where']))
                 $array['where'] .= 'WHERE Variable_name LIKE ';
-                
+
                 else
                 $array['where'] .= ' OR Variable_name LIKE ';
-                
+
                 $array['where'] .= static::value($v,null,$option)['sql'];
             }
         }
-        
+
         $return = static::makeShow($array,$option);
 
         return $return;

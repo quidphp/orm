@@ -55,8 +55,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             'drop'=>true],
         'cols'=>null, // paramètre pour colonne, si value d'une colonne est pas vide, vérifie l'existence dans colsLoad
         'colsExists'=>true, // si l'existance des colonne doit être validés
-        'permission'=>array(
-            '*'=>array(
+        'permission'=>[
+            '*'=>[
                 'access'=>true,
                 'select'=>true,
                 'show'=>true,
@@ -67,7 +67,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                 'alter'=>false,
                 'truncate'=>false,
                 'drop'=>false,
-                'nullPlaceholder'=>false))  // marque NULL comme placeholder si null (plutôt que -)
+                'nullPlaceholder'=>false]]  // marque NULL comme placeholder si null (plutôt que -)
     ];
 
 
@@ -83,7 +83,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     protected $rows = null; // objet des lignes
     protected $classe = null; // objet tableClassse
 
-    
+
     // construct
     // construit l'objet table
     public function __construct(string $name,Db $db,TableClasse $classe,array $attr)
@@ -178,15 +178,15 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         return $this;
     }
 
-    
+
     // onPermissionCan
     // callback avant chaque appel à permission can, vérifie que la table à la permission access
-    protected function onPermissionCan($key,array $array):bool 
+    protected function onPermissionCan($key,array $array):bool
     {
         return (array_key_exists('access',$array) && $array['access'] === true)? true:false;
     }
-    
-    
+
+
     // toArray
     // méthode utilisé pour obtenir du contenu tableau lors du remplacement via une méthode map
     public function toArray():array
@@ -285,23 +285,23 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         return $return;
     }
 
-    
+
     // permissionAll
     // retourne le tableau de la source des paramètres de rôles
     public function &permissionAll():array
     {
         return $this->attr['permission'];
     }
-    
-    
+
+
     // permissionDefaultRole
     // retourne le rôle courant
     public function permissionDefaultRole():Main\Role
     {
         return $this->db()->role();
     }
-    
-    
+
+
     // isSearchable
     // retourne vrai si la table est cherchable
     // si cols est true, il doit aussi y avoir une colonne cherchable dans la table
@@ -439,10 +439,10 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             if($value !== null)
             $baseAttr[$key] = $value;
         }
-        
+
         $attr = $callable(static::class,$dbAttr,$baseAttr,$tableAttr,$rowAttr);
         $attr['parent'] = $this->makeAttrParent($attr['parent'] ?? null);
-        
+
         $attr = $this->onMakeAttr($attr);
         $this->checkAttr($attr);
         $this->attr = $attr;
@@ -748,7 +748,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         return Base\Arr::get('Collation',$this->status($cache));
     }
 
-    
+
     // updateTime
     // retourne la date de dernière mise à jour de la table
     // retounre un timestamp ou une date formatté
@@ -759,15 +759,15 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         if(is_string($value))
         {
             $return = Base\Date::time($value,'sql');
-            
+
             if(is_int($return) && $format !== null)
             $return = Base\Date::format($format,$return);
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // primary
     // retourne la clé primaire de la table
     public function primary():string

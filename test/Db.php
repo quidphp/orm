@@ -76,11 +76,11 @@ class Db extends Base\Test
 
         // checkPermission
         assert($db->checkPermission('create','session') === $db);
-        
+
         // permission
         assert(count($db->permission()) === 9);
         assert($db->permission()['select'] === true);
-        
+
         // setPermission
         assert($db->setPermission(true) === $db);
 

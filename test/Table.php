@@ -48,9 +48,9 @@ class Table extends Base\Test
         // onCheckAttr
 
         // onTruncated
-        
+
         // onPermissionCan
-        
+
         // toArray
         assert($tb->toArray() === [1=>'james',2=>'james2']);
 
@@ -83,9 +83,9 @@ class Table extends Base\Test
 
         // permissionAll
         assert(Base\Arrs::is($tb->permissionAll()));
-        
+
         // permissionDefaultRole
-        
+
         // isSearchable
         assert($tb->isSearchable());
 
@@ -186,11 +186,11 @@ class Table extends Base\Test
 
         // collation
         assert($tb->collation() === 'utf8mb4_general_ci');
-        
+
         // updateTime
         assert(is_int($tb->updateTime()));
         assert(is_string($tb->updateTime(0)));
-        
+
         // primary
         assert($tb->primary() === 'id');
 
@@ -578,7 +578,7 @@ class Table extends Base\Test
         assert(!Orm\Table::isIgnored());
 
         // initReplaceMode
-        
+
         // permission
 
         // attr

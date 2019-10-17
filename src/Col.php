@@ -535,8 +535,8 @@ class Col extends Main\Root
     {
         return ($this->hasDefault() && !isset($this->attr['default']))? true:false;
     }
-    
-    
+
+
     // hasNullPlaceholder
     // retourne vrai si la colonne a un placeholder NULL, utiliser dans formComplex
     public function hasNullPlaceholder():bool
@@ -1998,9 +1998,9 @@ class Col extends Main\Root
 
         if(empty($attr['placeholder']) && $isTextTag === true && $this->hasNullPlaceholder())
         $attr['placeholder'] = 'NULL';
-        
+
         $return = Base\Html::$method($value,$attr,$option);
-        
+
         if(empty($return))
         $return = $this->formComplexEmptyPlaceholder($value);
 
@@ -2015,36 +2015,36 @@ class Col extends Main\Root
         return Base\Html::div($this->db()->lang()->text('common/nothing'),'nothing');
     }
 
-    
+
     // formComplexEmptyPlaceholder
     // le html pour un placeholder vide ('' ou null)
-    public function formComplexEmptyPlaceholder($value):string 
+    public function formComplexEmptyPlaceholder($value):string
     {
         return Base\Html::divCond($this->emptyPlaceholder($value),'empty-placeholder');
     }
-    
-    
+
+
     // emptyPlaceholder
     // retourne le placeholder à utiliser si value est vide ('' ou null)
-    public function emptyPlaceholder($value):?string 
+    public function emptyPlaceholder($value):?string
     {
         $return = null;
-        
+
         if(is_object($value))
         $value = Base\Obj::cast($value);
-        
-        if(in_array($value,array('',null),true))
+
+        if(in_array($value,['',null],true))
         {
             $return = '-';
-            
+
             if($value === null && $this->hasNullPlaceholder())
             $return = 'NULL';
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // formWrap
     // génère la colonne dans un formWrap incluant le label et l'élément de formulaire
     public function formWrap(?string $wrap=null,$pattern=null,$value=true,?array $attr=null,?array $replace=null,?array $option=null):string

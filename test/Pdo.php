@@ -140,7 +140,7 @@ class Pdo extends Base\Test
 
         // info
         assert(count($pdo->info()) === 17);
-        
+
         // importantVariables
         assert(count($pdo->importantVariables()) === 19);
 
@@ -598,7 +598,7 @@ class Pdo extends Base\Test
         // showVariables
         assert(count($pdo->showVariables()) > 400);
         assert(count($pdo->showVariables('innodb_%')) < 400);
-        
+
         // showTable
         assert($pdo->showTable($table) === $table);
 

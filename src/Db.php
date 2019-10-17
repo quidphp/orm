@@ -293,15 +293,15 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         return $this;
     }
 
-    
+
     // permission
     // retourne le tableau des permissions racines de la base de données
-    public function permission():array 
+    public function permission():array
     {
         return $this->permission;
     }
-    
-    
+
+
     // setPermission
     // change la valeur de option permission, si value est null, toggle
     public function setPermission(?bool $value=null):self

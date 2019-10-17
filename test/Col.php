@@ -200,11 +200,11 @@ class Col extends Base\Test
         assert(!$email->hasNullDefault());
         assert(!$def->hasNullDefault());
         assert(!$dateModify->hasNullDefault());
-        
+
         // hasNullPlaceholder
         assert($col->hasNullPlaceholder());
         assert(!$id->hasNullPlaceholder());
-        
+
         // hasNotEmptyDefault
         assert(!$col->hasNotEmptyDefault());
         assert($def->hasNotEmptyDefault());
@@ -598,16 +598,16 @@ class Col extends Base\Test
 
         // formComplexNothing
         assert($dateAdd->formComplexNothing() === "<div class='nothing'>Nothing</div>");
-        
+
         // formComplexEmptyPlaceholder
         assert($dateAdd->formComplexEmptyPlaceholder(null) === "<div class='empty-placeholder'>NULL</div>");
         assert($dateAdd->formComplexEmptyPlaceholder(true) === '');
-        
+
         // emptyPlaceholder
         assert($dateAdd->emptyPlaceholder(null) === 'NULL');
         assert($dateAdd->emptyPlaceholder('') === '-');
         assert($dateAdd->emptyPlaceholder('bla') === null);
-        
+
         // formWrap
         assert(strlen($email->formWrap('br',null,true,['name'=>'notEmail'])) === 251);
         assert(strlen($email->formWrap('br',null,true,['type'=>'text','name'=>'notEmail'])) === 251);
