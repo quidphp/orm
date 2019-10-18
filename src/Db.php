@@ -101,7 +101,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     {
         if($this->getOption('permission') === true && !empty($value['type']))
         {
-            if(!empty($value['table']))
+            if(!empty($value['table']) && !empty($this->tables))
             {
                 if(!$this->hasPermission($value['type'],$value['table']))
                 static::throw($value['type'],$value['table'],'notAllowed');
@@ -668,7 +668,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     public function table($table):Table
     {
         $return = $this->tables()->get($table);
-
+        
         if(!$return instanceof Table)
         static::throw($table,'doesNotExist');
 

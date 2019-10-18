@@ -18,6 +18,8 @@ class Cell extends Main\Root
     // trait
     use _colCell;
     use _tableAccess;
+    use Main\_attr;
+    use Main\_permission;
 
 
     // config
@@ -263,7 +265,23 @@ class Cell extends Main\Root
         return $this->col()->isEditable();
     }
 
+    
+    // permissionAll
+    // retourne le tableau de la source des paramètres de rôles
+    protected function &permissionAll():array
+    {
+        return $this->col()->permissionAll();
+    }
 
+
+    // permissionDefaultRole
+    // retourne le rôle courant
+    protected function permissionDefaultRole():Main\Role
+    {
+        return $this->col()->permissionDefaultRole();
+    }
+    
+    
     // generalExcerptMin
     // retourne la longueur de l'excerpt pour general
     public function generalExcerptMin():?int
@@ -610,27 +628,12 @@ class Cell extends Main\Root
     }
 
 
-    // attr
-    // retourne un attribut de la colonne
-    public function attr($key=null)
+    // attrAll
+    // retourne le tableau des attributs
+    // doit retourner une référence
+    protected function &attrAll():array
     {
-        return $this->col()->attr($key);
-    }
-
-
-    // attrCall
-    // retourne un attribut de la colonne, lance la callable si existante
-    public function attrCall($key,...$args)
-    {
-        return $this->col()->attrCall($key,...$args);
-    }
-
-
-    // attrNotEmpty
-    // retourne vrai si l'attribut n'est pas vide
-    public function attrNotEmpty($key):bool
-    {
-        return $this->col()->attrNotEmpty($key);
+        return $this->col()->attrAll();
     }
 
 

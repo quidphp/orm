@@ -16,10 +16,11 @@ use Quid\Main;
 class Col extends Main\Root
 {
     // trait
-    use Main\_attr;
     use _colCell;
     use _tableAccess;
-
+    use Main\_attr;
+    use Main\_permission;
+    
 
     // config
     public static $config = [
@@ -80,7 +81,10 @@ class Col extends Main\Root
         'onInsert'=>null, // callback sur insertion
         'onUpdate'=>null, // callback sur update
         'onCommit'=>null, // callack sur insertion ou update
-        'generalExcerptMin'=>null // excerpt min pour l'affichage dans general
+        'generalExcerptMin'=>null, // excerpt min pour l'affichage dans general
+        'permission'=>array( // tableau des permissions
+            '*'=>array(
+                'nullPlaceholder'=>true)) 
     ];
 
 
@@ -90,6 +94,7 @@ class Col extends Main\Root
 
     // dynamique
     protected $name = null; // nom de la colonne
+    protected $attr = array(); // tableau des attributs
     protected $relation = null; // objet de relation de la colonne
 
 
@@ -300,7 +305,17 @@ class Col extends Main\Root
         return $this->name();
     }
 
-
+    
+    // attrAll
+    // retourne le tableau des attributs
+    // doit retourner une référence
+    // est public car utilisé par cell
+    public function &attrAll():array
+    {
+        return $this->attr;
+    }
+    
+    
     // isLinked
     // retourne vrai si la colonne est lié à l'objet db
     public function isLinked():bool
@@ -541,7 +556,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a un placeholder NULL, utiliser dans formComplex
     public function hasNullPlaceholder():bool
     {
-        return ($this->acceptsNull() && $this->table()->hasPermission('nullPlaceholder'))? true:false;
+        return ($this->acceptsNull() && $this->hasPermission('nullPlaceholder') && $this->table()->hasPermission('nullPlaceholder'))? true:false;
     }
 
 
@@ -586,7 +601,23 @@ class Col extends Main\Root
         return $return;
     }
 
+    
+    // permissionAll
+    // retourne le tableau de la source des paramètres de rôles
+    public function &permissionAll():array
+    {
+        return $this->attr['permission'];
+    }
 
+
+    // permissionDefaultRole
+    // retourne le rôle courant
+    public function permissionDefaultRole():Main\Role
+    {
+        return $this->db()->role();
+    }
+    
+    
     // classHtml
     // retourne la ou les classe à utiliser en html
     public function classHtml()

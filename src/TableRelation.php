@@ -21,6 +21,10 @@ class TableRelation extends Relation
 
     // config
     public static $config = [];
+    
+    
+    // dynamique
+    protected $attr = array(); // tableau des attributs
 
 
     // construct
@@ -33,7 +37,16 @@ class TableRelation extends Relation
         return;
     }
 
-
+    
+    // attrAll
+    // retourne le tableau des attributs
+    // doit retourner une référence
+    protected function &attrAll():array
+    {
+        return $this->attr;
+    }
+    
+    
     // makeAttr
     // applique les attributs de relation en provenance de la table
     // si what est true, prend le nom de la colonne via la méthode colName

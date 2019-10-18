@@ -17,6 +17,8 @@ class Row extends Main\ArrObj
 {
     // trait
     use _tableAccess;
+    use Main\_attr;
+    use Main\_permission;
 
 
     // config
@@ -305,31 +307,32 @@ class Row extends Main\ArrObj
         return $this->primary;
     }
 
-
-    // attr
-    // retourne le tableau d'attribut ou une valeur du tableau attr de la table
-    public function attr($key=null)
+    
+    // attrAll
+    // retourne le tableau des attributs
+    // doit retourner une référence
+    protected function &attrAll():array
     {
-        return $this->table()->attr($key);
+        return $this->table()->attrAll();
+    }
+    
+    
+    // permissionAll
+    // retourne le tableau de la source des paramètres de rôles, se retrouve dans table
+    protected function &permissionAll():array
+    {
+        return $this->table()->permissionAll();
     }
 
 
-    // attrCall
-    // retourne un attribut de la table, lance la callable si existante
-    public function attrCall($key,...$args)
+    // permissionDefaultRole
+    // retourne le rôle courant
+    protected function permissionDefaultRole():Main\Role
     {
-        return $this->col()->attrCall($key,...$args);
+        return $this->table()->permissionDefaultRole();
     }
-
-
-    // attrNotEmpty
-    // retourne vrai si l'attribut de la table n'est pas vide
-    public function attrNotEmpty($key):bool
-    {
-        return $this->table()->attrNotEmpty($key);
-    }
-
-
+    
+    
     // pointer
     // retourne le nom de la table et le primary
     public function pointer(?string $separator=null):string
@@ -661,9 +664,10 @@ class Row extends Main\ArrObj
     // retourne vrai si la row est visible
     // cela signifie que la ligne est active si elle a un champ active
     // et si toutes les cellules requises ont une valeur non vide
+    // de même la permission view de la table doit être true
     public function isVisible():bool
     {
-        return ($this->isActive() && $this->cells()->isStillRequiredEmpty())? true:false;
+        return ($this->hasPermission('view') && $this->isActive() && $this->cells()->isStillRequiredEmpty())? true:false;
     }
 
 

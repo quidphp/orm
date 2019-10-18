@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Quid\Test\Orm;
 use Quid\Base;
 use Quid\Orm;
+use Quid\Main;
 
 // col
 // class for testing Quid\Orm\Col
@@ -87,7 +88,9 @@ class Col extends Base\Test
 
         // cast
         assert($col->_cast() === 'name');
-
+        
+        // attrAll
+        
         // isLinked
         assert($col->isLinked());
 
@@ -218,7 +221,13 @@ class Col extends Base\Test
         // hasOnUpdate
         assert(!$dateAdd->hasOnUpdate());
         assert($dateModify->hasOnUpdate());
-
+        
+        // permissionAll
+        assert(is_array($col->permissionAll()));
+        
+        // permissionDefaultRole
+        assert($col->permissionDefaultRole() instanceof Main\Role);
+        
         // classHtml
         assert($dateAdd->classHtml() === 'dateAdd');
 
@@ -672,7 +681,7 @@ class Col extends Base\Test
         // initReplaceMode
 
         // attr
-        assert(count($col->attr()) === 26);
+        assert(count($col->attr()) === 27);
         assert($col->attrNotEmpty('kind'));
         assert(!$col->attrNotEmpty('kindz'));
 
