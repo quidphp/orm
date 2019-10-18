@@ -265,7 +265,7 @@ class Cell extends Main\Root
         return $this->col()->isEditable();
     }
 
-    
+
     // permissionAll
     // retourne le tableau de la source des paramètres de rôles
     protected function &permissionAll():array
@@ -280,8 +280,8 @@ class Cell extends Main\Root
     {
         return $this->col()->permissionDefaultRole();
     }
-    
-    
+
+
     // generalExcerptMin
     // retourne la longueur de l'excerpt pour general
     public function generalExcerptMin():?int

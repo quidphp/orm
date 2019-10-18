@@ -668,7 +668,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     public function table($table):Table
     {
         $return = $this->tables()->get($table);
-        
+
         if(!$return instanceof Table)
         static::throw($table,'doesNotExist');
 

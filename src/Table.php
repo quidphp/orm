@@ -77,7 +77,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // dynamique
     protected $name = null; // nom de la table
-    protected $attr = array(); // talbeau des attributs
+    protected $attr = []; // talbeau des attributs
     protected $relation = null; // conserve une copie de l'objet de relation de la table
     protected $cols = null; // objet des colonnes
     protected $colsReady = false; // se met à true lorsque les colonnes sont toutes chargés
@@ -203,7 +203,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         return $this->name();
     }
 
-    
+
     // attrAll
     // retourne le tableau des attributs
     // doit retourner une référence
@@ -212,8 +212,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     {
         return $this->attr;
     }
-    
-    
+
+
     // offsetGet
     // arrayAccess offsetGet fait appel à la méthode row si key est int, ou col si key est string
     // tente de charger la row si non existante

@@ -20,7 +20,7 @@ class Col extends Main\Root
     use _tableAccess;
     use Main\_attr;
     use Main\_permission;
-    
+
 
     // config
     public static $config = [
@@ -82,9 +82,9 @@ class Col extends Main\Root
         'onUpdate'=>null, // callback sur update
         'onCommit'=>null, // callack sur insertion ou update
         'generalExcerptMin'=>null, // excerpt min pour l'affichage dans general
-        'permission'=>array( // tableau des permissions
-            '*'=>array(
-                'nullPlaceholder'=>true)) 
+        'permission'=>[ // tableau des permissions
+            '*'=>[
+                'nullPlaceholder'=>true]]
     ];
 
 
@@ -94,7 +94,7 @@ class Col extends Main\Root
 
     // dynamique
     protected $name = null; // nom de la colonne
-    protected $attr = array(); // tableau des attributs
+    protected $attr = []; // tableau des attributs
     protected $relation = null; // objet de relation de la colonne
 
 
@@ -305,7 +305,7 @@ class Col extends Main\Root
         return $this->name();
     }
 
-    
+
     // attrAll
     // retourne le tableau des attributs
     // doit retourner une référence
@@ -314,8 +314,8 @@ class Col extends Main\Root
     {
         return $this->attr;
     }
-    
-    
+
+
     // isLinked
     // retourne vrai si la colonne est lié à l'objet db
     public function isLinked():bool
@@ -601,7 +601,7 @@ class Col extends Main\Root
         return $return;
     }
 
-    
+
     // permissionAll
     // retourne le tableau de la source des paramètres de rôles
     public function &permissionAll():array
@@ -616,8 +616,8 @@ class Col extends Main\Root
     {
         return $this->db()->role();
     }
-    
-    
+
+
     // classHtml
     // retourne la ou les classe à utiliser en html
     public function classHtml()

@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Quid\Test\Orm;
 use Quid\Base;
-use Quid\Main;
 use Quid\Orm;
 
 // row
@@ -114,16 +113,16 @@ class Row extends Base\Test
 
         // id
         assert($row->id() === 1);
-        
+
         // attrAll
         assert(count($row->attr()) >= 18);
         assert(!$row->attrNotEmpty('test'));
         assert($row->attrNotEmpty('priority'));
-                
+
         // permissionAll
-        
+
         // permissionDefaultRole
-        
+
         // pointer
         assert($row->pointer() === 'ormRow-1');
 

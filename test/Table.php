@@ -56,9 +56,9 @@ class Table extends Base\Test
 
         // cast
         assert($tb->_cast() === $table);
-        
+
         // attrAll
-        
+
         // offsetGet
         assert($tb->offsetGet(1) === $tb[1]);
         assert($tb->offsetGet('id') instanceof Orm\Col);

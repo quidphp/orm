@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Quid\Test\Orm;
 use Quid\Base;
 use Quid\Orm;
-use Quid\Main;
 
 // cell
 // class for testing Quid\Orm\Cell
@@ -126,11 +125,11 @@ class Cell extends Base\Test
 
         // isEditable
         assert($cell->isEditable() === true);
-        
+
         // permissionAll
-        
+
         // permissionDefaultRole
-        
+
         // generalExcerptMin
         assert($cell->generalExcerptMin() === 100);
         assert($userAdd->generalExcerptMin() === null);

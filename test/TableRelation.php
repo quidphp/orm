@@ -37,9 +37,9 @@ class TableRelation extends Base\Test
 
         // construct
         assert($rel instanceof Orm\TableRelation);
-        
+
         // attrAll
-        
+
         // makeAttr
 
         // prepareAttrWithWhat

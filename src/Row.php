@@ -307,7 +307,7 @@ class Row extends Main\ArrObj
         return $this->primary;
     }
 
-    
+
     // attrAll
     // retourne le tableau des attributs
     // doit retourner une référence
@@ -315,8 +315,8 @@ class Row extends Main\ArrObj
     {
         return $this->table()->attrAll();
     }
-    
-    
+
+
     // permissionAll
     // retourne le tableau de la source des paramètres de rôles, se retrouve dans table
     protected function &permissionAll():array
@@ -331,8 +331,8 @@ class Row extends Main\ArrObj
     {
         return $this->table()->permissionDefaultRole();
     }
-    
-    
+
+
     // pointer
     // retourne le nom de la table et le primary
     public function pointer(?string $separator=null):string
