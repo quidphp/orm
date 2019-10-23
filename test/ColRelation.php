@@ -71,10 +71,10 @@ class ColRelation extends Base\Test
         assert($userIds->isSet());
         assert(!$userId->isSet());
         assert(!$dateAdd->isSet());
-        
+
         // isType
         assert($array->isType('array'));
-        
+
         // type
         assert($array->type() === 'array');
         assert($range->type() === 'range');
@@ -200,12 +200,12 @@ class ColRelation extends Base\Test
         assert($lang->search('e',['limit'=>[1=>1]]) === [2=>'oken']);
         assert(key($lang->search('e',['order'=>2])) === 3);
         assert(key($lang->search('e',['order'=>3])) === 2);
-        
+
         // searchCount
         assert($lang->searchCount('e') === 2);
         assert($lang->searchCount('e',['not'=>[2]]) === 1);
         assert($lang->searchCount('e',['limit'=>0,'not'=>[2]]) === 1);
-        
+
         // notOrderLimit
 
         // keyValue
@@ -223,7 +223,7 @@ class ColRelation extends Base\Test
         assert($userAdd->one(2) === 'admin (#2)');
         assert($range->one(0) === 0);
         assert($str->one(0) === 'test');
-        
+
         // many
         assert($multi->many(2) === [2=>'oken']);
         assert($multi->many([2,3]) === [2=>'oken',3=>'wllel']);
@@ -260,13 +260,13 @@ class ColRelation extends Base\Test
         assert($userIds->getRow([3,2,1]) instanceof Orm\Rows);
         assert($userAdd->getRow(1000) === null);
         assert($userIds->getRow(1000)->isEmpty());
-        
+
         // relation 0
-        assert($tb->selectPrimaries(array('relationRange'=>0)) === array(1));
-        assert($tb->selectPrimaries(array('relationRange'=>2)) === array(2));
-        assert($tb->selectPrimaries(array('relationStr'=>0)) === array(1));
-        assert($tb->selectPrimaries(array('relationStr'=>'lol')) === array(2));
-        
+        assert($tb->selectPrimaries(['relationRange'=>0]) === [1]);
+        assert($tb->selectPrimaries(['relationRange'=>2]) === [2]);
+        assert($tb->selectPrimaries(['relationStr'=>0]) === [1]);
+        assert($tb->selectPrimaries(['relationStr'=>'lol']) === [2]);
+
         // arrMap
         $clone = clone $lang;
         assert($clone !== $lang);

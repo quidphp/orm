@@ -252,7 +252,7 @@ class ColSchema extends Main\Root
             $kind = $attr['kind'] ?? null;
             if(is_string($group) && $group !== 'primary' && $group !== $kind)
             $return = $group;
-            
+
             elseif(!empty($attr['relation']))
             $return = 'relation';
 

@@ -1542,8 +1542,8 @@ class Row extends Main\ArrObj
     {
         return Table::initReplaceMode();
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string

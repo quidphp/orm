@@ -61,14 +61,14 @@ class Sql extends PdoSql
         return $return;
     }
 
-    
+
     // filter
     // gère un filtre pour un objet sql
     // il doit y avoir un table object
-    public function filter(array $values):self 
+    public function filter(array $values):self
     {
         $table = $this->checkTableObject();
-        
+
         foreach ($values as $key => $value)
         {
             $col = $table->col($key);
@@ -76,54 +76,54 @@ class Sql extends PdoSql
             if($col->canRelation())
             {
                 $method = $col->filterMethod();
-                
+
                 if(is_string($method))
                 {
                     if($col->canRelation())
                     {
                         if(!is_array($value))
-                        $value = array($value);
-                        
+                        $value = [$value];
+
                         $rel = $col->relation();
-                        
+
                         if($col->isFilterEmptyNotEmpty() && !empty($value))
                         $value = $this->filterEmptyNotEmpty($value,$col);
-                        
+
                         if($rel->isType('distinct'))
                         $value = array_values((array) $rel->keyValue($value));
                     }
-                    
+
                     $this->where($col,$method,$value);
                 }
             }
         }
-        
+
         return $this;
     }
-    
-    
+
+
     // filterEmptyNotEmpty
     // gère empty not empty pour un filtre
-    protected function filterEmptyNotEmpty(array $values,Col $col):array 
+    protected function filterEmptyNotEmpty(array $values,Col $col):array
     {
-        $return = array();
-        
-        foreach ($values as $value) 
+        $return = [];
+
+        foreach ($values as $value)
         {
             if($col::isFilterEmptyNotEmptyValue($value))
             {
                 $v = ((int) $value === 0)? 'empty':'notEmpty';
                 $this->where($col,$v);
             }
-            
+
             else
             $return[] = $value;
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // checkMake
     // retourne le tableau make, si problème ou retour vide lance une exception
     // méthode protégé

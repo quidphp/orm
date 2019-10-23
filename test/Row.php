@@ -345,7 +345,7 @@ class Row extends Base\Test
         // commitFinalValidate
 
         // initReplaceMode
-        
+
         // getOverloadKeyPrepend
         assert(Orm\Row::getOverloadKeyPrepend() === null);
 

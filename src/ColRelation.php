@@ -47,7 +47,7 @@ class ColRelation extends Relation
 
         $this->col = $col->name();
         $this->mode = ($col->isSet())? 'set':'enum';
-        
+
         if(empty($this->attr()))
         static::throw('noRelationConfig');
 
@@ -78,10 +78,10 @@ class ColRelation extends Relation
 
         elseif($col->isDate())
         $return = 'date';
-        
+
         else
         $return = 'distinct';
-        
+
         return $return;
     }
 
@@ -128,15 +128,15 @@ class ColRelation extends Relation
         return ($this->mode === 'set')? true:false;
     }
 
-    
+
     // isType
     // retourne vrai si le type est celui fourni en argument
-    public function isType(string $value):bool 
+    public function isType(string $value):bool
     {
-        return ($this->type() === $value);
+        return $this->type() === $value;
     }
-    
-    
+
+
     // type
     // retourne le type de relation de la colonne
     // le type est gardé en cache dans la propriété type de l'objet
@@ -160,10 +160,10 @@ class ColRelation extends Relation
 
                 elseif($attr === 'date' && $col->isDate())
                 $return = 'date';
-                
+
                 elseif($attr === 'distinct' && !$col->isKindText())
                 $return = 'distinct';
-                
+
                 elseif(is_string($attr))
                 $return = 'lang';
 
@@ -245,7 +245,7 @@ class ColRelation extends Relation
             $return = $table->relation()->allowedOrdering();
         }
 
-        elseif(in_array($type,array('date','distinct'),true))
+        elseif(in_array($type,['date','distinct'],true))
         {
             $return['key'] = true;
             $return['value'] = true;
@@ -351,25 +351,25 @@ class ColRelation extends Relation
                 $new = [];
                 $sort = false;
                 $values = false;
-                
-                if(in_array($type,array('array','callable','lang'),true))
+
+                if(in_array($type,['array','callable','lang'],true))
                 {
                     $sort = true;
                     $values = true;
-                    
+
                     if($type === 'array')
                     $new = $attr;
 
                     elseif($type === 'callable')
                     $new = $attr($this);
-                    
+
                     elseif($type === 'lang')
                     {
                         $lang = $this->db()->lang();
                         $new = $lang->relation($attr);
                     }
                 }
-                
+
                 else
                 {
                     if($type === 'range')
@@ -383,20 +383,20 @@ class ColRelation extends Relation
 
                     elseif($type === 'date')
                     $new = $col->dateRelation();
-                    
+
                     elseif($type === 'distinct')
                     $new = $col->distinct();
                 }
-                
+
                 if(!is_array($new))
                 static::throw();
-                
+
                 if($sort === true)
                 ksort($new);
-                
+
                 if($values === true && !Base\Arr::isIndexed($new))
                 $new = array_values($new);
-                
+
                 $return = $new;
             }
         }
@@ -492,16 +492,16 @@ class ColRelation extends Relation
         return $return;
     }
 
-    
+
     // searchCount
     // retourne le nombre de résultat d'une recherche de relation
     // limite est toujours mis à null
     public function searchCount(string $value,?array $option=null):?int
     {
         $return = null;
-        $option = Base\Arr::plus($option,array('limit'=>null));
+        $option = Base\Arr::plus($option,['limit'=>null]);
         $type = $this->checkType();
-        
+
         if(strlen($value))
         {
             if($type === 'table')
@@ -518,11 +518,11 @@ class ColRelation extends Relation
                 $return = count($search);
             }
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // notOrderLimit
     // gère not, order et limit pour un tableau de retour
     protected function notOrderLimit(array $return,?array $option=null):array
@@ -654,7 +654,7 @@ class ColRelation extends Relation
         return $return;
     }
 
-    
+
     // get
     // retourne la valeur d'une ou plusieurs relations, selon le type (enum ou set)
     // la valeur est passé dans onGet de la colonne

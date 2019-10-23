@@ -1103,8 +1103,8 @@ class Cell extends Main\Root
     {
         return Col::initReplaceMode();
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string

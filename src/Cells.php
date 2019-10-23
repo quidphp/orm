@@ -776,8 +776,8 @@ class Cells extends Main\Map
     {
         return [Cell::getOverloadClass(),Col::getOverloadClass()];
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string

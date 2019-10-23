@@ -539,14 +539,14 @@ class Col extends Main\Root
         return $this->attr('generalExcerptMin');
     }
 
-    
+
     // valueExcerpt
     // créer une version résumé de la valeur si la longueur dépasse l'attribut excerpt
     public function valueExcerpt($return,?array $option=null)
     {
-        $option = Base\Arr::plus(array('mb'=>true),$option);
+        $option = Base\Arr::plus(['mb'=>true],$option);
         $excerpt = $this->attr('excerpt');
-        
+
         if(is_int($excerpt))
         {
             if(is_array($return))
@@ -558,8 +558,8 @@ class Col extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // hasDefault
     // retourne vrai si la colonne a une valeur par défaut
     public function hasDefault():bool
@@ -723,7 +723,7 @@ class Col extends Main\Root
         return ($this->attr('search') === true && $this->isVisibleGeneral())? true:false;
     }
 
-    
+
     // isSearchTermValid
     // retourne vrai si le terme de la recherche est valide pour la colonne
     // valeur peut être scalar, un tableau à un ou plusieurs niveau
@@ -741,17 +741,17 @@ class Col extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // searchMinLength
     // retourne la longueur de recherche minimale pour la colonne
     // si l'attribut de la colonne est null, prend l'attribut de la table
-    public function searchMinLength():int 
+    public function searchMinLength():int
     {
         return $this->attr('searchMinLength') ?? $this->table()->attr('searchMinLength');
     }
-    
-    
+
+
     // isOrderable
     // retourne vrai si la colonne est ordonnable
     public function isOrderable():bool
@@ -767,15 +767,15 @@ class Col extends Main\Root
         return ($this->canRelation() && $this->attrCall('filter') === true && $this->isVisibleGeneral())? true:false;
     }
 
-    
+
     // isFilterEmptyNotEmpty
     // retourne vrai s'il faut afficher empty not empty dans le filtre
     public function isFilterEmptyNotEmpty():bool
     {
         return ($this->attr('filterEmptyNotEmpty') === true)? true:false;
     }
-    
-    
+
+
     // isVisible
     // retourne vrai si la colonne est visible, sinon elle est caché
     // la valeur doit être fourni, gère validate, session et row
@@ -895,15 +895,15 @@ class Col extends Main\Root
         return $return;
     }
 
-    
+
     // filterMethod
     // retourne la méthode à utiliser pour filtrer
     public function filterMethod():string
     {
         return $this->attrCall('filterMethod');
     }
-    
-    
+
+
     // direction
     // retourne la direction par défaut de la colonne
     public function direction(bool $lower=false):string
@@ -936,7 +936,7 @@ class Col extends Main\Root
             $attr = Base\Arr::plus($this->attr(),$attr);
             $return = ColSchema::formTag($attr);
         }
-        
+
         return $return;
     }
 
@@ -1421,31 +1421,31 @@ class Col extends Main\Root
         return $return;
     }
 
-    
+
     // distinct
     // retourne un tableau des valeurs distincts pour la colonne
     // par défaut ne retourne pas les valeurs distinctes vides
-    public function distinct($notEmpty=true,$where=null,$order=null):array 
+    public function distinct($notEmpty=true,$where=null,$order=null):array
     {
-        $return = array();
+        $return = [];
         $table = $this->table();
         $primary = $table->primary();
         $db = $table->db();
         $name = $this->name();
         $where = (array) $where;
-        
+
         if($notEmpty === true)
-        $where[] = array($name,true);
-        
+        $where[] = [$name,true];
+
         if($order === null)
-        $order = array($primary=>'asc');
-        
+        $order = [$primary=>'asc'];
+
         $return = $db->selectDistinct($this,$table,$where,$order);
-        
+
         return $return;
     }
-    
-    
+
+
     // replace
     // permet de faire un remplacement sur toutes les valeurs d'une colonne
     // si where est true, met primary >= 1
@@ -1595,10 +1595,10 @@ class Col extends Main\Root
             if($value !== null || !array_key_exists($key,$dbAttr))
             $baseAttr[$key] = $value;
         }
-        
+
         $attr = $callable(static::class,$dbAttr,$baseAttr,$defaultAttr,$tableAttr);
         $attr['group'] = ColSchema::group($attr,true);
-        
+
         $attr = $this->onMakeAttr($attr);
 
         $this->checkAttr($attr);
@@ -2368,15 +2368,15 @@ class Col extends Main\Root
         return $return;
     }
 
-    
+
     // isRelationSearchRequired
     // retourne vrai si la recherche est requise pour la relation
-    public function isRelationSearchRequired():bool 
+    public function isRelationSearchRequired():bool
     {
         return ($this->attr('relationSearchRequired') === true)? true:false;
     }
-    
-    
+
+
     // primaries
     // retourne les clés primaries qui réponde à la requête
     public function primaries($where,...$args):array
@@ -2384,15 +2384,15 @@ class Col extends Main\Root
         return $this->db()->selectPrimaries($this->table(),[$this->name()=>$where],...$args);
     }
 
-    
+
     // countPrimaries
     // retourne le count des clés primaries qui réponde à la requête
     public function countPrimaries($where,...$args):?int
     {
         return $this->db()->selectCount($this->table(),[$this->name()=>$where],...$args);
     }
-    
-    
+
+
     // cell
     // retourne la classe de la cell si existante
     public function cell():?string
@@ -2420,23 +2420,23 @@ class Col extends Main\Root
         return $this;
     }
 
-    
+
     // isFilterEmptyNotEmptyValue
     // retourne vrai si la valeur est pour un filtre empty/not empty
-    public static function isFilterEmptyNotEmptyValue($value):bool 
+    public static function isFilterEmptyNotEmptyValue($value):bool
     {
-        return (in_array($value,array('00','01'),true))? true:false;
+        return (in_array($value,['00','01'],true))? true:false;
     }
-    
-    
+
+
     // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
     public static function initReplaceMode():array
     {
         return static::$replaceMode ?? [];
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string

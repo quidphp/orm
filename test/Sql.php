@@ -47,11 +47,11 @@ class Sql extends Base\Test
 
         // checkTableObject
         assert($sql->checkTableObject() instanceof Orm\Table);
-        
+
         // filter
-        
+
         // filterEmptyNotEmpty
-        
+
         // checkMake
 
         // row

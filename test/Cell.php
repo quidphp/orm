@@ -419,9 +419,9 @@ class Cell extends Base\Test
         // terminate
 
         // initReplaceMode
-        
+
         // getOverloadKeyPrepend
-        
+
         // route
 
         // colCell

@@ -572,10 +572,10 @@ class Table extends Base\Test
         assert(!Orm\Table::isIgnored());
 
         // initReplaceMode
-        
+
         // getOverloadKeyPrepend
         assert(Orm\Table::getOverloadKeyPrepend() === null);
-        
+
         // permission
 
         // attr

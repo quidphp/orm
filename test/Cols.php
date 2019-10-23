@@ -184,22 +184,22 @@ class Cols extends Base\Test
 
         // searchable
         assert(count($cols->searchable()) !== count($cols));
-        
+
         // searchMinLength
         assert($cols->searchMinLength() === 3);
-        
+
         // isSearchTermValid
         assert($cols->isSearchTermValid('avbc'));
         assert(!$cols->isSearchTermValid('a'));
-        
+
         // writeFile
 
         // keyClassExtends
         assert(count($cols::keyClassExtends()) === 2);
-        
+
         // getOverloadKeyPrepend
         assert($cols::getOverloadKeyPrepend() === null);
-        
+
         // mapObj
         assert($cols->pair('isRequired')['id'] === false);
         assert($cols->filter(['kind'=>'char'])->isCount(2));

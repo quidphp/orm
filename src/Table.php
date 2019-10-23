@@ -323,7 +323,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         if($return === true)
         {
             $return = false;
-            
+
             $searchable = $this->cols()->searchable();
             if($searchable->isNotEmpty())
             $return = true;
@@ -870,7 +870,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         {
             $db = $this->db();
             $dbCols = $db->schema()->table($this);
-            
+
             if(!empty($dbCols))
             {
                 $priority = 0;
@@ -881,7 +881,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                 foreach ($dbCols as $value => $dbAttr)
                 {
                     $dbAttr = ColSchema::prepareAttr($dbAttr);
-                    
+
                     if(is_string($value) && is_array($dbAttr))
                     {
                         $class = $dbClasse->tableClasseCol($this,$value,$dbAttr);
@@ -890,7 +890,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                         {
                             $priority += $increment;
                             $dbAttr['priority'] = $priority;
-                            
+
                             $col = $this->colMake($class,$value,$dbAttr);
                             $dbClasse->tableClasseCell($this,$col);
                         }
@@ -2099,11 +2099,11 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if(is_scalar($search))
         $search = Base\Str::prepareSearch($search,$option['searchSeparator']);
-        
+
         if(is_array($search))
         {
             $cols = (!empty($option['cols']))? $option['cols']:$this->cols()->searchable();
-            
+
             if(is_array($cols))
             $cols = $this->cols(...array_values($cols))->searchable();
 
@@ -2111,7 +2111,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             {
                 if($option['searchTermValid'] === true && !$cols->isSearchTermValid($search))
                 static::throw('invalidSearchTerm',$search,$this);
-                
+
                 $db = $this->db();
                 $sql = $db->sql('select',$option['output']);
                 $sql->whats(...array_values($what));
@@ -2426,7 +2426,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         if(is_string($search) && strlen($search))
         {
             $searchable = $this->cols()->searchable();
-            
+
             if($searchable->isSearchTermValid($search))
             {
                 $like = $this->like();
@@ -2610,8 +2610,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     {
         return static::$replaceMode ?? [];
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string

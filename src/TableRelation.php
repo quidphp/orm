@@ -465,7 +465,7 @@ class TableRelation extends Relation
         return $return;
     }
 
-    
+
     // search
     // permet de faire une recherche dans la relation
     // la méthode renvoie à la méthode search dans core/table, donc les mêmes règles s'appliquent (minimum searchTerm, support pour +)
@@ -474,11 +474,11 @@ class TableRelation extends Relation
     {
         $return = null;
         $result = $this->searchResult($value,$option);
-        
+
         if($result !== null)
         {
-            $return = array();
-            
+            $return = [];
+
             foreach ($result as $key => $value)
             {
                 $return[$key] = $this->makeOutput($value,$option);
@@ -488,23 +488,23 @@ class TableRelation extends Relation
         return $return;
     }
 
-    
+
     // searchCount
     // retourne le nombre de résultat d'une recherche dans la relation
     // n'utilise pas la cache de relation
     public function searchCount(string $value,?array $option=null):?int
     {
         $return = null;
-        $option = Base\Arr::plus($option,array('limit'=>null,'method'=>null));
+        $option = Base\Arr::plus($option,['limit'=>null,'method'=>null]);
         $result = $this->searchResult($value,$option);
-        
+
         if($result !== null)
         $return = count($result);
 
         return $return;
     }
-    
-    
+
+
     // searchResult
     // utilisé par search et searchCount
     // méthode protégé
@@ -524,14 +524,14 @@ class TableRelation extends Relation
         $method = (isset($option['method']) && is_string($option['method']))? $option['method']:null;
         $searchSeparator = $option['searchSeparator'] ?? null;
         $searchTermValid = $option['searchTermValid'] ?? true;
-        
+
         if(strlen($value) && $this->size() > 0)
         {
-            $return = array();
+            $return = [];
             $primary = $table->primary();
             $isMethod = $this->isOutputMethod($method);
-            $searchOpt = array('cols'=>$cols,'searchSeparator'=>$searchSeparator,'searchTermValid'=>$searchTermValid);
-            
+            $searchOpt = ['cols'=>$cols,'searchSeparator'=>$searchSeparator,'searchTermValid'=>$searchTermValid];
+
             if(!empty($not))
             $where[] = [$primary,'notIn',$not];
             $whereAfter = ['order'=>$order,'limit'=>$limit];
@@ -548,17 +548,17 @@ class TableRelation extends Relation
                 $searchOpt['what'] = $what;
                 $searchOpt['output'] = 'assocsUnique';
             }
-            
+
             $result = $table->search($value,$where,$whereAfter,$searchOpt);
 
             if(is_array($result) || $result instanceof Rows)
             $return = $result;
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // defaultOrderCode
     // retourne le code d'ordre par défaut pour la relation
     public function defaultOrderCode():?int

@@ -684,36 +684,36 @@ class Cols extends Main\Map
         return $this->filter(['isSearchable'=>true]);
     }
 
-        
+
     // searchMinLength
     // retourne la longueur de recherche minimale pour les colonnes
-    public function searchMinLength():?int 
+    public function searchMinLength():?int
     {
         $return = null;
-        
-        foreach ($this as $col) 
+
+        foreach ($this as $col)
         {
             $minLength = $col->searchMinLength();
 
             if($return === null || $minLength > $return)
             $return = $minLength;
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // isSearchTermValid
     // retourne vrai si un terme de recherche est valide pour toutes les colonnes de l'objet
     public function isSearchTermValid($value):bool
     {
         $return = false;
-        
+
         if($this->isNotEmpty())
         {
             $return = true;
-            
-            foreach ($this as $col) 
+
+            foreach ($this as $col)
             {
                 if(!$col->isSearchTermValid($value))
                 {
@@ -722,11 +722,11 @@ class Cols extends Main\Map
                 }
             }
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // writeFile
     // écrit les colonnes dans l'objet file fourni en argument
     // par exemple pour une première ligne de csv
@@ -753,8 +753,8 @@ class Cols extends Main\Map
     {
         return [Col::getOverloadClass(),Cell::getOverloadClass()];
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string

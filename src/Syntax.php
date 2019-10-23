@@ -778,10 +778,10 @@ class Syntax extends Main\Root
     {
         if(is_bool($return) || $return === null)
         $return = static::boolNull($return);
-        
+
         elseif($return === 0)
         $return = '0';
-        
+
         elseif(Base\Arr::isSet($return))
         $return = static::makeSet($return);
 
@@ -811,7 +811,7 @@ class Syntax extends Main\Root
         $option['quote'] = true;
 
         $value = static::prepareValue($value);
-        
+
         if(is_int($value) || is_float($value))
         $return['sql'] .= $value;
 
@@ -1677,19 +1677,19 @@ class Syntax extends Main\Root
     {
         $return = ['sql'=>''];
         ['method'=>$method,'option'=>$option] = static::whereThreeMethod($method,$option);
-        
-        
+
+
         if(static::isWhereSymbol($method))
         {
             $symbol = static::getWhereSymbol($method);
             $separator = static::getWhereSeparator($option['separator'] ?? null);
-            $loop = array($value);
-            
+            $loop = [$value];
+
             if($separator === 'OR' && Base\Arr::isIndexed($value))
             $loop = $value;
-            
+
             $count = count($loop);
-            foreach ($loop as $value) 
+            foreach ($loop as $value)
             {
                 if($symbol === '=' && $value === null)
                 $return = static::whereTwo($key,$value,$option);
@@ -1701,7 +1701,7 @@ class Syntax extends Main\Root
                     $return = static::value($value,$return,$option);
                 }
             }
-            
+
             if(!empty($return['sql']) && $count > 1)
             $return['sql'] = static::parenthesis($return['sql']);
         }
