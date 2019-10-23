@@ -344,9 +344,9 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // searchable
     // retourne un objet tables avec toutes les tables cherchables
-    public function searchable(bool $cols=true):self
+    public function searchable():self
     {
-        return $this->filter(['isSearchable'=>true],$cols);
+        return $this->filter(['isSearchable'=>true]);
     }
 
 
@@ -616,7 +616,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // retourne un tableau utilisé par onPrepareKey
     public static function keyClassExtends():array
     {
-        return [Row::class,Table::class,Rows::class,Cells::class,Cols::class];
+        return [Row::getOverloadClass(),Table::getOverloadClass(),Rows::getOverloadClass(),Cells::getOverloadClass(),Cols::getOverloadClass()];
     }
 }
 ?>

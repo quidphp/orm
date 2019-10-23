@@ -191,7 +191,10 @@ class Col extends Base\Test
 
         // generalExcerptMin
         assert($col->generalExcerptMin() === 100);
-
+        
+        // valueExcerpt
+        assert($col->valueExcerpt('test') === 'test');
+        
         // hasDefault
         assert($col->hasDefault());
         assert($email->hasDefault());
@@ -228,9 +231,6 @@ class Col extends Base\Test
         // permissionDefaultRole
         assert($col->permissionDefaultRole() instanceof Main\Role);
 
-        // classHtml
-        assert($dateAdd->classHtml() === 'dateAdd');
-
         // value
         assert($col->value(true) === null);
         assert($dateAdd->value(1234) === 1234);
@@ -252,13 +252,24 @@ class Col extends Base\Test
         // isSearchable
         assert($col->isSearchable());
         assert(!$email->isSearchable());
-
+        
+        // isSearchTermValid
+        assert(!$col->isSearchTermValid('2'));
+        assert($id->isSearchTermValid('2'));
+        
+        // searchMinLength
+        assert($col->searchMinLength() === 3);
+        assert($id->searchMinLength() === 1);
+        
         // isOrderable
         assert($col->isOrderable());
 
         // isFilterable
-        assert(!$col->isFilterable());
-
+        assert(is_bool($col->isFilterable()));
+        
+        // isFilterEmptyNotEmpty
+        assert(is_bool($col->isFilterEmptyNotEmpty()));
+        
         // isVisible
         assert($col->isVisible(null));
         assert(!$dateAdd->isVisible(null));
@@ -275,7 +286,13 @@ class Col extends Base\Test
 
         // isEditable
         assert($col->isEditable() === true);
-
+        
+        // filterMethod
+        assert($col->filterMethod() === 'or|=');
+        assert($email->filterMethod() === 'or|=');
+        assert($dateAdd->filterMethod() === 'or|day');
+        assert($multi->filterMethod() === 'or|findInSet');
+        
         // direction
         assert($col->direction() === 'ASC');
         assert($col->direction(true) === 'asc');
@@ -415,7 +432,10 @@ class Col extends Base\Test
         assert($col->duplicate('james',[2]) === [1]);
         assert($col->duplicate('james',1) === []);
         assert($col->duplicate(null) === []);
-
+        
+        // distinct
+        assert($col->distinct() === array('james','james2'));
+        
         // replace
         assert($email->replace('gmail.com','hotmail.com') === 2);
         assert($email->replace('gmail.com','hotmail.com') === 0);
@@ -667,7 +687,10 @@ class Col extends Base\Test
         // relation
         assert($lang->relation() instanceof Orm\ColRelation);
         assert($date->relation() instanceof Orm\ColRelation);
-
+        
+        // isRelationSearchRequired
+        assert(is_bool($lang->isRelationSearchRequired()));
+        
         // primaries
         assert($id->primaries(1) === [1]);
 
@@ -677,11 +700,18 @@ class Col extends Base\Test
         // alter
 
         // drop
-
+        
+        // isFilterEmptyNotEmptyValue
+        assert($email::isFilterEmptyNotEmptyValue('00'));
+        assert(!$email::isFilterEmptyNotEmptyValue('bla'));
+        
         // initReplaceMode
-
+        
+        // getOverloadKeyPrepend
+        assert($col::getOverloadKeyPrepend() === null);
+        
         // attr
-        assert(count($col->attr()) === 27);
+        assert(count($col->attr()) === 62);
         assert($col->attrNotEmpty('kind'));
         assert(!$col->attrNotEmpty('kindz'));
 

@@ -37,8 +37,10 @@ class Col extends Main\Root
         'priority'=>null, // code de priorité de la colonne
         'setPriority'=>5, // priority pour onSet, plus le chiffre est petit plus le onSet est appelé rapidement sur la colonne
         'search'=>null, // la colonne est cherchable
+        'searchMinLength'=>null, // longueur minimale pour une recherche, si null prend l'attribut de la table
         'filter'=>false, // la colonne est filtrable
-        'filterMethod'=>'or|findInSet', // méthode utilisé lors du findInSet
+        'filterMethod'=>'or|=', // méthode utilisé lors du findInSet
+        'filterEmptyNotEmpty'=>false, // affiche empty not empty dans le filtre
         'order'=>true, // la colonne est ordonnable
         'general'=>null, // la colonne est considéré comme général
         'label'=>null, // chemin label qui remplace le défaut dans lang
@@ -63,6 +65,7 @@ class Col extends Main\Root
         'direction'=>null, // direction par défaut
         'date'=>null, // défini si la colonne est de type date, un format doit y être inscrit
         'relation'=>null, // défini la relation pour la colonne, donne accès à la méthode relation
+        'relationSearchRequired'=>false, // si la recherche est obligatoire pour une relation
         'enum'=>null, // défini la relation comme simple (enum)
         'set'=>null, // défini la relation comme multiple (set)
         'media'=>null, // défini le nombre maximal de media que contient la colonne
@@ -82,6 +85,7 @@ class Col extends Main\Root
         'onUpdate'=>null, // callback sur update
         'onCommit'=>null, // callack sur insertion ou update
         'generalExcerptMin'=>null, // excerpt min pour l'affichage dans general
+        'excerpt'=>75, // longueur de l'excerpt
         'permission'=>[ // tableau des permissions
             '*'=>[
                 'nullPlaceholder'=>true]]
@@ -104,7 +108,7 @@ class Col extends Main\Root
     {
         $this->setName($name);
         $this->setLink($table,true);
-        $this->makeAttr($attr,$table);
+        $this->makeAttr($attr);
 
         return;
     }
@@ -492,7 +496,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne peut avoir un objet colRelation
     public function canRelation():bool
     {
-        return ($this->isRelation() || $this->isDate())? true:false;
+        return ($this->isRelation() || $this->isDate() || !$this->isKindText())? true:false;
     }
 
 
@@ -535,7 +539,27 @@ class Col extends Main\Root
         return $this->attr('generalExcerptMin');
     }
 
+    
+    // valueExcerpt
+    // créer une version résumé de la valeur si la longueur dépasse l'attribut excerpt
+    public function valueExcerpt($return,?array $option=null)
+    {
+        $option = Base\Arr::plus(array('mb'=>true),$option);
+        $excerpt = $this->attr('excerpt');
+        
+        if(is_int($excerpt))
+        {
+            if(is_array($return))
+            $return = Base\Arr::valuesExcerpt($excerpt,$return,$option);
 
+            elseif(is_string($return))
+            $return = Base\Str::excerpt($excerpt,$return,$option);
+        }
+
+        return $return;
+    }
+    
+    
     // hasDefault
     // retourne vrai si la colonne a une valeur par défaut
     public function hasDefault():bool
@@ -615,14 +639,6 @@ class Col extends Main\Root
     public function permissionDefaultRole():Main\Role
     {
         return $this->db()->role();
-    }
-
-
-    // classHtml
-    // retourne la ou les classe à utiliser en html
-    public function classHtml()
-    {
-        return static::className(true);
     }
 
 
@@ -707,7 +723,35 @@ class Col extends Main\Root
         return ($this->attr('search') === true && $this->isVisibleGeneral())? true:false;
     }
 
+    
+    // isSearchTermValid
+    // retourne vrai si le terme de la recherche est valide pour la colonne
+    // valeur peut être scalar, un tableau à un ou plusieurs niveau
+    // si c'est un tableau la longueur totale de l'ensemble des termes est considéré
+    public function isSearchTermValid($value):bool
+    {
+        $return = false;
+        $minLength = $this->searchMinLength();
 
+        if(is_array($value))
+        $value = Base\Arrs::implode('',$value);
+
+        if(is_string($value) && strlen($value) >= $minLength)
+        $return = true;
+
+        return $return;
+    }
+    
+    
+    // searchMinLength
+    // retourne la longueur de recherche minimale pour la colonne
+    // si l'attribut de la colonne est null, prend l'attribut de la table
+    public function searchMinLength():int 
+    {
+        return $this->attr('searchMinLength') ?? $this->table()->attr('searchMinLength');
+    }
+    
+    
     // isOrderable
     // retourne vrai si la colonne est ordonnable
     public function isOrderable():bool
@@ -723,7 +767,15 @@ class Col extends Main\Root
         return ($this->canRelation() && $this->attrCall('filter') === true && $this->isVisibleGeneral())? true:false;
     }
 
-
+    
+    // isFilterEmptyNotEmpty
+    // retourne vrai s'il faut afficher empty not empty dans le filtre
+    public function isFilterEmptyNotEmpty():bool
+    {
+        return ($this->attr('filterEmptyNotEmpty') === true)? true:false;
+    }
+    
+    
     // isVisible
     // retourne vrai si la colonne est visible, sinon elle est caché
     // la valeur doit être fourni, gère validate, session et row
@@ -843,7 +895,15 @@ class Col extends Main\Root
         return $return;
     }
 
-
+    
+    // filterMethod
+    // retourne la méthode à utiliser pour filtrer
+    public function filterMethod():string
+    {
+        return $this->attrCall('filterMethod');
+    }
+    
+    
     // direction
     // retourne la direction par défaut de la colonne
     public function direction(bool $lower=false):string
@@ -876,7 +936,7 @@ class Col extends Main\Root
             $attr = Base\Arr::plus($this->attr(),$attr);
             $return = ColSchema::formTag($attr);
         }
-
+        
         return $return;
     }
 
@@ -1361,7 +1421,31 @@ class Col extends Main\Root
         return $return;
     }
 
-
+    
+    // distinct
+    // retourne un tableau des valeurs distincts pour la colonne
+    // par défaut ne retourne pas les valeurs distinctes vides
+    public function distinct($notEmpty=true,$where=null,$order=null):array 
+    {
+        $return = array();
+        $table = $this->table();
+        $primary = $table->primary();
+        $db = $table->db();
+        $name = $this->name();
+        $where = (array) $where;
+        
+        if($notEmpty === true)
+        $where[] = array($name,true);
+        
+        if($order === null)
+        $order = array($primary=>'asc');
+        
+        $return = $db->selectDistinct($this,$table,$where,$order);
+        
+        return $return;
+    }
+    
+    
     // replace
     // permet de faire un remplacement sur toutes les valeurs d'une colonne
     // si where est true, met primary >= 1
@@ -1496,8 +1580,9 @@ class Col extends Main\Root
     // lance onMakeAttr avant d'écrire dans la propriété
     // le merge est unidimensionnel, c'est à dire que les valeurs tableaux sont écrasés et non pas merge
     // si l'attribut contient la clé du type, ceci aura priorité sur tout le reste (dernier merge)
-    protected function makeAttr(array $dbAttr,Table $table):self
+    protected function makeAttr(array $dbAttr):self
     {
+        $table = $this->table();
         $db = $table->db();
         $name = $this->name();
         $defaultAttr = $db->colAttr($name);
@@ -1507,14 +1592,15 @@ class Col extends Main\Root
 
         foreach (static::$config as $key => $value)
         {
-            if($value !== null)
+            if($value !== null || !array_key_exists($key,$dbAttr))
             $baseAttr[$key] = $value;
         }
-
+        
         $attr = $callable(static::class,$dbAttr,$baseAttr,$defaultAttr,$tableAttr);
         $attr['group'] = ColSchema::group($attr,true);
-
+        
         $attr = $this->onMakeAttr($attr);
+
         $this->checkAttr($attr);
         $this->attr = $attr;
         $this->onCheckAttr();
@@ -2247,7 +2333,7 @@ class Col extends Main\Root
         $return['get'] = $this->onGet($value,$option);
         $return['output'] = $this->htmlOutput($value);
 
-        if($this->canRelation() && !$this->isDate())
+        if($this->isRelation())
         $return['get'] = $this->relation()->get($value,false,true,$option);
 
         return $return;
@@ -2282,7 +2368,15 @@ class Col extends Main\Root
         return $return;
     }
 
-
+    
+    // isRelationSearchRequired
+    // retourne vrai si la recherche est requise pour la relation
+    public function isRelationSearchRequired():bool 
+    {
+        return ($this->attr('relationSearchRequired') === true)? true:false;
+    }
+    
+    
     // primaries
     // retourne les clés primaries qui réponde à la requête
     public function primaries($where,...$args):array
@@ -2290,7 +2384,15 @@ class Col extends Main\Root
         return $this->db()->selectPrimaries($this->table(),[$this->name()=>$where],...$args);
     }
 
-
+    
+    // countPrimaries
+    // retourne le count des clés primaries qui réponde à la requête
+    public function countPrimaries($where,...$args):?int
+    {
+        return $this->db()->selectCount($this->table(),[$this->name()=>$where],...$args);
+    }
+    
+    
     // cell
     // retourne la classe de la cell si existante
     public function cell():?string
@@ -2318,12 +2420,28 @@ class Col extends Main\Root
         return $this;
     }
 
-
+    
+    // isFilterEmptyNotEmptyValue
+    // retourne vrai si la valeur est pour un filtre empty/not empty
+    public static function isFilterEmptyNotEmptyValue($value):bool 
+    {
+        return (in_array($value,array('00','01'),true))? true:false;
+    }
+    
+    
     // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
     public static function initReplaceMode():array
     {
         return static::$replaceMode ?? [];
+    }
+    
+    
+    // getOverloadKeyPrepend
+    // retourne le prepend de la clé à utiliser pour le tableau overload
+    public static function getOverloadKeyPrepend():?string
+    {
+        return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Col':null;
     }
 }
 

@@ -180,16 +180,26 @@ class Cols extends Base\Test
         assert($cols->orderable()->isCount(9));
 
         // filterable
-        assert($cols->filterable()->isCount(6));
+        assert($cols->filterable()->isMinCount(5));
 
         // searchable
         assert(count($cols->searchable()) !== count($cols));
-
+        
+        // searchMinLength
+        assert($cols->searchMinLength() === 3);
+        
+        // isSearchTermValid
+        assert($cols->isSearchTermValid('avbc'));
+        assert(!$cols->isSearchTermValid('a'));
+        
         // writeFile
 
         // keyClassExtends
         assert(count($cols::keyClassExtends()) === 2);
-
+        
+        // getOverloadKeyPrepend
+        assert($cols::getOverloadKeyPrepend() === null);
+        
         // mapObj
         assert($cols->pair('isRequired')['id'] === false);
         assert($cols->filter(['kind'=>'char'])->isCount(2));

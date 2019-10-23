@@ -252,7 +252,7 @@ class Cell extends Base\Test
         assert(!$cell->colUnique());
 
         // attrAll
-        assert(count($cell->attr()) === 28);
+        assert(count($cell->attr()) === 63);
         assert($cell->attr('kind') === 'char');
         assert($cell->attrNotEmpty('kind'));
         assert(!$cell->attrNotEmpty('kindz'));
@@ -419,7 +419,9 @@ class Cell extends Base\Test
         // terminate
 
         // initReplaceMode
-
+        
+        // getOverloadKeyPrepend
+        
         // route
 
         // colCell

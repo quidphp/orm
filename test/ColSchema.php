@@ -79,6 +79,9 @@ class ColSchema extends Base\Test
         assert(Orm\ColSchema::possible('name',true) === ['name_en','name_id','name_ids']);
 
         // group
+        assert(Orm\ColSchema::group(['group'=>'james','kind'=>'text']) === 'james');
+        assert(Orm\ColSchema::group(['group'=>'james','kind'=>'james']) === 'james');
+        assert(Orm\ColSchema::group(['group'=>'james','relation'=>true,'kind'=>'james']) === 'relation');
         assert(Orm\ColSchema::group(['date'=>true,'kind'=>'int']) === 'date');
         assert(Orm\ColSchema::group(['relation'=>true,'kind'=>'int']) === 'relation');
         assert(Orm\ColSchema::group(['media'=>true,'kind'=>'int']) === 'media');

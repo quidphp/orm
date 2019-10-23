@@ -103,7 +103,7 @@ class TableRelation extends Base\Test
         assert($rel2->in('test2'));
 
         // inWhere
-
+        
         // search
         assert($user->search('nob',['limit'=>1]) === [1=>'nobody (#1)']);
         assert($user->search('adm min') === [2=>'admin (#2)']);
@@ -111,7 +111,13 @@ class TableRelation extends Base\Test
         assert($user->search('well') === []);
         assert($rel2->search('test') === [1=>'test',2=>'test2']);
         assert($rel2->search('test2') === [2=>'test2']);
-
+        
+        // searchCount
+        assert($rel2->searchCount('test') === 2);
+        assert($user->searchCount('nob') === 1);
+        
+        // searchResult
+        
         // defaultOrderCode
         assert($user->defaultOrderCode() === 2);
 
@@ -123,7 +129,7 @@ class TableRelation extends Base\Test
         assert($user->getOrder(3) === ['username'=>'asc']);
         assert($user->getOrder(4) === ['username'=>'desc']);
 
-        // allowOrderingByValue
+        // allowOrdering
         assert($user->allowedOrdering() === ['key'=>true,'value'=>true]);
         assert($rel->allowedOrdering() === ['key'=>true,'value'=>true]);
 

@@ -1103,5 +1103,13 @@ class Cell extends Main\Root
     {
         return Col::initReplaceMode();
     }
+    
+    
+    // getOverloadKeyPrepend
+    // retourne le prepend de la clé à utiliser pour le tableau overload
+    public static function getOverloadKeyPrepend():?string
+    {
+        return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Cell':null;
+    }
 }
 ?>

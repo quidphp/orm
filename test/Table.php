@@ -553,15 +553,7 @@ class Table extends Base\Test
         assert($tb->sourceOne(true,true,$i)['id'] === 2);
         $i = 1;
         assert($tb->sourceOne(true,true,$i)['id'] === 3);
-        $target = new class(true) extends Main\File implements Main\Contract\Import {
-            use Main\File\_csv;
-            public static $config = [];
-            public function __construct(...$args)
-            {
-                static::__init();
-                parent::__construct(...$args);
-            }
-        };
+        $target = new Main\File\Csv(true);
         $import = Main\Importer::newOverload($tb,$target);
         $import->set('name_en',1);
         $import->set('email',0);
@@ -580,7 +572,10 @@ class Table extends Base\Test
         assert(!Orm\Table::isIgnored());
 
         // initReplaceMode
-
+        
+        // getOverloadKeyPrepend
+        assert(Orm\Table::getOverloadKeyPrepend() === null);
+        
         // permission
 
         // attr

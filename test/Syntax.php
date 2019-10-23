@@ -217,6 +217,9 @@ class Syntax extends Base\Test
         assert(count(Orm\Syntax::prepare()) === 2);
 
         // prepareValue
+        assert(Orm\Syntax::prepareValue(0) === '0');
+        assert(Orm\Syntax::prepareValue(1) === 1);
+        assert(Orm\Syntax::prepareValue(1.2) === 1.2);
         assert(Orm\Syntax::prepareValue(true) === 1);
         assert(Orm\Syntax::prepareValue(false) === 0);
         assert(Orm\Syntax::prepareValue(null) === 'NULL');
@@ -368,7 +371,14 @@ class Syntax extends Base\Test
         assert(Orm\Syntax::where([['username','l|notIn',['NOBODY','ADMIN']]])['sql'] === "LOWER(`username`) NOT IN(LOWER('NOBODY'), LOWER('ADMIN'))");
         assert(Orm\Syntax::where([['id','in',[]]])['sql'] === '');
         assert(Orm\Syntax::where([['id',23]])['sql'] === '`id` = 23');
-
+        assert(Orm\Syntax::where([["id","or|>",array(2,4,5)],["james","or|=",array('test','test2')]])['sql'] === "(`id` > 2 OR `id` > 4 OR `id` > 5) AND (`james` = 'test' OR `james` = 'test2')");
+        assert(Orm\Syntax::where([["id","or|>",array(2)],["james","or|=",array('test')]])['sql'] === "`id` > 2 AND `james` = 'test'");
+        assert(Orm\Syntax::where([["id","or|>",2],["james","or|=","test,test2"]])['sql'] === "`id` > 2 AND `james` = 'test,test2'");
+        assert(Orm\Syntax::where([['id','or|!=',array(null,true,2,false)]])['sql'] === "(`id` != NULL OR `id` != 1 OR `id` != 2 OR `id` != 0)");
+        assert(Orm\Syntax::where([['id','>',0]])['sql'] === "`id` > '0'");
+        assert(Orm\Syntax::where([['id','>',1]])['sql'] === "`id` > 1");
+        assert(Orm\Syntax::where([['id','>',1.2]])['sql'] === "`id` > 1.2");
+        
         // whereDefault
         assert(Orm\Syntax::whereDefault([true,3],Orm\Syntax::option()) === ['active'=>1,1=>['id','=',3]]);
         assert(Orm\Syntax::whereDefault(true,Orm\Syntax::option()) === ['active'=>1]);
@@ -429,6 +439,11 @@ class Syntax extends Base\Test
         // whereThreeMethod
 
         // whereThree
+        $arr = array(1,'bla'=>'ok','welp');
+        assert(Orm\Syntax::whereThree('james','=',array(1,2,3))['sql'] === "`james` = '1,2,3'");
+        assert(count(Orm\Syntax::whereThree('james','=',$arr,Orm\Syntax::option())['prepare']) === 1);
+        assert(Orm\Syntax::whereThree('james','or|=',array(1,2,3))['sql'] === "(`james` = 1 OR `james` = 2 OR `james` = 3)");
+        assert(count(Orm\Syntax::whereThree('james','or|=',$arr,Orm\Syntax::option())['prepare']) === 1);
         assert(Orm\Syntax::whereThree('james','=',null)['sql'] === '`james` IS NULL');
         assert(Orm\Syntax::whereThree('james','[=]',Orm\Syntax::select('*','jacynthe')['sql'])['sql'] === '`james` = SELECT * FROM `jacynthe`');
         assert(Orm\Syntax::whereThree('james','in',[1,2,3])['sql'] === '`james` IN(1, 2, 3)');
@@ -450,6 +465,7 @@ class Syntax extends Base\Test
         assert(Orm\Syntax::whereBetween('james',[10,20],'notBetween',['tick'=>true])['sql'] === '`james` NOT BETWEEN 10 AND 20');
 
         // whereFind
+        assert(Orm\Syntax::whereFind('james','what,ok','find')['sql'] === "FIND_IN_SET('what,ok', `james`)");
         assert(Orm\Syntax::whereFind('james',3,'find')['sql'] === 'FIND_IN_SET(3, `james`)');
         assert(Orm\Syntax::whereFind('james','james2','notFind')['sql'] === "!FIND_IN_SET('james2', `james`)");
         assert(Orm\Syntax::whereFind('james',[3,'james2','james3'],'find')['sql'] === "(FIND_IN_SET(3, `james`) AND FIND_IN_SET('james2', `james`) AND FIND_IN_SET('james3', `james`))");

@@ -22,7 +22,7 @@ class ColRelation extends Base\Test
         $db = Orm\Db::inst();
         $table = 'ormCol';
         assert($db->truncate($table) instanceof \PDOStatement);
-        assert($db->inserts($table,['id','dateAdd','dateModify'],[1,time(),time()],[2,time() + 3000000,time() + 2000000]) === [1,2]);
+        assert($db->inserts($table,['id','relationRange','relationStr','dateAdd','dateModify'],[1,0,0,time(),time()],[2,2,'lol',time() + 3000000,time() + 2000000]) === [1,2]);
         $tb = $db[$table];
         $user = $db['user'];
         $userId = $tb['user_id']->relation();
@@ -31,6 +31,7 @@ class ColRelation extends Base\Test
         $other = $tb['other']->relation();
         $array = $tb['myRelation']->relation();
         $range = $tb['relationRange']->relation();
+        $str = $tb['relationStr']->relation();
         $lang = $tb['relationLang']->relation();
         $multi = $tb['multi']->relation();
         $check = $tb['check']->relation();
@@ -70,7 +71,10 @@ class ColRelation extends Base\Test
         assert($userIds->isSet());
         assert(!$userId->isSet());
         assert(!$dateAdd->isSet());
-
+        
+        // isType
+        assert($array->isType('array'));
+        
         // type
         assert($array->type() === 'array');
         assert($range->type() === 'range');
@@ -196,7 +200,12 @@ class ColRelation extends Base\Test
         assert($lang->search('e',['limit'=>[1=>1]]) === [2=>'oken']);
         assert(key($lang->search('e',['order'=>2])) === 3);
         assert(key($lang->search('e',['order'=>3])) === 2);
-
+        
+        // searchCount
+        assert($lang->searchCount('e') === 2);
+        assert($lang->searchCount('e',['not'=>[2]]) === 1);
+        assert($lang->searchCount('e',['limit'=>0,'not'=>[2]]) === 1);
+        
         // notOrderLimit
 
         // keyValue
@@ -212,7 +221,9 @@ class ColRelation extends Base\Test
         assert($lang->one(8) === null);
         assert($lang->one('oken') === null);
         assert($userAdd->one(2) === 'admin (#2)');
-
+        assert($range->one(0) === 0);
+        assert($str->one(0) === 'test');
+        
         // many
         assert($multi->many(2) === [2=>'oken']);
         assert($multi->many([2,3]) === [2=>'oken',3=>'wllel']);
@@ -249,7 +260,13 @@ class ColRelation extends Base\Test
         assert($userIds->getRow([3,2,1]) instanceof Orm\Rows);
         assert($userAdd->getRow(1000) === null);
         assert($userIds->getRow(1000)->isEmpty());
-
+        
+        // relation 0
+        assert($tb->selectPrimaries(array('relationRange'=>0)) === array(1));
+        assert($tb->selectPrimaries(array('relationRange'=>2)) === array(2));
+        assert($tb->selectPrimaries(array('relationStr'=>0)) === array(1));
+        assert($tb->selectPrimaries(array('relationStr'=>'lol')) === array(2));
+        
         // arrMap
         $clone = clone $lang;
         assert($clone !== $lang);

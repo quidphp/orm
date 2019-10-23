@@ -465,12 +465,50 @@ class TableRelation extends Relation
         return $return;
     }
 
-
+    
     // search
     // permet de faire une recherche dans la relation
     // la méthode renvoie à la méthode search dans core/table, donc les mêmes règles s'appliquent (minimum searchTerm, support pour +)
     // n'utilise pas la cache de relation
     public function search(string $value,?array $option=null):?array
+    {
+        $return = null;
+        $result = $this->searchResult($value,$option);
+        
+        if($result !== null)
+        {
+            $return = array();
+            
+            foreach ($result as $key => $value)
+            {
+                $return[$key] = $this->makeOutput($value,$option);
+            }
+        }
+
+        return $return;
+    }
+
+    
+    // searchCount
+    // retourne le nombre de résultat d'une recherche dans la relation
+    // n'utilise pas la cache de relation
+    public function searchCount(string $value,?array $option=null):?int
+    {
+        $return = null;
+        $option = Base\Arr::plus($option,array('limit'=>null,'method'=>null));
+        $result = $this->searchResult($value,$option);
+        
+        if($result !== null)
+        $return = count($result);
+
+        return $return;
+    }
+    
+    
+    // searchResult
+    // utilisé par search et searchCount
+    // méthode protégé
+    protected function searchResult(string $value,?array $option=null)
     {
         $return = null;
         $attr = $this->attr();
@@ -485,45 +523,42 @@ class TableRelation extends Relation
         $not = (isset($option['not']) && is_array($option['not']))? $option['not']:null;
         $method = (isset($option['method']) && is_string($option['method']))? $option['method']:null;
         $searchSeparator = $option['searchSeparator'] ?? null;
-
-        if(strlen($value))
+        $searchTermValid = $option['searchTermValid'] ?? true;
+        
+        if(strlen($value) && $this->size() > 0)
         {
-            $return = [];
+            $return = array();
+            $primary = $table->primary();
+            $isMethod = $this->isOutputMethod($method);
+            $searchOpt = array('cols'=>$cols,'searchSeparator'=>$searchSeparator,'searchTermValid'=>$searchTermValid);
+            
+            if(!empty($not))
+            $where[] = [$primary,'notIn',$not];
+            $whereAfter = ['order'=>$order,'limit'=>$limit];
 
-            if($this->size() > 0)
+            if($isMethod === true)
             {
-                $primary = $table->primary();
-                $isMethod = $this->isOutputMethod($method);
-
-                if(!empty($not))
-                $where[] = [$primary,'notIn',$not];
-                $whereAfter = ['order'=>$order,'limit'=>$limit];
-
-                if($isMethod === true)
-                $searchOpt = ['output'=>'rows','cols'=>$cols,'what'=>'*','searchSeparator'=>$searchSeparator];
-
-                else
-                {
-                    $what = Base\Arr::append($table->primary(),$cols);
-                    $searchOpt = ['output'=>'assocsUnique','what'=>$what,'cols'=>$cols,'searchSeparator'=>$searchSeparator];
-                }
-
-                $result = $table->search($value,$where,$whereAfter,$searchOpt);
-
-                if(is_array($result) || $result instanceof Rows)
-                {
-                    foreach ($result as $key => $value)
-                    {
-                        $return[$key] = $this->makeOutput($value,$option);
-                    }
-                }
+                $searchOpt['what'] = '*';
+                $searchOpt['output'] = 'rows';
             }
-        }
 
+            else
+            {
+                $what = Base\Arr::append($table->primary(),$cols);
+                $searchOpt['what'] = $what;
+                $searchOpt['output'] = 'assocsUnique';
+            }
+            
+            $result = $table->search($value,$where,$whereAfter,$searchOpt);
+
+            if(is_array($result) || $result instanceof Rows)
+            $return = $result;
+        }
+        
         return $return;
     }
-
-
+    
+    
     // defaultOrderCode
     // retourne le code d'ordre par défaut pour la relation
     public function defaultOrderCode():?int

@@ -774,7 +774,15 @@ class Cells extends Main\Map
     // retourne un tableau utilisé par onPrepareKey
     public static function keyClassExtends():array
     {
-        return [Cell::class,Col::class];
+        return [Cell::getOverloadClass(),Col::getOverloadClass()];
+    }
+    
+    
+    // getOverloadKeyPrepend
+    // retourne le prepend de la clé à utiliser pour le tableau overload
+    public static function getOverloadKeyPrepend():?string
+    {
+        return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Cells':null;
     }
 }
 ?>

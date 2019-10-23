@@ -773,11 +773,15 @@ class Syntax extends Main\Root
 
     // prepareValue
     // prépare la valeur avant d'append
+    // si la valeur est 0, retourne la valeur sous forme de string car sql cast toutes les string en 0
     public static function prepareValue($return)
     {
         if(is_bool($return) || $return === null)
         $return = static::boolNull($return);
-
+        
+        elseif($return === 0)
+        $return = '0';
+        
         elseif(Base\Arr::isSet($return))
         $return = static::makeSet($return);
 
@@ -807,7 +811,7 @@ class Syntax extends Main\Root
         $option['quote'] = true;
 
         $value = static::prepareValue($value);
-
+        
         if(is_int($value) || is_float($value))
         $return['sql'] .= $value;
 
@@ -1672,22 +1676,34 @@ class Syntax extends Main\Root
     public static function whereThree($key,string $method,$value,?array $option=null):array
     {
         $return = ['sql'=>''];
-        $parse = static::whereThreeMethod($method,$option);
-        $method = $parse['method'];
-        $option = $parse['option'];
-
+        ['method'=>$method,'option'=>$option] = static::whereThreeMethod($method,$option);
+        
+        
         if(static::isWhereSymbol($method))
         {
             $symbol = static::getWhereSymbol($method);
-
-            if($symbol === '=' && $value === null)
-            $return = static::whereTwo($key,$value,$option);
-
-            else
+            $separator = static::getWhereSeparator($option['separator'] ?? null);
+            $loop = array($value);
+            
+            if($separator === 'OR' && Base\Arr::isIndexed($value))
+            $loop = $value;
+            
+            $count = count($loop);
+            foreach ($loop as $value) 
             {
-                $return['sql'] .= static::tick($key,$option).' '.$symbol.' ';
-                $return = static::value($value,$return,$option);
+                if($symbol === '=' && $value === null)
+                $return = static::whereTwo($key,$value,$option);
+
+                else
+                {
+                    $return['sql'] .= static::whereSeparator($return['sql'],$separator);
+                    $return['sql'] .= static::tick($key,$option).' '.$symbol.' ';
+                    $return = static::value($value,$return,$option);
+                }
             }
+            
+            if(!empty($return['sql']) && $count > 1)
+            $return['sql'] = static::parenthesis($return['sql']);
         }
 
         else

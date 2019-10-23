@@ -27,7 +27,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'parent'=>null, // nom du parent de la classe table, possible aussi de mettre une classe
         'priority'=>null, // code de priorité de la table
         'search'=>true, // la table est cherchable
-        'searchMinLength'=>3, // longueur minimum pour une recherche
+        'searchMinLength'=>3, // longueur minimale de la recherche, si null renvoie vers les colonnes
         'label'=>null, // chemin label qui remplace le défaut dans lang
         'description'=>null, // chemin description qui remplace le défaut dans lang
         'key'=>['key',0], // colonne(s) utilisé pour key
@@ -315,23 +315,18 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // isSearchable
     // retourne vrai si la table est cherchable
-    // si cols est true, il doit aussi y avoir une colonne cherchable dans la table
-    public function isSearchable(bool $cols=true):bool
+    // il doit aussi y avoir une colonne cherchable dans la table
+    public function isSearchable():bool
     {
         $return = ($this->attr('search') === true)? true:false;
 
-        if($return === true && $cols === true)
+        if($return === true)
         {
             $return = false;
-
-            foreach ($this->cols() as $key => $value)
-            {
-                if($value->isSearchable())
-                {
-                    $return = true;
-                    break;
-                }
-            }
+            
+            $searchable = $this->cols()->searchable();
+            if($searchable->isNotEmpty())
+            $return = true;
         }
 
         return $return;
@@ -339,21 +334,11 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
 
     // isSearchTermValid
-    // retourne vrai si le terme de la recherche est valide pour la table
+    // retourne vrai si le terme de la recherche est valide pour les colonnes cherchables de la table
     // valeur peut être scalar, un tableau à un ou plusieurs niveau
-    // si c'est un tableau la longueur totale de l'ensemble des termes est considéré
     public function isSearchTermValid($value):bool
     {
-        $return = false;
-        $minLength = $this->searchMinLength();
-
-        if(is_array($value))
-        $value = Base\Arrs::implode('',$value);
-
-        if(is_string($value) && strlen($value) >= $minLength)
-        $return = true;
-
-        return $return;
+        return $this->cols()->searchable()->isSearchTermValid($value);
     }
 
 
@@ -447,7 +432,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         foreach (static::$config as $key => $value)
         {
-            if($value !== null)
+            if($value !== null || !array_key_exists($key,$dbAttr))
             $baseAttr[$key] = $value;
         }
 
@@ -655,9 +640,11 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // searchMinLength
     // retourne le longueur minimale pour une recherche dans la table
+    // regarde en premier attribut de la table
+    // sinon ce sera la plus petite longueur de recherche minimale d'une colonne
     public function searchMinLength():int
     {
-        return $this->attr('searchMinLength');
+        return $this->cols()->searchable()->searchMinLength() ?? $this->attr('searchMinLength');
     }
 
 
@@ -883,7 +870,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         {
             $db = $this->db();
             $dbCols = $db->schema()->table($this);
-
+            
             if(!empty($dbCols))
             {
                 $priority = 0;
@@ -894,7 +881,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                 foreach ($dbCols as $value => $dbAttr)
                 {
                     $dbAttr = ColSchema::prepareAttr($dbAttr);
-
+                    
                     if(is_string($value) && is_array($dbAttr))
                     {
                         $class = $dbClasse->tableClasseCol($this,$value,$dbAttr);
@@ -903,6 +890,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                         {
                             $priority += $increment;
                             $dbAttr['priority'] = $priority;
+                            
                             $col = $this->colMake($class,$value,$dbAttr);
                             $dbClasse->tableClasseCell($this,$col);
                         }
@@ -2102,7 +2090,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public function search($search,?array $where=null,?array $whereAfter=null,?array $option=null)
     {
         $return = [];
-        $option = Base\Arr::plus(['what'=>null,'method'=>null,'cols'=>null,'output'=>'columns','searchSeparator'=>null],$option);
+        $option = Base\Arr::plus(['what'=>null,'method'=>null,'cols'=>null,'output'=>'columns','searchSeparator'=>null,'searchTermValid'=>true],$option);
         $what = (!empty($option['what']))? $option['what']:$this->primary();
         $method = (is_string($option['method']))? $option['method']:$this->like();
 
@@ -2111,16 +2099,19 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if(is_scalar($search))
         $search = Base\Str::prepareSearch($search,$option['searchSeparator']);
-
-        if(is_array($search) && $this->isSearchTermValid($search))
+        
+        if(is_array($search))
         {
             $cols = (!empty($option['cols']))? $option['cols']:$this->cols()->searchable();
-
+            
             if(is_array($cols))
             $cols = $this->cols(...array_values($cols))->searchable();
 
             if($cols instanceof Cols && $cols->isNotEmpty())
             {
+                if($option['searchTermValid'] === true && !$cols->isSearchTermValid($search))
+                static::throw('invalidSearchTerm',$search,$this);
+                
                 $db = $this->db();
                 $sql = $db->sql('select',$option['output']);
                 $sql->whats(...array_values($what));
@@ -2139,9 +2130,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             else
             static::throw('noColsToSearchIn',$this);
         }
-
-        else
-        static::throw('invalidSearchTerm',$this);
 
         return $return;
     }
@@ -2437,10 +2425,11 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if(is_string($search) && strlen($search))
         {
-            if($this->isSearchTermValid($search))
+            $searchable = $this->cols()->searchable();
+            
+            if($searchable->isSearchTermValid($search))
             {
                 $like = $this->like();
-                $searchable = $this->cols()->searchable();
                 $search = Base\Str::prepareSearch($search,$searchSeparator);
 
                 if(is_string($like) && $searchable->isNotEmpty())
@@ -2452,20 +2441,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return->wheresOne($where);
 
         if(is_array($filter) && !empty($filter))
-        {
-            foreach ($filter as $key => $value)
-            {
-                $col = $this->col($key);
-
-                if($col->canRelation())
-                {
-                    $findInSet = $col->attr('filterMethod');
-
-                    if(is_string($findInSet))
-                    $return->where($key,$findInSet,$value);
-                }
-            }
-        }
+        $return->filter($filter);
 
         if(is_array($in) && !empty($in))
         $return->where($primary,'in',$in);
@@ -2633,6 +2609,14 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public static function initReplaceMode():array
     {
         return static::$replaceMode ?? [];
+    }
+    
+    
+    // getOverloadKeyPrepend
+    // retourne le prepend de la clé à utiliser pour le tableau overload
+    public static function getOverloadKeyPrepend():?string
+    {
+        return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Table':null;
     }
 }
 

@@ -248,7 +248,12 @@ class ColSchema extends Main\Root
 
         if($advanced === true)
         {
-            if(!empty($attr['relation']))
+            $group = $attr['group'] ?? null;
+            $kind = $attr['kind'] ?? null;
+            if(is_string($group) && $group !== 'primary' && $group !== $kind)
+            $return = $group;
+            
+            elseif(!empty($attr['relation']))
             $return = 'relation';
 
             elseif(!empty($attr['media']))
@@ -540,7 +545,7 @@ class ColSchema extends Main\Root
     {
         $return = null;
 
-        if(array_key_exists('tag',$array))
+        if(array_key_exists('tag',$array) && $array['tag'] !== null)
         $return = $array['tag'];
 
         elseif(array_key_exists('kind',$array) && is_string($array['kind']))
