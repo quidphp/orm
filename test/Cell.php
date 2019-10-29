@@ -133,10 +133,10 @@ class Cell extends Base\Test
         // generalExcerptMin
         assert($cell->generalExcerptMin() === 100);
         assert($userAdd->generalExcerptMin() === null);
-        
+
         // group
         assert($userAdd->group() === 'relation');
-        
+
         // tag
         assert($cell->tag() === 'inputText');
         assert($dateAdd->tag() === 'inputText');
