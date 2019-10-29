@@ -84,7 +84,7 @@ class Pdo extends Main\Root
         'importantVariables'=>[
             'basedir','datadir','tmpdir','log_error','pid_file','socket','sql_mode','character_sets_dir',
             'character_set_connection','character_set_database','character_set_filesystem',
-            'character_set_results','character_set_server','character_set_system',
+            'character_set_results','character_set_server','character_set_system','lower_case_table_names',
             'collation_connection','collation_database','collation_server',
             'default_storage_engine','default_tmp_storage_engine']
     ];

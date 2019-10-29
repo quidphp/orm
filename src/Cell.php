@@ -289,7 +289,15 @@ class Cell extends Main\Root
         return $this->col()->generalExcerptMin();
     }
 
-
+    
+    // group
+    // retourne le groupe de la colonne
+    public function group():string
+    {
+        return $this->col()->group();
+    }
+    
+    
     // tag
     // retourne la tag de la colonne
     public function tag(?array $attr=null,bool $complex=false):string

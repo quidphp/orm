@@ -142,7 +142,7 @@ class Pdo extends Base\Test
         assert(count($pdo->info()) === 17);
 
         // importantVariables
-        assert(count($pdo->importantVariables()) === 19);
+        assert(count($pdo->importantVariables()) === 20);
 
         // getAttr
         assert($pdo->getAttr(\Pdo::ATTR_AUTOCOMMIT) === 1);
