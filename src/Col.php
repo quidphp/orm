@@ -18,8 +18,7 @@ class Col extends Main\Root
     // trait
     use _colCell;
     use _tableAccess;
-    use Main\_attr;
-    use Main\_permission;
+    use Main\_attrPermission;
 
 
     // config
@@ -98,7 +97,6 @@ class Col extends Main\Root
 
     // dynamique
     protected $name = null; // nom de la colonne
-    protected $attr = []; // tableau des attributs
     protected $relation = null; // objet de relation de la colonne
 
 
@@ -210,7 +208,7 @@ class Col extends Main\Root
 
         if(in_array($type,['col','cell'],true))
         {
-            $separator = $this->attr('exportSeparator');
+            $separator = $this->getAttr('exportSeparator');
 
             if($type === 'col')
             $value = $this->label();
@@ -239,7 +237,7 @@ class Col extends Main\Root
     // utilisé lors de la génération d'un élément de formulaire, si onComplex est true renvoie à onGet
     public function onComplex($return,array $option)
     {
-        $onComplex = $this->attr('onComplex');
+        $onComplex = $this->getAttr('onComplex');
 
         if($onComplex === true)
         $return = $this->onGet($return,$option);
@@ -310,16 +308,6 @@ class Col extends Main\Root
     }
 
 
-    // attrAll
-    // retourne le tableau des attributs
-    // doit retourner une référence
-    // est public car utilisé par cell
-    public function &attrAll():array
-    {
-        return $this->attr;
-    }
-
-
     // isLinked
     // retourne vrai si la colonne est lié à l'objet db
     public function isLinked():bool
@@ -340,7 +328,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est ignoré
     public function isIgnored():bool
     {
-        return ($this->attr('ignore') === true)? true:false;
+        return ($this->getAttr('ignore') === true)? true:false;
     }
 
 
@@ -348,7 +336,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est la clé primaire
     public function isPrimary():bool
     {
-        return ($this->attr('group') === 'primary')? true:false;
+        return ($this->getAttr('group') === 'primary')? true:false;
     }
 
 
@@ -356,7 +344,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de kind int
     public function isKindInt():bool
     {
-        return ($this->attr('kind') === 'int')? true:false;
+        return ($this->getAttr('kind') === 'int')? true:false;
     }
 
 
@@ -364,7 +352,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de kind char
     public function isKindChar():bool
     {
-        return ($this->attr('kind') === 'char')? true:false;
+        return ($this->getAttr('kind') === 'char')? true:false;
     }
 
 
@@ -372,7 +360,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de kind text
     public function isKindText():bool
     {
-        return ($this->attr('kind') === 'text')? true:false;
+        return ($this->getAttr('kind') === 'text')? true:false;
     }
 
 
@@ -380,7 +368,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne accepte null
     public function acceptsNull():bool
     {
-        return ($this->attr('null') === true)? true:false;
+        return ($this->getAttr('null') === true)? true:false;
     }
 
 
@@ -388,7 +376,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a l'attribut include a true
     public function hasAttrInclude():bool
     {
-        return ($this->attr('include') === true)? true:false;
+        return ($this->getAttr('include') === true)? true:false;
     }
 
 
@@ -421,7 +409,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est requise
     public function isRequired():bool
     {
-        return ($this->attr('required') === true)? true:false;
+        return ($this->getAttr('required') === true)? true:false;
     }
 
 
@@ -448,7 +436,7 @@ class Col extends Main\Root
     // un type doit être fourni
     public function shouldRemoveWhiteSpace(string $key):bool
     {
-        return ($this->attr(['removeWhiteSpace',$key]) === true)? true:false;
+        return ($this->getAttr(['removeWhiteSpace',$key]) === true)? true:false;
     }
 
 
@@ -456,7 +444,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est exportable
     public function isExportable():bool
     {
-        return ($this->attr('export') === true && $this->isVisibleGeneral())? true:false;
+        return ($this->getAttr('export') === true && $this->isVisibleGeneral())? true:false;
     }
 
 
@@ -464,7 +452,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a des paramètres de comparaison
     public function hasCompare():bool
     {
-        return (!empty($this->attr('compare')))? true:false;
+        return (!empty($this->getAttr('compare')))? true:false;
     }
 
 
@@ -480,7 +468,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de type date
     public function isDate():bool
     {
-        return (!empty($this->attr('date')))? true:false;
+        return (!empty($this->getAttr('date')))? true:false;
     }
 
 
@@ -488,7 +476,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de type relation
     public function isRelation():bool
     {
-        return (!empty($this->attr('relation')))? true:false;
+        return (!empty($this->getAttr('relation')))? true:false;
     }
 
 
@@ -496,7 +484,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne peut avoir un objet colRelation
     public function canRelation():bool
     {
-        return ($this->isRelation() || $this->isDate() || !$this->isKindText())? true:false;
+        return true;
     }
 
 
@@ -520,7 +508,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de type media
     public function isMedia():bool
     {
-        return (is_int($this->attr('media')))? true:false;
+        return (is_int($this->getAttr('media')))? true:false;
     }
 
 
@@ -528,7 +516,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne doit apparaître dans general
     public function isGeneral():bool
     {
-        return ($this->attrCall('general') === true)? true:false;
+        return ($this->getAttr('general',true) === true)? true:false;
     }
 
 
@@ -536,7 +524,7 @@ class Col extends Main\Root
     // retourne la longueur de l'excerpt pour general
     public function generalExcerptMin():?int
     {
-        return $this->attr('generalExcerptMin');
+        return $this->getAttr('generalExcerptMin');
     }
 
 
@@ -545,7 +533,7 @@ class Col extends Main\Root
     public function valueExcerpt($return,?array $option=null)
     {
         $option = Base\Arr::plus(['mb'=>true],$option);
-        $excerpt = $this->attr('excerpt');
+        $excerpt = $this->getAttr('excerpt');
 
         if(is_int($excerpt))
         {
@@ -588,7 +576,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a une valeur par défaut qui n'est pas vide
     public function hasNotEmptyDefault()
     {
-        return ($this->hasDefault() && !empty($this->attr('default')))? true:false;
+        return ($this->hasDefault() && !empty($this->getAttr('default')))? true:false;
     }
 
 
@@ -626,19 +614,11 @@ class Col extends Main\Root
     }
 
 
-    // permissionAll
-    // retourne le tableau de la source des paramètres de rôles
-    public function &permissionAll():array
+    // attrPermissionRolesObject
+    // retourne les rôles courant
+    public function attrPermissionRolesObject():Main\Roles
     {
-        return $this->attr['permission'];
-    }
-
-
-    // permissionDefaultRole
-    // retourne le rôle courant
-    public function permissionDefaultRole():Main\Role
-    {
-        return $this->db()->role();
+        return $this->db()->roles();
     }
 
 
@@ -720,7 +700,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est cherchable
     public function isSearchable():bool
     {
-        return ($this->attr('search') === true && $this->isVisibleGeneral())? true:false;
+        return ($this->getAttr('search') === true && $this->isVisibleGeneral())? true:false;
     }
 
 
@@ -748,7 +728,7 @@ class Col extends Main\Root
     // si l'attribut de la colonne est null, prend l'attribut de la table
     public function searchMinLength():int
     {
-        return $this->attr('searchMinLength') ?? $this->table()->attr('searchMinLength');
+        return $this->getAttr('searchMinLength') ?? $this->table()->getAttr('searchMinLength');
     }
 
 
@@ -756,7 +736,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est ordonnable
     public function isOrderable():bool
     {
-        return ($this->attr('order') === true && $this->isVisibleGeneral())? true:false;
+        return ($this->getAttr('order') === true && $this->isVisibleGeneral())? true:false;
     }
 
 
@@ -764,7 +744,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est cherchable
     public function isFilterable():bool
     {
-        return ($this->canRelation() && $this->attrCall('filter') === true && $this->isVisibleGeneral())? true:false;
+        return ($this->canRelation() && $this->getAttr('filter',true) === true && $this->isVisibleGeneral())? true:false;
     }
 
 
@@ -772,7 +752,7 @@ class Col extends Main\Root
     // retourne vrai s'il faut afficher empty not empty dans le filtre
     public function isFilterEmptyNotEmpty():bool
     {
-        return ($this->attr('filterEmptyNotEmpty') === true)? true:false;
+        return ($this->getAttr('filterEmptyNotEmpty') === true)? true:false;
     }
 
 
@@ -786,7 +766,7 @@ class Col extends Main\Root
 
         if($return === true)
         {
-            $visible = $this->attr('visible');
+            $visible = $this->getAttr('visible');
 
             if(is_array($visible) && !empty($visible))
             {
@@ -829,7 +809,7 @@ class Col extends Main\Root
     public function isVisibleGeneral(?array $attr=null):bool
     {
         $return = false;
-        $visible = $this->attr('visibleGeneral');
+        $visible = $this->getAttr('visibleGeneral');
 
         if($visible === true)
         $return = $this->isVisibleCommon($attr);
@@ -845,7 +825,7 @@ class Col extends Main\Root
     protected function isVisibleCommon(?array $attr=null):bool
     {
         $return = false;
-        $visible = $this->attr('visible');
+        $visible = $this->getAttr('visible');
         $tag = $this->tag($attr);
 
         if($visible === true)
@@ -871,7 +851,7 @@ class Col extends Main\Root
         if(!empty($roleVal))
         {
             $role = $this->db()->role();
-            if(!$role::validate($roleVal))
+            if(!$role->validate($roleVal))
             $return = false;
         }
 
@@ -884,7 +864,7 @@ class Col extends Main\Root
     public function isEditable():bool
     {
         $return = false;
-        $editable = $this->attr('editable');
+        $editable = $this->getAttr('editable');
 
         if($editable === true)
         $return = true;
@@ -900,7 +880,7 @@ class Col extends Main\Root
     // retourne la méthode à utiliser pour filtrer
     public function filterMethod():string
     {
-        return $this->attrCall('filterMethod');
+        return $this->getAttr('filterMethod',true);
     }
 
 
@@ -908,7 +888,7 @@ class Col extends Main\Root
     // retourne la direction par défaut de la colonne
     public function direction(bool $lower=false):string
     {
-        $return = Syntax::getOrderDirection($this->attr('direction'));
+        $return = $this->db()->syntaxCall('getOrderDirection',$this->getAttr('direction'));
 
         if($lower === true)
         $return = strtolower($return);
@@ -928,7 +908,7 @@ class Col extends Main\Root
         if($attr === null || empty($attr['tag']))
         {
             $key = ($complex === true)? 'complex':'tag';
-            $return = $this->attr($key);
+            $return = $this->getAttr($key);
         }
 
         if(empty($return))
@@ -995,7 +975,7 @@ class Col extends Main\Root
     // méthode protégé
     public function rulePreValidateCommon(string $type,bool $lang=false):array
     {
-        $return = $this->attr($type);
+        $return = $this->getAttr($type);
 
         if(!is_array($return))
         $return = (array) $return;
@@ -1018,7 +998,7 @@ class Col extends Main\Root
     public function attrCompare():array
     {
         $return = [];
-        $attr = $this->attr('compare');
+        $attr = $this->getAttr('compare');
         $table = $this->table();
 
         if(!is_array($attr))
@@ -1194,7 +1174,7 @@ class Col extends Main\Root
 
             if($v === 'pattern')
             {
-                $pattern = $this->attr('pattern');
+                $pattern = $this->getAttr('pattern');
                 if($pattern === false)
                 break;
             }
@@ -1580,7 +1560,7 @@ class Col extends Main\Root
     // lance onMakeAttr avant d'écrire dans la propriété
     // le merge est unidimensionnel, c'est à dire que les valeurs tableaux sont écrasés et non pas merge
     // si l'attribut contient la clé du type, ceci aura priorité sur tout le reste (dernier merge)
-    protected function makeAttr(array $dbAttr):self
+    protected function makeAttr($dbAttr,bool $config=true):void
     {
         $table = $this->table();
         $db = $table->db();
@@ -1589,13 +1569,16 @@ class Col extends Main\Root
         $tableAttr = $table->colAttr($name);
         $baseAttr = [];
         $callable = static::getInitCallable();
-
-        foreach (static::$config as $key => $value)
+        
+        if($config === true)
         {
-            if($value !== null || !array_key_exists($key,$dbAttr))
-            $baseAttr[$key] = $value;
+            foreach (static::$config as $key => $value)
+            {
+                if($value !== null || !array_key_exists($key,$dbAttr))
+                $baseAttr[$key] = $value;
+            }
         }
-
+        
         $attr = $callable(static::class,$dbAttr,$baseAttr,$defaultAttr,$tableAttr);
         $attr['group'] = ColSchema::group($attr,true);
 
@@ -1605,7 +1588,7 @@ class Col extends Main\Root
         $this->attr = $attr;
         $this->onCheckAttr();
 
-        return $this;
+        return;
     }
 
 
@@ -1659,7 +1642,7 @@ class Col extends Main\Root
     public function attrParseCallable(string $key):?array
     {
         $return = null;
-        $attr = $this->attr($key);
+        $attr = $this->getAttr($key);
 
         if(!empty($attr) && is_array($attr))
         {
@@ -1683,7 +1666,7 @@ class Col extends Main\Root
     // retourne le code de priorité de la colonne
     public function priority():int
     {
-        return $this->attr('priority');
+        return $this->getAttr('priority');
     }
 
 
@@ -1691,7 +1674,7 @@ class Col extends Main\Root
     // retourne le code de priorité de la colonne pour onSet
     public function setPriority():int
     {
-        return $this->attr('setPriority');
+        return $this->getAttr('setPriority');
     }
 
 
@@ -1699,7 +1682,7 @@ class Col extends Main\Root
     // retourne le type de la colonne
     public function type():string
     {
-        return $this->attr('type');
+        return $this->getAttr('type');
     }
 
 
@@ -1707,7 +1690,7 @@ class Col extends Main\Root
     // retourne le kind de la colonne
     public function kind():string
     {
-        return $this->attr('kind');
+        return $this->getAttr('kind');
     }
 
 
@@ -1715,7 +1698,7 @@ class Col extends Main\Root
     // retourne le groupe, utiliser pour lier à la bonne classe de la cellule
     public function group():string
     {
-        return $this->attr('group');
+        return $this->getAttr('group');
     }
 
 
@@ -1723,7 +1706,7 @@ class Col extends Main\Root
     // retourne la length de la colonne, si spécifié
     public function length():?int
     {
-        return $this->attr('length');
+        return $this->getAttr('length');
     }
 
 
@@ -1732,7 +1715,7 @@ class Col extends Main\Root
     // retourne null si la colonne n'est pas de kind int
     public function unsigned():?bool
     {
-        return ($this->isKindInt())? (($this->attr('unsigned') === true)? true:false):null;
+        return ($this->isKindInt())? (($this->getAttr('unsigned') === true)? true:false):null;
     }
 
 
@@ -1740,7 +1723,7 @@ class Col extends Main\Root
     // retourne vrai si la valeur de la colonne doit être unique
     public function shouldBeUnique():bool
     {
-        return ($this->attr('unique') === true)? true:false;
+        return ($this->getAttr('unique') === true)? true:false;
     }
 
 
@@ -1801,6 +1784,9 @@ class Col extends Main\Root
 
         else
         {
+            if(is_array($return) && $this->isRelation())
+            $return = Base\Set::str($return);
+            
             $str = Base\Str::cast($return);
 
             if($removeWhiteSpace === true)
@@ -1901,7 +1887,7 @@ class Col extends Main\Root
     {
         $return = null;
         $obj = $this->db()->lang();
-        $path = $this->attr('label');
+        $path = $this->getAttr('label');
         $option = Base\Arr::plus($option,['pattern'=>$pattern]);
 
         if(!empty($path))
@@ -1920,7 +1906,7 @@ class Col extends Main\Root
     {
         $return = null;
         $obj = $this->db()->lang();
-        $path = $this->attr('description');
+        $path = $this->getAttr('description');
         $option = Base\Arr::plus($option,['pattern'=>$pattern]);
 
         if(!empty($path))
@@ -1980,7 +1966,7 @@ class Col extends Main\Root
     // retourne la collation de la colonne
     public function collation():?string
     {
-        return $this->attr('collate');
+        return $this->getAttr('collate');
     }
 
 
@@ -1989,7 +1975,7 @@ class Col extends Main\Root
     // retourne la string default si vide
     public function panel():string
     {
-        $return = $this->attr('panel');
+        $return = $this->getAttr('panel');
 
         if(empty($return) || !is_string($return))
         $return = 'default';
@@ -2004,7 +1990,7 @@ class Col extends Main\Root
     // les attributs fournis en arguments ont priorités sur les valeurs provenant de la db comme name et length
     public function formAttr(?array $attr=null,bool $complex=false):array
     {
-        $return = (array) $this->attr('attr');
+        $return = (array) $this->getAttr('attr');
 
         if(is_array($attr))
         $return = Base\Arr::replace($return,$attr);
@@ -2149,11 +2135,11 @@ class Col extends Main\Root
 
         if(is_object($value))
         $value = Base\Obj::cast($value);
-
-        if(in_array($value,['',null],true))
+        
+        if(in_array($value,['',null,array()],true))
         {
             $return = '-';
-
+            
             if($value === null && $this->hasNullPlaceholder())
             $return = 'NULL';
         }
@@ -2373,7 +2359,7 @@ class Col extends Main\Root
     // retourne vrai si la recherche est requise pour la relation
     public function isRelationSearchRequired():bool
     {
-        return ($this->attr('relationSearchRequired') === true)? true:false;
+        return ($this->getAttr('relationSearchRequired') === true)? true:false;
     }
 
 
@@ -2397,7 +2383,7 @@ class Col extends Main\Root
     // retourne la classe de la cell si existante
     public function cell():?string
     {
-        return $this->attr('cell');
+        return $this->getAttr('cell');
     }
 
 

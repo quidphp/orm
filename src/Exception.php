@@ -48,7 +48,7 @@ class Exception extends Main\Exception
     // retourne la query si showQuery est true, sinon retourne null
     public function content():?string
     {
-        return (static::$config['query'] === true)? $this->query:null;
+        return ($this->getAttr('query') === true)? $this->query:null;
     }
 
 

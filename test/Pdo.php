@@ -22,10 +22,11 @@ class Pdo extends Base\Test
         $table = 'main';
         $table2 = $table.'2';
         $boot = $data['boot'];
-        $credentials = $boot->attr('assert/db');
+        $credentials = $boot->getAttr('assert/db');
 
         // construct
         $pdo = new Orm\Pdo(...$credentials);
+        $syntax = $pdo->getSyntax();
         assert($pdo->truncate($table) instanceof \PDOStatement);
         assert($pdo->insert($table,['id'=>1,'name_en'=>'james','dateAdd'=>10]));
         assert($pdo->insert($table,['id'=>2,'name_en'=>'james2','dateAdd'=>11]));
@@ -43,8 +44,6 @@ class Pdo extends Base\Test
         assert($pdo->_cast() === $pdo->name());
 
         // onSetInst
-
-        // onUnsetInst
 
         // onBeforeMakeStatement
 
@@ -75,7 +74,13 @@ class Pdo extends Base\Test
         assert($pdo->dsn() === $credentials[0]);
 
         // setDsn
-
+        
+        // getSyntax
+        
+        // setSyntax
+        
+        // syntaxCall
+        
         // driver
         assert($pdo->driver() === 'mysql');
 
@@ -110,7 +115,7 @@ class Pdo extends Base\Test
 
         // setDebug
         assert($pdo->setDebug(false));
-
+        
         // isReady
         assert($pdo->isReady());
 
@@ -118,7 +123,7 @@ class Pdo extends Base\Test
 
         // setRollback
         assert($pdo->setRollback(true));
-        assert($pdo->getOption('rollback') === true);
+        assert($pdo->getAttr('rollback') === true);
 
         // makeHistory
 
@@ -144,22 +149,22 @@ class Pdo extends Base\Test
         // importantVariables
         assert(count($pdo->importantVariables()) === 20);
 
-        // getAttr
-        assert($pdo->getAttr(\Pdo::ATTR_AUTOCOMMIT) === 1);
-        assert($pdo->getAttr(\Pdo::ATTR_CASE) === 0);
-        assert(is_string($pdo->getAttr(\Pdo::ATTR_CLIENT_VERSION)));
-        assert(is_string($pdo->getAttr(\Pdo::ATTR_CONNECTION_STATUS)));
-        assert($pdo->getAttr(\Pdo::ATTR_DRIVER_NAME) === 'mysql');
-        assert($pdo->getAttr(\Pdo::ATTR_ERRMODE) === 2);
-        assert($pdo->getAttr(\Pdo::ATTR_ORACLE_NULLS) === 0);
-        assert($pdo->getAttr(\Pdo::ATTR_PERSISTENT) === false);
-        assert(is_string($pdo->getAttr(\Pdo::ATTR_SERVER_INFO)));
-        assert(is_string($pdo->getAttr(\Pdo::ATTR_SERVER_VERSION)));
+        // getPdoAttr
+        assert($pdo->getPdoAttr(\Pdo::ATTR_AUTOCOMMIT) === 1);
+        assert($pdo->getPdoAttr(\Pdo::ATTR_CASE) === 0);
+        assert(is_string($pdo->getPdoAttr(\Pdo::ATTR_CLIENT_VERSION)));
+        assert(is_string($pdo->getPdoAttr(\Pdo::ATTR_CONNECTION_STATUS)));
+        assert($pdo->getPdoAttr(\Pdo::ATTR_DRIVER_NAME) === 'mysql');
+        assert($pdo->getPdoAttr(\Pdo::ATTR_ERRMODE) === 2);
+        assert($pdo->getPdoAttr(\Pdo::ATTR_ORACLE_NULLS) === 0);
+        assert($pdo->getPdoAttr(\Pdo::ATTR_PERSISTENT) === false);
+        assert(is_string($pdo->getPdoAttr(\Pdo::ATTR_SERVER_INFO)));
+        assert(is_string($pdo->getPdoAttr(\Pdo::ATTR_SERVER_VERSION)));
 
-        // setAttr
-        assert($pdo->setAttr(\Pdo::ATTR_CASE,\Pdo::CASE_UPPER));
+        // setPdoAttr
+        assert($pdo->setPdoAttr(\Pdo::ATTR_CASE,\Pdo::CASE_UPPER));
         assert($pdo->query("SELECT * FROM $table",'assoc')['NAME_EN'] === 'james');
-        assert($pdo->setAttr(\Pdo::ATTR_CASE,\Pdo::CASE_NATURAL));
+        assert($pdo->setPdoAttr(\Pdo::ATTR_CASE,\Pdo::CASE_NATURAL));
 
         // errorCode
 
@@ -194,7 +199,7 @@ class Pdo extends Base\Test
         // statementException
 
         // infoStatement
-        $sql = Orm\Syntax::select('*',$table,[2,'name_en'=>'james2']);
+        $sql = $syntax::select('*',$table,[2,'name_en'=>'james2']);
         $statement = $pdo->statement($sql);
         assert(count($pdo->infoStatement($sql,$statement)) === 14);
 
@@ -206,7 +211,7 @@ class Pdo extends Base\Test
         assert(count($pdo->getColumnMeta($statement)) === 4);
 
         // fetchKeyPairStatement
-        $sql = Orm\Syntax::select('*',$table);
+        $sql = $syntax::select('*',$table);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchKeyPairStatement(null,$statement) === [1=>'james']);
         assert($pdo->fetchKeyPairStatement(null,$statement) !== [1=>'james']);
@@ -214,21 +219,21 @@ class Pdo extends Base\Test
         assert($pdo->fetchKeyPairStatement(['name_en','id'],$statement) === ['james'=>1]);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchKeyPairStatement([1,0],$statement) === ['james'=>1]);
-        $statement = $pdo->statement(Orm\Syntax::select('id,name_en',$table));
+        $statement = $pdo->statement($syntax::select('id,name_en',$table));
         assert($pdo->fetchKeyPairStatement(null,$statement) === [1=>'james']);
 
         // fetchKeyPairsStatement
-        $sql = Orm\Syntax::select('*',$table);
+        $sql = $syntax::select('*',$table);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchKeyPairsStatement(null,$statement) === [1=>'james',2=>'james2',3=>'james3']);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchKeyPairsStatement(['name_en','id'],$statement) === ['james'=>1,'james2'=>2,'james3'=>3]);
-        $sql = Orm\Syntax::select('id,name_en',$table);
+        $sql = $syntax::select('id,name_en',$table);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchKeyPairsStatement(null,$statement) === [1=>'james',2=>'james2',3=>'james3']);
 
         // fetchColumnStatement
-        $sql = Orm\Syntax::select('*',$table);
+        $sql = $syntax::select('*',$table);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchColumnStatement(null,$statement) === 1);
         $statement = $pdo->statement($sql);
@@ -237,7 +242,7 @@ class Pdo extends Base\Test
         assert($pdo->fetchColumnStatement([0],$statement) === 1);
 
         // fetchColumnsStatement
-        $sql = Orm\Syntax::select('*',$table);
+        $sql = $syntax::select('*',$table);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchColumnsStatement(null,$statement) === [1,2,3]);
         $statement = $pdo->statement($sql);
@@ -246,17 +251,17 @@ class Pdo extends Base\Test
         assert($pdo->fetchColumnsStatement([0],$statement) === [1,2,3]);
 
         // fetchSegmentStatement
-        $sql = Orm\Syntax::select('*',$table);
+        $sql = $syntax::select('*',$table);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchSegmentStatement(['[id] [name_%lang%]'],$statement) === '1 james');
 
         // fetchSegmentsStatement
-        $sql = Orm\Syntax::select('*',$table,null,['id'=>'desc']);
+        $sql = $syntax::select('*',$table,null,['id'=>'desc']);
         $statement = $pdo->statement($sql);
         assert($pdo->fetchSegmentsStatement(['[id] [name_%lang%]'],$statement) === [3=>'3 james3',2=>'2 james2',1=>'1 james']);
 
         // query
-        $statement = $pdo->query(Orm\Syntax::select('*',$table),null);
+        $statement = $pdo->query($syntax::select('*',$table),null);
         assert($pdo->query("SELECT * FROMz $table",'debug')['sql'] === 'SELECT * FROMz main');
         assert($pdo->setDebug(true)->query("SELECT * FROMz $table")['sql'] === 'SELECT * FROMz main');
         assert($pdo->setDebug());
@@ -347,7 +352,7 @@ class Pdo extends Base\Test
         assert($pdo->makeDrop([$table2]) instanceof \PDOStatement);
 
         // prepareRollback
-        assert($pdo->prepareRollback('update',Orm\Syntax::make('update',[$table,['name'=>'bla'],2]))['rollback']['id'] === 2);
+        assert($pdo->prepareRollback('update',$syntax::make('update',[$table,['name'=>'bla'],2]))['rollback']['id'] === 2);
 
         // select
         assert(count($pdo->select(true,$table,null,['id'=>'DESC'],'1,2')) === 2);
@@ -429,9 +434,9 @@ class Pdo extends Base\Test
 
         // showKeyValues
         assert(count($pdo->showKeyValues('Field','Type',"COLUMNS FROM $table")) === 4);
-        Orm\Syntax::setShortcut('pe','pe');
+        $syntax::setShortcut('pe','pe');
         assert(count($pdo->showKeyValues('Field','Ty[pe]',"COLUMNS FROM $table")) === 4);
-        Orm\Syntax::unsetShortcut('pe');
+        $syntax::unsetShortcut('pe');
         assert($pdo->showKeyValues('Field','Ty[pe]',"COLUMNS FROM $table") === []);
 
         // showCount
@@ -673,72 +678,79 @@ class Pdo extends Base\Test
         assert($pdo->alterAutoIncrement('main',20) instanceof \PDOStatement);
 
         // emulate
-        $sql = Orm\Syntax::select('*',$table,[2,'active'=>'bla'],true,4);
+        $sql = $syntax::select('*',$table,[2,'active'=>'bla'],true,4);
         assert($pdo->emulate($sql['sql'],$sql['prepare']) === "SELECT * FROM `main` WHERE `id` = 2 AND `active` = 'bla' ORDER BY `id` ASC LIMIT 4");
 
         // debug
-        assert(count($pdo->debug(Orm\Syntax::select('*',$table,[2,'active'=>'bla'],true,4))) === 7);
+        assert(count($pdo->debug($syntax::select('*',$table,[2,'active'=>'bla'],true,4))) === 7);
 
         // sql
         assert($pdo->sql() instanceof Orm\PdoSql);
         assert($pdo->sql()->clone()->db() === $pdo);
+        
+        // isOutput
+        assert($pdo->isOutput('select',true));
+        assert($pdo->isOutput('select','assoc'));
+        assert($pdo->isOutput('select',['columns','arg'=>2]));
+        assert(!$pdo->isOutput('update','assoc'));
+        assert(!$pdo->isOutput('select','insertId'));
+        assert($pdo->isOutput('insert','insertId'));
+        assert($pdo->isOutput('insert','rowCount'));
+        assert($pdo->isOutput('insert',true));
+        assert($pdo->isOutput('insert','statement'));
+        assert(!$pdo->isOutput('insert','assoc'));
+        assert($pdo->isOutput('select','*'));
+        assert($pdo->isOutput('create',true));
+        assert($pdo->isOutput('create','statement'));
+        assert($pdo->isOutput('create',null));
+        assert(!$pdo->isOutput('create','assoc'));
+        
+        // output
+        assert($pdo->output('select',true) === ['method'=>'fetchAll','fetch'=>2,'type'=>'assocs']);
+        assert($pdo->output('insert','assoc') === null);
+        assert($pdo->output('select','insertId') === null);
+        assert($pdo->output('insert',true) === ['method'=>'lastInsertId','type'=>'insertId']);
+        assert($pdo->output('create',true) === ['type'=>'statement']);
+        assert($pdo->output('create','assoc') === null);
+        assert($pdo->output('create','statement') === ['type'=>'statement']);
+        assert($pdo->output('insert','insertId') === ['method'=>'lastInsertId','type'=>'insertId']);
+        assert($pdo->output('show','obj') === ['method'=>'fetchObject','selectLimit'=>1,'type'=>'obj']);
+        assert($pdo->output('select','objs') === ['method'=>'fetchAll','fetch'=>5,'type'=>'objs']);
+        assert($pdo->output('select',['columns','arg'=>2]) === ['method'=>'fetchAll','fetch'=>7,'arg'=>[2],'type'=>'columns']);
+        assert($pdo->output('select',['beforeAfter'=>'assoc']) === ['type'=>'statement']);
+        assert($pdo->output('select',null) === ['type'=>'statement']);
+        assert($pdo->output('delete',true) === ['method'=>'rowCount','type'=>'rowCount']);
+        assert($pdo->output('update',true) === ['method'=>'rowCount','type'=>'rowCount']);
+        assert($pdo->output('delete',null) === ['type'=>'statement']);
+        assert($pdo->output('delete','statement') === ['type'=>'statement']);
+        assert($pdo->output('select','row') === null);
+        assert($pdo->output('select','segment')['fetch'] === 'segment');
+        
+        // selectLimit
+        assert($pdo->selectLimit('assoc',['what'=>'ok']) === ['what'=>'ok','limit'=>1]);
+        assert($pdo->selectLimit('assocs',['what'=>'ok']) === ['what'=>'ok']);
+
+        // parseFetch
+        assert($pdo->parseFetch('assoc') === 2);
+        assert($pdo->parseFetch(\Pdo::FETCH_OBJ) === 5);
+        assert($pdo->parseFetch('assocz') === null);
+        
+        // defaultPort
+        assert($pdo->defaultPort() === 3306);
 
         // isDriver
         assert(Orm\Pdo::isDriver('mysql'));
         assert(!Orm\Pdo::isDriver('oracle'));
 
-        // isOutput
-        assert(Orm\Pdo::isOutput('select',true));
-        assert(Orm\Pdo::isOutput('select','assoc'));
-        assert(Orm\Pdo::isOutput('select',['columns','arg'=>2]));
-        assert(!Orm\Pdo::isOutput('update','assoc'));
-        assert(!Orm\Pdo::isOutput('select','insertId'));
-        assert(Orm\Pdo::isOutput('insert','insertId'));
-        assert(Orm\Pdo::isOutput('insert','rowCount'));
-        assert(Orm\Pdo::isOutput('insert',true));
-        assert(Orm\Pdo::isOutput('insert','statement'));
-        assert(!Orm\Pdo::isOutput('insert','assoc'));
-        assert(Orm\Pdo::isOutput('select','*'));
-        assert(Orm\Pdo::isOutput('create',true));
-        assert(Orm\Pdo::isOutput('create','statement'));
-        assert(Orm\Pdo::isOutput('create',null));
-        assert(!Orm\Pdo::isOutput('create','assoc'));
-
         // parseDsn
         $dsn = 'mysql:host=localhost;dbname=quid995';
-        assert(count(Orm\Pdo::parseDsn($dsn,'utf8mb4')) === 8);
-        assert(Orm\Pdo::parseDsn($dsn,'utf8')['dbname'] === 'quid995');
+        assert(count(Orm\Pdo::parseDsn($dsn,'utf8mb4',350)) === 8);
+        assert(Orm\Pdo::parseDsn($dsn,'utf8',324)['dbname'] === 'quid995');
 
         // parseDataType
         assert(Orm\Pdo::parseDataType('str') === \Pdo::PARAM_STR);
         assert(Orm\Pdo::parseDataType([]) === null);
         assert(Orm\Pdo::parseDataType(1.2) === \Pdo::PARAM_STR);
-
-        // parseFetch
-        assert(Orm\Pdo::parseFetch('assoc') === 2);
-        assert(Orm\Pdo::parseFetch(\Pdo::FETCH_OBJ) === 5);
-        assert(Orm\Pdo::parseFetch('assocz') === null);
-
-        // output
-        assert(Orm\Pdo::output('select',true) === ['method'=>'fetchAll','fetch'=>2,'type'=>'assocs']);
-        assert(Orm\Pdo::output('insert','assoc') === null);
-        assert(Orm\Pdo::output('select','insertId') === null);
-        assert(Orm\Pdo::output('insert',true) === ['method'=>'lastInsertId','type'=>'insertId']);
-        assert(Orm\Pdo::output('create',true) === ['type'=>'statement']);
-        assert(Orm\Pdo::output('create','assoc') === null);
-        assert(Orm\Pdo::output('create','statement') === ['type'=>'statement']);
-        assert(Orm\Pdo::output('insert','insertId') === ['method'=>'lastInsertId','type'=>'insertId']);
-        assert(Orm\Pdo::output('show','obj') === ['method'=>'fetchObject','selectLimit'=>1,'type'=>'obj']);
-        assert(Orm\Pdo::output('select','objs') === ['method'=>'fetchAll','fetch'=>5,'type'=>'objs']);
-        assert(Orm\Pdo::output('select',['columns','arg'=>2]) === ['method'=>'fetchAll','fetch'=>7,'arg'=>[2],'type'=>'columns']);
-        assert(Orm\Pdo::output('select',['beforeAfter'=>'assoc']) === ['type'=>'statement']);
-        assert(Orm\Pdo::output('select',null) === ['type'=>'statement']);
-        assert(Orm\Pdo::output('delete',true) === ['method'=>'rowCount','type'=>'rowCount']);
-        assert(Orm\Pdo::output('update',true) === ['method'=>'rowCount','type'=>'rowCount']);
-        assert(Orm\Pdo::output('delete',null) === ['type'=>'statement']);
-        assert(Orm\Pdo::output('delete','statement') === ['type'=>'statement']);
-        assert(Orm\Pdo::output('select','row') === null);
-        assert(Orm\Pdo::output('select','segment')['fetch'] === 'segment');
 
         // outputKey
         assert(Orm\Pdo::outputKey(0,[[2,'test'],[3,'test']]));
@@ -748,21 +760,14 @@ class Pdo extends Base\Test
         $obj2->test = 3;
         assert(Orm\Pdo::outputKey(0,[$obj,$obj2])[2] === $obj);
 
-        // selectLimit
-        assert(Orm\Pdo::selectLimit('assoc',['what'=>'ok']) === ['what'=>'ok','limit'=>1]);
-        assert(Orm\Pdo::selectLimit('assocs',['what'=>'ok']) === ['what'=>'ok']);
-
-        // defaultPort
-        assert(Orm\Pdo::defaultPort() === 3306);
-
         // allDrivers
         assert(in_array('mysql',Orm\Pdo::allDrivers(),true));
 
         // setDefaultHistory
         $pdo::setDefaultHistory(true);
 
-        // option
-        assert(count($pdo->option()) === 8);
+        // attr
+        assert(count($pdo->attr()) === 13);
 
         // cleanup
         assert($pdo->truncate($table) instanceof \PDOStatement);

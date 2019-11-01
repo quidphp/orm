@@ -40,7 +40,7 @@ class ColRelation extends Relation
     // change le mode de la relation
     // si le type de relation est table, la propriété data est une référence des données de relation de la table (donc partagé par toutes les colonnes en relation avec la même table)
     // méthode protégé
-    protected function prepare(Col $col):self
+    protected function prepare(Col $col):void
     {
         if(!$col->canRelation())
         static::throw($col,'cannotRelation');
@@ -48,13 +48,13 @@ class ColRelation extends Relation
         $this->col = $col->name();
         $this->mode = ($col->isSet())? 'set':'enum';
 
-        if(empty($this->attr()))
+        if(empty($this->attributes()))
         static::throw('noRelationConfig');
 
         if($this->checkType() === 'table')
         $this->data =& $this->relationTable()->relation()->arr();
 
-        return $this;
+        return;
     }
 
 
@@ -66,15 +66,15 @@ class ColRelation extends Relation
     }
 
 
-    // attr
-    // retourne les attributs de la relation de la colonne
-    public function attr()
+    // attributes
+    // retourne les attributes de la relation de la colonne
+    public function attributes()
     {
         $return = null;
         $col = $this->col();
 
         if($col->isRelation())
-        $return = $col->attr('relation');
+        $return = $col->getAttr('relation');
 
         elseif($col->isDate())
         $return = 'date';
@@ -91,7 +91,7 @@ class ColRelation extends Relation
     public function whereTable()
     {
         $return = null;
-        $attr = $this->attr();
+        $attr = $this->attributes();
 
         if(is_array($attr) && array_key_exists('where',$attr))
         {
@@ -148,7 +148,7 @@ class ColRelation extends Relation
         {
             $db = $this->db();
             $col = $this->col();
-            $attr = $this->attr();
+            $attr = $this->attributes();
 
             if(!empty($attr))
             {
@@ -161,7 +161,7 @@ class ColRelation extends Relation
                 elseif($attr === 'date' && $col->isDate())
                 $return = 'date';
 
-                elseif($attr === 'distinct' && !$col->isKindText())
+                elseif($attr === 'distinct')
                 $return = 'distinct';
 
                 elseif(is_string($attr))
@@ -209,7 +209,7 @@ class ColRelation extends Relation
     // retourne le code d'ordre par défaut pour la relation
     public function defaultOrderCode():?int
     {
-        $return = $this->col()->attr('orderCode');
+        $return = $this->col()->getAttr('orderCode');
 
         if(!is_int($return))
         {
@@ -262,7 +262,7 @@ class ColRelation extends Relation
     // retourne la table de relation si existante
     public function relationTable():?Table
     {
-        return ($this->type() === 'table')? $this->db()->table($this->attr()):null;
+        return ($this->type() === 'table')? $this->db()->table($this->attributes()):null;
     }
 
 
@@ -338,7 +338,7 @@ class ColRelation extends Relation
         if(empty($return) || $cache === false)
         {
             $col = $this->col();
-            $attr = $this->attr();
+            $attr = $this->attributes();
 
             if($type === 'table')
             {

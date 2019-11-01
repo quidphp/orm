@@ -25,7 +25,7 @@ trait _tableAccess
     // set la table et db à l'objet
     // envoie une exception si l'objet existe déjà
     // méthode protégé
-    protected function setLink(Table $value,bool $checkLink=false):self
+    protected function setLink(Table $value,bool $checkLink=false):void
     {
         $this->setDb($value->db());
         $this->table = $value->name();
@@ -33,7 +33,7 @@ trait _tableAccess
         if($checkLink === true && $this->isLinked())
         static::throw('alreadyInstantiated');
 
-        return $this;
+        return;
     }
 
 

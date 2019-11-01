@@ -89,8 +89,6 @@ class Col extends Base\Test
         // cast
         assert($col->_cast() === 'name');
 
-        // attrAll
-
         // isLinked
         assert($col->isLinked());
 
@@ -225,11 +223,8 @@ class Col extends Base\Test
         assert(!$dateAdd->hasOnUpdate());
         assert($dateModify->hasOnUpdate());
 
-        // permissionAll
-        assert(is_array($col->permissionAll()));
-
-        // permissionDefaultRole
-        assert($col->permissionDefaultRole() instanceof Main\Role);
+        // attrPermissionRolesObject
+        assert($col->attrPermissionRolesObject() instanceof Main\Roles);
 
         // value
         assert($col->value(true) === null);
@@ -712,8 +707,8 @@ class Col extends Base\Test
 
         // attr
         assert(count($col->attr()) === 62);
-        assert($col->attrNotEmpty('kind'));
-        assert(!$col->attrNotEmpty('kindz'));
+        assert($col->isAttrNotEmpty('kind'));
+        assert(!$col->isAttrNotEmpty('kindz'));
 
         // cleanup
         assert($db->truncate($table) instanceof \PDOStatement);

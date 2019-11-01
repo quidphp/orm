@@ -20,7 +20,7 @@ class History extends Base\Test
     {
         // prepare
         $boot = $data['boot'];
-        $credentials = $boot->attr('assert/db');
+        $credentials = $boot->getAttr('assert/db');
         $table = 'main';
         $pdo = new Orm\Pdo(...$credentials);
         $history = $pdo->history()->empty();
@@ -38,7 +38,12 @@ class History extends Base\Test
 
         // cast
         assert($history->_cast() === 6);
-
+        
+        // getSyntax
+        assert(is_string($history->getSyntax()));
+        
+        // setSyntax
+        
         // add
 
         // all

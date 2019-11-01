@@ -23,7 +23,11 @@ class History extends Main\Map
     protected static $is = 'array'; // les valeurs doivent passés ce test de validation ou exception
     protected static $allow = ['push','empty']; // méthodes permises
 
-
+    
+    // dynamique
+    protected $syntax = null; // garde une copie de la classe de syntaxe à utiliser
+    
+    
     // invoke
     // retourne un index de l'historique
     public function __invoke(...$args)
@@ -47,20 +51,41 @@ class History extends Main\Map
         return $this->count();
     }
 
-
+    
+    // getSyntax
+    // retourne la classe de syntaxe
+    public function getSyntax():?string 
+    {
+        return $this->syntax;
+    }
+    
+    
+    // setSyntax
+    // enregistre la classe de syntaxe
+    protected function setSyntax(Pdo $pdo):void 
+    {
+        $this->syntax = $pdo->getSyntax();
+        
+        return;
+    }
+    
+    
     // add
     // ajoute un statement dans l'historique db
-    public function add(array $value,\PDOStatement $statement):self
+    public function add(array $value,\PDOStatement $statement,Pdo $pdo):self
     {
+        if(empty($this->getSyntax()))
+        $this->setSyntax($pdo);
+        
         if(!empty($value['type']))
         {
             if(array_key_exists('cast',$value))
             unset($value['cast']);
-
-            if(Db::isOutput($value['type'],'rowCount'))
+            
+            if($pdo->isOutput($value['type'],'rowCount'))
             $value['row'] = $statement->rowCount();
 
-            if(Db::isOutput($value['type'],'columnCount'))
+            if($pdo->isOutput($value['type'],'columnCount'))
             {
                 $value['column'] = $statement->columnCount();
                 $value['cell'] = $value['row'] * $value['column'];
@@ -106,16 +131,20 @@ class History extends Main\Map
     public function keyValue(?string $type=null,bool $reverse=false):array
     {
         $return = [];
-
-        foreach ($this->all($type,$reverse) as $value)
+        $syntax = $this->getSyntax();
+        
+        if(!empty($syntax))
         {
-            if(is_array($value) && array_key_exists('sql',$value))
+            foreach ($this->all($type,$reverse) as $value)
             {
-                $sql = $value['sql'];
-                if(!empty($value['prepare']))
-                $sql = Syntax::emulate($sql,$value['prepare']);
+                if(is_array($value) && array_key_exists('sql',$value))
+                {
+                    $sql = $value['sql'];
+                    if(!empty($value['prepare']))
+                    $sql = $syntax::emulate($sql,$value['prepare']);
 
-                $return[] = $sql;
+                    $return[] = $sql;
+                }
             }
         }
 
@@ -170,13 +199,17 @@ class History extends Main\Map
     public function total():array
     {
         $return = [];
-
-        foreach (Syntax::getQueryTypes() as $type)
+        $syntax = $this->getSyntax();
+        
+        if(!empty($syntax))
         {
-            $array = $this->typeCount($type);
+            foreach ($syntax::getQueryTypes() as $type)
+            {
+                $array = $this->typeCount($type);
 
-            if(!empty($array))
-            $return[$type] = $array;
+                if(!empty($array))
+                $return[$type] = $array;
+            }
         }
 
         return $return;

@@ -143,23 +143,27 @@ class Cells extends Main\Map
     {
         $return = false;
         $array = Base\Obj::cast($array);
-
-        foreach ($array as $key => $value)
+        $db = $this->db();
+        
+        if(!empty($db))
         {
-            foreach (Syntax::wherePrepareOne($key,$value) as $v)
+            foreach ($array as $key => $value)
             {
-                if(is_array($v) && count($v) >= 2 && is_string($v[0]))
+                foreach ($db->syntaxCall('wherePrepareOne',$key,$value) as $v)
                 {
-                    $cell = $this->checkGet($v[0]);
-                    $arr = (is_string($v[1]))? [$v[1]=>$v[2] ?? null]:[0=>$v[1]];
-                    $return = $cell->isWhere($arr);
+                    if(is_array($v) && count($v) >= 2 && is_string($v[0]))
+                    {
+                        $cell = $this->checkGet($v[0]);
+                        $arr = (is_string($v[1]))? [$v[1]=>$v[2] ?? null]:[0=>$v[1]];
+                        $return = $cell->isWhere($arr);
 
-                    if($return === false)
-                    break 2;
+                        if($return === false)
+                        break 2;
+                    }
+
+                    else
+                    static::throw('unsupported');
                 }
-
-                else
-                static::throw('unsupported');
             }
         }
 

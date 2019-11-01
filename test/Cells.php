@@ -233,7 +233,6 @@ class Cells extends Base\Test
         // root
         assert(is_a($cells->classFqcn(),Orm\Cells::class,true));
         assert($cells->classNamespace() === "Quid\Core");
-        assert($cells->classRoot() === 'Quid');
         assert($cells->className() === 'Cells');
 
         // readOnly

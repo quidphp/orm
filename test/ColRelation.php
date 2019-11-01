@@ -52,9 +52,9 @@ class ColRelation extends Base\Test
         assert($dateAdd->mode() === 'enum');
         assert($relationCall->mode() === 'enum');
 
-        // attr
-        assert($userId->attr() === 'user');
-        assert($dateAdd->attr() === 'date');
+        // attributes
+        assert($userId->attributes() === 'user');
+        assert($dateAdd->attributes() === 'date');
 
         // whereTable
 

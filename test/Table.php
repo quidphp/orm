@@ -49,15 +49,13 @@ class Table extends Base\Test
 
         // onTruncated
 
-        // onPermissionCan
+        // onRolePermission
 
         // toArray
         assert($tb->toArray() === [1=>'james',2=>'james2']);
 
         // cast
         assert($tb->_cast() === $table);
-
-        // attrAll
 
         // offsetGet
         assert($tb->offsetGet(1) === $tb[1]);
@@ -83,11 +81,9 @@ class Table extends Base\Test
         assert($tb->shouldLogSql('truncate'));
         assert(!$logSql->shouldLogSql('truncate'));
 
-        // permissionAll
-        assert(Base\Arrs::is($tb->permissionAll()));
-
-        // permissionDefaultRole
-
+        // attrPermissionRolesObject
+        assert($tb->attrPermissionRolesObject() instanceof Main\Roles);
+        
         // isSearchable
         assert($tb->isSearchable());
 
@@ -580,10 +576,10 @@ class Table extends Base\Test
 
         // attr
         assert(count($tb->attr()) >= 18);
-        assert($tb->attr('test') === 'ok');
-        assert($tb->attr('key') === ['key',0]);
-        assert($tb->attrCall('test') === 'ok');
-        assert($tb->attrNotEmpty('test'));
+        assert($tb->getAttr('test') === 'ok');
+        assert($tb->getAttr('key') === ['key',0]);
+        assert($tb->getAttr('test',true) === 'ok');
+        assert($tb->isAttrNotEmpty('test'));
 
         // dbAccess
         assert($tb->hasDb());

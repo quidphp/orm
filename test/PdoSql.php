@@ -20,7 +20,7 @@ class PdoSql extends Base\Test
     {
         // prepare
         $boot = $data['boot'];
-        $credentials = $boot->attr('assert/db');
+        $credentials = $boot->getAttr('assert/db');
         $table = 'main';
         $pdo = new Orm\Pdo(...$credentials);
         $primary = $pdo->primary();
@@ -51,7 +51,9 @@ class PdoSql extends Base\Test
 
         // primary
         assert($sql->primary() === 'id');
-
+        
+        // syntaxCall
+        
         // setType
         assert($sql->setType('select','assoc') instanceof Orm\PdoSql);
         assert($sql->getOutput() === 'assoc');

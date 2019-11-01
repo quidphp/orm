@@ -114,14 +114,12 @@ class Row extends Base\Test
         // id
         assert($row->id() === 1);
 
-        // attrAll
+        // attrRef
         assert(count($row->attr()) >= 18);
-        assert(!$row->attrNotEmpty('test'));
-        assert($row->attrNotEmpty('priority'));
+        assert(!$row->isAttrNotEmpty('test'));
+        assert($row->isAttrNotEmpty('priority'));
 
-        // permissionAll
-
-        // permissionDefaultRole
+        // attrPermissionRolesObject
 
         // pointer
         assert($row->pointer() === 'ormRow-1');

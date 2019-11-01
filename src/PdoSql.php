@@ -44,6 +44,7 @@ class PdoSql extends Main\Map
     // construit l'objet sql
     public function __construct(Pdo $db,?string $type=null,$output=true)
     {
+        $this->makeAttr(null);
         $this->setDb($db);
         $this->setType($type);
         $this->setOutput($output);
@@ -124,7 +125,15 @@ class PdoSql extends Main\Map
         return $this->db()->primary();
     }
 
-
+    
+    // syntaxCall
+    // permet d'appeler une méthode sur la classe de syntaxe de la db
+    public function syntaxCall(string $method,...$args)
+    {
+        return $this->db()->syntaxCall($method,...$args);
+    }
+    
+    
     // setType
     // change le type de l'objet sql
     // l'objet est vidé
@@ -132,16 +141,16 @@ class PdoSql extends Main\Map
     public function setType(?string $type,$output=null):self
     {
         if($type === null)
-        $type = static::$config['default'];
+        $type = $this->getAttr('default');
 
-        if(Syntax::isQuery($type))
+        if($this->syntaxCall('isQuery',$type))
         {
             $db = $this->db();
             $this->empty();
             $this->resetCount();
             $this->type = $type;
 
-            if(!$db::isOutput($type,$this->getOutput()))
+            if(!$db->isOutput($type,$this->getOutput()))
             $this->setOutput(true);
 
             if($output !== null)
@@ -169,7 +178,7 @@ class PdoSql extends Main\Map
     {
         $db = $this->db();
 
-        if($db::isOutput($this->getType(),$output))
+        if($db->isOutput($this->getType(),$output))
         $this->output = $output;
 
         else
@@ -190,11 +199,11 @@ class PdoSql extends Main\Map
     // resetCount
     // reset le tableau de cache pour les count
     // méthode protégé
-    protected function resetCount():self
+    protected function resetCount():void
     {
         $this->count = [];
 
-        return $this;
+        return;
     }
 
 
@@ -202,13 +211,7 @@ class PdoSql extends Main\Map
     // retourne le nom de la méthode lié au shortcut
     public function getShortcut(string $value):?string
     {
-        $return = null;
-        $type = $this->getType();
-
-        if(array_key_exists($value,static::$config['shortcut']) && !empty(static::$config['shortcut'][$value][$type]))
-        $return = static::$config['shortcut'][$value][$type];
-
-        return $return;
+        return $this->getAttr(array('shortcut',$value,$this->getType()));
     }
 
 
@@ -272,14 +275,14 @@ class PdoSql extends Main\Map
 
     // checkClause
     // retourne vrai si la clause est valide avec le type, sinon lance une exception
-    protected function checkClause($value):self
+    protected function checkClause($value):void
     {
         if(is_string($value))
         {
             $type = $this->getType();
             $output = $this->getOutput();
-
-            if(!Syntax::hasQueryClause($type,$value))
+            
+            if(!$this->syntaxCall('hasQueryClause',$type,$value))
             {
                 if($value === 'on')
                 {
@@ -295,14 +298,14 @@ class PdoSql extends Main\Map
         else
         static::throw('requiresString');
 
-        return $this;
+        return;
     }
 
 
     // checkValue
     // retourne vrai si la valeur de la clause est valide, sinon lance une exception
     // cette validation se fait sur une entrée d'une clause
-    protected function checkValue(string $clause,$value):self
+    protected function checkValue(string $clause,$value):void
     {
         if(in_array($clause,['table','group','dropCol','dropKey'],true) && (!is_string($value) || !strlen($value)))
         static::throw($clause,'requires','stringWithLength');
@@ -316,7 +319,7 @@ class PdoSql extends Main\Map
         elseif(in_array($clause,['createCol','createKey','addCol','addKey','alterCol'],true) && (!is_array($value) || !count($value)))
         static::throw($clause,'requires','arrayWithCount');
 
-        return $this;
+        return;
     }
 
 
@@ -339,7 +342,7 @@ class PdoSql extends Main\Map
     {
         $return = null;
         $arr = $this->arr();
-        $required = Syntax::getQueryRequired($this->getType());
+        $required = $this->syntaxCall('getQueryRequired',$this->getType());
 
         if(!empty($required) && !Base\Arr::keysExists($required,$arr))
         {
@@ -369,7 +372,7 @@ class PdoSql extends Main\Map
     // si la valeur est un tableau avec un count de 1, enlève le tableau
     // la cache des count est reset à chaque appel à cette méthode
     // méthode protégé
-    protected function do(string $clause,$value,bool $prepend=false):self
+    protected function do(string $clause,$value,bool $prepend=false):void
     {
         $this->resetCount();
         $arr =& $this->arr();
@@ -434,7 +437,7 @@ class PdoSql extends Main\Map
         else
         static::throw('noValidTargetReference',$clause);
 
-        return $this;
+        return;
     }
 
 
@@ -442,7 +445,9 @@ class PdoSql extends Main\Map
     // append une entrée à une clause
     public function one(string $clause,...$value):self
     {
-        return $this->do($clause,$value,false);
+        $this->do($clause,$value,false);
+        
+        return $this;
     }
 
 
@@ -463,7 +468,9 @@ class PdoSql extends Main\Map
     // prepend une entrée à une clause
     public function prependOne(string $clause,...$value):self
     {
-        return $this->do($clause,$value,true);
+        $this->do($clause,$value,true);
+        
+        return $this;
     }
 
 
@@ -516,9 +523,9 @@ class PdoSql extends Main\Map
         $output = ($output === null)? $this->getOutput():$output;
 
         if($this->getType() === 'select')
-        $data = $db::selectLimit($output,$data);
+        $data = $db->selectLimit($output,$data);
 
-        $return = Syntax::make($this->getType(),$data,$option);
+        $return = $db->syntaxCall('make',$this->getType(),$data,$option);
 
         return $return;
     }
@@ -664,7 +671,7 @@ class PdoSql extends Main\Map
     // par défaut une parenthèse enroberra ces entrées where
     public function whereSeparator(string $separator,$method,$cols,$value=null,bool $parenthesis=true):self
     {
-        if(Syntax::isWhereSeparator($separator))
+        if($this->syntaxCall('isWhereSeparator',$separator))
         {
             $cols = Base\Obj::cast($cols,6);
 
@@ -718,7 +725,7 @@ class PdoSql extends Main\Map
     // possible de spécifier un séparateur et un séparateur interne
     public function whereSeparatorMany(string $separator,string $innerSeparator,$method,$cols,array $values,bool $parenthesis=true):self
     {
-        if(Syntax::isWhereSeparator($innerSeparator))
+        if($this->syntaxCall('isWhereSeparator',$innerSeparator))
         {
             $i = 0;
             foreach ($values as $value)
@@ -1401,10 +1408,10 @@ class PdoSql extends Main\Map
         $where = $this->get('where');
         $order = $this->get('order');
 
-        $tableName = Syntax::tick($table).' t';
+        $tableName = $this->syntaxCall('tick',$table).' t';
         $what = ['t.'.$primary];
         if(!empty($where))
-        $what = Base\Arr::appendUnique($what,Syntax::whatFromWhere($where,'t'));
+        $what = Base\Arr::appendUnique($what,$this->syntaxCall('whatFromWhere',$where,'t'));
         $what[] = ['@rownum := @rownum + 1','position'];
 
         $innerSql = clone $this;

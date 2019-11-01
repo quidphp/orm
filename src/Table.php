@@ -17,8 +17,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 {
     // trait
     use _dbAccess;
-    use Main\_attr;
-    use Main\_permission;
+    use Main\_attrPermission;
 
 
     // config
@@ -77,7 +76,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // dynamique
     protected $name = null; // nom de la table
-    protected $attr = []; // talbeau des attributs
     protected $relation = null; // conserve une copie de l'objet de relation de la table
     protected $cols = null; // objet des colonnes
     protected $colsReady = false; // se met à true lorsque les colonnes sont toutes chargés
@@ -112,11 +110,11 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // est appelé après colsLoad
     // par défaut est utilisé pour faire un check de l'existance des colonnes décritent dans config/cols si l'attribut colsExists est true
     // méthode protégé
-    protected function onColsLoad():self
+    protected function onColsLoad():void
     {
-        if($this->attr('colsExists') === true)
+        if($this->getAttr('colsExists') === true)
         {
-            $array = $this->attr('cols');
+            $array = $this->getAttr('cols');
 
             if(is_array($array) && !empty($array))
             {
@@ -149,7 +147,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             }
         }
 
-        return $this;
+        return;
     }
 
 
@@ -165,24 +163,24 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // onCheckAttr
     // callback dès que les attributs ont été set
     // permet d'envoyer des exceptions si les attributs sont inadéquats pour la table
-    protected function onCheckAttr():self
+    protected function onCheckAttr():void
     {
-        return $this;
+        return;
     }
 
 
     // onTruncated
     // appelé après un truncate réussie via la méthode truncate
     // méthode protégé qui peut être étendu
-    protected function onTruncated(array $option):self
+    protected function onTruncated(array $option):void
     {
-        return $this;
+        return;
     }
 
 
-    // onPermissionCan
+    // onRolePermission
     // callback avant chaque appel à permission can, vérifie que la table à la permission access
-    protected function onPermissionCan($key,array $array):bool
+    protected function onRolePermission($key,array $array):bool
     {
         return (array_key_exists('access',$array) && $array['access'] === true)? true:false;
     }
@@ -192,7 +190,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // méthode utilisé pour obtenir du contenu tableau lors du remplacement via une méthode map
     public function toArray():array
     {
-        return $this->keyValue(0,$this->attr('name'));
+        return $this->keyValue(0,$this->getAttr('name'));
     }
 
 
@@ -201,16 +199,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public function _cast():string
     {
         return $this->name();
-    }
-
-
-    // attrAll
-    // retourne le tableau des attributs
-    // doit retourner une référence
-    // est public car utilisé par cell
-    public function &attrAll():array
-    {
-        return $this->attr;
     }
 
 
@@ -288,7 +276,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public function shouldLogSql(string $type):bool
     {
         $return = false;
-        $log = $this->attr(['logSql',$type]);
+        $log = $this->getAttr(['logSql',$type]);
 
         if($log === true)
         $return = true;
@@ -297,19 +285,11 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     }
 
 
-    // permissionAll
-    // retourne le tableau de la source des paramètres de rôles
-    public function &permissionAll():array
+    // attrPermissionRolesObject
+    // retourne le rôles courants
+    public function attrPermissionRolesObject():Main\Roles
     {
-        return $this->attr['permission'];
-    }
-
-
-    // permissionDefaultRole
-    // retourne le rôle courant
-    public function permissionDefaultRole():Main\Role
-    {
-        return $this->db()->role();
+        return $this->db()->roles();
     }
 
 
@@ -318,7 +298,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // il doit aussi y avoir une colonne cherchable dans la table
     public function isSearchable():bool
     {
-        $return = ($this->attr('search') === true)? true:false;
+        $return = ($this->getAttr('search') === true)? true:false;
 
         if($return === true)
         {
@@ -354,18 +334,18 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si la table a des panels
     public function hasPanel():bool
     {
-        return ($this->attr('panel') === true)? true:false;
+        return ($this->getAttr('panel') === true)? true:false;
     }
 
 
     // setClasse
     // stock l'objet tableClasse
     // méthode protégé
-    protected function setClasse(TableClasse $classe):self
+    protected function setClasse(TableClasse $classe):void
     {
         $this->classe = $classe;
 
-        return $this;
+        return;
     }
 
 
@@ -381,21 +361,21 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // set la tables et db à l'objet
     // envoie une exception si l'objet table existe déjà
     // méthode protégé
-    protected function setLink(Db $value):self
+    protected function setLink(Db $value):void
     {
         $this->setDb($value);
 
         if($this->db()->hasTable($this->name()))
         static::throw('alreadyInstantiated',$this->name());
 
-        return $this;
+        return;
     }
 
 
     // setName
     // change le nom de la table après validation
     // méthode protégé
-    protected function setName(string $name):self
+    protected function setName(string $name):void
     {
         if(Base\Validate::isTable($name))
         $this->name = $name;
@@ -403,7 +383,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         else
         static::throw($name,'needsLowerCaseFirstChar','noComplexChars');
 
-        return $this;
+        return;
     }
 
 
@@ -421,7 +401,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // si l'attribut contient la clé du type de l'application, ceci aura priorité sur tout le reste (dernier merge)
     // lance onMakeAttr avant d'écrire dans la propriété
     // le merge est unidimensionnel sauf pour la clé cols
-    protected function makeAttr(array $dbAttr):self
+    protected function makeAttr($dbAttr,bool $config=true):void
     {
         $db = $this->db();
         $rowClass = $this->rowClass();
@@ -429,11 +409,14 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $baseAttr = [];
         $tableAttr = $db->tableAttr($this);
         $callable = static::getInitCallable();
-
-        foreach (static::$config as $key => $value)
+        
+        if($config === true)
         {
-            if($value !== null || !array_key_exists($key,$dbAttr))
-            $baseAttr[$key] = $value;
+            foreach (static::$config as $key => $value)
+            {
+                if($value !== null || !array_key_exists($key,$dbAttr))
+                $baseAttr[$key] = $value;
+            }
         }
 
         $attr = $callable(static::class,$dbAttr,$baseAttr,$tableAttr,$rowAttr);
@@ -444,7 +427,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $this->attr = $attr;
         $this->onCheckAttr();
 
-        return $this;
+        return;
     }
 
 
@@ -462,7 +445,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // checkAttr
     // fait un check sur les attributs, vérifie parent et priority
     // méthode protégé
-    protected function checkAttr(array $attr):self
+    protected function checkAttr(array $attr):void
     {
         if(array_key_exists('parent',$attr))
         {
@@ -482,7 +465,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         if(empty($attr['priority']) || !is_int($attr['priority']))
         static::throw('invalidPriority');
 
-        return $this;
+        return;
     }
 
 
@@ -490,7 +473,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne le nom de parent de la table, ou null
     public function parent():?string
     {
-        return $this->attr('parent');
+        return $this->getAttr('parent');
     }
 
 
@@ -498,7 +481,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne le code de priorité de la table
     public function priority():int
     {
-        return $this->attr('priority');
+        return $this->getAttr('priority');
     }
 
 
@@ -523,7 +506,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // méthode protégé
     protected function commonWhereFilter(string $type,$value=null):array
     {
-        $return = $this->attr($type);
+        $return = $this->getAttr($type);
+        $db = $this->db();
         $true = false;
         $return = $this->commonWhereFilterArg($return,$true);
         $value = $this->commonWhereFilterArg($value,$true);
@@ -532,7 +516,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return = $value;
 
         else
-        $return = Syntax::whereAppend($return,$value);
+        $return = $db->syntaxCall('whereAppend',$return,$value);
 
         return $return;
     }
@@ -544,6 +528,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // méthode protégé
     protected function commonWhereFilterArg($return,bool &$true):array
     {
+        $db = $this->db();
+        
         if(static::classIsCallable($return))
         $return = $return($this);
 
@@ -558,13 +544,13 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             elseif(is_array($return) && in_array(true,$return,true))
             {
                 $true = true;
-                $return = Syntax::removeDefault($return);
-                $return = Syntax::whereAppend($return,$this->whereFilterTrue());
+                $return = $db->syntaxCall('removeDefault',$return);
+                $return = $db->syntaxCall('whereAppend',$return,$this->whereFilterTrue());
             }
         }
 
         $return = Base\Call::digStaticMethod($return);
-        $return = Syntax::removeDefault($return);
+        $return = $db->syntaxCall('removeDefault',$return);
 
         return $return;
     }
@@ -634,7 +620,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne le pattern like à utiliser pour la table
     public function like():?string
     {
-        return $this->attr('like');
+        return $this->getAttr('like');
     }
 
 
@@ -644,7 +630,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // sinon ce sera la plus petite longueur de recherche minimale d'une colonne
     public function searchMinLength():int
     {
-        return $this->cols()->searchable()->searchMinLength() ?? $this->attr('searchMinLength');
+        return $this->cols()->searchable()->searchMinLength() ?? $this->getAttr('searchMinLength');
     }
 
 
@@ -657,7 +643,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public function order($get=true)
     {
         $return = null;
-        $order = $this->attr('order');
+        $order = $this->getAttr('order');
 
         if(is_array($order))
         {
@@ -697,7 +683,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne la limite par défaut
     public function limit():int
     {
-        return $this->attr('limit');
+        return $this->getAttr('limit');
     }
 
 
@@ -809,11 +795,11 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // setColsReady
     // permet de changer la valeur à l'attribut colsReady
-    protected function setColsReady(bool $value=true):self
+    protected function setColsReady(bool $value=true):void
     {
         $this->colsReady = $value;
 
-        return $this;
+        return;
     }
 
 
@@ -1008,7 +994,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public function colActive():?Col
     {
         $return = null;
-        $active = $this->attr('active');
+        $active = $this->getAttr('active');
 
         if(!empty($active) && $this->hasCol($active))
         $return = $this->col($active);
@@ -1022,7 +1008,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de spécifier une langue, sinon langue courante ou pas de langue
     public function colKey(?string $lang=null):Col
     {
-        $return = $this->col($this->attr('key'));
+        $return = $this->col($this->getAttr('key'));
 
         if(is_string($lang) && !empty($return))
         $return = $this->colPattern($return->nameStripPattern(),$lang);
@@ -1036,7 +1022,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de spécifier une langue, sinon langue courante ou pas de langue
     public function colName(?string $lang=null):Col
     {
-        $return = $this->col($this->attr('name'));
+        $return = $this->col($this->getAttr('name'));
 
         if(is_string($lang) && !empty($return))
         $return = $this->colPattern($return->nameStripPattern(),$lang);
@@ -1050,7 +1036,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de spécifier une langue, sinon langue courante ou pas de langue
     public function colContent(?string $lang=null):Col
     {
-        $return = $this->col($this->attr('content'));
+        $return = $this->col($this->getAttr('content'));
 
         if(is_string($lang) && !empty($return))
         $return = $this->colPattern($return->nameStripPattern(),$lang);
@@ -1240,7 +1226,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // rowsMakeIds
     // permet d'optimiser le chargement de rows à partir d'un tableau de ids
     // méthode protégé
-    protected function rowsMakeIds(...$values):self
+    protected function rowsMakeIds(...$values):void
     {
         if(Base\Arr::onlyNumeric($values))
         {
@@ -1269,7 +1255,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             }
         }
 
-        return $this;
+        return;
     }
 
 
@@ -1657,7 +1643,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public function grabVisible($where=true,$limit=null):Rows
     {
         $return = null;
-        $where = Syntax::addDefault($where);
+        $db = $this->db();
+        $where = $db->syntaxCall('addDefault',$where);
         $return = $this->grab($where,$limit,true);
 
         return $return;
@@ -1897,7 +1884,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // gère la communication après la requête insert si option com est true
     // si option com est false et qu'il y a une exception attrapable, renvoie
     // méthode protégé
-    protected function insertAfter($result,?array $option=null):self
+    protected function insertAfter($result,?array $option=null):void
     {
         $option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
 
@@ -1945,13 +1932,13 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         elseif($option['strict'] === true && !(is_int($result) && $result > 0))
         static::throw('insertFailed',$result);
 
-        return $this;
+        return;
     }
 
 
     // insertOnCommitted
     // lance le callback onCommitted sur toutes les colonnes
-    protected function insertOnCommitted(Row $row,array $set,array $option):self
+    protected function insertOnCommitted(Row $row,array $set,array $option):void
     {
         $cells = $row->cells(...array_keys($set));
 
@@ -1961,7 +1948,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             $cell->col()->onCommitted($cell,true,$option);
         }
 
-        return $this;
+        return;
     }
 
 
@@ -1971,7 +1958,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     {
         $return = null;
         $obj = $this->db()->lang();
-        $path = $this->attr('label');
+        $path = $this->getAttr('label');
         $option = Base\Arr::plus($option,['pattern'=>$pattern]);
 
         if(!empty($path))
@@ -1989,7 +1976,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     {
         $return = null;
         $obj = $this->db()->lang();
-        $path = $this->attr('description');
+        $path = $this->getAttr('description');
 
         if($path !== false)
         {
@@ -2009,7 +1996,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si la table supporte des relations
     public function allowsRelation():bool
     {
-        return (!empty($this->attr('relation')))? true:false;
+        return (!empty($this->getAttr('relation')))? true:false;
     }
 
 
@@ -2019,10 +2006,10 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public function relation():TableRelation
     {
         $return = $this->relation;
-
+        
         if(empty($return))
         $return = $this->relation = TableRelation::newOverload($this);
-
+        
         return $return;
     }
 
@@ -2216,7 +2203,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // gère la communication après la requête truncate si option com est true
     // si option com est false et qu'il y a une exception attrapable, renvoie
     // méthode protégé
-    protected function truncateAfter($result,?array $option=null):self
+    protected function truncateAfter($result,?array $option=null):void
     {
         $option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
 
@@ -2256,7 +2243,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         elseif($option['strict'] === true && !$result instanceof \PDOStatement)
         static::throw('truncateFailed');
 
-        return $this;
+        return;
     }
 
 

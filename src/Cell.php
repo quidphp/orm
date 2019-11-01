@@ -18,8 +18,7 @@ class Cell extends Main\Root
     // trait
     use _colCell;
     use _tableAccess;
-    use Main\_attr;
-    use Main\_permission;
+    use Main\_attrPermission;
 
 
     // config
@@ -266,19 +265,11 @@ class Cell extends Main\Root
     }
 
 
-    // permissionAll
-    // retourne le tableau de la source des paramètres de rôles
-    protected function &permissionAll():array
+    // attrPermissionRolesObject
+    // retourne les rôles courant
+    protected function attrPermissionRolesObject():Main\Roles
     {
-        return $this->col()->permissionAll();
-    }
-
-
-    // permissionDefaultRole
-    // retourne le rôle courant
-    protected function permissionDefaultRole():Main\Role
-    {
-        return $this->col()->permissionDefaultRole();
+        return $this->col()->attrPermissionRolesObject();
     }
 
 
@@ -448,12 +439,13 @@ class Cell extends Main\Root
     public function isWhere(array $array):bool
     {
         $return = false;
-
+        $db = $this->db();
+        
         foreach ($array as $method => $value)
         {
             $method = (is_numeric($method))? $value:$method;
 
-            if(is_string($method) && Syntax::isWhereSymbol($method))
+            if(is_string($method) && $db->syntaxCall('isWhereSymbol',$method))
             $return = $this->isCompare($method,$value);
 
             elseif(in_array($method,[null,'null'],true))
@@ -542,22 +534,22 @@ class Cell extends Main\Root
     // setCol
     // change la colonne de la cellule
     // méthode protégé
-    protected function setCol(Col $col):self
+    protected function setCol(Col $col):void
     {
         $this->col = $col->name();
 
-        return $this;
+        return;
     }
 
 
     // setRow
     // change la ligne de la cellule
     // méthode protégé
-    protected function setRow(Row $row):self
+    protected function setRow(Row $row):void
     {
         $this->row = $row->primary();
 
-        return $this;
+        return;
     }
 
 
@@ -636,12 +628,12 @@ class Cell extends Main\Root
     }
 
 
-    // attrAll
+    // attrRef
     // retourne le tableau des attributs
     // doit retourner une référence
-    protected function &attrAll():array
+    protected function &attrRef():array
     {
-        return $this->col()->attrAll();
+        return $this->col()->attrRef();
     }
 
 
@@ -956,7 +948,7 @@ class Cell extends Main\Root
 
         if($onSet !== $this)
         $value = $onSet;
-
+        
         $value = $col->autoCast($value);
 
         $this->value['change'] = $value;

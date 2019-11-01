@@ -26,7 +26,7 @@ class Sql extends PdoSql
         parent::setOutput($output);
         $db = $this->db();
 
-        if($db::isRowOutput($output))
+        if($db->isRowOutput($output))
         $this->set('what','*');
 
         return $this;
@@ -131,16 +131,16 @@ class Sql extends PdoSql
     {
         $return = null;
         $arr = $this->arr();
-        $required = Syntax::getQueryRequired($this->getType());
         $db = $this->db();
-
+        $required = $db->syntaxCall('getQueryRequired',$this->getType());
+        
         if(!empty($required) && !Base\Arr::keysExists($required,$arr))
         {
             $strip = Base\Arr::valuesStrip(array_keys($arr),$required);
             static::throw('missingRequiredClause',$strip);
         }
 
-        elseif($db::isRowOutput($output) && !in_array('*',(array) $arr['what'] ?? null,true))
+        elseif($db->isRowOutput($output) && !in_array('*',(array) $arr['what'] ?? null,true))
         static::throw('rowOutput','whatOnlyAccepts','*');
 
         elseif(empty($arr))

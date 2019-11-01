@@ -16,26 +16,26 @@ use Quid\Main;
 class Pdo extends Main\Root
 {
     // trait
-    use Main\_option;
     use Main\_inst;
 
 
     // config
     public static $config = [
-        'option'=>[ // tableau d'options
-            'history'=>true, // les requêtes sont ajoutés à l'historique
-            'rollback'=>true, // les rollback de requête sont générés, seulement si le tableau contient la table ainsi qu'un id numérique
-            'debug'=>null, // les requêtes émulés sont retournés sans être lancés à la base de donnée
-            'cast'=>null, // les valeurs numériques des fetchs sont cast
-            'primary'=>'id', // nom de la clé primaire
-            'charset'=>'utf8mb4', // charset
-            'sql'=>null, // option pour BaseSql
-            'connect'=>[ // attribut de connexion
-                \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC,
-                \PDO::ATTR_EMULATE_PREPARES=>false,
-                \PDO::ATTR_STRINGIFY_FETCHES=>false,
-                \PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION]],
-        'port'=>3306, // port par défaut
+        'history'=>true, // les requêtes sont ajoutés à l'historique
+        'rollback'=>true, // les rollback de requête sont générés, seulement si le tableau contient la table ainsi qu'un id numérique
+        'debug'=>null, // les requêtes émulés sont retournés sans être lancés à la base de donnée
+        'cast'=>null, // les valeurs numériques des fetchs sont cast
+        'primary'=>'id', // nom de la clé primaire
+        'charset'=>'utf8mb4', // charset
+        'sql'=>null, // option pour baseSql
+        'connect'=>[ // attribut de connexion
+            \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC,
+            \PDO::ATTR_EMULATE_PREPARES=>false,
+            \PDO::ATTR_STRINGIFY_FETCHES=>false,
+            \PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION],
+        'defaultPort'=>3306, // port par défaut
+        'syntax'=>array( // tableau associatif entre driver et classe syntaxe
+            'mysql'=>Syntax\Mysql::class),
         'fetch'=>[ // tableau associatif pour les fetch mode
             'assoc'=>\PDO::FETCH_ASSOC,
             'assocUnique'=>\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE,
@@ -91,18 +91,20 @@ class Pdo extends Main\Root
 
 
     // dynamic
-    protected $pdo = null; // valeur qui contient pdo
     protected $dsn = null; // valeur qui content le dsn
+    protected $pdo = null; // valeur qui contient pdo
+    protected $syntax = null; // classe de syntax à utiliser
     protected $username = null; // valeur qui content le username
     protected $history = null; // objet history
 
 
     // construct
     // construction de la classe
-    public function __construct(string $dsn,string $username,string $password,?array $option=null)
+    public function __construct(string $dsn,string $username,string $password,?array $attr=null)
     {
-        $this->option($option);
+        $this->makeAttr($attr);
         $this->setDsn($dsn);
+        $this->setSyntax();
         $this->connect($username,$password);
 
         return;
@@ -146,46 +148,39 @@ class Pdo extends Main\Root
     // onSetInst
     // méthode appeler après setInst
     // méthode protégé
-    protected function onSetInst():self
+    protected function onSetInst():void
     {
-        return $this->checkReady(true);
-    }
-
-
-    // onUnsetInst
-    // méthode appeler après unsetInst
-    // méthode protégé
-    protected function onUnsetInst():self
-    {
-        return $this;
+        $this->checkReady(true);
+        
+        return;
     }
 
 
     // onBeforeMakeStatement
     // callback avant la création du statement dans makeStatement
     // méthode protégé
-    protected function onBeforeMakeStatement(array $value):self
+    protected function onBeforeMakeStatement(array $value):void
     {
-        return $this;
+        return;
     }
 
 
     // onAfterMakeStatement
     // callback après la création du statement dans makeStatement
     // méthode protégé
-    protected function onAfterMakeStatement(array $value,\PdoStatement $statement):self
+    protected function onAfterMakeStatement(array $value,\PdoStatement $statement):void
     {
         if(!empty($value['type']))
         {
-            if($this->getOption('history') === true)
+            if($this->getAttr('history') === true)
             {
-                if(static::isOutput($value['type'],'insertId'))
+                if($this->isOutput($value['type'],'insertId'))
                 $value['insertId'] = $this->lastInsertId();
-                $this->history()->add($value,$statement);
+                $this->history()->add($value,$statement,$this);
             }
         }
 
-        return $this;
+        return;
     }
 
 
@@ -202,14 +197,14 @@ class Pdo extends Main\Root
     public function connect(string $username,string $password):self
     {
         $this->checkReady(false);
-        $dsn = static::parseDsn($this->dsn(),$this->charset());
+        $dsn = static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort());
 
         if(!empty($dsn))
         {
             if(static::isDriver($dsn['scheme']))
             {
                 $this->setUsername($username);
-                $this->pdo = new \PDO($dsn['dsn'],$username,$password,$this->getOption('connect'));
+                $this->pdo = new \PDO($dsn['dsn'],$username,$password,$this->getAttr('connect'));
                 $this->makeHistory();
             }
 
@@ -248,7 +243,7 @@ class Pdo extends Main\Root
     // retourne le nom de la clé primaire
     public function primary():string
     {
-        return $this->getOption('primary');
+        return $this->getAttr('primary');
     }
 
 
@@ -256,7 +251,7 @@ class Pdo extends Main\Root
     // retourne le nom du charset
     public function charset():string
     {
-        return $this->getOption('charset');
+        return $this->getAttr('charset');
     }
 
 
@@ -278,20 +273,56 @@ class Pdo extends Main\Root
 
     // setDsn
     // change le dsn
-    public function setDsn(string $value):self
+    protected function setDsn(string $value):void
     {
         $this->checkReady(false);
         $this->dsn = $value;
-
-        return $this;
+        
+        return;
     }
 
-
+    
+    // getSyntax
+    // retourne la classe de syntaxe à utiliser avec la base de donnée
+    public function getSyntax():string 
+    {
+        return $this->syntax;
+    }
+    
+    
+    // setSyntax
+    // permet d'enregister la classe de syntaxe à utiliser
+    protected function setSyntax():void 
+    {
+        $driver = $this->driver();
+        
+        if(is_string($driver))
+        {
+            $syntax = $this->getAttr(array('syntax',$driver));
+            if(is_string($syntax))
+            $this->syntax = $syntax::getOverloadClass();
+        }
+        
+        if(empty($this->syntax))
+        static::throw('noSyntaxFound',$driver);
+        
+        return;
+    }
+    
+    
+    // syntaxCall
+    // permet d'appeler une méthode sur la classe de syntaxe
+    public function syntaxCall(string $method,...$args)
+    {
+        return $this->getSyntax()::$method(...$args);
+    }
+    
+    
     // driver
     // retourne le driver du dsn
     public function driver():?string
     {
-        return static::parseDsn($this->dsn(),$this->charset())['driver'] ?? null;
+        return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['driver'] ?? null;
     }
 
 
@@ -299,7 +330,7 @@ class Pdo extends Main\Root
     // retourne le host du dsn
     public function host():?string
     {
-        return static::parseDsn($this->dsn(),$this->charset())['host'] ?? null;
+        return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['host'] ?? null;
     }
 
 
@@ -307,7 +338,7 @@ class Pdo extends Main\Root
     // retourne le dbname du dsn
     public function dbName():?string
     {
-        return static::parseDsn($this->dsn(),$this->charset())['dbname'] ?? null;
+        return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['dbname'] ?? null;
     }
 
 
@@ -321,12 +352,12 @@ class Pdo extends Main\Root
 
     // setUsername
     // change le username
-    public function setUsername(string $value):self
+    protected function setUsername(string $value):void
     {
         $this->checkReady(false);
         $this->username = $value;
 
-        return $this;
+        return;
     }
 
 
@@ -342,7 +373,7 @@ class Pdo extends Main\Root
     // retourne l'attribut client version
     public function clientVersion():string
     {
-        return $this->getAttr(\PDO::ATTR_CLIENT_VERSION);
+        return $this->getPdoAttr(\PDO::ATTR_CLIENT_VERSION);
     }
 
 
@@ -350,7 +381,7 @@ class Pdo extends Main\Root
     // retourne l'attribut connection status
     public function connectionStatus():string
     {
-        return $this->getAttr(\PDO::ATTR_CONNECTION_STATUS);
+        return $this->getPdoAttr(\PDO::ATTR_CONNECTION_STATUS);
     }
 
 
@@ -358,7 +389,7 @@ class Pdo extends Main\Root
     // retourne l'attribut server version
     public function serverVersion():string
     {
-        return $this->getAttr(\PDO::ATTR_SERVER_VERSION);
+        return $this->getPdoAttr(\PDO::ATTR_SERVER_VERSION);
     }
 
 
@@ -366,7 +397,7 @@ class Pdo extends Main\Root
     // retourne l'attribut server info
     public function serverInfo():string
     {
-        return $this->getAttr(\PDO::ATTR_SERVER_INFO);
+        return $this->getPdoAttr(\PDO::ATTR_SERVER_INFO);
     }
 
 
@@ -374,7 +405,7 @@ class Pdo extends Main\Root
     // retourne les options pour la classe base sql
     public function getSqlOption(?array $option=null):array
     {
-        return Base\Arr::plus($this->getOption('sql'),['primary'=>$this->primary(),'charset'=>$this->charset(),'quoteCallable'=>[$this,'quote']],$option);
+        return Base\Arr::plus($this->getAttr('sql'),['primary'=>$this->primary(),'charset'=>$this->charset(),'quoteCallable'=>[$this,'quote']],$option);
     }
 
 
@@ -383,12 +414,12 @@ class Pdo extends Main\Root
     public function setDebug(?bool $value=null):self
     {
         if($value === null)
-        $value = ($this->getOption('debug') === true)? false:true;
+        $value = ($this->getAttr('debug') === true)? false:true;
 
-        return $this->setOption('debug',$value);
+        return $this->setAttr('debug',$value);
     }
 
-
+    
     // isReady
     // retourne vrai si une connection est établi
     public function isReady():bool
@@ -418,20 +449,20 @@ class Pdo extends Main\Root
     public function setRollback(?bool $value=null):self
     {
         if($value === null)
-        $value = ($this->getOption('rollback') === true)? false:true;
+        $value = ($this->getAttr('rollback') === true)? false:true;
 
-        return $this->setOption('rollback',$value);
+        return $this->setAttr('rollback',$value);
     }
 
 
     // makeHistory
     // créer l'objet history
     // méthode protégé
-    protected function makeHistory():self
+    protected function makeHistory():void
     {
         $this->history = History::newOverload();
 
-        return $this;
+        return;
     }
 
 
@@ -448,9 +479,9 @@ class Pdo extends Main\Root
     public function setHistory(?bool $value=null):self
     {
         if($value === null)
-        $value = ($this->getOption('history') === true)? false:true;
+        $value = ($this->getAttr('history') === true)? false:true;
 
-        return $this->setOption('history',$value);
+        return $this->setAttr('history',$value);
     }
 
 
@@ -487,11 +518,11 @@ class Pdo extends Main\Root
         $return['serverInfo'] = $this->serverInfo();
         $return['serverVersion'] = $this->serverVersion();
 
-        $return['persistent'] = $this->getAttr(\PDO::ATTR_PERSISTENT);
-        $return['autocommit'] = $this->getAttr(\PDO::ATTR_AUTOCOMMIT);
-        $return['oracleNull'] = $this->getAttr(\PDO::ATTR_ORACLE_NULLS);
-        $return['defaultFetchMode'] = $this->getAttr(\PDO::ATTR_DEFAULT_FETCH_MODE);
-        $return['emulatePrepare'] = $this->getAttr(\PDO::ATTR_EMULATE_PREPARES);
+        $return['persistent'] = $this->getPdoAttr(\PDO::ATTR_PERSISTENT);
+        $return['autocommit'] = $this->getPdoAttr(\PDO::ATTR_AUTOCOMMIT);
+        $return['oracleNull'] = $this->getPdoAttr(\PDO::ATTR_ORACLE_NULLS);
+        $return['defaultFetchMode'] = $this->getPdoAttr(\PDO::ATTR_DEFAULT_FETCH_MODE);
+        $return['emulatePrepare'] = $this->getPdoAttr(\PDO::ATTR_EMULATE_PREPARES);
         $return['importantVariables'] = $this->importantVariables();
 
         $return['historyUni'] = $this->history()->keyValue();
@@ -506,13 +537,13 @@ class Pdo extends Main\Root
     // output est keyValues
     public function importantVariables(?array $option=null):?array
     {
-        return $this->showVariables(static::$config['importantVariables'],$option);
+        return $this->showVariables($this->getAttr('importantVariables'),$option);
     }
 
 
-    // getAttr
+    // getPdoAttr
     // retourne un attribut de l'objet pdo ou pdoStatement
-    public function getAttr(int $key,?\PDOStatement $statement=null)
+    public function getPdoAttr(int $key,?\PDOStatement $statement=null)
     {
         $return = null;
 
@@ -526,9 +557,9 @@ class Pdo extends Main\Root
     }
 
 
-    // setAttr
+    // setPdoAttr
     // change un attribut de l'objet pdo ou pdoStatement
-    public function setAttr(int $key,$value,?\PDOStatement $statement=null):bool
+    public function setPdoAttr(int $key,$value,?\PDOStatement $statement=null):bool
     {
         $return = false;
 
@@ -646,7 +677,7 @@ class Pdo extends Main\Root
     public function makeStatement($value,?array $attr=[]):?\PDOStatement
     {
         $return = null;
-        $value = Syntax::parseReturn($value);
+        $value = $this->syntaxCall('parseReturn',$value);
 
         try
         {
@@ -699,13 +730,13 @@ class Pdo extends Main\Root
             $type = $return['type'];
             $return['statement'] = $statement;
 
-            if(static::isOutput($type,'rowCount'))
+            if($this->isOutput($type,'rowCount'))
             $return['row'] = $statement->rowCount();
 
-            if(static::isOutput($type,'insertId'))
+            if($this->isOutput($type,'insertId'))
             $return['insertId'] = $this->lastInsertId();
 
-            if(static::isOutput($type,'columnCount'))
+            if($this->isOutput($type,'columnCount'))
             {
                 $return['all'] = $statement->fetchAll(\PDO::FETCH_ASSOC);
                 $return['column'] = $statement->columnCount();
@@ -725,16 +756,16 @@ class Pdo extends Main\Root
     public function outputStatement($value,$output,\PDOStatement $statement)
     {
         $return = null;
-        $value = Syntax::parseReturn($value);
+        $value = $this->syntaxCall('parseReturn',$value);
 
         if(!empty($value))
         {
-            if(!static::isOutput($value['type'],$output))
+            if(!$this->isOutput($value['type'],$output))
             static::throw($output,'invalidOutputFor',$value['type']);
 
             else
             {
-                $output = static::output($value['type'],$output);
+                $output = $this->output($value['type'],$output);
 
                 if(!empty($output))
                 {
@@ -749,10 +780,10 @@ class Pdo extends Main\Root
                         if($method === 'infoStatement')
                         $return = $this->infoStatement($value,$statement);
 
-                        elseif($method === 'rowCount' && static::isOutput($type,$output['type']))
+                        elseif($method === 'rowCount' && $this->isOutput($type,$output['type']))
                         $return = $statement->rowCount();
 
-                        elseif($method === 'lastInsertId' && static::isOutput($type,$output['type']))
+                        elseif($method === 'lastInsertId' && $this->isOutput($type,$output['type']))
                         $return = $this->lastInsertId();
 
                         elseif(in_array($type,['select','show'],true))
@@ -794,7 +825,7 @@ class Pdo extends Main\Root
     {
         $return = null;
         $count = $statement->columnCount();
-        $arg = Syntax::shortcut(array_values((array) $arg));
+        $arg = $this->syntaxCall('shortcut',array_values((array) $arg));
 
         if($count > 2)
         {
@@ -826,7 +857,7 @@ class Pdo extends Main\Root
     {
         $return = null;
         $count = $statement->columnCount();
-        $arg = Syntax::shortcut(array_values((array) $arg));
+        $arg = $this->syntaxCall('shortcut',array_values((array) $arg));
 
         if($count > 2)
         {
@@ -856,7 +887,7 @@ class Pdo extends Main\Root
     public function fetchColumnStatement($arg,\PDOStatement $statement)
     {
         $return = null;
-        $arg = Syntax::shortcut(array_values((array) $arg));
+        $arg = $this->syntaxCall('shortcut',array_values((array) $arg));
 
         if(!empty($arg) && !Base\Arr::onlyNumeric($arg) && !empty($fetch = $statement->fetch(\PDO::FETCH_ASSOC)))
         $return = Base\Arr::get($arg[0],$fetch);
@@ -877,7 +908,7 @@ class Pdo extends Main\Root
     public function fetchColumnsStatement($arg,\PDOStatement $statement):?array
     {
         $return = null;
-        $arg = Syntax::shortcut(array_values((array) $arg));
+        $arg = $this->syntaxCall('shortcut',array_values((array) $arg));
 
         if(!empty($arg) && !Base\Arr::onlyNumeric($arg) && !empty($fetch = $statement->fetchAll(\PDO::FETCH_ASSOC)))
         $return = Base\Column::value($arg[0],$fetch);
@@ -947,10 +978,10 @@ class Pdo extends Main\Root
     {
         $return = null;
 
-        if($this->getOption('debug') || $output === 'debug')
+        if($this->getAttr('debug') || $output === 'debug')
         $return = $this->debug($value);
 
-        elseif(!empty($value = Syntax::parseReturn($value)))
+        elseif(!empty($value = $this->syntaxCall('parseReturn',$value)))
         {
             $beforeAfter = (is_array($output) && array_key_exists('beforeAfter',$output) && in_array($value['type'],['insert','update','delete'],true))? true:false;
 
@@ -1003,7 +1034,7 @@ class Pdo extends Main\Root
     {
         $return = null;
 
-        if(in_array($type,['before','after'],true) && Syntax::isReturnSelect($value))
+        if(in_array($type,['before','after'],true) && $this->syntaxCall('isReturnSelect',$value))
         {
             if($type === 'before')
             $return = $this->query($value['select'],$output);
@@ -1061,7 +1092,7 @@ class Pdo extends Main\Root
         {
             $method = $output['method'];
             $arg = (array_key_exists('arg',$output) && is_array($output['arg']))? array_values($output['arg']):[];
-            $cast = (!empty($this->getOption('cast')) || !empty($value['cast']))? true:false;
+            $cast = (!empty($this->getAttr('cast')) || !empty($value['cast']))? true:false;
 
             if($method === 'columnCount')
             $return = $statement->columnCount();
@@ -1125,7 +1156,7 @@ class Pdo extends Main\Root
     {
         $return = null;
 
-        if(Syntax::isQuery($type))
+        if($this->syntaxCall('isQuery',$type))
         {
             $method = 'make'.ucfirst(strtolower($type));
             $return = $this->$method($array,$output,$option);
@@ -1141,7 +1172,7 @@ class Pdo extends Main\Root
     // par exemple pour select assoc, limit 1 est ajouté
     public function makeSelect(array $array,$output=true,?array $option=null)
     {
-        return $this->query(Syntax::makeSelect(static::selectLimit($output,$array),$this->getSqlOption($option)),$output);
+        return $this->query($this->syntaxCall('makeSelect',$this->selectLimit($output,$array),$this->getSqlOption($option)),$output);
     }
 
 
@@ -1149,7 +1180,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête show généré par la classe sql
     public function makeShow(array $array,$output=true,?array $option=null)
     {
-        return $this->query(Syntax::makeShow($array,$this->getSqlOption($option)),$output);
+        return $this->query($this->syntaxCall('makeShow',$array,$this->getSqlOption($option)),$output);
     }
 
 
@@ -1161,11 +1192,11 @@ class Pdo extends Main\Root
     {
         $return = null;
         $option = $this->getSqlOption($option);
-        $sql = Syntax::makeInsert($array,$option);
+        $sql = $this->syntaxCall('makeInsert',$array,$option);
 
         if(!empty($sql))
         {
-            if($this->getOption('rollback'))
+            if($this->getAttr('rollback'))
             $sql = $this->prepareRollback('insert',$sql,$option);
 
             $return = $this->query($sql,$output);
@@ -1182,11 +1213,11 @@ class Pdo extends Main\Root
     {
         $return = null;
         $option = $this->getSqlOption($option);
-        $sql = Syntax::makeUpdate($array,$option);
+        $sql = $this->syntaxCall('makeUpdate',$array,$option);
 
         if(!empty($sql))
         {
-            if($this->getOption('rollback'))
+            if($this->getAttr('rollback'))
             $sql = $this->prepareRollback('update',$sql,$option);
 
             $return = $this->query($sql,$output);
@@ -1203,11 +1234,11 @@ class Pdo extends Main\Root
     {
         $return = null;
         $option = $this->getSqlOption($option);
-        $sql = Syntax::makeDelete($array,$option);
+        $sql = $this->syntaxCall('makeDelete',$array,$option);
 
         if(!empty($sql))
         {
-            if($this->getOption('rollback'))
+            if($this->getAttr('rollback'))
             $sql = $this->prepareRollback('delete',$sql,$option);
 
             $return = $this->query($sql,$output);
@@ -1221,7 +1252,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête create généré par la classe sql
     public function makeCreate(array $array,$output=true,?array $option=null)
     {
-        return $this->query(Syntax::makeCreate($array,$this->getSqlOption($option)),$output);
+        return $this->query($this->syntaxCall('makeCreate',$array,$this->getSqlOption($option)),$output);
     }
 
 
@@ -1229,7 +1260,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête alter généré par la classe sql
     public function makeAlter(array $array,$output=true,?array $option=null)
     {
-        return $this->query(Syntax::makeAlter($array,$this->getSqlOption($option)),$output);
+        return $this->query($this->syntaxCall('makeAlter',$array,$this->getSqlOption($option)),$output);
     }
 
 
@@ -1237,7 +1268,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête truncate généré par la classe sql
     public function makeTruncate(array $array,$output=true,?array $option=null)
     {
-        return $this->query(Syntax::makeTruncate($array,$this->getSqlOption($option)),$output);
+        return $this->query($this->syntaxCall('makeTruncate',$array,$this->getSqlOption($option)),$output);
     }
 
 
@@ -1245,7 +1276,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête drop généré par la classe sql
     public function makeDrop(array $array,$output=true,?array $option=null)
     {
-        return $this->query(Syntax::makeDrop($array,$this->getSqlOption($option)),$output);
+        return $this->query($this->syntaxCall('makeDrop',$array,$this->getSqlOption($option)),$output);
     }
 
 
@@ -1254,13 +1285,13 @@ class Pdo extends Main\Root
     // il y aura seulement un rollback si le tableau sql contient select, une table et un id numérique
     public function prepareRollback(string $type,array $return,?array $option=null):array
     {
-        if(in_array($type,['insert','update','delete'],true) && Syntax::isReturnRollback($return))
+        if(in_array($type,['insert','update','delete'],true) && $this->syntaxCall('isReturnRollback',$return))
         {
             $table = $return['select']['table'];
             $id = $return['select']['id'];
 
             if($type === 'insert')
-            $return['rollback'] = Syntax::makeDelete([$table,$id],$option);
+            $return['rollback'] = $this->syntaxCall('makeDelete',[$table,$id],$option);
 
             else
             {
@@ -1269,10 +1300,10 @@ class Pdo extends Main\Root
                 if(!empty($assoc))
                 {
                     if($type === 'update')
-                    $return['rollback'] = Syntax::makeUpdate([$table,$assoc,$id],$option);
+                    $return['rollback'] = $this->syntaxCall('makeUpdate',[$table,$assoc,$id],$option);
 
                     elseif($type === 'delete')
-                    $return['rollback'] = Syntax::makeInsert([$table,$assoc,$id],$option);
+                    $return['rollback'] = $this->syntaxCall('makeInsert',[$table,$assoc,$id],$option);
 
                     $return['rollback']['content'] = $assoc;
                 }
@@ -1629,7 +1660,7 @@ class Pdo extends Main\Root
     // output est column
     public function selectCount(...$values):?int
     {
-        return $this->query(Syntax::makeSelectCount(static::selectLimit('column',$values),$this->getSqlOption()),'column');
+        return $this->query($this->syntaxCall('makeSelectCount',$this->selectLimit('column',$values),$this->getSqlOption()),'column');
     }
 
 
@@ -1638,7 +1669,7 @@ class Pdo extends Main\Root
     // what est *
     public function selectAll(...$values)
     {
-        return $this->query(Syntax::makeSelectAll(static::selectLimit('assoc',$values),$this->getSqlOption()),'assoc');
+        return $this->query($this->syntaxCall('makeSelectAll',$this->selectLimit('assoc',$values),$this->getSqlOption()),'assoc');
     }
 
 
@@ -1647,7 +1678,7 @@ class Pdo extends Main\Root
     // what est *
     public function selectAlls(...$values):?array
     {
-        return $this->query(Syntax::makeSelectAll($values,$this->getSqlOption()),'assocs');
+        return $this->query($this->syntaxCall('makeSelectAll',$values,$this->getSqlOption()),'assocs');
     }
 
 
@@ -1656,7 +1687,7 @@ class Pdo extends Main\Root
     // what est *, key est le champ qui sera utilisé pour la clé du tableau de retour, peut aussi être un index
     public function selectAllsKey($key,...$values):?array
     {
-        return $this->query(Syntax::makeSelectAll($values,$this->getSqlOption()),['assocsKey','key'=>Base\Obj::cast($key,3)]);
+        return $this->query($this->syntaxCall('makeSelectAll',$values,$this->getSqlOption()),['assocsKey','key'=>Base\Obj::cast($key,3)]);
     }
 
 
@@ -1665,7 +1696,7 @@ class Pdo extends Main\Root
     // what est *, les clés du tableau sont primary
     public function selectAllsPrimary(...$values):?array
     {
-        return $this->query(Syntax::makeSelectAll($values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
+        return $this->query($this->syntaxCall('makeSelectAll',$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
     }
 
 
@@ -1674,7 +1705,7 @@ class Pdo extends Main\Root
     // what et function doivent être fourni
     public function selectFunction($what,string $function,...$values)
     {
-        return $this->query(Syntax::makeSelectFunction($what,$function,static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
+        return $this->query($this->syntaxCall('makeSelectFunction',$what,$function,$this->selectLimit('column',$values,1),$this->getSqlOption()),'column');
     }
 
 
@@ -1683,7 +1714,7 @@ class Pdo extends Main\Root
     // what et function doivent être fourni
     public function selectFunctions($what,string $function,...$values)
     {
-        return $this->query(Syntax::makeSelectFunction($what,$function,$values,$this->getSqlOption()),'columns');
+        return $this->query($this->syntaxCall('makeSelectFunction',$what,$function,$values,$this->getSqlOption()),'columns');
     }
 
 
@@ -1692,7 +1723,7 @@ class Pdo extends Main\Root
     // what est distinct what
     public function selectDistinct($what,...$values)
     {
-        return $this->query(Syntax::makeSelectDistinct($what,$values,$this->getSqlOption()),'columns');
+        return $this->query($this->syntaxCall('makeSelectDistinct',$what,$values,$this->getSqlOption()),'columns');
     }
 
 
@@ -1701,7 +1732,7 @@ class Pdo extends Main\Root
     // what peut être string ou array pour 1 colonne
     public function selectColumn($what,...$values)
     {
-        return $this->query(Syntax::makeSelectColumn($what,static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
+        return $this->query($this->syntaxCall('makeSelectColumn',$what,$this->selectLimit('column',$values,1),$this->getSqlOption()),'column');
     }
 
 
@@ -1710,7 +1741,7 @@ class Pdo extends Main\Root
     // what peut être string ou array pour 1 colonne
     public function selectColumns($what,...$values):?array
     {
-        return $this->query(Syntax::makeSelectColumn($what,$values,$this->getSqlOption()),'columns');
+        return $this->query($this->syntaxCall('makeSelectColumn',$what,$values,$this->getSqlOption()),'columns');
     }
 
 
@@ -1718,7 +1749,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête select avec output keyValue
     public function selectKeyPair($key,$pair,...$values):?array
     {
-        return $this->query(Syntax::makeselectKeyPair($key,$pair,static::selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
+        return $this->query($this->syntaxCall('makeselectKeyPair',$key,$pair,$this->selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
     }
 
 
@@ -1726,7 +1757,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête select avec output keyValues
     public function selectKeyPairs($key,$pair,...$values):?array
     {
-        return $this->query(Syntax::makeselectKeyPair($key,$pair,$values,$this->getSqlOption()),'keyPairs');
+        return $this->query($this->syntaxCall('makeselectKeyPair',$key,$pair,$values,$this->getSqlOption()),'keyPairs');
     }
 
 
@@ -1735,7 +1766,7 @@ class Pdo extends Main\Root
     // what est primary
     public function selectPrimary(...$values)
     {
-        return $this->query(Syntax::makeselectPrimary(static::selectLimit('column',$values,1),$this->getSqlOption()),'column');
+        return $this->query($this->syntaxCall('makeselectPrimary',$this->selectLimit('column',$values,1),$this->getSqlOption()),'column');
     }
 
 
@@ -1744,7 +1775,7 @@ class Pdo extends Main\Root
     // what est primary
     public function selectPrimaries(...$values):?array
     {
-        return $this->query(Syntax::makeselectPrimary($values,$this->getSqlOption()),'columns');
+        return $this->query($this->syntaxCall('makeselectPrimary',$values,$this->getSqlOption()),'columns');
     }
 
 
@@ -1753,7 +1784,7 @@ class Pdo extends Main\Root
     // la key est primary
     public function selectPrimaryPair($pair,...$values):?array
     {
-        return $this->query(Syntax::makeselectPrimaryPair($pair,static::selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
+        return $this->query($this->syntaxCall('makeselectPrimaryPair',$pair,$this->selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
     }
 
 
@@ -1762,7 +1793,7 @@ class Pdo extends Main\Root
     // la key est primary
     public function selectPrimaryPairs($pair,...$values):?array
     {
-        return $this->query(Syntax::makeselectPrimaryPair($pair,$values,$this->getSqlOption()),'keyPairs');
+        return $this->query($this->syntaxCall('makeselectPrimaryPair',$pair,$values,$this->getSqlOption()),'keyPairs');
     }
 
 
@@ -1771,7 +1802,7 @@ class Pdo extends Main\Root
     // key doit être une string avec segment []
     public function selectSegment(string $key,...$values):?string
     {
-        return $this->query(Syntax::makeSelectSegment($key,static::selectLimit('segment',$values,1),$this->getSqlOption()),['segment','arg'=>$key]);
+        return $this->query($this->syntaxCall('makeSelectSegment',$key,$this->selectLimit('segment',$values,1),$this->getSqlOption()),['segment','arg'=>$key]);
     }
 
 
@@ -1781,7 +1812,7 @@ class Pdo extends Main\Root
     // key doit être une string avec segment []
     public function selectSegments(string $key,...$values):?array
     {
-        return $this->query(Syntax::makeSelectSegment($key,$values,$this->getSqlOption()),['segments','arg'=>$key]);
+        return $this->query($this->syntaxCall('makeSelectSegment',$key,$values,$this->getSqlOption()),['segments','arg'=>$key]);
     }
 
 
@@ -1790,7 +1821,7 @@ class Pdo extends Main\Root
     // key doit être une string avec segment []
     public function selectSegmentAssoc(string $key,...$values):?array
     {
-        return $this->query(Syntax::makeSelectSegment($key,static::selectLimit('segment',$values,1),$this->getSqlOption()),'assoc');
+        return $this->query($this->syntaxCall('makeSelectSegment',$key,$this->selectLimit('segment',$values,1),$this->getSqlOption()),'assoc');
     }
 
 
@@ -1799,7 +1830,7 @@ class Pdo extends Main\Root
     // l'argument key doit être une string avec segment []
     public function selectSegmentAssocs(string $key,...$values):?array
     {
-        return $this->query(Syntax::makeSelectSegment($key,$values,$this->getSqlOption()),'assocs');
+        return $this->query($this->syntaxCall('makeSelectSegment',$key,$values,$this->getSqlOption()),'assocs');
     }
 
 
@@ -1809,7 +1840,7 @@ class Pdo extends Main\Root
     // l'argument key doit être une string avec segment []
     public function selectSegmentAssocsKey(string $key,...$values):?array
     {
-        return $this->query(Syntax::makeSelectSegment($key,$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
+        return $this->query($this->syntaxCall('makeSelectSegment',$key,$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
     }
 
 
@@ -1818,7 +1849,7 @@ class Pdo extends Main\Root
     // utilise select car plus rapide, output est rowCount
     public function selectTableColumnCount($value,?array $option=null):?int
     {
-        return $this->query(Syntax::makeSelect(['*',$value,'limit'=>0],$this->getSqlOption($option)),'columnCount');
+        return $this->query($this->syntaxCall('makeSelect',['*',$value,'limit'=>0],$this->getSqlOption($option)),'columnCount');
     }
 
 
@@ -1828,7 +1859,7 @@ class Pdo extends Main\Root
     // output est column
     public function showDatabase($value,?array $option=null)
     {
-        return $this->query(Syntax::makeShowDatabase(Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
+        return $this->query($this->syntaxCall('makeShowDatabase',Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
     }
 
 
@@ -1838,7 +1869,7 @@ class Pdo extends Main\Root
     // output est columns
     public function showDatabases($value=null,?array $option=null):?array
     {
-        return $this->query(Syntax::makeShowDatabase($value,$this->getSqlOption($option)),'columns');
+        return $this->query($this->syntaxCall('makeShowDatabase',$value,$this->getSqlOption($option)),'columns');
     }
 
 
@@ -1848,7 +1879,7 @@ class Pdo extends Main\Root
     // output est column
     public function showVariable($value,?array $option=null)
     {
-        return $this->query(Syntax::makeShowVariable(Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>1]);
+        return $this->query($this->syntaxCall('makeShowVariable',Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>1]);
     }
 
 
@@ -1858,7 +1889,7 @@ class Pdo extends Main\Root
     // output est keyValues
     public function showVariables($value=null,?array $option=null):?array
     {
-        return $this->query(Syntax::makeShowVariable($value,$this->getSqlOption($option)),'keyPairs');
+        return $this->query($this->syntaxCall('makeShowVariable',$value,$this->getSqlOption($option)),'keyPairs');
     }
 
 
@@ -1868,7 +1899,7 @@ class Pdo extends Main\Root
     // output est column
     public function showTable($value,?array $option=null)
     {
-        return $this->query(Syntax::makeShowTable(Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
+        return $this->query($this->syntaxCall('makeShowTable',Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
     }
 
 
@@ -1878,7 +1909,7 @@ class Pdo extends Main\Root
     // output est columns
     public function showTables($value=null,?array $option=null):?array
     {
-        return $this->query(Syntax::makeShowTable($value,$this->getSqlOption($option)),'columns');
+        return $this->query($this->syntaxCall('makeShowTable',$value,$this->getSqlOption($option)),'columns');
     }
 
 
@@ -1886,7 +1917,7 @@ class Pdo extends Main\Root
     // output est assoc
     public function showTableStatus($value,?array $option=null)
     {
-        return $this->query(Syntax::makeShowTableStatus(Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
+        return $this->query($this->syntaxCall('makeShowTableStatus',Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
     }
 
 
@@ -1929,7 +1960,7 @@ class Pdo extends Main\Root
     // output est assoc
     public function showTableColumn($table,$value,?array $option=null):?array
     {
-        return $this->query(Syntax::makeShowTableColumn($table,Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
+        return $this->query($this->syntaxCall('makeShowTableColumn',$table,Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
     }
 
 
@@ -1939,7 +1970,7 @@ class Pdo extends Main\Root
     public function showTableColumnField($table,$value,?array $option=null)
     {
         $option = Base\Arr::plus($option,['full'=>false]);
-        return $this->query(Syntax::makeShowTableColumn($table,Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>'Field']);
+        return $this->query($this->syntaxCall('makeShowTableColumn',$table,Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>'Field']);
     }
 
 
@@ -1948,7 +1979,7 @@ class Pdo extends Main\Root
     // output est assocsKey, la clé est field
     public function showTableColumns($value,?array $option=null):?array
     {
-        return $this->query(Syntax::makeShowTableColumn($value,null,$this->getSqlOption($option)),['assocsKey','key'=>'Field']);
+        return $this->query($this->syntaxCall('makeShowTableColumn',$value,null,$this->getSqlOption($option)),['assocsKey','key'=>'Field']);
     }
 
 
@@ -1957,7 +1988,7 @@ class Pdo extends Main\Root
     // output est columns, la clé est field
     public function showTableColumnsField($value,?array $option=null):?array
     {
-        return $this->query(Syntax::makeShowTableColumn($value,null,$this->getSqlOption($option)),['columns','arg'=>'Field']);
+        return $this->query($this->syntaxCall('makeShowTableColumn',$value,null,$this->getSqlOption($option)),['columns','arg'=>'Field']);
     }
 
 
@@ -2067,7 +2098,7 @@ class Pdo extends Main\Root
     // output est statement
     public function alterAutoIncrement($table,int $value=0,?array $option=null):?\PDOStatement
     {
-        return $this->query(Syntax::makeAlterAutoIncrement($table,$value,$this->getSqlOption($option)),null);
+        return $this->query($this->syntaxCall('makeAlterAutoIncrement',$table,$value,$this->getSqlOption($option)),null);
     }
 
 
@@ -2075,7 +2106,7 @@ class Pdo extends Main\Root
     // émule une requête sql en utilisant la méthode quote de pdo
     public function emulate(string $return,?array $prepare=null,bool $replaceDoubleEscape=true):string
     {
-        return Syntax::emulate($return,$prepare,[$this,'quote'],$replaceDoubleEscape);
+        return $this->syntaxCall('emulate',$return,$prepare,[$this,'quote'],$replaceDoubleEscape);
     }
 
 
@@ -2084,7 +2115,7 @@ class Pdo extends Main\Root
     // la requête est émulé en utilisant la méthode quote de pdo
     public function debug($value,bool $replaceDoubleEscape=true):?array
     {
-        return Syntax::debug($value,[$this,'quote'],$replaceDoubleEscape);
+        return $this->syntaxCall('debug',$value,[$this,'quote'],$replaceDoubleEscape);
     }
 
 
@@ -2096,17 +2127,9 @@ class Pdo extends Main\Root
     }
 
 
-    // isDriver
-    // retourne vrai si le driver est supporté par PDO
-    public static function isDriver($value):bool
-    {
-        return (is_string($value) && in_array($value,static::allDrivers(),true))? true:false;
-    }
-
-
     // isOutput
     // retourne vrai si l'output est compatible avec le type de requête
-    public static function isOutput(string $type,$value):bool
+    public function isOutput(string $type,$value):bool
     {
         $return = false;
 
@@ -2118,27 +2141,145 @@ class Pdo extends Main\Root
 
         if(is_string($value))
         {
+            $all = $this->getAttr(array('output','all'));
+            
             if($value === 'insertId')
             $return = ($type === 'insert')? true:false;
 
             elseif($value === 'rowCount' && in_array($type,['select','show','insert','update','delete'],true))
             $return = true;
 
-            elseif(array_key_exists($value,static::$config['output']['all']) && ($type === 'select' || $type === 'show'))
+            elseif(is_array($all) && array_key_exists($value,$all) && ($type === 'select' || $type === 'show'))
             {
-                if(empty(static::$config['output']['all'][$value]['onlySelect']) || $type === 'select')
+                if(empty($all[$value]['onlySelect']) || $type === 'select')
                 $return = true;
             }
         }
 
         return $return;
     }
+    
+    
+    // output
+    // retourne le tableau de configuration pour output
+    // true retourne le output par défaut pour le type de requête
+    public function output(string $type,$value):?array
+    {
+        $return = null;
+
+        if($this->isOutput($type,$value))
+        {
+            if($value === true)
+            {
+                if($type === 'select' || $type === 'show')
+                $value = $this->getAttr(array('output','default',$type));
+
+                elseif($type === 'insert')
+                $value = 'insertId';
+
+                elseif($type === 'update' || $type === 'delete')
+                $value = 'rowCount';
+
+                else
+                $value = 'statement';
+            }
+
+            if(is_array($value) && !empty($value))
+            {
+                if(array_key_exists('beforeAfter',$value))
+                unset($value['beforeAfter']);
+
+                $replace = Base\Arr::spliceFirst($value);
+                $value = (count($value))? current($value):null;
+            }
+
+            if($value === null)
+            $value = 'statement';
+            
+            $all = $this->getAttr(array('output','all'));
+            if(is_string($value) && is_array($all) && array_key_exists($value,$all))
+            {
+                $return = $all[$value];
+                $return['type'] = $value;
+
+                if(!empty($replace))
+                $return = Base\Arr::replace($return,$replace);
+
+                if(array_key_exists('fetch',$return))
+                {
+                    $fetch = $this->parseFetch($return['fetch']);
+
+                    if($fetch !== null || !is_string($return['fetch']))
+                    $return['fetch'] = $fetch;
+                }
+
+                if(array_key_exists('arg',$return))
+                $return['arg'] = (array) $return['arg'];
+            }
+        }
+
+        return $return;
+    }
+    
+    
+    // selectLimit
+    // une valeur numérique limit peut être ajouté dans le tableau input sql si configuré
+    // par exemple pour une requête select assoc, limit 1 est ajouté
+    // offset permet de preprend une ou plusieurs entrées au tableau, par exemple si what n'est pas censé être dans le tableau
+    public function selectLimit($output,array $return,int $offset=0):array
+    {
+        $output = $this->output('select',$output);
+
+        if(!empty($output) && array_key_exists('selectLimit',$output))
+        {
+            $array = ($offset > 0)? Base\Arr::unshift($return,$offset):$return;
+            $makeParse = $this->syntaxCall('makeParse','select','limit',$array);
+
+            if($makeParse === null)
+            $return['limit'] = $output['selectLimit'];
+        }
+
+        return $return;
+    }
+    
+    
+    // parseFetch
+    // retourne le code numérique pour fetch
+    // true retourne le code par défaut
+    public function parseFetch($value):?int
+    {
+        $return = null;
+
+        if(is_string($value))
+        $return = $this->getAttr(array('fetch',$value));
+
+        elseif(is_int($value))
+        $return = $value;
+
+        return $return;
+    }
+
+    
+    // defaultPort
+    // retourne le port par défaut pour l'engin sql
+    public function defaultPort():int
+    {
+        return $this->getAttr('defaultPort');
+    }
+    
+    
+    // isDriver
+    // retourne vrai si le driver est supporté par PDO
+    public static function isDriver($value):bool
+    {
+        return (is_string($value) && in_array($value,static::allDrivers(),true))? true:false;
+    }
 
 
     // parseDsn
     // parse une string dsn
     // le charset est ajouté à la fin du dsn de retour
-    public static function parseDsn(string $dsn,string $charset):?array
+    public static function parseDsn(string $dsn,string $charset,int $defaultPort):?array
     {
         $return = null;
 
@@ -2163,7 +2304,7 @@ class Pdo extends Main\Root
                 }
 
                 if(empty($parse['port']))
-                $parse['port'] = static::defaultPort();
+                $parse['port'] = $defaultPort;
 
                 if(!empty($parse['host']) && !empty($parse['dbname']))
                 $return = $parse;
@@ -2194,84 +2335,6 @@ class Pdo extends Main\Root
 
         elseif($value === null)
         $return = \PDO::PARAM_NULL;
-
-        return $return;
-    }
-
-
-    // parseFetch
-    // retourne le code numérique pour fetch
-    // true retourne le code par défaut
-    public static function parseFetch($value):?int
-    {
-        $return = null;
-
-        if(is_string($value) && array_key_exists($value,static::$config['fetch']))
-        $return = static::$config['fetch'][$value];
-
-        elseif(is_int($value))
-        $return = $value;
-
-        return $return;
-    }
-
-
-    // output
-    // retourne le tableau de configuration pour output
-    // true retourne le output par défaut pour le type de requête
-    public static function output(string $type,$value):?array
-    {
-        $return = null;
-
-        if(static::isOutput($type,$value))
-        {
-            if($value === true)
-            {
-                if($type === 'select' || $type === 'show')
-                $value = (!empty(static::$config['output']['default'][$type]))? static::$config['output']['default'][$type]:null;
-
-                elseif($type === 'insert')
-                $value = 'insertId';
-
-                elseif($type === 'update' || $type === 'delete')
-                $value = 'rowCount';
-
-                else
-                $value = 'statement';
-            }
-
-            if(is_array($value) && !empty($value))
-            {
-                if(array_key_exists('beforeAfter',$value))
-                unset($value['beforeAfter']);
-
-                $replace = Base\Arr::spliceFirst($value);
-                $value = (count($value))? current($value):null;
-            }
-
-            if($value === null)
-            $value = 'statement';
-
-            if(is_string($value) && array_key_exists($value,static::$config['output']['all']))
-            {
-                $return = static::$config['output']['all'][$value];
-                $return['type'] = $value;
-
-                if(!empty($replace))
-                $return = Base\Arr::replace($return,$replace);
-
-                if(array_key_exists('fetch',$return))
-                {
-                    $fetch = static::parseFetch($return['fetch']);
-
-                    if($fetch !== null || !is_string($return['fetch']))
-                    $return['fetch'] = $fetch;
-                }
-
-                if(array_key_exists('arg',$return))
-                $return['arg'] = (array) $return['arg'];
-            }
-        }
 
         return $return;
     }
@@ -2319,35 +2382,6 @@ class Pdo extends Main\Root
         }
 
         return $return;
-    }
-
-
-    // selectLimit
-    // une valeur numérique limit peut être ajouté dans le tableau input sql si configuré
-    // par exemple pour une requête select assoc, limit 1 est ajouté
-    // offset permet de preprend une ou plusieurs entrées au tableau, par exemple si what n'est pas censé être dans le tableau
-    public static function selectLimit($output,array $return,int $offset=0):array
-    {
-        $output = static::output('select',$output);
-
-        if(!empty($output) && array_key_exists('selectLimit',$output))
-        {
-            $array = ($offset > 0)? Base\Arr::unshift($return,$offset):$return;
-            $makeParse = Syntax::makeParse('select','limit',$array);
-
-            if($makeParse === null)
-            $return['limit'] = $output['selectLimit'];
-        }
-
-        return $return;
-    }
-
-
-    // defaultPort
-    // retourne le port par défaut pour l'engin sql
-    public static function defaultPort():int
-    {
-        return static::$config['port'];
     }
 
 

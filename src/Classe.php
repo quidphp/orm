@@ -14,23 +14,18 @@ use Quid\Main;
 // class required to identify which class needs to be used by the different ORM components of a database
 class Classe extends Main\Map
 {
-    // trait
-    use Main\_option;
-
-
     // config
     public static $config = [
-        'option'=>[
-            'default'=>[ // classe par défaut
-                'table'=>Table::class,
-                'col'=>Col::class,
-                'row'=>Row::class,
-                'cell'=>Cell::class,
-                'cols'=>Cols::class,
-                'rows'=>Rows::class,
-                'cells'=>Cells::class],
-            'colGroup'=>[], // classe pour colonne selon le group
-            'colAttr'=>[]], // classe pour colonne selon un attribut
+        'default'=>[ // classe par défaut
+            'table'=>Table::class,
+            'col'=>Col::class,
+            'row'=>Row::class,
+            'cell'=>Cell::class,
+            'cols'=>Cols::class,
+            'rows'=>Rows::class,
+            'cells'=>Cells::class],
+        'colGroup'=>[], // classe pour colonne selon le group
+        'colAttr'=>[], // classe pour colonne selon un attribut
         'extendersKeys'=>['table','rows','row','cols','col','cells','cell'], // défini les clés à garder de l'extenders
     ];
 
@@ -45,9 +40,9 @@ class Classe extends Main\Map
 
     // construct
     // construit l'objet classe
-    public function __construct(Main\Extenders $extenders,?array $option=null)
+    public function __construct(Main\Extenders $extenders,?array $attr=null)
     {
-        $this->option($option);
+        $this->makeAttr($attr);
         $this->setExtenders($extenders);
 
         return;
@@ -57,14 +52,14 @@ class Classe extends Main\Map
     // setExtenders
     // garde une copie de l'objet extenders
     // méthode protégé
-    protected function setExtenders(Main\Extenders $extenders):self
+    protected function setExtenders(Main\Extenders $extenders):void
     {
-        $keys = static::extendersKeys();
+        $keys = $this->extendersKeys();
         $this->extenders = $extenders->filter(function($value,$key) use($keys) {
             return (in_array($key,$keys,true))? true:false;
         });
 
-        return $this;
+        return;
     }
 
 
@@ -93,7 +88,7 @@ class Classe extends Main\Map
         {
             $array = [];
 
-            foreach (static::extendersKeys() as $key)
+            foreach ($this->extendersKeys() as $key)
             {
                 if(!in_array($key,['col','cell'],true))
                 $array[$key] = $this->find($key,$table);
@@ -170,7 +165,7 @@ class Classe extends Main\Map
     // doit retourner une string, sinon une exception sera lancé
     public function default(string $type):string
     {
-        return $this->getOption(['default',$type]);
+        return $this->getAttr(['default',$type]);
     }
 
 
@@ -183,7 +178,7 @@ class Classe extends Main\Map
         $return = null;
         $default = $this->default($type);
 
-        if(!in_array($type,static::extendersKeys(),true))
+        if(!in_array($type,$this->extendersKeys(),true))
         static::throw('invalidType',$type);
 
         if($type === 'col')
@@ -259,7 +254,7 @@ class Classe extends Main\Map
         $return = $this->colFromAttr($table->colAttr($col),true);
 
         if(empty($return) && array_key_exists('group',$attr) && is_string($attr['group']))
-        $return = $this->getOption(['colGroup',$attr['group']]);
+        $return = $this->getAttr(['colGroup',$attr['group']]);
 
         return $return;
     }
@@ -279,15 +274,15 @@ class Classe extends Main\Map
             $return = $value['class'];
 
             elseif(array_key_exists('media',$value))
-            $return = $this->getOption(['colAttr','media']);
+            $return = $this->getAttr(['colAttr','media']);
 
             elseif(array_key_exists('relation',$value))
             {
                 if(array_key_exists('set',$value) && $value['set'] === true)
-                $return = $this->getOption(['colAttr','set']);
+                $return = $this->getAttr(['colAttr','set']);
 
                 elseif((array_key_exists('enum',$value) && $value['enum'] === true) || $defaultEnum === true)
-                $return = $this->getOption(['colAttr','enum']);
+                $return = $this->getAttr(['colAttr','enum']);
             }
         }
 
@@ -307,9 +302,9 @@ class Classe extends Main\Map
 
     // extendersKeys
     // retourne les clés de l'extender pour la db
-    public static function extendersKeys():array
+    protected function extendersKeys():array
     {
-        return static::$config['extendersKeys'];
+        return $this->getAttr('extendersKeys');
     }
 }
 ?>

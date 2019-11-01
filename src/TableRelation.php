@@ -15,16 +15,8 @@ use Quid\Main;
 // class to access the relation data of a table
 class TableRelation extends Relation
 {
-    /// trait
-    use Main\_attr;
-
-
     // config
     public static $config = [];
-
-
-    // dynamique
-    protected $attr = []; // tableau des attributs
 
 
     // construct
@@ -38,26 +30,17 @@ class TableRelation extends Relation
     }
 
 
-    // attrAll
-    // retourne le tableau des attributs
-    // doit retourner une référence
-    protected function &attrAll():array
-    {
-        return $this->attr;
-    }
-
-
     // makeAttr
     // applique les attributs de relation en provenance de la table
     // si what est true, prend le nom de la colonne via la méthode colName
     // seul what est nécessaire
     // méthode protégé
-    protected function makeAttr(Table $table):self
+    protected function makeAttr($table,bool $config=true):void
     {
         if(!$table->allowsRelation())
         static::throw($this,'doesNotSupportRelation');
 
-        $attr = $table->attr('relation');
+        $attr = $table->getAttr('relation');
         if(is_scalar($attr))
         $attr = ['what'=>$attr];
 
@@ -106,7 +89,7 @@ class TableRelation extends Relation
             static::throw('whatCannotBeEmpty');
         }
 
-        return $this;
+        return;
     }
 
 
@@ -563,7 +546,7 @@ class TableRelation extends Relation
     // retourne le code d'ordre par défaut pour la relation
     public function defaultOrderCode():?int
     {
-        return $this->table()->attr('orderCode');
+        return $this->table()->getAttr('orderCode');
     }
 
 

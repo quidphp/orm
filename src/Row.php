@@ -17,8 +17,7 @@ class Row extends Main\ArrObj
 {
     // trait
     use _tableAccess;
-    use Main\_attr;
-    use Main\_permission;
+    use Main\_attrPermission;
 
 
     // config
@@ -54,18 +53,20 @@ class Row extends Main\ArrObj
     // appeler après le premier cellsLoad de la row
     // par défaut renvoie à onRefreshed
     // méthode protégé qui peut être étendu
-    protected function onInit():self
+    protected function onInit():void
     {
-        return $this->onRefreshed();
+        $this->onRefreshed();
+        
+        return;
     }
 
 
     // onRefreshed
     // appeler après chaque appel réussi à cellsLoad ou cellsRefresh
     // méthode protégé qui peut être étendu
-    protected function onRefreshed():self
+    protected function onRefreshed():void
     {
-        return $this;
+        return;
     }
 
 
@@ -111,7 +112,7 @@ class Row extends Main\ArrObj
     // méthode protégé qui peut être étendu
     protected function onCommittedOrDeleted(array $option)
     {
-        return $this;
+        return;
     }
 
 
@@ -280,7 +281,7 @@ class Row extends Main\ArrObj
     // setPrimary
     // change la ligne primaire de la ligne
     // méthode protégé
-    protected function setPrimary(int $primary):self
+    protected function setPrimary(int $primary):void
     {
         if($primary > 0)
         $this->primary = $primary;
@@ -288,7 +289,7 @@ class Row extends Main\ArrObj
         else
         static::throw();
 
-        return $this;
+        return;
     }
 
 
@@ -308,28 +309,20 @@ class Row extends Main\ArrObj
     }
 
 
-    // attrAll
+    // attrRef
     // retourne le tableau des attributs
     // doit retourner une référence
-    protected function &attrAll():array
+    protected function &attrRef():array
     {
-        return $this->table()->attrAll();
+        return $this->table()->attrRef();
     }
 
 
-    // permissionAll
-    // retourne le tableau de la source des paramètres de rôles, se retrouve dans table
-    protected function &permissionAll():array
+    // attrPermissionRolesObject
+    // retourne les rôles courants
+    protected function attrPermissionRolesObject():Main\Roles
     {
-        return $this->table()->permissionAll();
-    }
-
-
-    // permissionDefaultRole
-    // retourne le rôle courant
-    protected function permissionDefaultRole():Main\Role
-    {
-        return $this->table()->permissionDefaultRole();
+        return $this->table()->attrPermissionRolesObject();
     }
 
 
@@ -527,12 +520,12 @@ class Row extends Main\ArrObj
     // cellMake
     // construit et store un objet cellule
     // méthode protégé
-    protected function cellMake(string $class,Col $col,$value):self
+    protected function cellMake(string $class,Col $col,$value):void
     {
         $cell = new $class($value,$col,$this);
         $this->cells->add($cell);
 
-        return $this;
+        return;
     }
 
 
@@ -865,7 +858,7 @@ class Row extends Main\ArrObj
     {
         $return = null;
         $table = $this->table();
-        $cells = $this->cells()->withoutPrimary()->filter(['attr'=>true],'duplicate');
+        $cells = $this->cells()->withoutPrimary()->filter(['getAttr'=>true],'duplicate');
 
         if($cells->isNotEmpty())
         {
@@ -1227,7 +1220,7 @@ class Row extends Main\ArrObj
     // gère la communication après la requête update si option com est true
     // si option com est false et qu'il y a une exception attrapable, renvoie
     // méthode protégé
-    protected function updateAfter($result,?array $set=null,?array $option=null):self
+    protected function updateAfter($result,?array $set=null,?array $option=null):void
     {
         $option = Base\Arr::plus(['com'=>false,'strict'=>true,'partial'=>false,'onCommitted'=>true],$option);
 
@@ -1289,13 +1282,13 @@ class Row extends Main\ArrObj
         if($option['onCommitted'] === true && in_array($result,[0,1],true) && is_array($set) && !empty($set))
         $this->updateOnCommitted($set,$option);
 
-        return $this;
+        return;
     }
 
 
     // updateOnCommitted
     // lance le callback onCommitted sur toutes les colonnes qui ont changés
-    protected function updateOnCommitted(array $set,array $option):self
+    protected function updateOnCommitted(array $set,array $option):void
     {
         $cells = $this->cells(...array_keys($set));
 
@@ -1305,7 +1298,7 @@ class Row extends Main\ArrObj
             $cell->onCommitted(false,$option);
         }
 
-        return $this;
+        return;
     }
 
 
@@ -1392,7 +1385,7 @@ class Row extends Main\ArrObj
     // gère la communication après la requête delete si option com est true
     // si option com est false et qu'il y a une exception attrapable, renvoie
     // méthode protégé
-    protected function deleteAfter($result,?array $option=null):self
+    protected function deleteAfter($result,?array $option=null):void
     {
         $option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
 
@@ -1442,7 +1435,7 @@ class Row extends Main\ArrObj
         elseif($option['strict'] === true && !in_array($result,[0,1],true))
         static::throw('deleteFailed',$result,'strictMode');
 
-        return $this;
+        return;
     }
 
 

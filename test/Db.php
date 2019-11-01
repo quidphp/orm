@@ -21,6 +21,7 @@ class Db extends Base\Test
     {
         // prepare
         $db = Orm\Db::inst();
+        $syntax = $db->getSyntax();
         $db->autoSave();
         $table = 'ormDb';
         assert($db->truncate($table) instanceof \PDOStatement);
@@ -86,7 +87,7 @@ class Db extends Base\Test
 
         // setLog
         assert($db->setLog(true) === $db);
-        assert($db->getOption('log') === true);
+        assert($db->getAttr('log') === true);
 
         // statementException
 
@@ -130,8 +131,11 @@ class Db extends Base\Test
         // description
         assert($db->description(null,null,'fr') === null);
 
-        // setRole
-
+        // setRoles
+        
+        // roles
+        assert($db->roles() instanceof Main\Roles);
+        
         // role
         assert($db->role() instanceof Main\Role);
 
@@ -180,8 +184,8 @@ class Db extends Base\Test
         assert($db->fromPointer('ormDb/2') === null);
 
         // prepareRow
-        assert($db->prepareRow(Orm\Syntax::makeSelect(['*',$table,['name_[lang]'=>'james']]),'rows')['id'] === [1]);
-        assert($db->prepareRow(Orm\Syntax::makeSelect(['*',$table,['name_[lang]'=>'james']]),'row')['id'] === 1);
+        assert($db->prepareRow($syntax::makeSelect(['*',$table,['name_[lang]'=>'james']]),'rows')['id'] === [1]);
+        assert($db->prepareRow($syntax::makeSelect(['*',$table,['name_[lang]'=>'james']]),'row')['id'] === 1);
 
         // row
         assert($db->row($tb,2) instanceof Orm\Row);
@@ -263,20 +267,20 @@ class Db extends Base\Test
         // info
         assert(count($db->info()) === 18);
 
+        // getPriorityIncrement
+        assert($db->getPriorityIncrement() === 10);
+
         // isRowOutput
-        assert(Orm\Db::isRowOutput('rowIn'));
-        assert(Orm\Db::isRowOutput('rowsIn'));
-        assert(!Orm\Db::isRowOutput('rowsInz'));
+        assert($db->isRowOutput('rowIn'));
+        assert($db->isRowOutput('rowsIn'));
+        assert(!$db->isRowOutput('rowsInz'));
 
         // getRowOutputType
-        assert(Orm\Db::getRowOutputType('rowIn') === 'row');
-        assert(Orm\Db::getRowOutputType('rowsIn') === 'rows');
+        assert($db->getRowOutputType('rowIn') === 'row');
+        assert($db->getRowOutputType('rowsIn') === 'rows');
 
-        // getPriorityIncrement
-        assert(Orm\Db::getPriorityIncrement() === 10);
-
-        // option
-        assert(count($db->option()) === 18);
+        // attr
+        assert(count($db->attr()) === 25);
 
         // inst
         assert(Orm\Db::hasInst());
@@ -317,13 +321,13 @@ class Db extends Base\Test
         assert($db->setDebug(false) === $db);
 
         // pdo
-        assert(Orm\Db::isOutput('select','rowsIn'));
-        assert(!Orm\Db::isOutput('insert','rowOut'));
-        assert(!Orm\Db::isOutput('show','rows'));
-        assert(Orm\Db::output('select','rowOut') === ['onlySelect'=>true,'selectLimit'=>1,'type'=>'rowOut']);
-        assert(Orm\Db::output('show','rowOut') === null);
-        assert(Orm\Db::selectLimit('row',['*','james',2])['limit'] === 1);
-        assert(count(Orm\Db::selectLimit('rows',['*','james',2])) === 3);
+        assert($db->isOutput('select','rowsIn'));
+        assert(!$db->isOutput('insert','rowOut'));
+        assert(!$db->isOutput('show','rows'));
+        assert($db->output('select','rowOut') === ['onlySelect'=>true,'selectLimit'=>1,'type'=>'rowOut']);
+        assert($db->output('show','rowOut') === null);
+        assert($db->selectLimit('row',['*','james',2])['limit'] === 1);
+        assert(count($db->selectLimit('rows',['*','james',2])) === 3);
         assert($db->selectColumn($col,$table,$row) === 1);
         assert($db->showTable($tb) === 'ormDb');
         assert(is_string(Base\Obj::cast($sql)));

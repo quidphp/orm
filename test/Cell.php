@@ -126,9 +126,7 @@ class Cell extends Base\Test
         // isEditable
         assert($cell->isEditable() === true);
 
-        // permissionAll
-
-        // permissionDefaultRole
+        // attrPermissionRolesObject
 
         // generalExcerptMin
         assert($cell->generalExcerptMin() === 100);
@@ -254,11 +252,11 @@ class Cell extends Base\Test
         // colUnique
         assert(!$cell->colUnique());
 
-        // attrAll
+        // attrRef
         assert(count($cell->attr()) === 63);
-        assert($cell->attr('kind') === 'char');
-        assert($cell->attrNotEmpty('kind'));
-        assert(!$cell->attrNotEmpty('kindz'));
+        assert($cell->getAttr('kind') === 'char');
+        assert($cell->isAttrNotEmpty('kind'));
+        assert(!$cell->isAttrNotEmpty('kindz'));
 
         // rowPrimary
         assert($cell->rowPrimary() === 1);
