@@ -30,8 +30,8 @@ abstract class Syntax extends Main\Root
     {
         return;
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string

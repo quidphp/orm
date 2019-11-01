@@ -440,7 +440,7 @@ class Cell extends Main\Root
     {
         $return = false;
         $db = $this->db();
-        
+
         foreach ($array as $method => $value)
         {
             $method = (is_numeric($method))? $value:$method;
@@ -948,7 +948,7 @@ class Cell extends Main\Root
 
         if($onSet !== $this)
         $value = $onSet;
-        
+
         $value = $col->autoCast($value);
 
         $this->value['change'] = $value;

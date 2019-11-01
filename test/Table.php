@@ -83,7 +83,7 @@ class Table extends Base\Test
 
         // attrPermissionRolesObject
         assert($tb->attrPermissionRolesObject() instanceof Main\Roles);
-        
+
         // isSearchable
         assert($tb->isSearchable());
 

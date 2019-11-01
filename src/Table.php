@@ -409,7 +409,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $baseAttr = [];
         $tableAttr = $db->tableAttr($this);
         $callable = static::getInitCallable();
-        
+
         if($config === true)
         {
             foreach (static::$config as $key => $value)
@@ -529,7 +529,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     protected function commonWhereFilterArg($return,bool &$true):array
     {
         $db = $this->db();
-        
+
         if(static::classIsCallable($return))
         $return = $return($this);
 
@@ -2006,10 +2006,10 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     public function relation():TableRelation
     {
         $return = $this->relation;
-        
+
         if(empty($return))
         $return = $this->relation = TableRelation::newOverload($this);
-        
+
         return $return;
     }
 

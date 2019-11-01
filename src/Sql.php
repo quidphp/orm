@@ -133,7 +133,7 @@ class Sql extends PdoSql
         $arr = $this->arr();
         $db = $this->db();
         $required = $db->syntaxCall('getQueryRequired',$this->getType());
-        
+
         if(!empty($required) && !Base\Arr::keysExists($required,$arr))
         {
             $strip = Base\Arr::valuesStrip(array_keys($arr),$required);

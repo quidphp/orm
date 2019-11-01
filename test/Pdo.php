@@ -74,13 +74,13 @@ class Pdo extends Base\Test
         assert($pdo->dsn() === $credentials[0]);
 
         // setDsn
-        
+
         // getSyntax
-        
+
         // setSyntax
-        
+
         // syntaxCall
-        
+
         // driver
         assert($pdo->driver() === 'mysql');
 
@@ -115,7 +115,7 @@ class Pdo extends Base\Test
 
         // setDebug
         assert($pdo->setDebug(false));
-        
+
         // isReady
         assert($pdo->isReady());
 
@@ -687,7 +687,7 @@ class Pdo extends Base\Test
         // sql
         assert($pdo->sql() instanceof Orm\PdoSql);
         assert($pdo->sql()->clone()->db() === $pdo);
-        
+
         // isOutput
         assert($pdo->isOutput('select',true));
         assert($pdo->isOutput('select','assoc'));
@@ -704,7 +704,7 @@ class Pdo extends Base\Test
         assert($pdo->isOutput('create','statement'));
         assert($pdo->isOutput('create',null));
         assert(!$pdo->isOutput('create','assoc'));
-        
+
         // output
         assert($pdo->output('select',true) === ['method'=>'fetchAll','fetch'=>2,'type'=>'assocs']);
         assert($pdo->output('insert','assoc') === null);
@@ -725,7 +725,7 @@ class Pdo extends Base\Test
         assert($pdo->output('delete','statement') === ['type'=>'statement']);
         assert($pdo->output('select','row') === null);
         assert($pdo->output('select','segment')['fetch'] === 'segment');
-        
+
         // selectLimit
         assert($pdo->selectLimit('assoc',['what'=>'ok']) === ['what'=>'ok','limit'=>1]);
         assert($pdo->selectLimit('assocs',['what'=>'ok']) === ['what'=>'ok']);
@@ -734,7 +734,7 @@ class Pdo extends Base\Test
         assert($pdo->parseFetch('assoc') === 2);
         assert($pdo->parseFetch(\Pdo::FETCH_OBJ) === 5);
         assert($pdo->parseFetch('assocz') === null);
-        
+
         // defaultPort
         assert($pdo->defaultPort() === 3306);
 

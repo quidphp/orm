@@ -56,7 +56,7 @@ class Row extends Main\ArrObj
     protected function onInit():void
     {
         $this->onRefreshed();
-        
+
         return;
     }
 

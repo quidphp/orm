@@ -144,7 +144,7 @@ class Cells extends Main\Map
         $return = false;
         $array = Base\Obj::cast($array);
         $db = $this->db();
-        
+
         if(!empty($db))
         {
             foreach ($array as $key => $value)

@@ -615,15 +615,15 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         return $return;
     }
 
-    
+
     // role
     // retourne l'objet role, soit le role principal
-    public function role():Main\Role 
+    public function role():Main\Role
     {
         return $this->roles()->main();
     }
-    
-    
+
+
     // setCom
     // lit ou enlève un objet com à db
     public function setCom(?Main\Com $value):self
@@ -927,7 +927,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         $table = $table->name();
 
         if(is_string($table))
-        $return = $this->getAttr(array('tables',$table));
+        $return = $this->getAttr(['tables',$table]);
 
         return $return;
     }
@@ -938,7 +938,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // peut retourner null, utiliser par dbClasse, a moins de priorité que table/colAttr
     public function colAttr(string $col):?array
     {
-        $return = $this->getAttr(array('cols',$col));
+        $return = $this->getAttr(['cols',$col]);
 
         if(is_string($return))
         static::throw($col,'stringNotAllowed',$return);
@@ -958,20 +958,20 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         return $return;
     }
 
-    
+
     // getPriorityIncrement
     // retourne l'incrémentation de priorité souhaité
     public function getPriorityIncrement():int
     {
         return $this->getAttr('priorityIncrement');
     }
-    
-    
+
+
     // isRowOutput
     // retourne vrai si le type de output est row/rows
     public function isRowOutput($value):bool
     {
-        return (is_string($value) && in_array($value,$this->getAttr(array('output','row')),true))? true:false;
+        return (is_string($value) && in_array($value,$this->getAttr(['output','row']),true))? true:false;
     }
 
 

@@ -51,9 +51,9 @@ class PdoSql extends Base\Test
 
         // primary
         assert($sql->primary() === 'id');
-        
+
         // syntaxCall
-        
+
         // setType
         assert($sql->setType('select','assoc') instanceof Orm\PdoSql);
         assert($sql->getOutput() === 'assoc');

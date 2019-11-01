@@ -38,12 +38,12 @@ class History extends Base\Test
 
         // cast
         assert($history->_cast() === 6);
-        
+
         // getSyntax
         assert(is_string($history->getSyntax()));
-        
+
         // setSyntax
-        
+
         // add
 
         // all

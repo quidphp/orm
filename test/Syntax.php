@@ -20,7 +20,7 @@ class Syntax extends Base\Test
     {
         // mysql
         $syntax = Orm\Syntax\Mysql::class;
-        
+
         // isQuery
         assert($syntax::isQuery('select'));
         assert(!$syntax::isQuery('SELECTz'));
@@ -862,11 +862,11 @@ class Syntax extends Base\Test
 
         // debug
         assert($syntax::debug($syntax::select('*','james',['name'=>'ok']))['emulate'] === "SELECT * FROM `james` WHERE `name` = 'ok'");
-        
+
         // getOverloadKeyPrepend
         assert(Orm\Syntax::getOverloadKeyPrepend() === null);
         assert($syntax::getOverloadKeyPrepend() === 'Syntax');
-        
+
         // shortcut
         assert(!empty($syntax::allShortcuts()));
         assert($syntax::shortcuts(['test'=>'name_[lang]']) === ['test'=>'name_en']);

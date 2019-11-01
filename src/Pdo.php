@@ -34,8 +34,8 @@ class Pdo extends Main\Root
             \PDO::ATTR_STRINGIFY_FETCHES=>false,
             \PDO::ATTR_ERRMODE=>\PDO::ERRMODE_EXCEPTION],
         'defaultPort'=>3306, // port par défaut
-        'syntax'=>array( // tableau associatif entre driver et classe syntaxe
-            'mysql'=>Syntax\Mysql::class),
+        'syntax'=>[ // tableau associatif entre driver et classe syntaxe
+            'mysql'=>Syntax\Mysql::class],
         'fetch'=>[ // tableau associatif pour les fetch mode
             'assoc'=>\PDO::FETCH_ASSOC,
             'assocUnique'=>\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE,
@@ -151,7 +151,7 @@ class Pdo extends Main\Root
     protected function onSetInst():void
     {
         $this->checkReady(true);
-        
+
         return;
     }
 
@@ -277,47 +277,47 @@ class Pdo extends Main\Root
     {
         $this->checkReady(false);
         $this->dsn = $value;
-        
+
         return;
     }
 
-    
+
     // getSyntax
     // retourne la classe de syntaxe à utiliser avec la base de donnée
-    public function getSyntax():string 
+    public function getSyntax():string
     {
         return $this->syntax;
     }
-    
-    
+
+
     // setSyntax
     // permet d'enregister la classe de syntaxe à utiliser
-    protected function setSyntax():void 
+    protected function setSyntax():void
     {
         $driver = $this->driver();
-        
+
         if(is_string($driver))
         {
-            $syntax = $this->getAttr(array('syntax',$driver));
+            $syntax = $this->getAttr(['syntax',$driver]);
             if(is_string($syntax))
             $this->syntax = $syntax::getOverloadClass();
         }
-        
+
         if(empty($this->syntax))
         static::throw('noSyntaxFound',$driver);
-        
+
         return;
     }
-    
-    
+
+
     // syntaxCall
     // permet d'appeler une méthode sur la classe de syntaxe
     public function syntaxCall(string $method,...$args)
     {
         return $this->getSyntax()::$method(...$args);
     }
-    
-    
+
+
     // driver
     // retourne le driver du dsn
     public function driver():?string
@@ -419,7 +419,7 @@ class Pdo extends Main\Root
         return $this->setAttr('debug',$value);
     }
 
-    
+
     // isReady
     // retourne vrai si une connection est établi
     public function isReady():bool
@@ -2141,8 +2141,8 @@ class Pdo extends Main\Root
 
         if(is_string($value))
         {
-            $all = $this->getAttr(array('output','all'));
-            
+            $all = $this->getAttr(['output','all']);
+
             if($value === 'insertId')
             $return = ($type === 'insert')? true:false;
 
@@ -2158,8 +2158,8 @@ class Pdo extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // output
     // retourne le tableau de configuration pour output
     // true retourne le output par défaut pour le type de requête
@@ -2172,7 +2172,7 @@ class Pdo extends Main\Root
             if($value === true)
             {
                 if($type === 'select' || $type === 'show')
-                $value = $this->getAttr(array('output','default',$type));
+                $value = $this->getAttr(['output','default',$type]);
 
                 elseif($type === 'insert')
                 $value = 'insertId';
@@ -2195,8 +2195,8 @@ class Pdo extends Main\Root
 
             if($value === null)
             $value = 'statement';
-            
-            $all = $this->getAttr(array('output','all'));
+
+            $all = $this->getAttr(['output','all']);
             if(is_string($value) && is_array($all) && array_key_exists($value,$all))
             {
                 $return = $all[$value];
@@ -2220,8 +2220,8 @@ class Pdo extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // selectLimit
     // une valeur numérique limit peut être ajouté dans le tableau input sql si configuré
     // par exemple pour une requête select assoc, limit 1 est ajouté
@@ -2241,8 +2241,8 @@ class Pdo extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // parseFetch
     // retourne le code numérique pour fetch
     // true retourne le code par défaut
@@ -2251,7 +2251,7 @@ class Pdo extends Main\Root
         $return = null;
 
         if(is_string($value))
-        $return = $this->getAttr(array('fetch',$value));
+        $return = $this->getAttr(['fetch',$value]);
 
         elseif(is_int($value))
         $return = $value;
@@ -2259,15 +2259,15 @@ class Pdo extends Main\Root
         return $return;
     }
 
-    
+
     // defaultPort
     // retourne le port par défaut pour l'engin sql
     public function defaultPort():int
     {
         return $this->getAttr('defaultPort');
     }
-    
-    
+
+
     // isDriver
     // retourne vrai si le driver est supporté par PDO
     public static function isDriver($value):bool

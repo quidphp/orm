@@ -132,10 +132,10 @@ class Db extends Base\Test
         assert($db->description(null,null,'fr') === null);
 
         // setRoles
-        
+
         // roles
         assert($db->roles() instanceof Main\Roles);
-        
+
         // role
         assert($db->role() instanceof Main\Role);
 

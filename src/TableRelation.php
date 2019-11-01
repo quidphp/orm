@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Quid\Orm;
 use Quid\Base;
-use Quid\Main;
 
 // tableRelation
 // class to access the relation data of a table

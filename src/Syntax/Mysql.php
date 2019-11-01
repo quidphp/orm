@@ -8,9 +8,8 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm\Syntax;
-use Quid\Orm;
 use Quid\Base;
-use Quid\Main;
+use Quid\Orm;
 
 // mysql
 // class with static methods to generate MySQL syntax strings (compatible with MySQL and MariaDB)

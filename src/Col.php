@@ -1569,7 +1569,7 @@ class Col extends Main\Root
         $tableAttr = $table->colAttr($name);
         $baseAttr = [];
         $callable = static::getInitCallable();
-        
+
         if($config === true)
         {
             foreach (static::$config as $key => $value)
@@ -1578,7 +1578,7 @@ class Col extends Main\Root
                 $baseAttr[$key] = $value;
             }
         }
-        
+
         $attr = $callable(static::class,$dbAttr,$baseAttr,$defaultAttr,$tableAttr);
         $attr['group'] = ColSchema::group($attr,true);
 
@@ -1786,7 +1786,7 @@ class Col extends Main\Root
         {
             if(is_array($return) && $this->isRelation())
             $return = Base\Set::str($return);
-            
+
             $str = Base\Str::cast($return);
 
             if($removeWhiteSpace === true)
@@ -2135,11 +2135,11 @@ class Col extends Main\Root
 
         if(is_object($value))
         $value = Base\Obj::cast($value);
-        
-        if(in_array($value,['',null,array()],true))
+
+        if(in_array($value,['',null,[]],true))
         {
             $return = '-';
-            
+
             if($value === null && $this->hasNullPlaceholder())
             $return = 'NULL';
         }

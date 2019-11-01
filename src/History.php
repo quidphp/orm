@@ -23,11 +23,11 @@ class History extends Main\Map
     protected static $is = 'array'; // les valeurs doivent passés ce test de validation ou exception
     protected static $allow = ['push','empty']; // méthodes permises
 
-    
+
     // dynamique
     protected $syntax = null; // garde une copie de la classe de syntaxe à utiliser
-    
-    
+
+
     // invoke
     // retourne un index de l'historique
     public function __invoke(...$args)
@@ -51,37 +51,37 @@ class History extends Main\Map
         return $this->count();
     }
 
-    
+
     // getSyntax
     // retourne la classe de syntaxe
-    public function getSyntax():?string 
+    public function getSyntax():?string
     {
         return $this->syntax;
     }
-    
-    
+
+
     // setSyntax
     // enregistre la classe de syntaxe
-    protected function setSyntax(Pdo $pdo):void 
+    protected function setSyntax(Pdo $pdo):void
     {
         $this->syntax = $pdo->getSyntax();
-        
+
         return;
     }
-    
-    
+
+
     // add
     // ajoute un statement dans l'historique db
     public function add(array $value,\PDOStatement $statement,Pdo $pdo):self
     {
         if(empty($this->getSyntax()))
         $this->setSyntax($pdo);
-        
+
         if(!empty($value['type']))
         {
             if(array_key_exists('cast',$value))
             unset($value['cast']);
-            
+
             if($pdo->isOutput($value['type'],'rowCount'))
             $value['row'] = $statement->rowCount();
 
@@ -132,7 +132,7 @@ class History extends Main\Map
     {
         $return = [];
         $syntax = $this->getSyntax();
-        
+
         if(!empty($syntax))
         {
             foreach ($this->all($type,$reverse) as $value)
@@ -200,7 +200,7 @@ class History extends Main\Map
     {
         $return = [];
         $syntax = $this->getSyntax();
-        
+
         if(!empty($syntax))
         {
             foreach ($syntax::getQueryTypes() as $type)

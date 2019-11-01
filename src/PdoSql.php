@@ -125,15 +125,15 @@ class PdoSql extends Main\Map
         return $this->db()->primary();
     }
 
-    
+
     // syntaxCall
     // permet d'appeler une méthode sur la classe de syntaxe de la db
     public function syntaxCall(string $method,...$args)
     {
         return $this->db()->syntaxCall($method,...$args);
     }
-    
-    
+
+
     // setType
     // change le type de l'objet sql
     // l'objet est vidé
@@ -211,7 +211,7 @@ class PdoSql extends Main\Map
     // retourne le nom de la méthode lié au shortcut
     public function getShortcut(string $value):?string
     {
-        return $this->getAttr(array('shortcut',$value,$this->getType()));
+        return $this->getAttr(['shortcut',$value,$this->getType()]);
     }
 
 
@@ -281,7 +281,7 @@ class PdoSql extends Main\Map
         {
             $type = $this->getType();
             $output = $this->getOutput();
-            
+
             if(!$this->syntaxCall('hasQueryClause',$type,$value))
             {
                 if($value === 'on')
@@ -446,7 +446,7 @@ class PdoSql extends Main\Map
     public function one(string $clause,...$value):self
     {
         $this->do($clause,$value,false);
-        
+
         return $this;
     }
 
@@ -469,7 +469,7 @@ class PdoSql extends Main\Map
     public function prependOne(string $clause,...$value):self
     {
         $this->do($clause,$value,true);
-        
+
         return $this;
     }
 
