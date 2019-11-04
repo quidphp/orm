@@ -124,7 +124,7 @@ class Syntax extends Base\Test
         assert($syntax::getWhereSymbol('!=') === '!=');
 
         // getWhereMethod
-        assert($syntax::getWhereMethod('findInSet') === [$syntax,'whereFind']);
+        assert($syntax::getWhereMethod('findInSet') === [Orm\Syntax::class,'whereFind']);
         assert($syntax::getWhereMethod('findz') === null);
 
         // getWhereSeparator
@@ -146,11 +146,11 @@ class Syntax extends Base\Test
         assert($syntax::invertOrderDirection(true) === 'DESC');
 
         // getOrderMethod
-        assert($syntax::getOrderMethod('find') === [$syntax,'orderFind']);
+        assert($syntax::getOrderMethod('find') === [Orm\Syntax::class,'orderFind']);
         assert($syntax::getOrderMethod('findz') === null);
 
         // getSetMethod
-        assert($syntax::getSetMethod('replace') === [$syntax,'setReplace']);
+        assert($syntax::getSetMethod('replace') === [Orm\Syntax::class,'setReplace']);
 
         // getQueryWord
         assert($syntax::getQueryWord('select') === 'SELECT');
