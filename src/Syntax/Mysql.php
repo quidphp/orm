@@ -8,7 +8,6 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm\Syntax;
-use Quid\Base;
 use Quid\Orm;
 
 // mysql

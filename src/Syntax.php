@@ -149,11 +149,11 @@ abstract class Syntax extends Main\Root
                 'table'=>['required'=>true,'word'=>'TABLE','key'=>0]]]
     ];
 
-    
+
     // prepared
     protected static $prepared = 0; // valeur qui s'incrémente à chaque appel de prepare
-    
-    
+
+
     // _construct
     // pas de possibilité de construire l'objet
     private function __construct()
@@ -161,7 +161,7 @@ abstract class Syntax extends Main\Root
         return;
     }
 
-    
+
     // isQuery
     // retourne vrai si la valeur est un type de query
     public static function isQuery($value):bool
@@ -3469,8 +3469,8 @@ abstract class Syntax extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     public static function getOverloadKeyPrepend():?string
