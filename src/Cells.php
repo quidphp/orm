@@ -749,10 +749,10 @@ class Cells extends Main\Map
         {
             if($option['type'] === 'format')
             $value = $cell->export($option);
-            
+
             else
             $value = (string) $cell;
-            
+
             $array = Base\Arr::append($array,$value);
         }
 

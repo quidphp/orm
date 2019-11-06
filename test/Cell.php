@@ -284,9 +284,9 @@ class Cell extends Base\Test
         assert($dateAdd->set(1234235434) === $dateAdd);
         assert($dateAdd->form() === "<input maxlength='11' name='dateAdd' type='text' value='1234235434'/>");
         assert($cell->form() === "<input data-required='1' maxlength='100' name='name' type='text' value='2'/>");
-        assert($cell->form(array('data-required'=>false)) === "<input data-required='0' maxlength='100' name='name' type='text' value='2'/>");
-        assert($cell->form(array('data'=>array('required'=>false))) === "<input data-required='0' maxlength='100' name='name' type='text' value='2'/>");
-        
+        assert($cell->form(['data-required'=>false]) === "<input data-required='0' maxlength='100' name='name' type='text' value='2'/>");
+        assert($cell->form(['data'=>['required'=>false]]) === "<input data-required='0' maxlength='100' name='name' type='text' value='2'/>");
+
         // formHidden
         assert($cell->formHidden() === "<input data-required='1' name='name' type='hidden' value='2'/>");
         assert($cell->formHidden(['data-required'=>null]) === "<input name='name' type='hidden' value='2'/>");
@@ -352,10 +352,10 @@ class Cell extends Base\Test
         assert($cell->export() === ['okabcde']);
 
         // exportCommon
-        
+
         // exportOne
         assert($cell->exportOne() === 'okabcde');
-        
+
         // pair
         assert($cell->pair() instanceof Orm\Cell);
         assert($cell->pair(1) === 'o');

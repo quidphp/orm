@@ -203,28 +203,28 @@ class Col extends Main\Root
     public function onExport(string $type,$value=null,Cell $cell,?array $option=null):array
     {
         $return = [];
-        
+
         if(in_array($type,['col','cell'],true))
         {
             $separator = $this->getAttr('exportSeparator');
-            
+
             if($type === 'col')
             $value = $this->label();
-            
+
             $return = $this->attrCallback('onExport',false,[$value],$type,$cell,(array) $option);
-            
+
             if(!is_array($return))
             $return = (array) $return;
-            
+
             foreach ($return as $key => $value)
             {
                 $return[$key] = Base\Str::cast($value,$separator);
             }
         }
-        
+
         else
         static::throw();
-        
+
         return $return;
     }
 
@@ -627,7 +627,7 @@ class Col extends Main\Root
         return $return;
     }
 
-    
+
     // export
     // retourne la valeur pour l'exportation, nécessite une cellule
     // doit retourner un tableau
@@ -635,8 +635,8 @@ class Col extends Main\Root
     {
         return $this->onExport('col',null,$cell,$option);
     }
-    
-    
+
+
     // exportOne
     // retourne la valeur pour l'exportation, nécessite une cellule
     // retourne la première valeur du tableau export
@@ -644,14 +644,14 @@ class Col extends Main\Root
     {
         $return = null;
         $array = $this->export($option);
-        
+
         if(!empty($array))
         $return = current($array);
-        
+
         return $return;
     }
-    
-    
+
+
     // placeholder
     // retourne le placeholder ou le label, si value n'est pas string
     public function placeholder($value=null):?string
@@ -1953,10 +1953,10 @@ class Col extends Main\Root
             $data = Base\Attr::data($attr);
             if(!empty($data))
             $attr = Base\Arr::replace($attr,$data);
-            
+
             $return = Base\Arr::replace($return,$attr);
         }
-        
+
         if(array_key_exists('tag',$return))
         unset($return['tag']);
 

@@ -856,7 +856,7 @@ class Cell extends Main\Root
         return $this->col()->onExport('cell',$value,$this,$option);
     }
 
-    
+
     // exportOne
     // retourne la valeur pour l'exportation
     // retourne la première valeur du tableau export
@@ -864,14 +864,14 @@ class Cell extends Main\Root
     {
         $return = null;
         $array = $this->export($option);
-        
+
         if(!empty($array))
         $return = current($array);
-        
+
         return $return;
     }
-    
-    
+
+
     // pair
     // si value est true, retourne le htmlOutput de cellule
     // si value est false, c'est value

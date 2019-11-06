@@ -724,10 +724,10 @@ class Cols extends Main\Map
                 $cell = $cells->checkGet($key);
                 $value = $col->export($cell,$option);
             }
-            
+
             else
             $value = $col->name();
-            
+
             $array = Base\Arr::append($array,$value);
         }
 

@@ -230,11 +230,11 @@ class Col extends Base\Test
 
         // get
         assert($col->get(123) === 123);
-        
+
         // export
-        
+
         // exportOne
-        
+
         // placeholder
         assert($col->placeholder(null) === 'Name');
         assert($col->placeholder('abcde') === 'abcde');
