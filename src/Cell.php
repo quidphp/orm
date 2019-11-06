@@ -290,7 +290,7 @@ class Cell extends Main\Root
 
 
     // tag
-    // retourne la tag de la colonne
+    // retourne la tag de la cellule
     public function tag(?array $attr=null,bool $complex=false):string
     {
         $return = null;
@@ -310,14 +310,6 @@ class Cell extends Main\Root
     public function isFormTag(?array $attr=null,bool $complex=false):bool
     {
         return Base\Html::isFormTag($this->tag($attr,$complex));
-    }
-
-
-    // complexTag
-    // retourne la tag complex en lien avec la colonne
-    public function complexTag(?array $attr=null):string
-    {
-        return $this->tag($attr,true);
     }
 
 
@@ -712,14 +704,6 @@ class Cell extends Main\Root
     }
 
 
-    // formComplex
-    // génère un élément de formulaire complexe pour la cellule
-    public function formComplex(?array $attr=null,?array $option=null):string
-    {
-        return $this->col()->formComplex($this,$attr,$option);
-    }
-
-
     // formWrap
     // génère la celulle dans un formWrap incluant le label et l'élément de formulaire
     // un id commun au label et élément de formulaire sera automatiquement ajouté
@@ -737,14 +721,6 @@ class Cell extends Main\Root
     public function formPlaceholderWrap(?string $wrap=null,$pattern=null,?string $placeholder=null,?array $attr=null,?array $replace=null,?array $option=null):string
     {
         return $this->col()->formPlaceholderWrap($wrap,$pattern,$this,$placeholder,$attr,$replace,$option);
-    }
-
-
-    // formComplexWrap
-    // fait un wrap à partir de formComplex plutôt que form, si existant
-    public function formComplexWrap(?string $wrap=null,$pattern=null,array $attr=null,?array $replace=null,?array $option=null):string
-    {
-        return $this->col()->formComplexWrap($wrap,$pattern,$this,$attr,$replace,$option);
     }
 
 
@@ -880,7 +856,7 @@ class Cell extends Main\Root
         return $this->col()->onExport('cell',$value,$this,$option);
     }
 
-
+    
     // exportOne
     // retourne la valeur pour l'exportation
     // retourne la première valeur du tableau export
@@ -888,14 +864,14 @@ class Cell extends Main\Root
     {
         $return = null;
         $array = $this->export($option);
-
+        
         if(!empty($array))
         $return = current($array);
-
+        
         return $return;
     }
-
-
+    
+    
     // pair
     // si value est true, retourne le htmlOutput de cellule
     // si value est false, c'est value

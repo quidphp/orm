@@ -155,8 +155,6 @@ class Cols extends Base\Test
         assert(strlen($cols->formPlaceholder()['id']) === 93);
         assert(is_string($cols->formPlaceholder(true)));
 
-        // formComplex
-
         // formWrap
         assert(count($cols->formWrap('br')) === 9);
         assert(strlen(current($cols->formWrap('br','%:'))) === 136);
@@ -166,8 +164,6 @@ class Cols extends Base\Test
         assert(count($cols->formPlaceholderWrap(null)) === 9);
         assert(strlen($cols->formPlaceholderWrap('br')['id']) === 152);
         assert(is_string($cols->formPlaceholderWrap('br',null,true)));
-
-        // formComplexWrap
 
         // htmlStr
         assert($cols->htmlStr("<div class='%name%'>%label%: %value%</div>")['name_en'] === "<div class='name_en'>English name: LOL</div>");

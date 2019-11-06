@@ -76,8 +76,6 @@ class Col extends Base\Test
 
         // onExport
 
-        // onComplex
-
         // onCellInit
 
         // onCellSet
@@ -230,16 +228,13 @@ class Col extends Base\Test
         assert($col->value(true) === null);
         assert($dateAdd->value(1234) === 1234);
 
-        // valueComplex
-        assert($dateAdd->valueComplex(123445677) === 'November 29, 1973 13:27:57');
-
         // get
         assert($col->get(123) === 123);
-
+        
         // export
-
+        
         // exportOne
-
+        
         // placeholder
         assert($col->placeholder(null) === 'Name');
         assert($col->placeholder('abcde') === 'abcde');
@@ -313,10 +308,6 @@ class Col extends Base\Test
         assert($check->isFormTag());
         assert(!$col->isFormTag(['tag'=>'div']));
         assert($col->isFormTag(['tag'=>'textarea']));
-
-        // complexTag
-        assert($lang->complexTag() === 'radio');
-        assert($dateAdd->complexTag() === 'div');
 
         // pair
         assert($lang->pair() === $lang);
@@ -585,14 +576,10 @@ class Col extends Base\Test
 
         // formAttr
         assert($email->formAttr() === ['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']);
-        assert($email->formAttr(['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']) === ['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']);
+        assert($email->formAttr(['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']) === ['data-required'=>true,'data-pattern'=>'^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$','maxlength'=>100,'name'=>'email']);
         assert($email->formAttr(['placeholder'=>'myplace','data-required'=>'ok'])['data-required'] === 'ok');
         assert(count($email->formAttr(['placeholder'=>'myplace','data-required'=>'ok'])) === 5);
         assert(count($email->formAttr(['placeholder'=>'myplace','ok','ok2','name'=>'james2','data-required'=>'ok'])) === 7);
-
-        // formComplexAttr
-        assert(count($dateAdd->formAttr()) === 2);
-        assert(count($dateAdd->formComplexAttr()) === 0);
 
         // form
         assert($col->form('val',['name'=>'test','data-required'=>null]) === "<input name='test' maxlength='100' type='text' value='val'/>");
@@ -615,18 +602,6 @@ class Col extends Base\Test
         assert($email->formPlaceholder(true,'myPlaceholder') === "<input placeholder='myPlaceholder' data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='default@def.james'/>");
         assert(strlen($email->formPlaceholder(true)) === 194);
 
-        // formComplex
-        assert($dateAdd->formComplex() === "<div class='empty-placeholder'>NULL</div>");
-
-        // formComplexOutput
-
-        // formComplexNothing
-        assert($dateAdd->formComplexNothing() === "<div class='nothing'>Nothing</div>");
-
-        // formComplexEmptyPlaceholder
-        assert($dateAdd->formComplexEmptyPlaceholder(null) === "<div class='empty-placeholder'>NULL</div>");
-        assert($dateAdd->formComplexEmptyPlaceholder(true) === '');
-
         // emptyPlaceholder
         assert($dateAdd->emptyPlaceholder(null) === 'NULL');
         assert($dateAdd->emptyPlaceholder('') === '-');
@@ -646,10 +621,6 @@ class Col extends Base\Test
         assert(strlen($email->formPlaceholderWrap('br','%:','james@ok','placehol')) === 257);
         assert(strlen($email->formPlaceholderWrap('br')) === 262);
         assert(strlen($email->formPlaceholderWrap('br',3)) === 260);
-
-        // formComplexWrap
-        assert($password->formComplexWrap() !== $password->formWrap());
-        assert(strlen($password->formComplexWrap('br',3)) === 357);
 
         // makeFormWrap
 
@@ -706,7 +677,7 @@ class Col extends Base\Test
         assert($col::getOverloadKeyPrepend() === null);
 
         // attr
-        assert(count($col->attr()) === 62);
+        assert(count($col->attr()) >= 61);
         assert($col->isAttrNotEmpty('kind'));
         assert(!$col->isAttrNotEmpty('kindz'));
 

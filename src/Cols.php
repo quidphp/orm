@@ -605,15 +605,6 @@ class Cols extends Main\Map
     }
 
 
-    // formComplex
-    // génère les éléments formulaires complexes pour toutes les colonnes
-    public function formComplex(bool $str=false)
-    {
-        $return = $this->pair('formComplex');
-        return ($str === true)? implode($return):$return;
-    }
-
-
     // formWrap
     // génère les éléments formWrap pour toutes les colonnes
     public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
@@ -629,15 +620,6 @@ class Cols extends Main\Map
     public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
     {
         $return = $this->pair('formPlaceholderWrap',$wrap,$pattern);
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // formComplexWrap
-    // génère les éléments formComplexWrap pour toutes les colonnes
-    public function formComplexWrap(?string $wrap=null,$pattern=null,bool $str=false)
-    {
-        $return = $this->pair('formComplexWrap',$wrap,$pattern);
         return ($str === true)? implode($return):$return;
     }
 
@@ -730,15 +712,23 @@ class Cols extends Main\Map
     // writeFile
     // écrit les colonnes dans l'objet file fourni en argument
     // par exemple pour une première ligne de csv
-    public function writeFile(Main\File $file,Cells $cells,?array $option=null):self
+    public function writeFile(Main\File $file,?Cells $cells=null,?array $option=null):self
     {
+        $option = Base\Arr::plus(['type'=>'format'],$option);
         $array = [];
 
-        foreach ($this->toArray() as $key => $col)
+        foreach ($this as $key => $col)
         {
-            $cell = $cells->checkGet($key);
-            $export = $col->export($cell,$option);
-            $array = Base\Arr::append($array,$export);
+            if($option['type'] === 'format' && !empty($cells))
+            {
+                $cell = $cells->checkGet($key);
+                $value = $col->export($cell,$option);
+            }
+            
+            else
+            $value = $col->name();
+            
+            $array = Base\Arr::append($array,$value);
         }
 
         $file->write($array,$option);

@@ -253,7 +253,7 @@ class Cell extends Base\Test
         assert(!$cell->colUnique());
 
         // attrRef
-        assert(count($cell->attr()) === 63);
+        assert(count($cell->attr()) >= 62);
         assert($cell->getAttr('kind') === 'char');
         assert($cell->isAttrNotEmpty('kind'));
         assert(!$cell->isAttrNotEmpty('kindz'));
@@ -283,7 +283,10 @@ class Cell extends Base\Test
         assert(strlen($cell->form()) === 76);
         assert($dateAdd->set(1234235434) === $dateAdd);
         assert($dateAdd->form() === "<input maxlength='11' name='dateAdd' type='text' value='1234235434'/>");
-
+        assert($cell->form() === "<input data-required='1' maxlength='100' name='name' type='text' value='2'/>");
+        assert($cell->form(array('data-required'=>false)) === "<input data-required='0' maxlength='100' name='name' type='text' value='2'/>");
+        assert($cell->form(array('data'=>array('required'=>false))) === "<input data-required='0' maxlength='100' name='name' type='text' value='2'/>");
+        
         // formHidden
         assert($cell->formHidden() === "<input data-required='1' name='name' type='hidden' value='2'/>");
         assert($cell->formHidden(['data-required'=>null]) === "<input name='name' type='hidden' value='2'/>");
@@ -292,9 +295,6 @@ class Cell extends Base\Test
         assert(strlen($cell->formPlaceholder('placeholder')) === 102);
         assert(strlen($cell->formPlaceholder()) === 95);
 
-        // formComplex
-        assert($dateAdd->formComplex() === '<div>February 9, 2009 22:10:34</div>');
-
         // formWrap
         assert(strlen($cell->formWrap('br')) === 141);
         assert(strlen($cell->formWrap('br',3)) === 140);
@@ -302,8 +302,6 @@ class Cell extends Base\Test
         // formPlaceholderWrap
         assert(strlen($cell->formPlaceholderWrap('br',null,'placeholder')) === 167);
         assert(strlen($cell->formPlaceholderWrap('br')) === 160);
-
-        // formComplexWrap
 
         // hasFormLabelId
         assert($cell->hasFormLabelId());
@@ -354,10 +352,10 @@ class Cell extends Base\Test
         assert($cell->export() === ['okabcde']);
 
         // exportCommon
-
+        
         // exportOne
         assert($cell->exportOne() === 'okabcde');
-
+        
         // pair
         assert($cell->pair() instanceof Orm\Cell);
         assert($cell->pair(1) === 'o');

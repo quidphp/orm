@@ -190,8 +190,6 @@ class Cells extends Base\Test
         assert(strlen($cells->formPlaceholder()['id']) === 93);
         assert(is_string($cells->formPlaceholder(true)));
 
-        // formComplex
-
         // formWrap
         assert(count($cells->formWrap(null)) === 9);
         assert(count($cells->formWrap('br')) === 9);
@@ -202,8 +200,6 @@ class Cells extends Base\Test
         assert(strlen($cells->formPlaceholderWrap('br')['active']) === 171);
         assert(strlen($cells->formPlaceholderWrap('br')['id']) === 152);
         assert(is_string($cells->formPlaceholderWrap('br',null,true)));
-
-        // formComplexWrap
 
         // segment
         assert($cells->segment('[name_%lang%] [active] + [id]') === 'bla 2 + 1');
@@ -232,7 +228,7 @@ class Cells extends Base\Test
 
         // root
         assert(is_a($cells->classFqcn(),Orm\Cells::class,true));
-        assert($cells->classNamespace() === "Quid\Core");
+        assert(is_string($cells->classNamespace()));
         assert($cells->className() === 'Cells');
 
         // readOnly

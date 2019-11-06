@@ -76,7 +76,6 @@ class Col extends Main\Root
         'check'=>null, // envoie une exception si le tableau d'attribut ne contient pas les slices de check, voir makeAttr
         'onSet'=>null, // callable pour onSet, appelé à chaque set de valeur
         'onGet'=>null, // callable pour onGet, appelé pour avoir la version get d'une valeur
-        'onComplex'=>null, // callable pour onComplex, si true alors utilise la méthode onGet lors de la création des éléments de formulaires complexes
         'onMakeAttr'=>null, // callback sur onMakeAttr lors de la création de la colonne
         'onDuplicate'=>null, // callback sur duplication
         'onExport'=>null, // callback lors de l'exporation
@@ -200,51 +199,32 @@ class Col extends Main\Root
 
     // onExport
     // callback sur exportation
-    // si null, retourne le label de la colonne
     // doit retourner un tableau
     public function onExport(string $type,$value=null,Cell $cell,?array $option=null):array
     {
         $return = [];
-
+        
         if(in_array($type,['col','cell'],true))
         {
             $separator = $this->getAttr('exportSeparator');
-
+            
             if($type === 'col')
             $value = $this->label();
-
+            
             $return = $this->attrCallback('onExport',false,[$value],$type,$cell,(array) $option);
-
+            
             if(!is_array($return))
             $return = (array) $return;
-
+            
             foreach ($return as $key => $value)
             {
-                if(is_array($value) && Base\Arr::isIndexed($value))
                 $return[$key] = Base\Str::cast($value,$separator);
             }
         }
-
+        
         else
         static::throw();
-
-        return $return;
-    }
-
-
-    // onComplex
-    // permet de formater une valeur simple vers un type plus complexe
-    // utilisé lors de la génération d'un élément de formulaire, si onComplex est true renvoie à onGet
-    public function onComplex($return,array $option)
-    {
-        $onComplex = $this->getAttr('onComplex');
-
-        if($onComplex === true)
-        $return = $this->onGet($return,$option);
-
-        else
-        $return = $this->attrCallback('onComplex',true,$return,$option);
-
+        
         return $return;
     }
 
@@ -636,22 +616,6 @@ class Col extends Main\Root
     }
 
 
-    // valueComplex
-    // génère une valeur en vue de l'affichage dans un élément de formulaire complexe
-    public function valueComplex($return=true,?array $option=null)
-    {
-        $option = (array) $option;
-
-        if($return instanceof Cell)
-        $option['cell'] = $return;
-
-        $return = $this->value($return);
-        $return = $this->onComplex($return,$option);
-
-        return $return;
-    }
-
-
     // get
     // retourne la valeur après être passé dans onGet
     public function get($return=true,?array $option=null)
@@ -663,7 +627,7 @@ class Col extends Main\Root
         return $return;
     }
 
-
+    
     // export
     // retourne la valeur pour l'exportation, nécessite une cellule
     // doit retourner un tableau
@@ -671,8 +635,8 @@ class Col extends Main\Root
     {
         return $this->onExport('col',null,$cell,$option);
     }
-
-
+    
+    
     // exportOne
     // retourne la valeur pour l'exportation, nécessite une cellule
     // retourne la première valeur du tableau export
@@ -680,14 +644,14 @@ class Col extends Main\Root
     {
         $return = null;
         $array = $this->export($option);
-
+        
         if(!empty($array))
         $return = current($array);
-
+        
         return $return;
     }
-
-
+    
+    
     // placeholder
     // retourne le placeholder ou le label, si value n'est pas string
     public function placeholder($value=null):?string
@@ -926,14 +890,6 @@ class Col extends Main\Root
     public function isFormTag(?array $attr=null,bool $complex=false):bool
     {
         return Base\Html::isFormTag($this->tag($attr,$complex));
-    }
-
-
-    // complexTag
-    // retourne la tag complex en lien avec la colonne
-    public function complexTag(?array $attr=null):string
-    {
-        return $this->tag($attr,true);
     }
 
 
@@ -1523,7 +1479,7 @@ class Col extends Main\Root
         $this->name = $name;
 
         else
-        static::throw($name,'needsLowerCaseFirstChar','noComplexChars');
+        static::throw($name,'needsLowerCaseFirstChar','invalidChars');
 
         return $this;
     }
@@ -1993,8 +1949,14 @@ class Col extends Main\Root
         $return = (array) $this->getAttr('attr');
 
         if(is_array($attr))
-        $return = Base\Arr::replace($return,$attr);
-
+        {
+            $data = Base\Attr::data($attr);
+            if(!empty($data))
+            $attr = Base\Arr::replace($attr,$data);
+            
+            $return = Base\Arr::replace($return,$attr);
+        }
+        
         if(array_key_exists('tag',$return))
         unset($return['tag']);
 
@@ -2034,14 +1996,6 @@ class Col extends Main\Root
     }
 
 
-    // formComplexAttr
-    // retourne les attributs de formulaires complexes avec un tableau d'attributs en argument facultatif
-    public function formComplexAttr(?array $attr=null):array
-    {
-        return $this->formAttr($attr,true);
-    }
-
-
     // form
     // génère un élément de formulaire pour la colonne
     // si value est true, utilise la valeur par défaut, sinon met la valeur
@@ -2075,55 +2029,6 @@ class Col extends Main\Root
     public function formPlaceholder($value=true,?string $placeholder=null,?array $attr=null,?array $option=null):string
     {
         return $this->form($value,Base\Arr::plus($attr,['placeholder'=>$this->placeholder($placeholder)]),$option);
-    }
-
-
-    // formComplex
-    // méthode pouvant être étendu, pour les formComplex
-    // par défaut renvoie vers form
-    public function formComplex($value=true,?array $attr=null,?array $option=null):string
-    {
-        return $this->formComplexOutput($this->valueComplex($value,$option),$attr,$option);
-    }
-
-
-    // formComplexOutput
-    // génère un élément de formulaire complexe mais sans passer value dans valueComplex
-    public function formComplexOutput($value,?array $attr=null,?array $option=null):string
-    {
-        $return = '';
-        $tag = $this->complexTag($attr);
-
-        $isForm = Base\Html::isFormTag($tag);
-        $isTextTag = Base\Html::isTextTag($tag);
-        $attr = $this->formComplexAttr($attr);
-        $method = ($isForm === true)? $tag:$tag.'Cond';
-
-        if(empty($attr['placeholder']) && $isTextTag === true && $this->hasNullPlaceholder())
-        $attr['placeholder'] = 'NULL';
-
-        $return = Base\Html::$method($value,$attr,$option);
-
-        if(empty($return))
-        $return = $this->formComplexEmptyPlaceholder($value);
-
-        return $return;
-    }
-
-
-    // formComplexNothing
-    // le html si rien à afficher
-    public function formComplexNothing():string
-    {
-        return Base\Html::div($this->db()->lang()->text('common/nothing'),'nothing');
-    }
-
-
-    // formComplexEmptyPlaceholder
-    // le html pour un placeholder vide ('' ou null)
-    public function formComplexEmptyPlaceholder($value):string
-    {
-        return Base\Html::divCond($this->emptyPlaceholder($value),'empty-placeholder');
     }
 
 
@@ -2164,14 +2069,6 @@ class Col extends Main\Root
     public function formPlaceholderWrap(?string $wrap=null,$pattern=null,$value=true,?string $placeholder=null,?array $attr=null,?array $replace=null,?array $option=null):string
     {
         return $this->formWrap($wrap,$pattern,$value,Base\Arr::plus($attr,['placeholder'=>$this->placeholder($placeholder)]),$replace,$option);
-    }
-
-
-    // formComplexWrap
-    // fait un wrap à partir de formComplex plutôt que form
-    public function formComplexWrap(?string $wrap=null,$pattern=null,$value=true,?array $attr=null,?array $replace=null,?array $option=null):string
-    {
-        return $this->makeFormWrap('formComplex',$wrap,$pattern,$value,$attr,$replace,$option);
     }
 
 

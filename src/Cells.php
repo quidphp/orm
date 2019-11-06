@@ -688,15 +688,6 @@ class Cells extends Main\Map
     }
 
 
-    // formComplex
-    // génère les éléments formulaires complexes pour toutes les cellules
-    public function formComplex(bool $str=false)
-    {
-        $return = $this->pair('formComplex');
-        return ($str === true)? implode($return):$return;
-    }
-
-
     // formWrap
     // génère les éléments formWrap pour toutes les cellules
     public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
@@ -712,15 +703,6 @@ class Cells extends Main\Map
     public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
     {
         $return = $this->pair('formPlaceholderWrap',$wrap,$pattern);
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // formComplexWrap
-    // génère les éléments formComplexWrap pour toutes les cellules
-    public function formComplexWrap(?string $wrap=null,$pattern=null,bool $str=false)
-    {
-        $return = $this->pair('formComplexWrap',$wrap,$pattern);
         return ($str === true)? implode($return):$return;
     }
 
@@ -756,16 +738,22 @@ class Cells extends Main\Map
 
     // writeFile
     // écrit les cellules dans l'objet file fourni en argument
+    // par défaut le type est format, donc passe dans export
     // par exemple pour une ligne de csv
     public function writeFile(Main\File $file,?array $option=null):self
     {
-        $option = Base\Arr::plus(['context'=>'noHtml'],$option);
+        $option = Base\Arr::plus(['context'=>'noHtml','type'=>'format'],$option);
         $array = [];
 
-        foreach ($this->toArray() as $key => $cell)
+        foreach ($this as $key => $cell)
         {
-            $export = $cell->export($option);
-            $array = Base\Arr::append($array,$export);
+            if($option['type'] === 'format')
+            $value = $cell->export($option);
+            
+            else
+            $value = (string) $cell;
+            
+            $array = Base\Arr::append($array,$value);
         }
 
         $file->write($array,$option);
