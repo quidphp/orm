@@ -27,8 +27,7 @@ class Exception extends Main\Exception
 
     // setQuery
     // lie la query à l'exception
-    // méthode protégé
-    public function setQuery(string $value)
+    final public function setQuery(string $value)
     {
         $this->query = $value;
 
@@ -38,7 +37,7 @@ class Exception extends Main\Exception
 
     // getQuery
     // retourne la query
-    public function getQuery():?string
+    final public function getQuery():?string
     {
         return $this->query;
     }
@@ -46,7 +45,7 @@ class Exception extends Main\Exception
 
     // content
     // retourne la query si showQuery est true, sinon retourne null
-    public function content():?string
+    final public function content():?string
     {
         return ($this->getAttr('query') === true)? $this->query:null;
     }
@@ -54,7 +53,7 @@ class Exception extends Main\Exception
 
     // showQuery
     // affiche ou non la requête sql dans le message
-    public static function showQuery(bool $value):void
+    final public static function showQuery(bool $value):void
     {
         static::$config['query'] = $value;
 

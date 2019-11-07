@@ -22,7 +22,7 @@ trait _colCell
     // exception
     // retourne le message de l'exception
     // si lang est true, retourne le texte indiquant que le champ est requis
-    public function exception(bool $lang=false)
+    final public function exception(bool $lang=false)
     {
         $return = true;
         $exception = $this->getException();
@@ -52,7 +52,7 @@ trait _colCell
 
     // ruleException
     // retourne l'exception si présente
-    public function ruleException(bool $lang=false):?string
+    final public function ruleException(bool $lang=false):?string
     {
         $return = $this->exception($lang);
 
@@ -65,7 +65,7 @@ trait _colCell
 
     // hasCommittedCallback
     // retourne vrai si l'objet contient un commited callback
-    public function hasCommittedCallback(string $key):bool
+    final public function hasCommittedCallback(string $key):bool
     {
         return (!empty($this->getCommittedCallback($key)))? true:false;
     }
@@ -73,7 +73,7 @@ trait _colCell
 
     // getCommittedCallback
     // retourne le commited callback
-    public function getCommittedCallback(string $key):?callable
+    final public function getCommittedCallback(string $key):?callable
     {
         return $this->callback[$key] ?? null;
     }
@@ -81,7 +81,7 @@ trait _colCell
 
     // setCommittedCallback
     // ajoute un commited callback
-    public function setCommittedCallback(string $key,callable $callback):void
+    final public function setCommittedCallback(string $key,callable $callback):void
     {
         $this->callback[$key] = $callback;
 
@@ -91,7 +91,7 @@ trait _colCell
 
     // clearCommittedCallback
     // vide le callback à appeler après un commit, insert ou update
-    public function clearCommittedCallback():void
+    final public function clearCommittedCallback():void
     {
         $this->callback = [];
 
@@ -101,7 +101,7 @@ trait _colCell
 
     // hasException
     // retourne vrai si l'objet contient une exception
-    public function hasException():bool
+    final public function hasException():bool
     {
         return (!empty($this->exception))? true:false;
     }
@@ -109,7 +109,7 @@ trait _colCell
 
     // getException
     // retourne le message d'exception lié à l'objet
-    public function getException():?array
+    final public function getException():?array
     {
         return $this->exception;
     }
@@ -117,7 +117,7 @@ trait _colCell
 
     // setException
     // entrepose le message d'exception dans l'objet
-    public function setException(Main\CatchableException $exception):void
+    final public function setException(Main\CatchableException $exception):void
     {
         $message['message'] = $exception->getMessage();
         $message['messageArgs']  = $exception->messageArgs();
@@ -129,7 +129,7 @@ trait _colCell
 
     // clearException
     // vide l'exception lié à une insertion raté
-    public function clearException():void
+    final public function clearException():void
     {
         $this->exception = null;
 

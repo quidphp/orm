@@ -42,7 +42,7 @@ class PdoSql extends Main\Map
 
     // construct
     // construit l'objet sql
-    public function __construct(Pdo $db,?string $type=null,$output=true)
+    final public function __construct(Pdo $db,?string $type=null,$output=true)
     {
         $this->makeAttr(null);
         $this->setDb($db);
@@ -55,7 +55,7 @@ class PdoSql extends Main\Map
 
     // invoke
     // appel de la classe, renvoie vers trigger
-    public function __invoke(...$args)
+    final public function __invoke(...$args)
     {
         return $this->trigger(...$args);
     }
@@ -63,7 +63,7 @@ class PdoSql extends Main\Map
 
     // toString
     // retourne l'émulation de la requête
-    public function __toString():string
+    final public function __toString():string
     {
         return $this->emulate() ?? '';
     }
@@ -72,7 +72,7 @@ class PdoSql extends Main\Map
     // onPrepareKey
     // prépare une clé pour une méthode comme get et slice
     // peut envoyer une exception
-    protected function onPrepareKey($return)
+    final protected function onPrepareKey($return)
     {
         $return = $this->getShortcut($return) ?? $return;
         $this->checkClause($return);
@@ -84,7 +84,7 @@ class PdoSql extends Main\Map
     // toArray
     // méthode utilisé pour obtenir du contenu tableau lors du remplacement via une méthode map
     // seulement pour des requêtes select ou show
-    public function toArray():array
+    final public function toArray():array
     {
         $return = [];
 
@@ -99,7 +99,7 @@ class PdoSql extends Main\Map
 
     // arr
     // retourne une référence du tableau data
-    public function &arr():array
+    final public function &arr():array
     {
         return $this->data;
     }
@@ -107,7 +107,7 @@ class PdoSql extends Main\Map
 
     // cast
     // retourne la valeur cast enrobbé de paranthèse
-    public function _cast():?string
+    final public function _cast():?string
     {
         $return = $this->emulate();
 
@@ -120,7 +120,7 @@ class PdoSql extends Main\Map
 
     // primary
     // retourne la clé primaire par défaut de l'objet db
-    public function primary():string
+    final public function primary():string
     {
         return $this->db()->primary();
     }
@@ -128,7 +128,7 @@ class PdoSql extends Main\Map
 
     // syntaxCall
     // permet d'appeler une méthode sur la classe de syntaxe de la db
-    public function syntaxCall(string $method,...$args)
+    final public function syntaxCall(string $method,...$args)
     {
         return $this->db()->syntaxCall($method,...$args);
     }
@@ -138,7 +138,7 @@ class PdoSql extends Main\Map
     // change le type de l'objet sql
     // l'objet est vidé
     // le output est ramené à true si output courant incompatible avec le nouveau type
-    public function setType(?string $type,$output=null):self
+    final public function setType(?string $type,$output=null):self
     {
         if($type === null)
         $type = $this->getAttr('default');
@@ -166,7 +166,7 @@ class PdoSql extends Main\Map
 
     // getType
     // retourne le type de l'objet
-    public function getType():string
+    final public function getType():string
     {
         return $this->type;
     }
@@ -190,7 +190,7 @@ class PdoSql extends Main\Map
 
     // getOutput
     // retourne le output de la requête
-    public function getOutput()
+    final public function getOutput()
     {
         return $this->output;
     }
@@ -198,8 +198,7 @@ class PdoSql extends Main\Map
 
     // resetCount
     // reset le tableau de cache pour les count
-    // méthode protégé
-    protected function resetCount():void
+    final protected function resetCount():void
     {
         $this->count = [];
 
@@ -209,7 +208,7 @@ class PdoSql extends Main\Map
 
     // getShortcut
     // retourne le nom de la méthode lié au shortcut
-    public function getShortcut(string $value):?string
+    final public function getShortcut(string $value):?string
     {
         return $this->getAttr(['shortcut',$value,$this->getType()]);
     }
@@ -217,7 +216,7 @@ class PdoSql extends Main\Map
 
     // getTable
     // retourne le nom de la table lié à l'objet sql si existant
-    public function getTable():?string
+    final public function getTable():?string
     {
         $return = null;
         $table = $this->get('table');
@@ -232,7 +231,7 @@ class PdoSql extends Main\Map
     // checkTable
     // retourne le nom de la table lié à l'objet sql
     // envoie une exception si non existant
-    public function checkTable():string
+    final public function checkTable():string
     {
         $return = $this->getTable();
 
@@ -245,7 +244,7 @@ class PdoSql extends Main\Map
 
     // hasJoin
     // retourne vrai si l'objet a une entrée join et que table est set
-    public function hasJoin():bool
+    final public function hasJoin():bool
     {
         $return = false;
 
@@ -264,7 +263,7 @@ class PdoSql extends Main\Map
 
     // checkType
     // envoie une exception si le type de l'objet n'est pas celui donné en argument
-    public function checkType(string $value):self
+    final public function checkType(string $value):self
     {
         if($this->getType() !== $value)
         static::throw($value);
@@ -275,7 +274,7 @@ class PdoSql extends Main\Map
 
     // checkClause
     // retourne vrai si la clause est valide avec le type, sinon lance une exception
-    protected function checkClause($value):void
+    final protected function checkClause($value):void
     {
         if(is_string($value))
         {
@@ -305,7 +304,7 @@ class PdoSql extends Main\Map
     // checkValue
     // retourne vrai si la valeur de la clause est valide, sinon lance une exception
     // cette validation se fait sur une entrée d'une clause
-    protected function checkValue(string $clause,$value):void
+    final protected function checkValue(string $clause,$value):void
     {
         if(in_array($clause,['table','group','dropCol','dropKey'],true) && (!is_string($value) || !strlen($value)))
         static::throw($clause,'requires','stringWithLength');
@@ -325,7 +324,7 @@ class PdoSql extends Main\Map
 
     // checkShortcut
     // retourne la méthode à appeler si le shortcut est valide avec le type, sinon lance une exception
-    protected function checkShortcut(string $value):?string
+    final protected function checkShortcut(string $value):?string
     {
         $return = $this->getShortcut($value);
 
@@ -371,8 +370,7 @@ class PdoSql extends Main\Map
     // permet d'append ou prepend une entrée à une clause
     // si la valeur est un tableau avec un count de 1, enlève le tableau
     // la cache des count est reset à chaque appel à cette méthode
-    // méthode protégé
-    protected function do(string $clause,$value,bool $prepend=false):void
+    final protected function do(string $clause,$value,bool $prepend=false):void
     {
         $this->resetCount();
         $arr =& $this->arr();
@@ -443,7 +441,7 @@ class PdoSql extends Main\Map
 
     // one
     // append une entrée à une clause
-    public function one(string $clause,...$value):self
+    final public function one(string $clause,...$value):self
     {
         $this->do($clause,$value,false);
 
@@ -453,7 +451,7 @@ class PdoSql extends Main\Map
 
     // many
     // permet d'append plusieurs entrées à une clause
-    public function many(string $clause,...$values):self
+    final public function many(string $clause,...$values):self
     {
         foreach ($values as $value)
         {
@@ -466,7 +464,7 @@ class PdoSql extends Main\Map
 
     // prependOne
     // prepend une entrée à une clause
-    public function prependOne(string $clause,...$value):self
+    final public function prependOne(string $clause,...$value):self
     {
         $this->do($clause,$value,true);
 
@@ -476,7 +474,7 @@ class PdoSql extends Main\Map
 
     // prependMany
     // prepend plusieurs entrées à une clause
-    public function prependMany(string $clause,...$values):self
+    final public function prependMany(string $clause,...$values):self
     {
         foreach ($values as $value)
         {
@@ -490,7 +488,7 @@ class PdoSql extends Main\Map
     // exists
     // retourne vrai si les clauses existent dans le tableau
     // n'envoie pas d'exception
-    public function exists(...$keys):bool
+    final public function exists(...$keys):bool
     {
         foreach ($keys as &$key)
         {
@@ -503,7 +501,7 @@ class PdoSql extends Main\Map
 
     // set
     // change ou ajoute le contenu d'une clause
-    public function set($key,$value):parent
+    final public function set($key,$value):parent
     {
         $key = $this->getShortcut($key) ?? $key;
         $this->checkClause($key);
@@ -515,7 +513,7 @@ class PdoSql extends Main\Map
 
     // make
     // fait la requête via la classe BaseSql
-    public function make($output=null,?array $option=null):?array
+    final public function make($output=null,?array $option=null):?array
     {
         $return = null;
         $data = $this->arr();
@@ -534,7 +532,7 @@ class PdoSql extends Main\Map
     // what
     // permet d'ajouter une entrée à une clause what
     // valide pour select et show
-    public function what(...$value):self
+    final public function what(...$value):self
     {
         return $this->one('what',...$value);
     }
@@ -543,7 +541,7 @@ class PdoSql extends Main\Map
     // whats
     // permet d'ajouter plusieurs entrées à une clause what
     // valide pour select et show
-    public function whats(...$values):self
+    final public function whats(...$values):self
     {
         return $this->many('what',...$values);
     }
@@ -552,7 +550,7 @@ class PdoSql extends Main\Map
     // table
     // permet d'ajouter du contenu à une clause table
     // valide pour tous les types
-    public function table($value):self
+    final public function table($value):self
     {
         return $this->one('table',Base\Obj::cast($value,1));
     }
@@ -561,7 +559,7 @@ class PdoSql extends Main\Map
     // from
     // permet d'ajouter du contenu à une clause table
     // valide pour select et delete
-    public function from($value):self
+    final public function from($value):self
     {
         $shortcut = $this->checkShortcut('from');
         $this->one($shortcut,Base\Obj::cast($value,1));
@@ -573,7 +571,7 @@ class PdoSql extends Main\Map
     // into
     // permet d'ajouter du contenu à une clause table
     // valide pour insert
-    public function into($value):self
+    final public function into($value):self
     {
         $shortcut = $this->checkShortcut('into');
         $this->one($shortcut,Base\Obj::cast($value,1));
@@ -585,7 +583,7 @@ class PdoSql extends Main\Map
     // join
     // permet d'ajouter une entrée à une clause join
     // seule la table est obligatoire, valide pour select
-    public function join($table,?array $values=null):self
+    final public function join($table,?array $values=null):self
     {
         return $this->one('join',['table'=>Base\Obj::cast($table,1)])->ons($values);
     }
@@ -594,7 +592,7 @@ class PdoSql extends Main\Map
     // innerJoin
     // permet d'ajouter une entrée à une clause innerJoin
     // seule la table est obligatoire, valide pour select
-    public function innerJoin($table,?array $values=null):self
+    final public function innerJoin($table,?array $values=null):self
     {
         return $this->one('innerJoin',['table'=>Base\Obj::cast($table,1)])->ons($values);
     }
@@ -603,7 +601,7 @@ class PdoSql extends Main\Map
     // outerJoin
     // permet d'ajouter une entrée à une clause outerJoin
     // seule la table est obligatoire, valide pour select
-    public function outerJoin($table,?array $values=null):self
+    final public function outerJoin($table,?array $values=null):self
     {
         return $this->one('outerJoin',['table'=>Base\Obj::cast($table,1)])->ons($values);
     }
@@ -611,7 +609,7 @@ class PdoSql extends Main\Map
 
     // on
     // permet d'append une entrée on à une clause join, innerJoin ou outerJoin
-    public function on(...$value):self
+    final public function on(...$value):self
     {
         return $this->one('on',...$value);
     }
@@ -619,7 +617,7 @@ class PdoSql extends Main\Map
 
     // ons
     // permet d'append plusieurs entrées on à une clause join, innerJoin ou outerJoin
-    public function ons(...$values):self
+    final public function ons(...$values):self
     {
         return $this->many('on',...$values);
     }
@@ -628,7 +626,7 @@ class PdoSql extends Main\Map
     // where
     // permet d'ajouter une entrée à une clause where
     // valide pour select, show, update et delete
-    public function where(...$value):self
+    final public function where(...$value):self
     {
         return $this->one('where',...$value);
     }
@@ -637,7 +635,7 @@ class PdoSql extends Main\Map
     // wheres
     // permet d'ajouter plusieurs entrées à une clause where
     // valide pour select, show, update et delete
-    public function wheres(...$values):self
+    final public function wheres(...$values):self
     {
         return $this->many('where',...$values);
     }
@@ -645,7 +643,7 @@ class PdoSql extends Main\Map
 
     // wheresOne
     // permet d'ajouter plusieurs entrées clause where via un seul argument
-    public function wheresOne($values):self
+    final public function wheresOne($values):self
     {
         if(!is_array($values))
         $values = [$values];
@@ -669,7 +667,7 @@ class PdoSql extends Main\Map
     // permet de faire un where sur plusieurs colonnes avec une même méthode et une même valeur
     // le séparateur entre chaque colonne doit être défini en premier argument
     // par défaut une parenthèse enroberra ces entrées where
-    public function whereSeparator(string $separator,$method,$cols,$value=null,bool $parenthesis=true):self
+    final public function whereSeparator(string $separator,$method,$cols,$value=null,bool $parenthesis=true):self
     {
         if($this->syntaxCall('isWhereSeparator',$separator))
         {
@@ -704,7 +702,7 @@ class PdoSql extends Main\Map
     // permet de faire un where sur plusieurs colonnes avec une même méthode et une même valeur
     // le séparateur entre chaque colonne est and
     // par défaut une parenthèse enroberra ces entrées where
-    public function whereAnd($method,$cols,$value=null,bool $parenthesis=true):self
+    final public function whereAnd($method,$cols,$value=null,bool $parenthesis=true):self
     {
         return $this->whereSeparator('and',$method,$cols,$value,$parenthesis);
     }
@@ -714,7 +712,7 @@ class PdoSql extends Main\Map
     // permet de faire un where sur plusieurs colonnes avec une même méthode et une même valeur
     // le séparateur entre chaque colonne est or
     // par défaut une parenthèse enroberra ces entrées where
-    public function whereOr($method,$cols,$value=null,bool $parenthesis=true):self
+    final public function whereOr($method,$cols,$value=null,bool $parenthesis=true):self
     {
         return $this->whereSeparator('or',$method,$cols,$value,$parenthesis);
     }
@@ -723,7 +721,7 @@ class PdoSql extends Main\Map
     // whereSeparatorMany
     // comme whereSeparator, mais chaque valeur du tableau passe dans le loop de façon indépendante
     // possible de spécifier un séparateur et un séparateur interne
-    public function whereSeparatorMany(string $separator,string $innerSeparator,$method,$cols,array $values,bool $parenthesis=true):self
+    final public function whereSeparatorMany(string $separator,string $innerSeparator,$method,$cols,array $values,bool $parenthesis=true):self
     {
         if($this->syntaxCall('isWhereSeparator',$innerSeparator))
         {
@@ -748,7 +746,7 @@ class PdoSql extends Main\Map
     // whereAndMany
     // comme whereAnd, mais chaque valeur du tableau passe dans le loop de façon indépendante
     // possible de spécifier un séparateur entre les whereAnd
-    public function whereAndMany($method,$cols,array $values,string $innerSeparator='and',bool $parenthesis=true):self
+    final public function whereAndMany($method,$cols,array $values,string $innerSeparator='and',bool $parenthesis=true):self
     {
         return $this->whereSeparatorMany('and',$innerSeparator,$method,$cols,$values,$parenthesis);
     }
@@ -757,7 +755,7 @@ class PdoSql extends Main\Map
     // whereOrMany
     // comme whereOr, mais chaque valeur du tableau passe dans le loop de façon indépendante
     // possible de spécifier un séparateur entre les whereOr
-    public function whereOrMany($method,$cols,array $values,string $innerSeparator='and',bool $parenthesis=true):self
+    final public function whereOrMany($method,$cols,array $values,string $innerSeparator='and',bool $parenthesis=true):self
     {
         return $this->whereSeparatorMany('or',$innerSeparator,$method,$cols,$values,$parenthesis);
     }
@@ -766,7 +764,7 @@ class PdoSql extends Main\Map
     // whereAfter
     // permet d'ajouter les clauses après where
     // value 0 est order et value 1 est limit
-    public function whereAfter(...$values):self
+    final public function whereAfter(...$values):self
     {
         foreach ($values as $key => $value)
         {
@@ -784,7 +782,7 @@ class PdoSql extends Main\Map
     // group
     // permet d'ajouter une ou plusieurs entrées à une clause group
     // valide pour select
-    public function group(...$values):self
+    final public function group(...$values):self
     {
         return $this->many('group',...Base\Obj::casts(1,...$values));
     }
@@ -793,7 +791,7 @@ class PdoSql extends Main\Map
     // order
     // permet d'ajouter une entrée à une clause order
     // valide pour select, show, update et delete
-    public function order(...$value):self
+    final public function order(...$value):self
     {
         return $this->one('order',...$value);
     }
@@ -802,7 +800,7 @@ class PdoSql extends Main\Map
     // orders
     // permet d'ajouter plusieurs entrées à une clause order
     // valide pour select, show, update et delete
-    public function orders(...$values):self
+    final public function orders(...$values):self
     {
         return $this->many('order',...$values);
     }
@@ -811,7 +809,7 @@ class PdoSql extends Main\Map
     // limit
     // permet d'ajouter une entrée à une clause limit
     // valide pour select, show, update et delete
-    public function limit(...$value):self
+    final public function limit(...$value):self
     {
         return $this->one('limit',...$value);
     }
@@ -820,7 +818,7 @@ class PdoSql extends Main\Map
     // page
     // permet d'ajouter une entrée à une clause limit via deux valeur numériques: page et limit
     // envoie une exception si page n'est pas au moins 1
-    public function page(int $page,int $limit):self
+    final public function page(int $page,int $limit):self
     {
         if($page <= 0)
         static::throw('pageMustBeAtLeast1');
@@ -832,7 +830,7 @@ class PdoSql extends Main\Map
     // insertSet
     // permet d'ajouter une entrée à une clause insertSet
     // valide pour insert
-    public function insertSet($key,$value):self
+    final public function insertSet($key,$value):self
     {
         return $this->one('insertSet',[Base\Obj::cast($key,1)=>$value]);
     }
@@ -841,7 +839,7 @@ class PdoSql extends Main\Map
     // insertSets
     // permet d'ajouter plusieurs entrées à une clause insertSet via un tableau associatif
     // valide pour insert
-    public function insertSets(array $value):self
+    final public function insertSets(array $value):self
     {
         return $this->many('insertSet',$value);
     }
@@ -850,7 +848,7 @@ class PdoSql extends Main\Map
     // updateSet
     // permet d'ajouter une entrée à une clause updateSet
     // valide pour update
-    public function updateSet($key,$value):self
+    final public function updateSet($key,$value):self
     {
         return $this->one('updateSet',[Base\Obj::cast($key,1)=>$value]);
     }
@@ -859,7 +857,7 @@ class PdoSql extends Main\Map
     // updateSets
     // permet d'ajouter plusieurs entrées à une clause updateSet via un tableau associatif
     // valide pour update
-    public function updateSets(array $value):self
+    final public function updateSets(array $value):self
     {
         return $this->many('updateSet',$value);
     }
@@ -867,7 +865,7 @@ class PdoSql extends Main\Map
 
     // data
     // raccourci pour insertSet et updateSet selon le type
-    public function data($key,$value):self
+    final public function data($key,$value):self
     {
         $key = Base\Obj::cast($key,1);
         $method = $this->checkShortcut('data');
@@ -882,7 +880,7 @@ class PdoSql extends Main\Map
     // datas
     // raccourci pour insertSets et updateSets selon le type
     // comme date mais rajoute un s à la méthode
-    public function datas(array ...$values):self
+    final public function datas(array ...$values):self
     {
         $method = $this->checkShortcut('data');
 
@@ -898,7 +896,7 @@ class PdoSql extends Main\Map
 
     // col
     // raccourci pour createCol ou addCol selon le type
-    public function col(array ...$values):self
+    final public function col(array ...$values):self
     {
         $method = $this->checkShortcut('col');
 
@@ -912,7 +910,7 @@ class PdoSql extends Main\Map
     // createCol
     // permet d'ajouter plusieurs entrées à une clause createCol
     // valide pour create
-    public function createCol(array ...$values):self
+    final public function createCol(array ...$values):self
     {
         return $this->many('createCol',...$values);
     }
@@ -921,7 +919,7 @@ class PdoSql extends Main\Map
     // createKey
     // permet d'ajouter plusieurs entrées à une clause createKey
     // valide pour create
-    public function createKey(array ...$values):self
+    final public function createKey(array ...$values):self
     {
         return $this->many('createKey',...$values);
     }
@@ -930,7 +928,7 @@ class PdoSql extends Main\Map
     // addCol
     // permet d'ajouter plusieurs entrées à une clause addCol
     // valide pour alter
-    public function addCol(array ...$values):self
+    final public function addCol(array ...$values):self
     {
         return $this->many('addCol',...$values);
     }
@@ -939,7 +937,7 @@ class PdoSql extends Main\Map
     // addKey
     // permet d'ajouter plusieurs entrées à une clause addKey
     // valide pour alter
-    public function addKey(array ...$values):self
+    final public function addKey(array ...$values):self
     {
         return $this->many('addKey',...$values);
     }
@@ -948,7 +946,7 @@ class PdoSql extends Main\Map
     // alterCol
     // permet d'ajouter plusieurs entrées à une clause alterCol
     // valide pour alter
-    public function alterCol(array ...$values):self
+    final public function alterCol(array ...$values):self
     {
         return $this->many('alterCol',...$values);
     }
@@ -957,7 +955,7 @@ class PdoSql extends Main\Map
     // dropCol
     // permet d'ajouter plusieurs entrées à une clause dropCol
     // valide pour alter
-    public function dropCol(...$values):self
+    final public function dropCol(...$values):self
     {
         return $this->many('dropCol',...Base\Obj::casts(1,...$values));
     }
@@ -966,7 +964,7 @@ class PdoSql extends Main\Map
     // dropKey
     // permet d'ajouter plusieurs entrées à une clause dropKey
     // valide pour alter
-    public function dropKey(...$values):self
+    final public function dropKey(...$values):self
     {
         return $this->many('dropKey',...Base\Obj::casts(1,...$values));
     }
@@ -975,7 +973,7 @@ class PdoSql extends Main\Map
     // select
     // vide l'objet, change le type pour select
     // argument est whats
-    public function select(...$values):self
+    final public function select(...$values):self
     {
         $this->setType('select');
 
@@ -989,7 +987,7 @@ class PdoSql extends Main\Map
     // assoc
     // vide l'objet, change le type pour select avec output assoc
     // argument est whats
-    public function assoc(...$values):self
+    final public function assoc(...$values):self
     {
         $this->setType('select');
         $this->setOutput('assoc');
@@ -1004,7 +1002,7 @@ class PdoSql extends Main\Map
     // assocs
     // vide l'objet, change le type pour select avec output assocs
     // argument est whats
-    public function assocs(...$values):self
+    final public function assocs(...$values):self
     {
         $this->setType('select');
         $this->setOutput('assocs');
@@ -1019,7 +1017,7 @@ class PdoSql extends Main\Map
     // show
     // vide l'objet, change le type pour show
     // si c'est une string, envoie dans set/what
-    public function show($value=null):self
+    final public function show($value=null):self
     {
         $value = Base\Obj::cast($value,2);
         $this->setType('show');
@@ -1034,7 +1032,7 @@ class PdoSql extends Main\Map
     // insert
     // vide l'objet, change le type pour insert
     // argument est into
-    public function insert($value=null):self
+    final public function insert($value=null):self
     {
         $value = Base\Obj::cast($value,2);
         $this->setType('insert');
@@ -1049,7 +1047,7 @@ class PdoSql extends Main\Map
     // update
     // vide l'objet, change le type pour update
     // argument est table
-    public function update($value=null):self
+    final public function update($value=null):self
     {
         $value = Base\Obj::cast($value,2);
         $this->setType('update');
@@ -1064,7 +1062,7 @@ class PdoSql extends Main\Map
     // delete
     // vide l'objet, change le type pour delete
     // argument est from
-    public function delete($value=null):self
+    final public function delete($value=null):self
     {
         $value = Base\Obj::cast($value,2);
         $this->setType('delete');
@@ -1079,7 +1077,7 @@ class PdoSql extends Main\Map
     // create
     // vide l'objet, change le type pour create
     // argument est table
-    public function create($value=null):self
+    final public function create($value=null):self
     {
         $value = Base\Obj::cast($value,2);
         $this->setType('create');
@@ -1094,7 +1092,7 @@ class PdoSql extends Main\Map
     // alter
     // vide l'objet, change le type pour alter
     // argument est table
-    public function alter($value=null):self
+    final public function alter($value=null):self
     {
         $value = Base\Obj::cast($value,2);
         $this->setType('alter');
@@ -1109,7 +1107,7 @@ class PdoSql extends Main\Map
     // truncate
     // vide l'objet, change le type pour truncate
     // argument est table
-    public function truncate($value=null):self
+    final public function truncate($value=null):self
     {
         $value = Base\Obj::cast($value,2);
         $this->setType('truncate');
@@ -1124,7 +1122,7 @@ class PdoSql extends Main\Map
     // drop
     // vide l'objet, change le type pour drop
     // argument est table
-    public function drop($value=null):self
+    final public function drop($value=null):self
     {
         $value = Base\Obj::cast($value,2);
         $this->setType('drop');
@@ -1140,7 +1138,7 @@ class PdoSql extends Main\Map
     // parse la valeur limit de l'objet sql
     // retourne la limit, le offset et la page si disponible
     // possible de spécifier une clé et retourne seulement une des trois valeurs
-    public function parseLimit(?string $key=null)
+    final public function parseLimit(?string $key=null)
     {
         $return = null;
         $limit = $this->get('limit');
@@ -1162,7 +1160,7 @@ class PdoSql extends Main\Map
 
     // getOffset
     // retourne la valeur offset de l'objet sql
-    public function getOffset():?int
+    final public function getOffset():?int
     {
         return $this->parseLimit('offset');
     }
@@ -1170,7 +1168,7 @@ class PdoSql extends Main\Map
 
     // getLimit
     // retourne la valeur limit de l'objet sql
-    public function getLimit():?int
+    final public function getLimit():?int
     {
         return $this->parseLimit('limit');
     }
@@ -1178,7 +1176,7 @@ class PdoSql extends Main\Map
 
     // getPage
     // retourne la page courant à partir de la clause limite de l'objet sql
-    public function getPage():?int
+    final public function getPage():?int
     {
         return $this->parseLimit('page');
     }
@@ -1186,7 +1184,7 @@ class PdoSql extends Main\Map
 
     // pageBase
     // méthode protégé qui fait des appels à la classe base/nav
-    protected function pageBase(string $method,?int $page=null,bool $cache=true,...$args)
+    final protected function pageBase(string $method,?int $page=null,bool $cache=true,...$args)
     {
         $limit = $this->parseLimit();
         $page = (is_int($page))? $page:$limit['page'];
@@ -1196,7 +1194,7 @@ class PdoSql extends Main\Map
 
     // isPage
     // retourne vrai si la page existe
-    public function isPage(?int $page=null,bool $cache=true):bool
+    final public function isPage(?int $page=null,bool $cache=true):bool
     {
         return $this->pageBase('isPage',$page,$cache);
     }
@@ -1204,7 +1202,7 @@ class PdoSql extends Main\Map
 
     // isPageFull
     // retourne vrai si la page existe et est pleine
-    public function isPageFull(?int $page=null,bool $cache=true):bool
+    final public function isPageFull(?int $page=null,bool $cache=true):bool
     {
         return $this->pageBase('isPageFull',$page,$cache);
     }
@@ -1212,7 +1210,7 @@ class PdoSql extends Main\Map
 
     // isSpecificInPage
     // retourne vrai si le id est dans la page
-    public function isSpecificInPage($value,?int $page=null,bool $cache=true):bool
+    final public function isSpecificInPage($value,?int $page=null,bool $cache=true):bool
     {
         $return = false;
         $page = (is_int($page))? $page:$this->getPage();
@@ -1227,7 +1225,7 @@ class PdoSql extends Main\Map
 
     // pageMax
     // retourne la page maximale pour la requête
-    public function pageMax(bool $cache=true):?int
+    final public function pageMax(bool $cache=true):?int
     {
         return Base\Nav::pageMax($this->triggerWhatCount($cache),$this->parseLimit('limit'));
     }
@@ -1235,7 +1233,7 @@ class PdoSql extends Main\Map
 
     // pageFromIndex
     // retourne un numéro de page à partir d'un index de valeur
-    public function pageFromIndex(int $index,bool $cache=true):?int
+    final public function pageFromIndex(int $index,bool $cache=true):?int
     {
         return Base\Nav::pageFromIndex($index,$this->triggerWhatCount($cache),$this->parseLimit('limit'));
     }
@@ -1243,7 +1241,7 @@ class PdoSql extends Main\Map
 
     // pages
     // retourne un tableau avec tous les numéros de page
-    public function pages(bool $cache=true):array
+    final public function pages(bool $cache=true):array
     {
         return Base\Nav::pages($this->triggerWhatCount($cache),$this->parseLimit('limit'));
     }
@@ -1251,7 +1249,7 @@ class PdoSql extends Main\Map
 
     // pagesPosition
     // retourne un tableau contenant toutes les pages et la position par rapport à la page courante
-    public function pagesPosition(?int $page=null,bool $cache=true):?array
+    final public function pagesPosition(?int $page=null,bool $cache=true):?array
     {
         return $this->pageBase('pagesPosition',$page,$cache);
     }
@@ -1259,7 +1257,7 @@ class PdoSql extends Main\Map
 
     // pagesClose
     // retourne un tableau contenant les pages entourant la page courante
-    public function pagesClose(?int $page=null,int $amount=3,bool $cache=true):?array
+    final public function pagesClose(?int $page=null,int $amount=3,bool $cache=true):?array
     {
         $return = null;
         $limit = $this->parseLimit();
@@ -1272,7 +1270,7 @@ class PdoSql extends Main\Map
 
     // pageSpecificCount
     // retourne le nombre d'éléments contenu dans une page
-    public function pageSpecificCount(?int $page=null,bool $cache=true):?int
+    final public function pageSpecificCount(?int $page=null,bool $cache=true):?int
     {
         return $this->pageBase('pageSpecificCount',$page,$cache);
     }
@@ -1280,7 +1278,7 @@ class PdoSql extends Main\Map
 
     // pageFirst
     // retourne la première page
-    public function pageFirst(bool $cache=true):?int
+    final public function pageFirst(bool $cache=true):?int
     {
         return Base\Nav::pageFirst($this->triggerWhatCount($cache),$this->parseLimit('limit'));
     }
@@ -1288,7 +1286,7 @@ class PdoSql extends Main\Map
 
     // pagePrev
     // retourne la page précédente
-    public function pagePrev(?int $page=null,bool $cache=true):?int
+    final public function pagePrev(?int $page=null,bool $cache=true):?int
     {
         return $this->pageBase('pagePrev',$page,$cache);
     }
@@ -1296,7 +1294,7 @@ class PdoSql extends Main\Map
 
     // pageNext
     // retourne la page suivante
-    public function pageNext(?int $page=null,bool $cache=true):?int
+    final public function pageNext(?int $page=null,bool $cache=true):?int
     {
         return $this->pageBase('pageNext',$page,$cache);
     }
@@ -1304,7 +1302,7 @@ class PdoSql extends Main\Map
 
     // pageLast
     // retourne la dernière page
-    public function pageLast(bool $cache=true):?int
+    final public function pageLast(bool $cache=true):?int
     {
         return Base\Nav::pageLast($this->triggerWhatCount($cache),$this->parseLimit('limit'));
     }
@@ -1313,7 +1311,7 @@ class PdoSql extends Main\Map
     // general
     // retourne un tableau contenant un maximum d'informations relatives aux pages
     // first et last seulement retourné si différent de prev/next
-    public function general(?int $page=null,int $amount=3,bool $cache=true):?array
+    final public function general(?int $page=null,int $amount=3,bool $cache=true):?array
     {
         return $this->pageBase('general',$page,$cache,$amount);
     }
@@ -1321,7 +1319,7 @@ class PdoSql extends Main\Map
 
     // pagesWithSpecific
     // retourne un tableau multidimensionnel avec les pages et les ids contenus dans chaque page
-    public function pagesWithSpecific():?array
+    final public function pagesWithSpecific():?array
     {
         $return = null;
         $primary = $this->primary();
@@ -1343,7 +1341,7 @@ class PdoSql extends Main\Map
 
     // pageWithSpecific
     // retourne les ids contenus dans une page
-    public function pageWithSpecific(?int $value=null):?array
+    final public function pageWithSpecific(?int $value=null):?array
     {
         $return = null;
         $value = (is_int($value))? $value:$this->getPage();
@@ -1371,7 +1369,7 @@ class PdoSql extends Main\Map
 
     // pageFirstSpecific
     // retourne le premier id contenu dans la page
-    public function pageFirstSpecific(?int $value=null):?int
+    final public function pageFirstSpecific(?int $value=null):?int
     {
         $return = null;
         $content = $this->pageWithSpecific($value);
@@ -1385,7 +1383,7 @@ class PdoSql extends Main\Map
 
     // pageLastSpecific
     // retourne le dernier id contenu dans la page
-    public function pageLastSpecific(?int $value=null):?int
+    final public function pageLastSpecific(?int $value=null):?int
     {
         $return = null;
         $content = $this->pageWithSpecific($value);
@@ -1399,7 +1397,7 @@ class PdoSql extends Main\Map
 
     // specificIndex
     // retourne le offset d'un id à l'intérieur de la requête
-    public function specificIndex($value)
+    final public function specificIndex($value)
     {
         $return = null;
         $value = Base\Obj::cast($value,4);
@@ -1444,7 +1442,7 @@ class PdoSql extends Main\Map
 
     // specificPage
     // retourne le numéro de page d'un id spécifique dans la requête
-    public function specificPage($value,bool $cache=true):?int
+    final public function specificPage($value,bool $cache=true):?int
     {
         $return = null;
         $value = $this->specificIndex($value);
@@ -1462,7 +1460,7 @@ class PdoSql extends Main\Map
 
     // specificFirst
     // retourne le premier id qui serait retourné par la requête
-    public function specificFirst():?int
+    final public function specificFirst():?int
     {
         $return = null;
         $primary = $this->primary();
@@ -1481,7 +1479,7 @@ class PdoSql extends Main\Map
     // specificPrev
     // retourne le id précédent la valeur donnée en argument
     // value peut être un index si isIndex est true
-    public function specificPrev($value,?int $index=null):?int
+    final public function specificPrev($value,?int $index=null):?int
     {
         $return = null;
 
@@ -1509,7 +1507,7 @@ class PdoSql extends Main\Map
     // specificPrevInPage
     // retourne le id précédant dans la même page
     // value peut être un index si isIndex est true
-    public function specificPrevInPage($value,?int $index=null,bool $cache=true):?int
+    final public function specificPrevInPage($value,?int $index=null,bool $cache=true):?int
     {
         $return = null;
         $page = $this->specificPage($value,$cache);
@@ -1525,7 +1523,7 @@ class PdoSql extends Main\Map
     // specificNext
     // retourne le id suivant la valeur donnée en argument
     // value peut être un index si isIndex est true
-    public function specificNext($value,?int $index=null):?int
+    final public function specificNext($value,?int $index=null):?int
     {
         $return = null;
 
@@ -1554,7 +1552,7 @@ class PdoSql extends Main\Map
     // specificNextInPage
     // retourne le id suivant dans la même page
     // value peut être un index si isIndex est true
-    public function specificNextInPage($value,?int $index=null,bool $cache=true):?int
+    final public function specificNextInPage($value,?int $index=null,bool $cache=true):?int
     {
         $return = null;
         $page = $this->specificPage($value,$cache);
@@ -1569,7 +1567,7 @@ class PdoSql extends Main\Map
 
     // specificLast
     // retourne le dernier id qui serait retourné par la requête
-    public function specificLast(bool $cache=true):?int
+    final public function specificLast(bool $cache=true):?int
     {
         $return = null;
         $primary = $this->primary();
@@ -1596,7 +1594,7 @@ class PdoSql extends Main\Map
     // retourne un tableau avec un maximum d'information sur un id à l'intérieur d'une requête
     // retourne le offset, premier, précédent, suivant et dernier
     // first et last seulement retourné si différent de prev/next
-    public function specific($value,bool $cache=true):?array
+    final public function specific($value,bool $cache=true):?array
     {
         $return = null;
         $value = Base\Obj::cast($value,4);
@@ -1630,7 +1628,7 @@ class PdoSql extends Main\Map
     // trigger
     // lance la requête et retourne le résultat
     // possibilité de changer le output et les options pour le trigger, sans affecter l'objet
-    public function trigger($output=null,?array $option=null)
+    final public function trigger($output=null,?array $option=null)
     {
         $return = null;
         $db = $this->db();
@@ -1645,7 +1643,7 @@ class PdoSql extends Main\Map
     // triggerCount
     // pour les requêtes de type select
     // permet de retourner un count via la meilleure façon pour la requête
-    public function triggerCount(bool $cache=false):?int
+    final public function triggerCount(bool $cache=false):?int
     {
         return (empty($this->get('limit')))? $this->triggerWhatCount($cache):$this->triggerRowCount($cache);
     }
@@ -1680,7 +1678,7 @@ class PdoSql extends Main\Map
     // pour les requêtes de type select
     // permet de retourner un count en utlisant la méthode count dans what
     // ne tient pas compte de la clause limite
-    public function triggerWhatCount(bool $cache=false):?int
+    final public function triggerWhatCount(bool $cache=false):?int
     {
         $return = null;
         $this->checkType('select');
@@ -1711,7 +1709,7 @@ class PdoSql extends Main\Map
     // pour les requêtes de type select
     // permet de retourner un count en utilisant le output rowCount
     // tient compte de la clause limite
-    public function triggerRowCount(bool $cache=false):?int
+    final public function triggerRowCount(bool $cache=false):?int
     {
         $return = null;
         $this->checkType('select');
@@ -1740,7 +1738,7 @@ class PdoSql extends Main\Map
     // isTriggerCountEmpty
     // retourne vrai si la requête sql contient des lignes
     // par défaut, garde en cache
-    public function isTriggerCountEmpty(bool $cache=true):bool
+    final public function isTriggerCountEmpty(bool $cache=true):bool
     {
         return (empty($this->triggerCount($cache)))? true:false;
     }
@@ -1749,7 +1747,7 @@ class PdoSql extends Main\Map
     // isTriggerCountNotEmpty
     // retourne vrai si la requête sql ne contient pas de lignes
     // par défaut, garde en cache
-    public function isTriggerCountNotEmpty(bool $cache=true):bool
+    final public function isTriggerCountNotEmpty(bool $cache=true):bool
     {
         return (!empty($this->triggerCount($cache)))? true:false;
     }
@@ -1757,7 +1755,7 @@ class PdoSql extends Main\Map
 
     // emulate
     // retourne la version émulée de la requête
-    public function emulate(?array $option=null):?string
+    final public function emulate(?array $option=null):?string
     {
         $return = null;
         $make = $this->make($option);
@@ -1771,7 +1769,7 @@ class PdoSql extends Main\Map
 
     // debug
     // retourne le tableau de débogagge
-    public function debug(?array $option=null):?array
+    final public function debug(?array $option=null):?array
     {
         return $this->db()->debug($this->make($option));
     }

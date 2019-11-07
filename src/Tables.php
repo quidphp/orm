@@ -32,7 +32,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // construct
     // construit un nouvel objet tables
-    public function __construct(...$values)
+    final public function __construct(...$values)
     {
         if(!empty($values))
         $this->add(...$values);
@@ -43,7 +43,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // toString
     // retourne les noms de tables séparés par des virgules
-    public function __toString():string
+    final public function __toString():string
     {
         return implode(',',$this->names());
     }
@@ -53,7 +53,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // prepare une clé pour les méthodes qui soumette une clé
     // support pour shortcut
     // possibilité de donner un nom de classe aussi
-    protected function onPrepareKey($key)
+    final protected function onPrepareKey($key)
     {
         $return = null;
 
@@ -102,7 +102,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // onPrepareReturns
     // prépare le retour pour gets
-    protected function onPrepareReturns(array $array):self
+    final protected function onPrepareReturns(array $array):self
     {
         $return = new static();
 
@@ -118,7 +118,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // cast
     // retourne la valeur cast
-    public function _cast():array
+    final public function _cast():array
     {
         return $this->names();
     }
@@ -126,7 +126,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // offsetSet
     // arrayAccess offsetSet est seulement permis si la clé est null []
-    public function offsetSet($key,$value):void
+    final public function offsetSet($key,$value):void
     {
         if($key === null)
         $this->add($value);
@@ -140,7 +140,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // hasChanged
     // retourne vrai si une des lignes des tables a changé
-    public function hasChanged():bool
+    final public function hasChanged():bool
     {
         $return = false;
 
@@ -159,7 +159,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // names
     // retourne les noms des tables contenus dans l'objet
-    public function names():array
+    final public function names():array
     {
         return $this->keys();
     }
@@ -167,7 +167,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // db
     // retourne la db du premier objet table
-    public function db():?Db
+    final public function db():?Db
     {
         $return = null;
         $first = $this->first();
@@ -183,7 +183,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // valeurs doivent être des objets table ou tables
     // deux objets identiques ne peuvent pas être ajoutés dans tables
     // des objets de différentes base de données ne peuvent être ajoutés dans tables
-    public function add(...$values):self
+    final public function add(...$values):self
     {
         $this->checkAllowed('add');
         $values = $this->prepareValues(...$values);
@@ -216,7 +216,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // label
     // retourne les noms de toutes les tables
-    public function label($pattern=null,?string $lang=null,?array $option=null):array
+    final public function label($pattern=null,?string $lang=null,?array $option=null):array
     {
         return $this->pair('label',$pattern,$lang,$option);
     }
@@ -224,7 +224,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // description
     // retourne les descriptions de toutes les tables
-    public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
+    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
     {
         return $this->pair('description',$pattern,$replace,$lang,$option);
     }
@@ -233,7 +233,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // labels
     // retourne les labels de toutes les tables et de toutes les colonnes
     // pas de support pour pattern
-    public function labels(?string $lang=null,?array $option=null):array
+    final public function labels(?string $lang=null,?array $option=null):array
     {
         $return = [];
 
@@ -250,7 +250,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // descriptions
     // retourne les labels de toutes les tables et de toutes les descriptions
     // pas de support pour pattern
-    public function descriptions(?array $replace=null,?string $lang=null,?array $option=null):array
+    final public function descriptions(?array $replace=null,?string $lang=null,?array $option=null):array
     {
         $return = [];
 
@@ -266,7 +266,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // hasPermission
     // permet de filtre les tables par une ou plusieurs permissions
-    public function hasPermission(string ...$types):self
+    final public function hasPermission(string ...$types):self
     {
         return $this->filter(['hasPermission'=>true],...$types);
     }
@@ -277,7 +277,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // possible de changer la méthode en deuxième argument
     // retourne un tableau avec les ids et non pas un objet rows
     // ne retourne pas une table si aucun résultat trouvé
-    public function search($search,?string $method=null,...$values):array
+    final public function search($search,?string $method=null,...$values):array
     {
         $return = [];
 
@@ -295,7 +295,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // changed
     // retourne un objet rowsIndex avec toutes les lignes de table qui ont changé
-    public function changed():RowsIndex
+    final public function changed():RowsIndex
     {
         $return = RowsIndex::newOverload();
 
@@ -315,7 +315,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // retourne un tableau unidimensionnel sur le total des tables, colonnes, lignes et cellules chargés pour toutes les tables
     // si count est true, compte le nombre total de ligne et de colonne, pas seulement celle chargé
     // si count et cache sont true, retourne les counts en cache si existant
-    public function total(bool $count=false,bool $cache=false):array
+    final public function total(bool $count=false,bool $cache=false):array
     {
         $return = [];
 
@@ -336,7 +336,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // info
     // retourne un tableau multidimensionnel qui contient des informations sur le nombre de colonnes, lignes et cellules chargés pour toutes les tables
-    public function info(bool $count=false,bool $cache=false):array
+    final public function info(bool $count=false,bool $cache=false):array
     {
         return $this->pair('info',$count,$cache);
     }
@@ -344,7 +344,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // searchable
     // retourne un objet tables avec toutes les tables cherchables
-    public function searchable():self
+    final public function searchable():self
     {
         return $this->filter(['isSearchable'=>true]);
     }
@@ -352,7 +352,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // searchMinLength
     // retourne la plus grande longueur de recherche minimale
-    public function searchMinLength():int
+    final public function searchMinLength():int
     {
         $return = 0;
 
@@ -371,7 +371,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // isSearchTermValid
     // retourne vrai si le terme de la recherche est valide pour toutes les tables
     // valeur peut être scalar, un tableau à un ou plusieurs niveaux
-    public function isSearchTermValid($value):bool
+    final public function isSearchTermValid($value):bool
     {
         $return = false;
 
@@ -390,7 +390,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // keyParent
     // retourne un tableau unidimensionnel avec le nom de la table comme clé et le nom du parent comme valeur
     // si aucun parent, la valeur est null
-    public function keyParent():array
+    final public function keyParent():array
     {
         return $this->pair('parent');
     }
@@ -398,7 +398,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // truncate
     // permet de lancer la requête sql truncate sur toutes les tables contenus dans l'objet
-    public function truncate(?array $option=null):array
+    final public function truncate(?array $option=null):array
     {
         return $this->pair('truncate',$option);
     }
@@ -407,7 +407,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // hierarchy
     // retourne le tableau de la hiérarchie des éléments de l'objet
     // si existe est false, les parents de table non existants sont conservés
-    public function hierarchy(bool $exists=true):array
+    final public function hierarchy(bool $exists=true):array
     {
         return Base\Arrs::hierarchy($this->keyParent(),$exists);
     }
@@ -416,7 +416,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // childsRecursive
     // retourne un tableau avec tous les enfants de l'élément de façon récursive
     // si existe est false, les parents de table non existants sont conservés
-    public function childsRecursive($value,bool $exists=true):?array
+    final public function childsRecursive($value,bool $exists=true):?array
     {
         $return = null;
         $hierarchy = $this->hierarchy($exists);
@@ -438,7 +438,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // tops
     // retourne un objet des éléments n'ayant pas de parent
     // ne retourne pas les tables non existantes
-    public function tops():self
+    final public function tops():self
     {
         $return = new static();
 
@@ -455,7 +455,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // parent
     // retourne l'objet d'un élément parent ou null
     // ne retourne pas les tables non existantes
-    public function parent($value):?Table
+    final public function parent($value):?Table
     {
         $return = null;
         $value = $this->get($value);
@@ -474,7 +474,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // top
     // retourne le plus haut parent d'un élément ou null
     // ne retourne pas les tables non existantes
-    public function top($value):?Table
+    final public function top($value):?Table
     {
         $return = null;
         $value = $this->get($value);
@@ -499,7 +499,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // parents
     // retourne un objet avec tous les parents de l'élément
     // ne retourne pas les tables non existantes
-    public function parents($value):self
+    final public function parents($value):self
     {
         $return = new static();
         $value = $this->get($value);
@@ -520,7 +520,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // breadcrumb
     // retourne un objet inversé de tous les parents de l'élément et l'objet courant
     // ne retourne pas les tables non existantes
-    public function breadcrumb($value):self
+    final public function breadcrumb($value):self
     {
         $return = $this->parents($value);
 
@@ -538,7 +538,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // siblings
     // retourne un objet des éléments ayant le même parent que la valeur donnée
     // ne retourne pas les tables non existantes
-    public function siblings($value):self
+    final public function siblings($value):self
     {
         $return = new static();
         $value = $this->get($value);
@@ -561,7 +561,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // childs
     // retourne un objet avec les enfants de l'élément donné en argument
     // ne retourne pas les tables non existantes
-    public function childs($value):self
+    final public function childs($value):self
     {
         $return = new static();
         $value = $this->get($value);
@@ -581,7 +581,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // relationChilds
     // retourne tous les ids ou les lignes qui sont des enfants de relation d'une ligne
-    public function relationChilds($table,$primary):array
+    final public function relationChilds($table,$primary):array
     {
         $return = [];
         $table = $this->get($table);
@@ -614,7 +614,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
 
     // keyClassExtends
     // retourne un tableau utilisé par onPrepareKey
-    public static function keyClassExtends():array
+    final public static function keyClassExtends():array
     {
         return [Row::getOverloadClass(),Table::getOverloadClass(),Rows::getOverloadClass(),Cells::getOverloadClass(),Cols::getOverloadClass()];
     }

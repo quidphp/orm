@@ -33,7 +33,7 @@ class Cell extends Main\Root
 
     // construct
     // construit l'objet table
-    public function __construct($value,Col $col,Row $row)
+    final public function __construct($value,Col $col,Row $row)
     {
         $table = $col->table();
 
@@ -55,7 +55,7 @@ class Cell extends Main\Root
     // toString
     // retourne la valeur de la cellule via la méthode output
     // sécuritaire pour sortie html
-    public function __toString():string
+    final public function __toString():string
     {
         return Base\Str::cast($this->value());
     }
@@ -63,7 +63,7 @@ class Cell extends Main\Root
 
     // invoke
     // appel de l'objet, renvoie vers pair
-    public function __invoke(...$args)
+    final public function __invoke(...$args)
     {
         return $this->pair(...$args);
     }
@@ -72,7 +72,7 @@ class Cell extends Main\Root
     // onCommitted
     // callback après une mise à jour réussie
     // ne retourne rien
-    public function onCommitted(bool $insert=false,array $option)
+    final protected function onCommitted(bool $insert=false,array $option)
     {
         if($this->hasCommittedCallback('onCommitted'))
         {
@@ -82,7 +82,11 @@ class Cell extends Main\Root
 
         $this->clearCommittedCallback();
         $this->clearException();
-        $this->col()->onCommitted($this,$insert,$option);
+        $col = $this->col();
+        $cell = $this;
+        Base\Call::bindTo($col,function() use($cell,$insert,$option) {
+            $this->onCommitted($cell,$insert,$option);
+        });
 
         return;
     }
@@ -98,7 +102,7 @@ class Cell extends Main\Root
 
     // is
     // retourne vrai si la valeur remplit la condition de validation
-    public function is($value):bool
+    final public function is($value):bool
     {
         return Base\Validate::is($value,$this->value());
     }
@@ -106,7 +110,7 @@ class Cell extends Main\Root
 
     // isNot
     // retourne vrai si la valeur ne remplit pas la condition de validation
-    public function isNot($value):bool
+    final public function isNot($value):bool
     {
         return Base\Validate::isNot($value,$this->value());
     }
@@ -114,7 +118,7 @@ class Cell extends Main\Root
 
     // isEqual
     // retourne vrai si la valeur est égale à l'argument
-    public function isEqual($value):bool
+    final public function isEqual($value):bool
     {
         return ($value === $this->value())? true:false;
     }
@@ -122,7 +126,7 @@ class Cell extends Main\Root
 
     // isNotEqual
     // retourne vrai si la valeur n'est pas égale à l'argument
-    public function isNotEqual($value):bool
+    final public function isNotEqual($value):bool
     {
         return ($value !== $this->value())? true:false;
     }
@@ -130,7 +134,7 @@ class Cell extends Main\Root
 
     // isCompare
     // permet de comparer la valeur de cellule avec un symbol et une valeur
-    public function isCompare(string $symbol,$value):bool
+    final public function isCompare(string $symbol,$value):bool
     {
         return Base\Validate::compare($this->value(),$symbol,$value);
     }
@@ -138,7 +142,7 @@ class Cell extends Main\Root
 
     // isEmpty
     // retourne vrai si la valeur est vide
-    public function isEmpty():bool
+    final public function isEmpty():bool
     {
         return (empty($this->value()))? true:false;
     }
@@ -146,7 +150,7 @@ class Cell extends Main\Root
 
     // isNotEmpty
     // retourne vrai si la valeur n'est pas vide
-    public function isNotEmpty():bool
+    final public function isNotEmpty():bool
     {
         return (!empty($this->value()))? true:false;
     }
@@ -154,7 +158,7 @@ class Cell extends Main\Root
 
     // isNull
     // retourne vrai si la valeur est null
-    public function isNull():bool
+    final public function isNull():bool
     {
         return ($this->value() === null)? true:false;
     }
@@ -162,7 +166,7 @@ class Cell extends Main\Root
 
     // isNotNull
     // retourne vrai si la valeur n'est pas null
-    public function isNotNull():bool
+    final public function isNotNull():bool
     {
         return ($this->value() !== null)? true:false;
     }
@@ -170,7 +174,7 @@ class Cell extends Main\Root
 
     // isPrimary
     // retourne vrai si la colonne de la cellule est la clé primaire
-    public function isPrimary():bool
+    final public function isPrimary():bool
     {
         return ($this->col()->isPrimary())? true:false;
     }
@@ -178,7 +182,7 @@ class Cell extends Main\Root
 
     // acceptsNull
     // retourne vrai si la colonne de la cellule accepte null
-    public function acceptsNull():bool
+    final public function acceptsNull():bool
     {
         return $this->col()->acceptsNull();
     }
@@ -186,7 +190,7 @@ class Cell extends Main\Root
 
     // isRequired
     // retourne vrai si la colonne de la cellule est requise
-    public function isRequired():bool
+    final public function isRequired():bool
     {
         return $this->col()->isRequired();
     }
@@ -195,7 +199,7 @@ class Cell extends Main\Root
     // isStillRequired
     // retourne vrai si la cellule est toujours requise, donc la valeur est vide
     // utilise la méthode validate isReallyEmpty pour déterminer si une valeur est vide
-    public function isStillRequired():bool
+    final public function isStillRequired():bool
     {
         return $this->col()->isStillRequired($this);
     }
@@ -203,7 +207,7 @@ class Cell extends Main\Root
 
     // isDate
     // retourne vrai si la colonne est de type date
-    public function isDate():bool
+    final public function isDate():bool
     {
         return $this->col()->isDate();
     }
@@ -211,7 +215,7 @@ class Cell extends Main\Root
 
     // isRelation
     // retourne vrai si la colonne est de type relation
-    public function isRelation():bool
+    final public function isRelation():bool
     {
         return $this->col()->isRelation();
     }
@@ -219,7 +223,7 @@ class Cell extends Main\Root
 
     // isEnum
     // retourne vrai si la colonne est de type relation enum
-    public function isEnum():bool
+    final public function isEnum():bool
     {
         return $this->col()->isEnum();
     }
@@ -227,7 +231,7 @@ class Cell extends Main\Root
 
     // isSet
     // retourne vrai si la colonne est de type relation set
-    public function isSet():bool
+    final public function isSet():bool
     {
         return $this->col()->isSet();
     }
@@ -235,7 +239,7 @@ class Cell extends Main\Root
 
     // isMedia
     // retourne vrai si la colonne est de type media
-    public function isMedia():bool
+    final public function isMedia():bool
     {
         return $this->col()->isMedia();
     }
@@ -243,7 +247,7 @@ class Cell extends Main\Root
 
     // isVisible
     // retourne vrai si la cellule est visible, prend en compte la valeur de la cellule
-    public function isVisible(?array $attr=null,?Main\Session $session=null):bool
+    final public function isVisible(?array $attr=null,?Main\Session $session=null):bool
     {
         return $this->col()->isVisible($this,$attr,$session);
     }
@@ -251,7 +255,7 @@ class Cell extends Main\Root
 
     // isVisibleGeneral
     // retourne vrai si la cellule est visible, ne tient pas compte de la valeur de la cellule
-    public function isVisibleGeneral(?array $attr=null):bool
+    final public function isVisibleGeneral(?array $attr=null):bool
     {
         return $this->col()->isVisibleGeneral($attr);
     }
@@ -259,7 +263,7 @@ class Cell extends Main\Root
 
     // isEditable
     // retourne vrai si la colonne est editable, si non donc pas de modification après insertion
-    public function isEditable():bool
+    final public function isEditable():bool
     {
         return $this->col()->isEditable();
     }
@@ -267,7 +271,7 @@ class Cell extends Main\Root
 
     // attrPermissionRolesObject
     // retourne les rôles courant
-    protected function attrPermissionRolesObject():Main\Roles
+    final protected function attrPermissionRolesObject():Main\Roles
     {
         return $this->col()->attrPermissionRolesObject();
     }
@@ -275,7 +279,7 @@ class Cell extends Main\Root
 
     // generalExcerptMin
     // retourne la longueur de l'excerpt pour general
-    public function generalExcerptMin():?int
+    final public function generalExcerptMin():?int
     {
         return $this->col()->generalExcerptMin();
     }
@@ -283,7 +287,7 @@ class Cell extends Main\Root
 
     // group
     // retourne le groupe de la colonne
-    public function group():string
+    final public function group():string
     {
         return $this->col()->group();
     }
@@ -291,7 +295,7 @@ class Cell extends Main\Root
 
     // tag
     // retourne la tag de la cellule
-    public function tag(?array $attr=null,bool $complex=false):string
+    final public function tag(?array $attr=null,bool $complex=false):string
     {
         $return = null;
 
@@ -307,7 +311,7 @@ class Cell extends Main\Root
 
     // isFormTag
     // retourne vrai si la tag de la colonne est de type form
-    public function isFormTag(?array $attr=null,bool $complex=false):bool
+    final public function isFormTag(?array $attr=null,bool $complex=false):bool
     {
         return Base\Html::isFormTag($this->tag($attr,$complex));
     }
@@ -317,7 +321,7 @@ class Cell extends Main\Root
     // retourne toutes les règles de validations et required de la cellule
     // n'a pas de lien avec la valeur courante de la cellule
     // possible de retourner les textes si lang est true
-    public function rules(bool $lang=false,bool $preValidate=false)
+    final public function rules(bool $lang=false,bool $preValidate=false)
     {
         $return = $this->col()->rules($lang,$preValidate);
         $exception = $this->ruleException($lang);
@@ -331,7 +335,7 @@ class Cell extends Main\Root
     // compare
     // retourne vrai si la valeur de la cellule passe le test de comparaison
     // possible de retourner le texte si lang est true
-    public function compare(bool $lang=false)
+    final public function compare(bool $lang=false)
     {
         return $this->col()->compare($this,$this->row(),$lang);
     }
@@ -341,7 +345,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur de la cellule passe le test required de la colonne
     // sinon retourne required pour envoyer dans lang
     // possible de retourner le texte si lang est true
-    public function required(bool $lang=false)
+    final public function required(bool $lang=false)
     {
         return $this->col()->required($this,$lang);
     }
@@ -351,7 +355,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur de la cellule passe le test unique de la colonne
     // sinon retourne unique pour envoyer dans lang
     // possible de retourner le texte si lang est true
-    public function unique(bool $lang=false)
+    final public function unique(bool $lang=false)
     {
         return $this->col()->unique($this,$this->rowPrimary(),$lang);
     }
@@ -361,7 +365,7 @@ class Cell extends Main\Root
     // retourne vrai si la cellule est éditable ou si la valeur n'a pas changé
     // sinon retourne editable pour envoyer dans lang
     // possible de retourner le texte si lang est true
-    public function editable(bool $lang=false)
+    final public function editable(bool $lang=false)
     {
         return ($this->isEditable() || !$this->hasChanged())? true:$this->col()->ruleEditable($lang);
     }
@@ -373,7 +377,7 @@ class Cell extends Main\Root
     // les règles de validation ne s'applique pas si la valeur est celle par défaut ou null, si null est accepté
     // possible de retourner les textes si lang est true
     // si cache est true, retoure la propriété validate qui garde en cache la dernière validation
-    public function validate(bool $lang=false)
+    final public function validate(bool $lang=false)
     {
         return $this->col()->validate($this,$lang);
     }
@@ -383,7 +387,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur de la cellule passe les test srequired et validation de la colonne
     // sinon retourne un tableau avec les détails des tests non passés
     // possible de retourner les textes si lang est true
-    public function completeValidation(bool $lang=false)
+    final public function completeValidation(bool $lang=false)
     {
         $array = [];
         $array['exception'] = $this->exception($lang);
@@ -401,7 +405,7 @@ class Cell extends Main\Root
 
     // isColKindInt
     // retourne vrai si la colonne de la cellule est de type int
-    public function isColKindInt():bool
+    final public function isColKindInt():bool
     {
         return $this->col()->isKindInt();
     }
@@ -409,7 +413,7 @@ class Cell extends Main\Root
 
     // isColKindChar
     // retourne vrai si la colonne de la cellule est de type char
-    public function isColKindChar():bool
+    final public function isColKindChar():bool
     {
         return $this->col()->isKindChar();
     }
@@ -417,7 +421,7 @@ class Cell extends Main\Root
 
     // isColKindText
     // retourne vrai si la colonne de la cellule est de type text
-    public function isColKindText():bool
+    final public function isColKindText():bool
     {
         return $this->col()->isKindText();
     }
@@ -428,7 +432,7 @@ class Cell extends Main\Root
     // similaire à une syntaxe sql mais ne supporte pas les méthodes base/sql whereThree, ni les and, or et paranthèses
     // envoie une exception si une méthode n'est pas supporté
     // utilisé par cells isWhere
-    public function isWhere(array $array):bool
+    final public function isWhere(array $array):bool
     {
         $return = false;
         $db = $this->db();
@@ -465,7 +469,7 @@ class Cell extends Main\Root
 
     // hasDefault
     // retourne vrai si la colonne de la cellule a une valeur par défaut
-    public function hasDefault():bool
+    final public function hasDefault():bool
     {
         return $this->col()->hasDefault();
     }
@@ -473,7 +477,7 @@ class Cell extends Main\Root
 
     // isLinked
     // retourne vrai si la cellule est lié à l'objet db
-    public function isLinked():bool
+    final public function isLinked():bool
     {
         return ($this->hasDb() && $this->row()->cells()->in($this))? true:false;
     }
@@ -481,7 +485,7 @@ class Cell extends Main\Root
 
     // alive
     // retourne vrai si la cellule existe dans la base de donnée
-    public function alive():bool
+    final public function alive():bool
     {
         return (!empty($this->db()->selectColumns($this->col(),$this->table(),$this->row())))? true:false;
     }
@@ -489,7 +493,7 @@ class Cell extends Main\Root
 
     // sameRow
     // retourne vrai si l'objet et celui fourni ont la même ligne
-    public function sameRow($row):bool
+    final public function sameRow($row):bool
     {
         return ($this->row() === $this->table()->row($row))? true:false;
     }
@@ -497,7 +501,7 @@ class Cell extends Main\Root
 
     // isIncluded
     // retourne vrai si l'inclusion de la  colonne est forcé lors des loop insert ou update
-    public function isIncluded(bool $required=true):bool
+    final public function isIncluded(bool $required=true):bool
     {
         return $this->col()->isIncluded('update',$required);
     }
@@ -506,7 +510,7 @@ class Cell extends Main\Root
     // hasChanged
     // retourne vrai si la valeur de la cellule a changé depuis son dernier commit
     // retourne vrai si la cellule a un committed callback
-    public function hasChanged():bool
+    final public function hasChanged():bool
     {
         $return = false;
 
@@ -525,8 +529,7 @@ class Cell extends Main\Root
 
     // setCol
     // change la colonne de la cellule
-    // méthode protégé
-    protected function setCol(Col $col):void
+    final protected function setCol(Col $col):void
     {
         $this->col = $col->name();
 
@@ -536,8 +539,7 @@ class Cell extends Main\Root
 
     // setRow
     // change la ligne de la cellule
-    // méthode protégé
-    protected function setRow(Row $row):void
+    final protected function setRow(Row $row):void
     {
         $this->row = $row->primary();
 
@@ -547,7 +549,7 @@ class Cell extends Main\Root
 
     // name
     // retourne le nom de la colonne
-    public function name():string
+    final public function name():string
     {
         return $this->col()->name();
     }
@@ -555,7 +557,7 @@ class Cell extends Main\Root
 
     // col
     // retourne l'objet col
-    public function col():Col
+    final public function col():Col
     {
         return $this->table()->col($this->col);
     }
@@ -563,7 +565,7 @@ class Cell extends Main\Root
 
     // priority
     // retourne le code de priorité de la colonne
-    public function priority():int
+    final public function priority():int
     {
         return $this->col()->priority();
     }
@@ -571,7 +573,7 @@ class Cell extends Main\Root
 
     // setPriority
     // retourne le code de priorité de la colonne pour le onSet
-    public function setPriority():int
+    final public function setPriority():int
     {
         return $this->col()->setPriority();
     }
@@ -579,7 +581,7 @@ class Cell extends Main\Root
 
     // colType
     // retourne le type de la colonne de la cellule
-    public function colType()
+    final public function colType()
     {
         return $this->col()->type();
     }
@@ -587,7 +589,7 @@ class Cell extends Main\Root
 
     // colKind
     // retourne le kind de la colonne de la cellule
-    public function colKind()
+    final public function colKind()
     {
         return $this->col()->kind();
     }
@@ -595,7 +597,7 @@ class Cell extends Main\Root
 
     // colLength
     // retourne la length de la colonne de la cellule, si spécifié
-    public function colLength():?int
+    final public function colLength():?int
     {
         return $this->col()->length();
     }
@@ -606,7 +608,7 @@ class Cell extends Main\Root
     // préférable d'appeler hasDefault avant pour être certain qu'il y a un réelement attribut défaut de spécifié
     // retourne aussi int 0 et string vide si pas d'attribut défaut spécifié
     // par défaut retourne null
-    public function colDefault()
+    final public function colDefault()
     {
         return $this->col()->default();
     }
@@ -614,7 +616,7 @@ class Cell extends Main\Root
 
     // colUnique
     // retorune vrai si la colonne doit avoir une valeur unique
-    public function colUnique():bool
+    final public function colUnique():bool
     {
         return $this->col()->shouldBeUnique();
     }
@@ -623,7 +625,7 @@ class Cell extends Main\Root
     // attrRef
     // retourne le tableau des attributs
     // doit retourner une référence
-    protected function &attrRef():array
+    final protected function &attrRef():array
     {
         return $this->col()->attrRef();
     }
@@ -631,7 +633,7 @@ class Cell extends Main\Root
 
     // rowPrimary
     // retourne le id de la clé primaire de ligne
-    public function rowPrimary():int
+    final public function rowPrimary():int
     {
         return $this->row;
     }
@@ -639,7 +641,7 @@ class Cell extends Main\Root
 
     // id
     // retourne le id de la clé primaire de ligne
-    public function id():int
+    final public function id():int
     {
         return $this->row;
     }
@@ -647,7 +649,7 @@ class Cell extends Main\Root
 
     // row
     // retourne l'objet row
-    public function row():Row
+    final public function row():Row
     {
         return $this->table()->checkRow($this->row);
     }
@@ -655,7 +657,7 @@ class Cell extends Main\Root
 
     // label
     // retourne le label de la cellule
-    public function label($pattern=null,?string $lang=null,?array $option=null):?string
+    final public function label($pattern=null,?string $lang=null,?array $option=null):?string
     {
         return $this->col()->label($pattern,$lang,$option);
     }
@@ -663,7 +665,7 @@ class Cell extends Main\Root
 
     // description
     // retourne la description de la cellule
-    public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
+    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
     {
         return $this->col()->description($pattern,$replace,$lang,$option);
     }
@@ -671,7 +673,7 @@ class Cell extends Main\Root
 
     // details
     // retourne les détails de la cellule
-    public function details(bool $lang=true):array
+    final public function details(bool $lang=true):array
     {
         return $this->col()->details($lang);
     }
@@ -680,7 +682,7 @@ class Cell extends Main\Root
     // form
     // génère un élément de formulaire pour la cellule
     // possible de merge un tableau attribut sur celui de la cellule
-    public function form(?array $attr=null,?array $option=null):string
+    final public function form(?array $attr=null,?array $option=null):string
     {
         return $this->col()->form($this,$attr,$option);
     }
@@ -689,7 +691,7 @@ class Cell extends Main\Root
     // formHidden
     // génère un élément de formulaire pour la cellule
     // force que le type du input soit hidden
-    public function formHidden(?array $attr=null,?array $option=null):string
+    final public function formHidden(?array $attr=null,?array $option=null):string
     {
         return $this->col()->formHidden($this,$attr,$option);
     }
@@ -698,7 +700,7 @@ class Cell extends Main\Root
     // formPlaceholder
     // génère un élément de formulaire pour la cellule
     // comme la méthode form, mais le premier argument est une string pour le placeholder
-    public function formPlaceholder(?string $placeholder=null,?array $attr=null,?array $option=null):string
+    final public function formPlaceholder(?string $placeholder=null,?array $attr=null,?array $option=null):string
     {
         return $this->col()->formPlaceholder($this,$placeholder,$attr,$option);
     }
@@ -708,7 +710,7 @@ class Cell extends Main\Root
     // génère la celulle dans un formWrap incluant le label et l'élément de formulaire
     // un id commun au label et élément de formulaire sera automatiquement ajouté
     // les formWrap sont définis dans les config de la classe base/html
-    public function formWrap(?string $wrap=null,$pattern=null,?array $attr=null,?array $replace=null,?array $option=null):string
+    final public function formWrap(?string $wrap=null,$pattern=null,?array $attr=null,?array $replace=null,?array $option=null):string
     {
         return $this->col()->formWrap($wrap,$pattern,$this,$attr,$replace,$option);
     }
@@ -718,7 +720,7 @@ class Cell extends Main\Root
     // génère la celulle dans un formWrap incluant le label et l'élément de formulaire avec le placeholder
     // un id commun au label et élément de formulaire sera automatiquement ajouté
     // les formWrap sont définis dans les config de la classe base/html
-    public function formPlaceholderWrap(?string $wrap=null,$pattern=null,?string $placeholder=null,?array $attr=null,?array $replace=null,?array $option=null):string
+    final public function formPlaceholderWrap(?string $wrap=null,$pattern=null,?string $placeholder=null,?array $attr=null,?array $replace=null,?array $option=null):string
     {
         return $this->col()->formPlaceholderWrap($wrap,$pattern,$this,$placeholder,$attr,$replace,$option);
     }
@@ -726,7 +728,7 @@ class Cell extends Main\Root
 
     // hasFormLabelId
     // retourne vrai si l'élément de formulaire de la colonne doit avoir un id dans le label
-    public function hasFormLabelId(?array $attr=null,bool $complex=false):bool
+    final public function hasFormLabelId(?array $attr=null,bool $complex=false):bool
     {
         return $this->col()->hasFormLabelId($attr,$complex);
     }
@@ -735,7 +737,7 @@ class Cell extends Main\Root
     // com
     // permet d'insérer de la com à partir d'une cellule
     // la com sera inséré dans la row
-    public function com($value,?string $type=null,?array $replace=null):self
+    final public function com($value,?string $type=null,?array $replace=null):self
     {
         $this->col()->com($value,$this,$type,$replace);
 
@@ -747,7 +749,7 @@ class Cell extends Main\Root
     // fonction pour faire un résumé sécuritaire
     // removeLineBreaks, removeUnicode, excerpt par length (rtrim et suffix), trim, stripTags, encode (specialChars)
     // mb est true par défaut
-    public function htmlExcerpt(?int $length,?array $option=null):string
+    final public function htmlExcerpt(?int $length,?array $option=null):string
     {
         return $this->col()->htmlExcerpt($length,$this,$option);
     }
@@ -757,7 +759,7 @@ class Cell extends Main\Root
     // output une string html de façon sécuritaire
     // removeLineBreaks, removeUnicode, trim et encode (specialchars)
     // mb est true par défaut
-    public function htmlOutput(?array $option=null):string
+    final public function htmlOutput(?array $option=null):string
     {
         return $this->col()->htmlOutput($this,$option);
     }
@@ -766,7 +768,7 @@ class Cell extends Main\Root
     // htmlUnicode
     // removeLineBreaks, trim et convert (specialchars)
     // conserve unicode
-    public function htmlUnicode(?array $option=null):string
+    final public function htmlUnicode(?array $option=null):string
     {
         return $this->col()->htmlUnicode($this,$option);
     }
@@ -774,7 +776,7 @@ class Cell extends Main\Root
 
     // htmlReplace
     // retourne le tableau de remplacement, utilisé par la méthode html
-    public function htmlReplace(?array $option=null):array
+    final public function htmlReplace(?array $option=null):array
     {
         return $this->col()->htmlReplace($this,$option);
     }
@@ -783,7 +785,7 @@ class Cell extends Main\Root
     // htmlStr
     // retourne une string html avec les valeurs entre paranthèses remplacés
     // remplace name, label, value, get et output
-    public function htmlStr(string $return,?array $option=null):string
+    final public function htmlStr(string $return,?array $option=null):string
     {
         return $this->col()->htmlStr($this,$return,$option);
     }
@@ -792,7 +794,7 @@ class Cell extends Main\Root
     // value
     // retourne la valeur de la cellule
     // peut être la valeur de changement ou la valeur courante
-    public function value()
+    final public function value()
     {
         $return = null;
 
@@ -809,7 +811,7 @@ class Cell extends Main\Root
     // valueInitial
     // retourne la valuer initiale de la cellule
     // peu importe les changements
-    public function valueInitial()
+    final public function valueInitial()
     {
         return $this->value['initial'] ?? null;
     }
@@ -818,7 +820,7 @@ class Cell extends Main\Root
     // get
     // retourne la valeur formatté de la cellule
     // si la valeur est scalar, elle est cast avant d'être envoyé dans onGet
-    public function get(?array $option=null)
+    final public function get(?array $option=null)
     {
         $return = null;
 
@@ -828,8 +830,12 @@ class Cell extends Main\Root
 
         if(is_scalar($value))
         $value = Base\Scalar::cast($value);
-
-        $onGet = $this->col()->onGet($this,$option);
+        
+        $col = $this->col();
+        $cell = $this;
+        $onGet = Base\Call::bindTo($col,function() use($cell,$option) {
+            return $this->onGet($cell,$option);
+        });
 
         if($onGet !== $this)
         $value = $onGet;
@@ -851,16 +857,20 @@ class Cell extends Main\Root
 
     // exportCommon
     // méthode protégé utilisé par la méthode export des différentes classes de cellule
-    protected function exportCommon($value,?array $option=null):array
+    final protected function exportCommon($value,?array $option=null):array
     {
-        return $this->col()->onExport('cell',$value,$this,$option);
+        $col = $this->col();
+        $cell = $this;
+        return Base\Call::bindTo($col,function() use($cell,$value,$option) {
+            return $this->onExport('cell',$value,$cell,$option);
+        });
     }
 
 
     // exportOne
     // retourne la valeur pour l'exportation
     // retourne la première valeur du tableau export
-    public function exportOne(?array $option=null)
+    final public function exportOne(?array $option=null)
     {
         $return = null;
         $array = $this->export($option);
@@ -911,7 +921,8 @@ class Cell extends Main\Root
 
         $col = $this->col();
         $row = $this->row();
-
+        $cell = $this;
+        
         if(!empty($option['preValidate']) && $option['preValidate'] === true)
         {
             $value = $col->preValidatePrepare($value);
@@ -919,8 +930,10 @@ class Cell extends Main\Root
             if(is_array($preValidate))
             static::throw('preValidate',$this->name(),$preValidate);
         }
-
-        $onSet = $col->onSet($value,$row->get(),$this,$option);
+        
+        $onSet = Base\Call::bindTo($col,function() use($value,$row,$cell,$option) {
+            return $this->onSet($value,$row->get(),$cell,$option);
+        });
 
         if($onSet !== $this)
         $value = $onSet;
@@ -928,7 +941,10 @@ class Cell extends Main\Root
         $value = $col->autoCast($value);
 
         $this->value['change'] = $value;
-        $col->onCellSet($this);
+        
+        Base\Call::bindTo($col,function() use($cell) {
+            $this->onCellSet($cell);
+        });
 
         return $this;
     }
@@ -950,8 +966,11 @@ class Cell extends Main\Root
 
         $this->clearCommittedCallback();
         $this->clearException();
-
-        $col->onCellInit($this);
+        
+        $cell = $this;
+        Base\Call::bindTo($col,function() use($cell) {
+            $this->onCellInit($cell);
+        });
 
         return $this;
     }
@@ -960,7 +979,7 @@ class Cell extends Main\Root
     // setSelf
     // attribute la valeur actuelle à la valeur de changement
     // utiliser dans cells included, permet de lancer les onSet même sans changement de valeur
-    public function setSelf(?array $option=null)
+    final public function setSelf(?array $option=null)
     {
         return $this->set($this->value(),$option);
     }
@@ -974,8 +993,12 @@ class Cell extends Main\Root
     {
         if(array_key_exists('change',$this->value))
         unset($this->value['change']);
-
-        $this->col()->onCellSet($this);
+        
+        $col = $this->col();
+        $cell = $this;
+        Base\Call::bindTo($col,function() use($cell) {
+            $this->onCellSet($cell);
+        });
 
         return $this;
     }
@@ -1001,7 +1024,7 @@ class Cell extends Main\Root
 
     // isUnique
     // retourne vrai si la valeur de la cellule est unique parmis toutes les autres cellules
-    public function isUnique():bool
+    final public function isUnique():bool
     {
         return $this->col()->isUnique($this,$this->rowPrimary());
     }
@@ -1010,7 +1033,7 @@ class Cell extends Main\Root
     // duplicate
     // retourne un tableau avec les ids de la table dont la colonne ont la même valeur que la cellule
     // null n'est pas une value qui peut avoir des duplicatas
-    public function duplicate():?array
+    final public function duplicate():?array
     {
         return $this->col()->duplicate($this,$this->rowPrimary());
     }
@@ -1020,7 +1043,7 @@ class Cell extends Main\Root
     // la cellule est passé dans la méthode updateCallable de la colonne, si existante
     // ceci est appelé avant la mise à jour de la ligne
     // méthode public car appelé dans row
-    public function update(?array $option=null):self
+    final public function update(?array $option=null):self
     {
         $this->col()->updateCallable($this,(array) $option);
 
@@ -1034,7 +1057,13 @@ class Cell extends Main\Root
     // méthode public car appelé dans row
     public function delete(?array $option=null):self
     {
-        $this->col()->onDelete($this,(array) $option);
+        $col = $this->col();
+        $cell = $this;
+        $option = (array) $option;
+        
+        Base\Call::bindTo($col,function() use($cell,$option) {
+            $this->onDelete($cell,$option);
+        });
 
         return $this;
     }
@@ -1043,7 +1072,7 @@ class Cell extends Main\Root
     // refresh
     // ramène la valeur de la cellule à celle présentement dans la base de donnée
     // envoie une exception si la ligne n'existe plus
-    public function refresh():self
+    final public function refresh():self
     {
         $table = $this->table();
         $value = $this->db()->selectColumns($this->col(),$table,$this->row());
@@ -1061,7 +1090,7 @@ class Cell extends Main\Root
     // terminate
     // vide un objet cell
     // l'objet devient inutilisable
-    public function terminate():self
+    final public function terminate():self
     {
         $this->value = [];
         $this->col = null;
@@ -1075,7 +1104,7 @@ class Cell extends Main\Root
 
     // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
-    public static function initReplaceMode():array
+    final public static function initReplaceMode():array
     {
         return Col::initReplaceMode();
     }
@@ -1083,7 +1112,7 @@ class Cell extends Main\Root
 
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
-    public static function getOverloadKeyPrepend():?string
+    final public static function getOverloadKeyPrepend():?string
     {
         return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Cell':null;
     }

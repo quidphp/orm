@@ -17,7 +17,7 @@ use Quid\Orm;
 class Table extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $db = Orm\Db::inst();
@@ -441,14 +441,6 @@ class Table extends Base\Test
 
         // insertCom
 
-        // insertPreValidate
-
-        // insertValidate
-
-        // insertAfter
-
-        // insertOnCommitted
-
         // label
         $tb2 = $tables['ormDb'];
         assert($tb2->label() === 'Le nom de la table');
@@ -491,8 +483,6 @@ class Table extends Base\Test
 
         // truncate
         assert($db['ormCol']->truncate() === true);
-
-        // truncateAfter
 
         // delete
         assert($tb->delete([['id','>',1000]]) === null);

@@ -41,7 +41,7 @@ class ColSchema extends Main\Root
 
     // _construct
     // pas de possibilité de construire l'objet
-    private function __construct()
+    final private function __construct()
     {
         return;
     }
@@ -49,7 +49,7 @@ class ColSchema extends Main\Root
 
     // is
     // retourne vrai si la valeur est une colonne
-    public static function is($value):bool
+    final public static function is($value):bool
     {
         return Base\Validate::isCol($value);
     }
@@ -57,7 +57,7 @@ class ColSchema extends Main\Root
 
     // hasPattern
     // retourne vrai si le nom de colonne a un pattern
-    public static function hasPattern($value):bool
+    final public static function hasPattern($value):bool
     {
         return (is_string($value) && static::pattern($value) !== null)? true:false;
     }
@@ -65,7 +65,7 @@ class ColSchema extends Main\Root
 
     // isRelation
     // retourne vrai si la colonne a le pattern relation
-    public static function isRelation($value,bool $isPatternType=false):bool
+    final public static function isRelation($value,bool $isPatternType=false):bool
     {
         $return = false;
         $value = ($isPatternType === true)? $value:static::patternType($value);
@@ -79,7 +79,7 @@ class ColSchema extends Main\Root
 
     // pattern
     // retourne un tableau avec la clé et la valeur du pattern à partir d'un nom de colonne
-    public static function pattern(string $value):?array
+    final public static function pattern(string $value):?array
     {
         $return = null;
         $chars = static::$config['patternChars'];
@@ -109,7 +109,7 @@ class ColSchema extends Main\Root
     // addPattern
     // permet d'ajouter le pattern à un nom de colonne sans pattern
     // si le pattern ne contient pas le *, ajoute le
-    public static function addPattern(string $pattern,string $value):?string
+    final public static function addPattern(string $pattern,string $value):?string
     {
         $return = null;
         $chars = $char = static::$config['patternChars'];
@@ -137,7 +137,7 @@ class ColSchema extends Main\Root
     // stripPattern
     // retourne le nom du champ de la colonne sans la partie pattern
     // est utilisé pour déterminer le pattern
-    public static function stripPattern(string $value,?array $pattern=null):?string
+    final public static function stripPattern(string $value,?array $pattern=null):?string
     {
         $return = null;
         $pattern = ($pattern === null)? static::pattern($value):$pattern;
@@ -152,7 +152,7 @@ class ColSchema extends Main\Root
     // patternType
     // retourne la clé du pattern déterminer à partir du nom de colonne
     // c'est la clé de pattern
-    public static function patternType(string $value):?string
+    final public static function patternType(string $value):?string
     {
         $return = null;
         $pattern = static::pattern($value);
@@ -166,7 +166,7 @@ class ColSchema extends Main\Root
 
     // langCode
     // retourne le patternType si c'est une langue
-    public static function langCode(string $value):?string
+    final public static function langCode(string $value):?string
     {
         $return = null;
         $type = static::patternType($value);
@@ -181,7 +181,7 @@ class ColSchema extends Main\Root
     // panel
     // retourne le panel à utiliser à partir du nom de colonne
     // c'est la clé de pattern
-    public static function panel(string $value,bool $isPatternType=false):?string
+    final public static function panel(string $value,bool $isPatternType=false):?string
     {
         $return = null;
         $value = ($isPatternType === true)? $value:static::patternType($value);
@@ -196,7 +196,7 @@ class ColSchema extends Main\Root
     // table
     // retourne le nom de table à partir d'une colonne relation
     // doit match un des pattern relation dans static config
-    public static function table(string $value):?string
+    final public static function table(string $value):?string
     {
         $return = null;
         $pattern = static::pattern($value);
@@ -211,7 +211,7 @@ class ColSchema extends Main\Root
     // possible
     // retourne tous les noms possibles que pourrait prendre un nom de colonne si le pattern n'est pas fourni
     // retourne un tableau
-    public static function possible(string $value,bool $currentLang=false):array
+    final public static function possible(string $value,bool $currentLang=false):array
     {
         $return = [];
         $char = static::$config['patternChars'][1];
@@ -242,7 +242,7 @@ class ColSchema extends Main\Root
     // retourne le group à partir d'un tableau d'attribut
     // si advanced est true, prend aussi les groups avancés qui viennent de configuration dans core et non pas du scheme de la db
     // retourne null si rien
-    public static function group(array $attr,bool $advanced=true):?string
+    final public static function group(array $attr,bool $advanced=true):?string
     {
         $return = null;
 
@@ -281,7 +281,7 @@ class ColSchema extends Main\Root
     // si default est null, l'attribut null doit être à YES pour être conservé
     // panel et relation sont déduits via la méthode pattern
     // peut retourner null si le kind est inconnu
-    public static function prepareAttr(array $value):?array
+    final public static function prepareAttr(array $value):?array
     {
         $return = null;
 
@@ -356,7 +356,7 @@ class ColSchema extends Main\Root
     // parseType
     // retourne un tableau d'attribut en fonction de la string type fourni par sql
     // peut retourner null si le kind est inconnu
-    public static function parseType(string $value):?array
+    final public static function parseType(string $value):?array
     {
         $return = null;
         $length = null;
@@ -415,7 +415,7 @@ class ColSchema extends Main\Root
 
     // parseValidate
     // gère les règles de validation selon le kind et le length
-    public static function parseValidate(array $array):array
+    final public static function parseValidate(array $array):array
     {
         $return = [];
 
@@ -455,7 +455,7 @@ class ColSchema extends Main\Root
 
     // parseValidateInt
     // retourne la valeur maximale d'un int, selon le type et le statut unsigned
-    public static function parseValidateInt(array $array):?array
+    final public static function parseValidateInt(array $array):?array
     {
         $return = null;
 
@@ -486,7 +486,7 @@ class ColSchema extends Main\Root
 
     // parseValidateUnsigned
     // gère unsigned pour float et int
-    public static function parseValidateUnsigned(array $array):?array
+    final public static function parseValidateUnsigned(array $array):?array
     {
         $return = null;
 
@@ -499,7 +499,7 @@ class ColSchema extends Main\Root
 
     // kindDefault
     // retourne le défaut selon le kind
-    public static function kindDefault(string $kind)
+    final public static function kindDefault(string $kind)
     {
         $return = null;
 
@@ -518,7 +518,7 @@ class ColSchema extends Main\Root
 
     // kindTag
     // retourne le input par défaut selon le kind
-    public static function kindTag(string $kind):?string
+    final public static function kindTag(string $kind):?string
     {
         $return = null;
 
@@ -541,7 +541,7 @@ class ColSchema extends Main\Root
     // formTag
     // retourne la tag à utiliser pour toutes les méthodes form
     // la tag peut être dans le tableau ou sinon déduit via le kind
-    public static function formTag(array $array):?string
+    final public static function formTag(array $array):?string
     {
         $return = null;
 
@@ -557,7 +557,7 @@ class ColSchema extends Main\Root
 
     // textLength
     // retourne la longueur maximale pour un champ texte
-    public static function textLength(string $value):?int
+    final public static function textLength(string $value):?int
     {
         return (array_key_exists($value,static::$config['textLength']))? static::$config['textLength'][$value]:null;
     }

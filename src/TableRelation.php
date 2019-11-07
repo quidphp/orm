@@ -20,7 +20,7 @@ class TableRelation extends Relation
 
     // construct
     // construit l'objet de relation de table
-    public function __construct(Table $table)
+    final public function __construct(Table $table)
     {
         $this->setLink($table,false);
         $this->makeAttr($table);
@@ -33,8 +33,7 @@ class TableRelation extends Relation
     // applique les attributs de relation en provenance de la table
     // si what est true, prend le nom de la colonne via la méthode colName
     // seul what est nécessaire
-    // méthode protégé
-    protected function makeAttr($table,bool $config=true):void
+    final protected function makeAttr($table,bool $config=true):void
     {
         if(!$table->allowsRelation())
         static::throw($this,'doesNotSupportRelation');
@@ -94,7 +93,7 @@ class TableRelation extends Relation
 
     // prepareAttrWithWhat
     // prépare les attributs pour une relation de table standard avec what
-    protected function prepareAttrWithWhat(Table $table,array $attr):array
+    final protected function prepareAttrWithWhat(Table $table,array $attr):array
     {
         $return = [];
         $primary = $table->primary();
@@ -125,7 +124,7 @@ class TableRelation extends Relation
 
     // prepareAttrWithMethod
     // prépare les attributs pour une relation de table avec output de méthode
-    protected function prepareAttrWithMethod(Table $table,array $attr):array
+    final protected function prepareAttrWithMethod(Table $table,array $attr):array
     {
         $return = [];
         $primary = $table->primary();
@@ -148,7 +147,7 @@ class TableRelation extends Relation
     // prepareOption
     // prépare le tableau d'option passé dans all, gets ou search
     // est utilisé pour traiter appendPrimary dans une relation qui est dans une relation
-    protected function prepareOption(array $return):array
+    final protected function prepareOption(array $return):array
     {
         if(array_key_exists('appendPrimary',$return) && $return['appendPrimary'] === false)
         {
@@ -166,7 +165,7 @@ class TableRelation extends Relation
 
     // shouldCache
     // retourne si l'argument cache doit être respecté
-    public function shouldCache(bool $return,$option=null)
+    final public function shouldCache(bool $return,$option=null)
     {
         $option = (array) $option;
         $option = Base\Arr::clean($option);
@@ -180,7 +179,7 @@ class TableRelation extends Relation
 
     // isOutputMethod
     // retourne vrai si la output est une méthode de row
-    public function isOutputMethod(?string $method=null):bool
+    final public function isOutputMethod(?string $method=null):bool
     {
         $return = false;
         $attr = $this->attr();
@@ -195,7 +194,7 @@ class TableRelation extends Relation
 
     // size
     // compte le nombre de relation
-    public function size(bool $cache=true,?array $option=null):int
+    final public function size(bool $cache=true,?array $option=null):int
     {
         $return = 0;
         $cache = $this->shouldCache($cache,$option);
@@ -212,7 +211,7 @@ class TableRelation extends Relation
     // retourne une relation dans la table
     // une clé primaire doit être fourni
     // par défaut les relations sont conservés en cache dans l'objet relation
-    public function get(int $primary,bool $cache=true,?array $option=null)
+    final public function get(int $primary,bool $cache=true,?array $option=null)
     {
         $return = null;
         $relations = $this->gets([$primary],false,$cache,$option);
@@ -228,7 +227,7 @@ class TableRelation extends Relation
     // retourne plusieurs relations dans la table
     // seul les relations non chargés le sont
     // par défaut les relations sont conservés en cache dans l'objet relation
-    public function gets(array $primaries,bool $found=false,bool $cache=true,?array $option=null):array
+    final public function gets(array $primaries,bool $found=false,bool $cache=true,?array $option=null):array
     {
         $return = [];
         $attr = $this->attr();
@@ -295,7 +294,7 @@ class TableRelation extends Relation
     // par défaut les relations sont conservés en cache dans l'objet relation
     // il y a un problème si tu charges les relations via relation ou relations et ensuite relationAll avec la cache (l'ordre ne sera pas respecté)
     // retourne une référence
-    public function &all(bool $cache=true,?array $option=null):array
+    final public function &all(bool $cache=true,?array $option=null):array
     {
         $data =& $this->arr();
         $cache = $this->shouldCache($cache,$option);
@@ -364,7 +363,7 @@ class TableRelation extends Relation
 
     // exists
     // retourne vrai si la ou les clés existent dans la relation
-    public function exists(...$primaries):bool
+    final public function exists(...$primaries):bool
     {
         return $this->existsWhere(null,...$primaries);
     }
@@ -374,7 +373,7 @@ class TableRelation extends Relation
     // retourne vrai si la ou les clés existent dans la relation
     // prend compte de where
     // cache est true par défaut
-    public function existsWhere($where=null,...$primaries):bool
+    final public function existsWhere($where=null,...$primaries):bool
     {
         $return = false;
 
@@ -410,7 +409,7 @@ class TableRelation extends Relation
 
     // in
     // retourne vrai si la ou les valeurs existent dans la relation
-    public function in(...$values):bool
+    final public function in(...$values):bool
     {
         return $this->inWhere(null,...$values);
     }
@@ -420,7 +419,7 @@ class TableRelation extends Relation
     // retourne vrai si la ou les valeurs existent dans la relation
     // prend compte de where
     // cette méthode utilisera all si pas trouvé dans les relations existantes, donc la cache est true par défaut
-    public function inWhere($where=null,...$values):bool
+    final public function inWhere($where=null,...$values):bool
     {
         $return = false;
 
@@ -452,7 +451,7 @@ class TableRelation extends Relation
     // permet de faire une recherche dans la relation
     // la méthode renvoie à la méthode search dans core/table, donc les mêmes règles s'appliquent (minimum searchTerm, support pour +)
     // n'utilise pas la cache de relation
-    public function search(string $value,?array $option=null):?array
+    final public function search(string $value,?array $option=null):?array
     {
         $return = null;
         $result = $this->searchResult($value,$option);
@@ -474,7 +473,7 @@ class TableRelation extends Relation
     // searchCount
     // retourne le nombre de résultat d'une recherche dans la relation
     // n'utilise pas la cache de relation
-    public function searchCount(string $value,?array $option=null):?int
+    final public function searchCount(string $value,?array $option=null):?int
     {
         $return = null;
         $option = Base\Arr::plus($option,['limit'=>null,'method'=>null]);
@@ -489,8 +488,7 @@ class TableRelation extends Relation
 
     // searchResult
     // utilisé par search et searchCount
-    // méthode protégé
-    protected function searchResult(string $value,?array $option=null)
+    final protected function searchResult(string $value,?array $option=null)
     {
         $return = null;
         $attr = $this->attr();
@@ -543,7 +541,7 @@ class TableRelation extends Relation
 
     // defaultOrderCode
     // retourne le code d'ordre par défaut pour la relation
-    public function defaultOrderCode():?int
+    final public function defaultOrderCode():?int
     {
         return $this->table()->getAttr('orderCode');
     }
@@ -552,7 +550,7 @@ class TableRelation extends Relation
     // getOrder
     // génère le order pour la relation de table
     // support pour order 1, 2, 3 et 4
-    public function getOrder($order=null,?array $attr=null):?array
+    final public function getOrder($order=null,?array $attr=null):?array
     {
         $return = null;
         $attr = ($attr === null)? $this->attr():$attr;
@@ -594,7 +592,7 @@ class TableRelation extends Relation
 
     // allowedOrdering
     // retourne un tableau définissant si la relation peut être ordonner par clé et ou valeur
-    public function allowedOrdering(?array $attr=null):array
+    final public function allowedOrdering(?array $attr=null):array
     {
         $return = ['key'=>true];
 
@@ -608,7 +606,7 @@ class TableRelation extends Relation
     // getOrderFieldOutput
     // retourne le champ à utiliser pour l'ordonnage de nom
     // envoie une exception si aucun champ trouvé
-    public function getOrderFieldOutput(?array $attr=null):?string
+    final public function getOrderFieldOutput(?array $attr=null):?string
     {
         $return = null;
         $attr = ($attr === null)? $this->attr():$attr;
@@ -643,7 +641,7 @@ class TableRelation extends Relation
 
     // makeOutput
     // méthode privé pour généré un output via output ou outputMethod
-    protected function makeOutput($value,?array $option=null):?string
+    final protected function makeOutput($value,?array $option=null):?string
     {
         $return = null;
         $attr = $this->attr();
@@ -669,7 +667,7 @@ class TableRelation extends Relation
     // gère le output d'un tableau associatif contenant les données sur la relation
     // possible de passer le tableau dans onGet, par défaut c'est faux
     // output peut être une string, un array ou null
-    public function output(array $array,$output,bool $onGet=false):?string
+    final public function output(array $array,$output,bool $onGet=false):?string
     {
         $return = null;
 
@@ -732,7 +730,7 @@ class TableRelation extends Relation
 
     // outputAdd
     // utilisé par la méthode output pour ajouter un élément à la string de sortie
-    protected function outputAdd(string $return,$key,$value,string $separator=' - '):string
+    final protected function outputAdd(string $return,$key,$value,string $separator=' - '):string
     {
         if(is_scalar($value))
         {
@@ -759,7 +757,7 @@ class TableRelation extends Relation
 
     // outputMethod
     // gère le output d'une relation avec output method
-    public function outputMethod(Row $row,string $method):?string
+    final public function outputMethod(Row $row,string $method):?string
     {
         $return = $row->$method();
         $return = Base\Obj::cast($return);
@@ -773,7 +771,7 @@ class TableRelation extends Relation
 
     // outputPrimary
     // utilisé pour ajouter le id entre paranthèse avec #
-    public static function outputPrimary($value,string $return):string
+    final public static function outputPrimary($value,string $return):string
     {
         if(is_numeric($value) && strlen($return))
         $return .= " (#$value)";

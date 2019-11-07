@@ -16,7 +16,7 @@ use Quid\Orm;
 class Rows extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $db = Orm\Db::inst();
@@ -243,18 +243,11 @@ class Rows extends Base\Test
         // update
         assert($rows->update() === [1=>1,2=>1]);
 
-        // updateValid
-
         // updateChanged
-
-        // updateChangedIncluded
         $rows->setCell('name','james4');
-        assert($rows->updateChangedIncluded() === [1=>1,2=>1]);
+        assert($rows->updateChanged() === [1=>1,2=>1]);
 
-        // updateChangedIncludedValid
-
-        // updateAll
-        assert(count($rows->updateAll()) === 2);
+        // updateValid
 
         // updateRowChanged
         $rows->setCell('name','james5');

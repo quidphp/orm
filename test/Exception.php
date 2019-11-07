@@ -17,7 +17,7 @@ use Quid\Orm;
 class Exception extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // construct
         $e = new Orm\Exception('blabla');

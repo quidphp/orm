@@ -30,7 +30,7 @@ class History extends Main\Map
 
     // invoke
     // retourne un index de l'historique
-    public function __invoke(...$args)
+    final public function __invoke(...$args)
     {
         return $this->index(...$args);
     }
@@ -38,7 +38,7 @@ class History extends Main\Map
 
     // toString
     // affiche le dump du tableau des requêtes uni
-    public function __toString():string
+    final public function __toString():string
     {
         return Base\Debug::varGet($this->keyValue());
     }
@@ -46,7 +46,7 @@ class History extends Main\Map
 
     // cast
     // cast de l'historique, retourne le count
-    public function _cast()
+    final public function _cast()
     {
         return $this->count();
     }
@@ -54,7 +54,7 @@ class History extends Main\Map
 
     // getSyntax
     // retourne la classe de syntaxe
-    public function getSyntax():?string
+    final public function getSyntax():?string
     {
         return $this->syntax;
     }
@@ -62,7 +62,7 @@ class History extends Main\Map
 
     // setSyntax
     // enregistre la classe de syntaxe
-    protected function setSyntax(Pdo $pdo):void
+    final protected function setSyntax(Pdo $pdo):void
     {
         $this->syntax = $pdo->getSyntax();
 
@@ -72,7 +72,7 @@ class History extends Main\Map
 
     // add
     // ajoute un statement dans l'historique db
-    public function add(array $value,\PDOStatement $statement,Pdo $pdo):self
+    final public function add(array $value,\PDOStatement $statement,Pdo $pdo):self
     {
         if(empty($this->getSyntax()))
         $this->setSyntax($pdo);
@@ -101,7 +101,7 @@ class History extends Main\Map
     // all
     // retourne des donnés de l'historique
     // possibilité de filtrer par type
-    public function all(?string $type=null,bool $reverse=false):array
+    final public function all(?string $type=null,bool $reverse=false):array
     {
         $return = [];
         $data = $this->arr();
@@ -128,7 +128,7 @@ class History extends Main\Map
     // keyValue
     // retourne un tableau unidimensionnel d'historique
     // emule la requête si nécessaire
-    public function keyValue(?string $type=null,bool $reverse=false):array
+    final public function keyValue(?string $type=null,bool $reverse=false):array
     {
         $return = [];
         $syntax = $this->getSyntax();
@@ -155,7 +155,7 @@ class History extends Main\Map
     // typeCount
     // retourne les données counts de l'historique
     // le type est requis
-    public function typeCount(string $type):array
+    final public function typeCount(string $type):array
     {
         $return = [];
 
@@ -188,7 +188,7 @@ class History extends Main\Map
     // typeIndex
     // retourne un index de l'historique filtre par type ou null si non existant
     // par défaut index est le dernier, plus récent
-    public function typeIndex(string $type,int $index=-1):?array
+    final public function typeIndex(string $type,int $index=-1):?array
     {
         return Base\Arr::index($index,$this->all($type));
     }
@@ -196,7 +196,7 @@ class History extends Main\Map
 
     // total
     // retourne les données counts de l'historique pour tous les types
-    public function total():array
+    final public function total():array
     {
         $return = [];
         $syntax = $this->getSyntax();

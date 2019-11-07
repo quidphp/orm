@@ -17,7 +17,7 @@ use Quid\Orm;
 class Db extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $db = Orm\Db::inst();

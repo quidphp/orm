@@ -156,7 +156,7 @@ abstract class Syntax extends Main\Root
 
     // _construct
     // pas de possibilité de construire l'objet
-    private function __construct()
+    final private function __construct()
     {
         return;
     }
@@ -164,7 +164,7 @@ abstract class Syntax extends Main\Root
 
     // isQuery
     // retourne vrai si la valeur est un type de query
-    public static function isQuery($value):bool
+    final public static function isQuery($value):bool
     {
         return (is_string($value) && array_key_exists($value,static::$config['query']) && is_array(static::$config['query'][$value]))? true:false;
     }
@@ -172,7 +172,7 @@ abstract class Syntax extends Main\Root
 
     // isQuote
     // retourne vrai si la valeur est quote
-    public static function isQuote($value):bool
+    final public static function isQuote($value):bool
     {
         return (is_string($value) && Base\Str::isStartEnd("'","'",$value))? true:false;
     }
@@ -180,7 +180,7 @@ abstract class Syntax extends Main\Root
 
     // hasTickOrSpace
     // retourne vrai si la valeur a un tick ou un espace
-    public static function hasTickOrSpace($value):bool
+    final public static function hasTickOrSpace($value):bool
     {
         return (is_string($value) && (strpos($value,' ') !== false || strpos($value,'`') !== false))? true:false;
     }
@@ -188,7 +188,7 @@ abstract class Syntax extends Main\Root
 
     // isTick
     // retourne vrai si la valeur est enrobbé de tick
-    public static function isTick($value):bool
+    final public static function isTick($value):bool
     {
         $return = false;
 
@@ -208,7 +208,7 @@ abstract class Syntax extends Main\Root
     // isParenthesis
     // retourne vrai si la valeur est une parenthese
     // openClose permet de spécifier si on recherche open ou close parenthesis
-    public static function isParenthesis($value,?bool $openClose=null):bool
+    final public static function isParenthesis($value,?bool $openClose=null):bool
     {
         $return = false;
 
@@ -227,7 +227,7 @@ abstract class Syntax extends Main\Root
 
     // isKey
     // retourne vrai si le type de clé existe
-    public static function isKey($value):bool
+    final public static function isKey($value):bool
     {
         return (is_string($value) && array_key_exists($value,static::$config['key']))? true:false;
     }
@@ -235,7 +235,7 @@ abstract class Syntax extends Main\Root
 
     // isColType
     // retourne vrai si le type de colonne existe
-    public static function isColType($value):bool
+    final public static function isColType($value):bool
     {
         return (is_string($value) && array_key_exists($value,static::$config['col']))? true:false;
     }
@@ -243,7 +243,7 @@ abstract class Syntax extends Main\Root
 
     // isWhereSymbol
     // retourne vrai si la valeur est un symbol where
-    public static function isWhereSymbol($value):bool
+    final public static function isWhereSymbol($value):bool
     {
         return (is_string($value) && array_key_exists($value,static::$config['where']['symbol']))? true:false;
     }
@@ -251,7 +251,7 @@ abstract class Syntax extends Main\Root
 
     // isWhereSeparator
     // retourne vrai si la valeur est un séparateur where
-    public static function isWhereSeparator($value):bool
+    final public static function isWhereSeparator($value):bool
     {
         return (is_string($value) && in_array(strtoupper($value),static::$config['where']['separator']['all'],true))? true:false;
     }
@@ -259,7 +259,7 @@ abstract class Syntax extends Main\Root
 
     // isWhereTwo
     // retourne vrai si la valeur est une des méthodes whereTwo
-    public static function isWhereTwo($value):bool
+    final public static function isWhereTwo($value):bool
     {
         return (in_array($value,[null,'null','notNull',false,'empty',true,'notEmpty'],true) || is_int($value))? true:false;
     }
@@ -267,7 +267,7 @@ abstract class Syntax extends Main\Root
 
     // isOrderDirection
     // retourne vrai si la valeur est une direction
-    public static function isOrderDirection($value):bool
+    final public static function isOrderDirection($value):bool
     {
         return (is_string($value) && in_array(strtoupper($value),static::$config['order']['direction'],true))? true:false;
     }
@@ -275,7 +275,7 @@ abstract class Syntax extends Main\Root
 
     // isReturnSelect
     // retourne vrai si la valeur de retour contient un select, par exemple après un insert, update ou select
-    public static function isReturnSelect($value):bool
+    final public static function isReturnSelect($value):bool
     {
         $return = false;
 
@@ -288,7 +288,7 @@ abstract class Syntax extends Main\Root
 
     // isReturnRollback
     // retourne vrai si la valeur de retour permet de préparer un rollback
-    public static function isReturnRollback($value):bool
+    final public static function isReturnRollback($value):bool
     {
         $return = false;
 
@@ -304,7 +304,7 @@ abstract class Syntax extends Main\Root
 
     // isReturnTableId
     // retourne vrai si la valeur de retour contient table et id
-    public static function isReturnTableId($value):bool
+    final public static function isReturnTableId($value):bool
     {
         $return = false;
 
@@ -320,7 +320,7 @@ abstract class Syntax extends Main\Root
 
     // hasDot
     // retourne vrai si la valeur a un dot
-    public static function hasDot($value):bool
+    final public static function hasDot($value):bool
     {
         return is_string($value) && strlen($value) > 1 && strpos($value,'.') > 0;
     }
@@ -328,7 +328,7 @@ abstract class Syntax extends Main\Root
 
     // hasQueryClause
     // retourne vrai si la valeur est un type de query et que key est supporté dans la valeur
-    public static function hasQueryClause($value,$key):bool
+    final public static function hasQueryClause($value,$key):bool
     {
         $return = false;
 
@@ -344,7 +344,7 @@ abstract class Syntax extends Main\Root
 
     // getQueryTypes
     // retourne tous les types de requêtes
-    public static function getQueryTypes():array
+    final public static function getQueryTypes():array
     {
         return array_keys(static::$config['query']);
     }
@@ -352,7 +352,7 @@ abstract class Syntax extends Main\Root
 
     // getQueryRequired
     // retourne les champs requis du type de requête
-    public static function getQueryRequired(string $value):?array
+    final public static function getQueryRequired(string $value):?array
     {
         $return = null;
 
@@ -375,7 +375,7 @@ abstract class Syntax extends Main\Root
 
     // getKeyWord
     // retourne le nom de la clé ou null
-    public static function getKeyWord(string $value):?string
+    final public static function getKeyWord(string $value):?string
     {
         $return = null;
 
@@ -388,7 +388,7 @@ abstract class Syntax extends Main\Root
 
     // getColTypeAttr
     // retourne les attributs par défaut d'une colonne ou null
-    public static function getColTypeAttr(string $value):?array
+    final public static function getColTypeAttr(string $value):?array
     {
         $return = null;
 
@@ -401,7 +401,7 @@ abstract class Syntax extends Main\Root
 
     // functionFormat
     // retourne le nom de la fonction formattée
-    public static function functionFormat(string $value):string
+    final public static function functionFormat(string $value):string
     {
         return strtoupper($value);
     }
@@ -409,7 +409,7 @@ abstract class Syntax extends Main\Root
 
     // getWhatFunction
     // retourne la function what si existante
-    public static function getWhatFunction(string $value):?array
+    final public static function getWhatFunction(string $value):?array
     {
         $return = null;
 
@@ -429,7 +429,7 @@ abstract class Syntax extends Main\Root
 
     // getWhereSymbol
     // retourne le symbol where ou null
-    public static function getWhereSymbol(string $value):?string
+    final public static function getWhereSymbol(string $value):?string
     {
         return (array_key_exists($value,static::$config['where']['symbol']))? static::$config['where']['symbol'][$value]:null;
     }
@@ -437,7 +437,7 @@ abstract class Syntax extends Main\Root
 
     // getWhereMethod
     // retourne la callable d'une méthode where
-    public static function getWhereMethod(string $value):?callable
+    final public static function getWhereMethod(string $value):?callable
     {
         return (array_key_exists($value,static::$config['where']['method']) && static::classIsCallable(static::$config['where']['method'][$value]))? static::$config['where']['method'][$value]:null;
     }
@@ -445,7 +445,7 @@ abstract class Syntax extends Main\Root
 
     // getWhereSeparator
     // retourne le séparateur pour where, si pas de valeur retourner le séparateur par défaut
-    public static function getWhereSeparator(?string $value=null):string
+    final public static function getWhereSeparator(?string $value=null):string
     {
         return (is_string($value) && static::isWhereSeparator($value))? strtoupper($value):static::$config['where']['separator']['default'];
     }
@@ -453,7 +453,7 @@ abstract class Syntax extends Main\Root
 
     // getOrderDirection
     // retourne la direction d'ordre ou la direction d'ordre par défaut
-    public static function getOrderDirection($value=null):string
+    final public static function getOrderDirection($value=null):string
     {
         $return = static::$config['order']['default'];
 
@@ -468,7 +468,7 @@ abstract class Syntax extends Main\Root
 
     // invertOrderDirection
     // retourne la direction d'ordre inverse à celle donné en argument
-    public static function invertOrderDirection($value=null):string
+    final public static function invertOrderDirection($value=null):string
     {
         $return = static::getOrderDirection($value);
         $directions = static::$config['order']['direction'];
@@ -486,7 +486,7 @@ abstract class Syntax extends Main\Root
 
     // getOrderMethod
     // retourne la callable d'une méthode order
-    public static function getOrderMethod(string $value):?callable
+    final public static function getOrderMethod(string $value):?callable
     {
         return (array_key_exists($value,static::$config['order']['method']) && static::classIsCallable(static::$config['order']['method'][$value]))? static::$config['order']['method'][$value]:null;
     }
@@ -494,7 +494,7 @@ abstract class Syntax extends Main\Root
 
     // getSetMethod
     // retourne la callable d'une méthode set
-    public static function getSetMethod(string $value):?callable
+    final public static function getSetMethod(string $value):?callable
     {
         return (array_key_exists($value,static::$config['set']['method']) && static::classIsCallable(static::$config['set']['method'][$value]))? static::$config['set']['method'][$value]:null;
     }
@@ -503,7 +503,7 @@ abstract class Syntax extends Main\Root
     // getQueryWord
     // retourne le mot de la query ou de la clé de la query
     // option dropExists et createNotExists
-    public static function getQueryWord(string $type,?string $key=null,?array $option=null):?string
+    final public static function getQueryWord(string $type,?string $key=null,?array $option=null):?string
     {
         $return = null;
 
@@ -535,7 +535,7 @@ abstract class Syntax extends Main\Root
 
     // getReturn
     // retourne le tableau de retour
-    public static function getReturn(?array $return=null):array
+    final public static function getReturn(?array $return=null):array
     {
         return (is_array($return) && array_key_exists('sql',$return) && is_string($return['sql']))? $return:['sql'=>''];
     }
@@ -543,7 +543,7 @@ abstract class Syntax extends Main\Root
 
     // returnMerge
     // merge des tableaux return ensemble
-    public static function returnMerge(array ...$values):array
+    final public static function returnMerge(array ...$values):array
     {
         $return = ['sql'=>''];
 
@@ -574,7 +574,7 @@ abstract class Syntax extends Main\Root
     // si la chaine contient un point, alors seul le dernier element aura un tick
     // transforme les shortcuts
     // pas de tick autour d'une valeur enrobbé de paranthèse
-    public static function tick(string $return,?array $option=null):string
+    final public static function tick(string $return,?array $option=null):string
     {
         $return = static::shortcut($return);
 
@@ -610,7 +610,7 @@ abstract class Syntax extends Main\Root
 
     // untick
     // dérobe la valeur de tick
-    public static function untick(string $return):string
+    final public static function untick(string $return):string
     {
         if(strlen($return) && static::isTick($return))
         {
@@ -639,7 +639,7 @@ abstract class Syntax extends Main\Root
     // les variables scalar non string ne sont pas quote
     // possible de passer une callable pour quote, sinon utilise str quote et addslashes
     // possible de remplacer les double \\ par \ (false par défaut)
-    public static function quote($value,?callable $callable=null,bool $replaceDoubleEscape=false)
+    final public static function quote($value,?callable $callable=null,bool $replaceDoubleEscape=false)
     {
         $return = '';
 
@@ -671,7 +671,7 @@ abstract class Syntax extends Main\Root
     // quoteSet
     // construit un champ set séparé par ,
     // chaque element est envoyé à la méthode quote
-    public static function quoteSet(array $value,?callable $callable=null):string
+    final public static function quoteSet(array $value,?callable $callable=null):string
     {
         $return = '';
 
@@ -690,7 +690,7 @@ abstract class Syntax extends Main\Root
 
     // unquote
     // unquote une valeur
-    public static function unquote(string $return):string
+    final public static function unquote(string $return):string
     {
         return Base\Str::unquote(stripslashes($return),true,false);
     }
@@ -698,7 +698,7 @@ abstract class Syntax extends Main\Root
 
     // parenthesis
     // enrobe la valeur de parenthese si pas vide
-    public static function parenthesis(string $return):string
+    final public static function parenthesis(string $return):string
     {
         return (strlen($return))? "($return)":'';
     }
@@ -706,7 +706,7 @@ abstract class Syntax extends Main\Root
 
     // comma
     // retourne une virgule si la valeur n'est pas vide
-    public static function comma(string $value,bool $space=true):string
+    final public static function comma(string $value,bool $space=true):string
     {
         return (strlen($value))? ($space === true)? ', ':',':'';
     }
@@ -714,7 +714,7 @@ abstract class Syntax extends Main\Root
 
     // whereSeparator
     // retourne le séparateur where entouré d'espaces si la valeur n'est pas string vide
-    public static function whereSeparator(?string $value=null,?string $separator=null,bool $space=true):string
+    final public static function whereSeparator(?string $value=null,?string $separator=null,bool $space=true):string
     {
         $return = '';
 
@@ -733,7 +733,7 @@ abstract class Syntax extends Main\Root
     // boolNull
     // prepare des valeurs bools et null
     // retourne int ou string
-    public static function boolNull($value)
+    final public static function boolNull($value)
     {
         $return = null;
 
@@ -753,7 +753,7 @@ abstract class Syntax extends Main\Root
     // prepare
     // retourne un tableau avec les strings prepare et replace ou null
     // un nombre est ajouté à la fin de la clé préparé, ce nombre est incrémenté à chaque appel réussi
-    public static function prepare():?array
+    final public static function prepare():?array
     {
         $return = null;
         $prepare = Base\Str::random(...static::$config['prepared']['random']);
@@ -774,7 +774,7 @@ abstract class Syntax extends Main\Root
     // prepareValue
     // prépare la valeur avant d'append
     // si la valeur est 0, retourne la valeur sous forme de string car sql cast toutes les string en 0
-    public static function prepareValue($return)
+    final public static function prepareValue($return)
     {
         if(is_bool($return) || $return === null)
         $return = static::boolNull($return);
@@ -796,7 +796,7 @@ abstract class Syntax extends Main\Root
     // ajoute une valeur dans sql et une slice dans prepare
     // peut retourner une valeur préparé, quote ou tick
     // possible de mettre des quoteChar
-    public static function value($value,?array $return=null,?array $option=null):array
+    final public static function value($value,?array $return=null,?array $option=null):array
     {
         $return = static::getReturn($return);
 
@@ -857,7 +857,7 @@ abstract class Syntax extends Main\Root
     // valueSet
     // append les valeurs scalar d'un tableau
     // construit un set avec les valeurs string quotés
-    public static function valueSet(array $value,?array $return=null,?array $option=null):array
+    final public static function valueSet(array $value,?array $return=null,?array $option=null):array
     {
         $return = static::getReturn($return);
 
@@ -881,7 +881,7 @@ abstract class Syntax extends Main\Root
 
     // makeSet
     // crée un set à partir d'un tableau
-    public static function makeSet(array $value):string
+    final public static function makeSet(array $value):string
     {
         $return = '';
 
@@ -901,8 +901,7 @@ abstract class Syntax extends Main\Root
     // makeDefault
     // gère le remplacement de la valeur par défaut, représenté par true
     // le remplacement se fait si la valeur est true ou true est présent dans le premier niveau d'un tableau
-    // méthode protégé
-    protected static function makeDefault(string $type,$return,array $option)
+    final protected static function makeDefault(string $type,$return,array $option)
     {
         if(array_key_exists($type,$option))
         {
@@ -945,7 +944,7 @@ abstract class Syntax extends Main\Root
     // est cast à l'entrée
     // permet d'ajouter true dans un tableau si non existant
     // true représente la valeur par défaut
-    public static function addDefault($return):array
+    final public static function addDefault($return):array
     {
         $return = (array) Base\Obj::cast($return);
         $add = true;
@@ -969,7 +968,7 @@ abstract class Syntax extends Main\Root
     // removeDefault
     // enlève true dans un tableau si existant
     // true représente la valeur par défaut
-    public static function removeDefault($return):array
+    final public static function removeDefault($return):array
     {
         $return = (array) $return;
 
@@ -986,7 +985,7 @@ abstract class Syntax extends Main\Root
     // sql
     // décortique une entrée sql
     // utilisé pour simplement ajouté du sql à la requête
-    public static function sql($value,?array $option=null):array
+    final public static function sql($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -1000,7 +999,7 @@ abstract class Syntax extends Main\Root
     // what
     // décortique une entrée what
     // une string est passé directement en sql
-    public static function what($value,?array $option=null):array
+    final public static function what($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -1044,7 +1043,7 @@ abstract class Syntax extends Main\Root
     // whatPrepare
     // prépare plusieurs entrée de what
     // retourne un tableau multidimensionnel
-    public static function whatPrepare(array $array,?array $option=null):array
+    final public static function whatPrepare(array $array,?array $option=null):array
     {
         $return = [];
 
@@ -1078,7 +1077,7 @@ abstract class Syntax extends Main\Root
 
     // whatOne
     // construit une entrée what à une variable
-    public static function whatOne(string $key,?array $option=null):array
+    final public static function whatOne(string $key,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -1095,7 +1094,7 @@ abstract class Syntax extends Main\Root
     // whatTwo
     // construit une entrée what à deux variables
     // si as finit par des paranthèses vides (), c'est considéré comme une function
-    public static function whatTwo(string $key,string $as,?array $option=null):array
+    final public static function whatTwo(string $key,string $as,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -1116,7 +1115,7 @@ abstract class Syntax extends Main\Root
 
     // whatThree
     // construit une entrée what à trois variables
-    public static function whatThree(string $key,string $function,string $as,?array $option=null):array
+    final public static function whatThree(string $key,string $function,string $as,?array $option=null):array
     {
         $return = ['sql'=>''];
         $separator = static::$config['what']['separator'] ?? null;
@@ -1148,7 +1147,7 @@ abstract class Syntax extends Main\Root
     // retourne un tableau avec toutes les colonnes dans le where
     // possible d'ajouter un prefix avant le nom de chaque colonne
     // si where n'est pas array, retourne *
-    public static function whatFromWhere($where,?string $prefix=null):array
+    final public static function whatFromWhere($where,?string $prefix=null):array
     {
         $return = [];
 
@@ -1181,7 +1180,7 @@ abstract class Syntax extends Main\Root
     // permet une seule table, selon l'index donné en deuxième argument
     // la table est tick si elle ne contient pas d'espace ni de tick
     // la table est retourné dans la clé table si elle ne contient pas d'espace
-    public static function table(string $value,?array $option=null):array
+    final public static function table(string $value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -1200,7 +1199,7 @@ abstract class Syntax extends Main\Root
 
     // join
     // décortique une entrée join
-    public static function join($value,?array $option=null):array
+    final public static function join($value,?array $option=null):array
     {
         $return = ['sql'=>''];
         $option['type'] = (empty($option['type']))? 'join':$option['type'];
@@ -1242,7 +1241,7 @@ abstract class Syntax extends Main\Root
 
     // innerJoin
     // décortique une entrée inner join
-    public static function innerJoin($value,?array $option=null):array
+    final public static function innerJoin($value,?array $option=null):array
     {
         return static::join($value,Base\Arr::plus($option,['type'=>'innerJoin']));
     }
@@ -1250,7 +1249,7 @@ abstract class Syntax extends Main\Root
 
     // outerJoin
     // décortique une entrée outer join
-    public static function outerJoin($value,?array $option=null):array
+    final public static function outerJoin($value,?array $option=null):array
     {
         return static::join($value,Base\Arr::plus($option,['type'=>'outerJoin']));
     }
@@ -1258,7 +1257,7 @@ abstract class Syntax extends Main\Root
 
     // where
     // décortique une entrée where
-    public static function where($value,?array $option=null):array
+    final public static function where($value,?array $option=null):array
     {
         $return = ['sql'=>''];
         $value = static::whereDefault($value,$option);
@@ -1321,7 +1320,7 @@ abstract class Syntax extends Main\Root
 
     // whereDefault
     // gère la variable where par défaut
-    public static function whereDefault($return,?array $option=null)
+    final public static function whereDefault($return,?array $option=null)
     {
         if(!empty($option['default']) && is_array($option['default']))
         $return = static::makeDefault('where',$return,$option['default']);
@@ -1359,7 +1358,7 @@ abstract class Syntax extends Main\Root
     // prépare plusieurs entrée du tableau where
     // gère les mots séparateurs et les ouvertures fermetures de paranthèses
     // retourne un tableau multidimensionnel
-    public static function wherePrepare(array $array,?array $option=null):array
+    final public static function wherePrepare(array $array,?array $option=null):array
     {
         $return = [];
         $wasSeparator = null;
@@ -1435,7 +1434,7 @@ abstract class Syntax extends Main\Root
     // wherePrepareOne
     // prépare une entrée du tableau where
     // retourne un tableau multidimensionnel
-    public static function wherePrepareOne($key,$value,?array $option=null):array
+    final public static function wherePrepareOne($key,$value,?array $option=null):array
     {
         $return = [];
 
@@ -1478,7 +1477,7 @@ abstract class Syntax extends Main\Root
 
     // whereCols
     // retourne toutes les colonnes uniques trouvés dans un tableau where
-    public static function whereCols(array $array):array
+    final public static function whereCols(array $array):array
     {
         $return = [];
 
@@ -1500,7 +1499,7 @@ abstract class Syntax extends Main\Root
     // whereAppend
     // append plusieurs valeurs where et retourne un grand tableau multidimensionnel utilisable par la méthode where pour générer le sql
     // les options par défaut sont utilisés
-    public static function whereAppend(...$values)
+    final public static function whereAppend(...$values)
     {
         $return = [];
         $merge = [];
@@ -1530,7 +1529,7 @@ abstract class Syntax extends Main\Root
     // retourne la ou les id à partir d'un tableau where prepare
     // retourne aussi la mention si la primary est la seule chose dans where
     // les id sont cast en int qu'il soit scalar ou array
-    public static function wherePrimary(array $array,?array $option=null):?array
+    final public static function wherePrimary(array $array,?array $option=null):?array
     {
         $return = null;
 
@@ -1568,7 +1567,7 @@ abstract class Syntax extends Main\Root
 
     // whereOne
     // construit une entrée where à une variable
-    public static function whereOne(string $key):array
+    final public static function whereOne(string $key):array
     {
         $return = ['sql'=>''];
 
@@ -1585,7 +1584,7 @@ abstract class Syntax extends Main\Root
     // whereTwo
     // construit une entrée where à deux variables
     // whereTwo accepte maintenant un int aussi
-    public static function whereTwo(string $key,$value,?array $option=null):array
+    final public static function whereTwo(string $key,$value,?array $option=null):array
     {
         $return = ['sql'=>''];
         $tick = static::tick($key);
@@ -1621,7 +1620,7 @@ abstract class Syntax extends Main\Root
     // la méthode peut être entre ``, à ce moment tick mais ne quote et ne prepare pas
     // si la méthode commence par une chaîne x,y,z|, analyse les caractères
     // support pour b binary, i insensitive et or or
-    protected static function whereThreeMethod(string $method,?array $option=null)
+    final protected static function whereThreeMethod(string $method,?array $option=null)
     {
         $return = [];
         $option = (array) $option;
@@ -1673,7 +1672,7 @@ abstract class Syntax extends Main\Root
 
     // whereThree
     // construit une entrée where à trois variables
-    public static function whereThree($key,string $method,$value,?array $option=null):array
+    final public static function whereThree($key,string $method,$value,?array $option=null):array
     {
         $return = ['sql'=>''];
         ['method'=>$method,'option'=>$option] = static::whereThreeMethod($method,$option);
@@ -1720,7 +1719,7 @@ abstract class Syntax extends Main\Root
 
     // whereIn
     // construit une entrée where in à trois variables
-    public static function whereIn(string $key,$value,string $method='in',?array $option=null):array
+    final public static function whereIn(string $key,$value,string $method='in',?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -1752,7 +1751,7 @@ abstract class Syntax extends Main\Root
     // whereBetween
     // construit une entrée where between à trois variables
     // value doit être un tableau contenant deux valeurs -> min et max
-    public static function whereBetween($key,array $value,string $method='between',?array $option=null):array
+    final public static function whereBetween($key,array $value,string $method='between',?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -1784,7 +1783,7 @@ abstract class Syntax extends Main\Root
     // whereFind
     // construit une entrée where find à trois variables
     // si l'argument est un tableau, un loop est construit
-    public static function whereFind(string $key,$value,string $method='find',?array $option=null):array
+    final public static function whereFind(string $key,$value,string $method='find',?array $option=null):array
     {
         $return = ['sql'=>''];
         $separator = static::getWhereSeparator($option['separator'] ?? null);
@@ -1825,7 +1824,7 @@ abstract class Syntax extends Main\Root
     // construit une entrée where findOrEmpty à trois variables
     // comme whereFind mais la différence est que chaque valeur accepte aussi null
     // si l'argument est un tableau, un loop est construit
-    public static function whereFindOrNull(string $key,$value,string $method='find',?array $option=null):array
+    final public static function whereFindOrNull(string $key,$value,string $method='find',?array $option=null):array
     {
         $return = ['sql'=>''];
         $separator = static::getWhereSeparator($option['separator'] ?? null);
@@ -1863,7 +1862,7 @@ abstract class Syntax extends Main\Root
     // construit une entrée where like à trois variables
     // si l'argument est un tableau, un loop est construit
     // la méthode va quoteChar les caractères % et _, comme l'indique la document SQL
-    public static function whereLike(string $key,$value,string $method='like',?array $option=null):array
+    final public static function whereLike(string $key,$value,string $method='like',?array $option=null):array
     {
         $return = ['sql'=>''];
         $quoteChar = static::$config['where']['likeQuoteChar'];
@@ -1923,7 +1922,7 @@ abstract class Syntax extends Main\Root
 
     // whereDate
     // construit une entrée where date à trois variables
-    public static function whereDate(string $key,$value,string $method='month',?array $option=null):array
+    final public static function whereDate(string $key,$value,string $method='month',?array $option=null):array
     {
         $return = ['sql'=>''];
         $separator = static::getWhereSeparator($option['separator'] ?? null);
@@ -1985,7 +1984,7 @@ abstract class Syntax extends Main\Root
 
     // group
     // décortique une entrée group
-    public static function group($value,?array $option=null):array
+    final public static function group($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2010,7 +2009,7 @@ abstract class Syntax extends Main\Root
 
     // order
     // décortique une entrée order
-    public static function order($value,?array $option=null):array
+    final public static function order($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2055,7 +2054,7 @@ abstract class Syntax extends Main\Root
     // orderPrepare
     // prépare plusieurs entrée de order
     // retourne un tableau multidimensionnel
-    public static function orderPrepare(array $array,?array $option=null):array
+    final public static function orderPrepare(array $array,?array $option=null):array
     {
         $return = [];
 
@@ -2080,7 +2079,7 @@ abstract class Syntax extends Main\Root
 
     // orderOne
     // construit une entrée order à une variable
-    public static function orderOne(string $key,?array $option=null):array
+    final public static function orderOne(string $key,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2096,7 +2095,7 @@ abstract class Syntax extends Main\Root
 
     // orderTwo
     // construit une entrée order à deux variables
-    public static function orderTwo(string $key,$value,?array $option=null):array
+    final public static function orderTwo(string $key,$value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2109,7 +2108,7 @@ abstract class Syntax extends Main\Root
 
     // orderThree
     // construit une entrée order à trois variables
-    public static function orderThree(string $key,string $method,$value,?array $option=null):array
+    final public static function orderThree(string $key,string $method,$value,?array $option=null):array
     {
         $return = [];
 
@@ -2123,7 +2122,7 @@ abstract class Syntax extends Main\Root
 
     // orderFind
     // construit une entrée order find à trois variables
-    public static function orderFind(string $key,$value,string $method='find',?array $option=null):array
+    final public static function orderFind(string $key,$value,string $method='find',?array $option=null):array
     {
         $return = [];
         $value = $value;
@@ -2149,7 +2148,7 @@ abstract class Syntax extends Main\Root
     // limit
     // décortique une entrée limit
     // la méthode utilise la syntaxe avec le mot OFFSET plutôt que la syntaxe courte
-    public static function limit($value,?array $option=null):array
+    final public static function limit($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2185,7 +2184,7 @@ abstract class Syntax extends Main\Root
     // limitPrepare
     // prépare un tableau limit
     // si le tableau a 1 niveau et que la clé est numérique sans être 0, key est considéré comme page et current comme limit
-    public static function limitPrepare(array $value):array
+    final public static function limitPrepare(array $value):array
     {
         $return = [];
         $count = count($value);
@@ -2207,7 +2206,7 @@ abstract class Syntax extends Main\Root
     // limitPrepareOne
     // prépare un tableau limit si la valeur n'avait qu'une entrée
     // si le tableau a 1 niveau et que la clé est numérique sans être 0, key est considéré comme page et current comme limit
-    public static function limitPrepareOne($key,$value):array
+    final public static function limitPrepareOne($key,$value):array
     {
         $return = [];
 
@@ -2235,7 +2234,7 @@ abstract class Syntax extends Main\Root
 
     // limitPrepareTwo
     // prépare un tableau limit si la valeur avait deux entrées
-    public static function limitPrepareTwo(array $value):array
+    final public static function limitPrepareTwo(array $value):array
     {
         $return = [];
         $limit = $value['limit'] ?? Base\Arr::valueFirst($value);
@@ -2263,7 +2262,7 @@ abstract class Syntax extends Main\Root
     // créer une requête set pour INSERT avec noms de champs
     // possible de créer un insertSet vide en fournissant un tableau vide
     // ne permet pas de faire plusieurs insertions par requête, car il y a support pour callable dans set et aussi le rollback ne marchait pas correctement
-    public static function insertSet($value,?array $option=null):array
+    final public static function insertSet($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2299,7 +2298,7 @@ abstract class Syntax extends Main\Root
 
     // insertSetFields
     // génère le sql pour les fields lors d'une insertion
-    public static function insertSetFields(array $value):array
+    final public static function insertSetFields(array $value):array
     {
         $return = ['sql'=>''];
 
@@ -2319,7 +2318,7 @@ abstract class Syntax extends Main\Root
     // setPrepare
     // prépare plusieurs entrée de insert ou update set
     // retourne un tableau multidimensionnel
-    public static function setPrepare(array $array):array
+    final public static function setPrepare(array $array):array
     {
         $return = [];
 
@@ -2339,7 +2338,7 @@ abstract class Syntax extends Main\Root
     // setValues
     // méthode utilisé par insertSet et updateSet pour générer les valeurs
     // si tick est true, alors met le nom du champ avant la valeur avec un =
-    public static function setValues(array $value,bool $tick=false,?array $option=null):array
+    final public static function setValues(array $value,bool $tick=false,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2378,7 +2377,7 @@ abstract class Syntax extends Main\Root
     // updateSet
     // créer une requête de type SET pour update
     // ne supporte pas les valeurs par défaut
-    public static function updateSet($value,?array $option=null):array
+    final public static function updateSet($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2397,7 +2396,7 @@ abstract class Syntax extends Main\Root
 
     // setOne
     // construit une entrée insertSet ou updateSet à une variable
-    public static function setOne($value,?array $option=null):array
+    final public static function setOne($value,?array $option=null):array
     {
         return static::value($value,null,$option);
     }
@@ -2405,7 +2404,7 @@ abstract class Syntax extends Main\Root
 
     // setTwo
     // construit une entrée insertSet ou updateSet à deux variables
-    public static function setTwo(string $method,$value,?array $option=null):array
+    final public static function setTwo(string $method,$value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2420,7 +2419,7 @@ abstract class Syntax extends Main\Root
 
     // setThree
     // construit une entrée insertSet ou updateSet à trois variables
-    public static function setThree(string $key,string $method,$value1,$value2,?array $option=null):array
+    final public static function setThree(string $key,string $method,$value1,$value2,?array $option=null):array
     {
         $return = [];
 
@@ -2438,7 +2437,7 @@ abstract class Syntax extends Main\Root
     // setReplace
     // construit une entrée set replace à quatres variables
     // permet de faire un remplacement sur une colonne
-    public static function setReplace(string $key,$from,$to,string $method,?array $option=null):array
+    final public static function setReplace(string $key,$from,$to,string $method,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2457,7 +2456,7 @@ abstract class Syntax extends Main\Root
 
     // col
     // obtient le sql de création d'une col
-    public static function col(array $value,?array $option=null):array
+    final public static function col(array $value,?array $option=null):array
     {
         $return = ['sql'=>''];
         $option = static::option(Base\Arr::plus($option,['prepare'=>false]));
@@ -2551,7 +2550,7 @@ abstract class Syntax extends Main\Root
 
     // makeCol
     // méthode utilisé par createCol, addCol et alterCol
-    public static function makeCol($value,array $option):array
+    final public static function makeCol($value,array $option):array
     {
         $return = ['sql'=>''];
 
@@ -2586,7 +2585,7 @@ abstract class Syntax extends Main\Root
 
     // createCol
     // ajoute une col pour un create
-    public static function createCol($value,?array $option=null):array
+    final public static function createCol($value,?array $option=null):array
     {
         return static::makeCol($value,Base\Arr::plus($option,['type'=>'createCol']));
     }
@@ -2594,7 +2593,7 @@ abstract class Syntax extends Main\Root
 
     // addCol
     // ajoute une col pour un alter
-    public static function addCol($value,?array $option=null):array
+    final public static function addCol($value,?array $option=null):array
     {
         return static::makeCol($value,Base\Arr::plus($option,['type'=>'addCol']));
     }
@@ -2603,7 +2602,7 @@ abstract class Syntax extends Main\Root
     // alterCol
     // change un col pour un alter
     // il faut remettre l'ensemble des paramètres de la colonne (type, longueur)
-    public static function alterCol($value,?array $option=null):array
+    final public static function alterCol($value,?array $option=null):array
     {
         return static::makeCol($value,Base\Arr::plus($option,['type'=>'alterCol']));
     }
@@ -2611,7 +2610,7 @@ abstract class Syntax extends Main\Root
 
     // dropCol
     // drop une col pour un alter
-    public static function dropCol($value,?array $option=null):array
+    final public static function dropCol($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2636,7 +2635,7 @@ abstract class Syntax extends Main\Root
 
     // key
     // obtient le sql de création d'une key
-    public static function key(array $value,?array $option=null):array
+    final public static function key(array $value,?array $option=null):array
     {
         $return = ['sql'=>''];
         $key = Base\Arr::keysFirstValue(['key',0],$value);
@@ -2695,7 +2694,7 @@ abstract class Syntax extends Main\Root
 
     // makeKey
     // méthode utilisé par createKey et alterKey
-    public static function makeKey($value,?array $option=null):array
+    final public static function makeKey($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2730,7 +2729,7 @@ abstract class Syntax extends Main\Root
 
     // createKey
     // ajoute une key pour un create
-    public static function createKey($value,?array $option=null):array
+    final public static function createKey($value,?array $option=null):array
     {
         return static::makeKey($value,Base\Arr::plus($option,['type'=>'createKey']));
     }
@@ -2738,7 +2737,7 @@ abstract class Syntax extends Main\Root
 
     // addKey
     // ajoute une key pour un alter
-    public static function addKey($value,?array $option=null):array
+    final public static function addKey($value,?array $option=null):array
     {
         return static::makeKey($value,Base\Arr::plus($option,['type'=>'addKey']));
     }
@@ -2746,7 +2745,7 @@ abstract class Syntax extends Main\Root
 
     // dropKey
     // drop une key pour un alter
-    public static function dropKey($value,?array $option=null):array
+    final public static function dropKey($value,?array $option=null):array
     {
         $return = ['sql'=>''];
 
@@ -2772,7 +2771,7 @@ abstract class Syntax extends Main\Root
     // createEnd
     // génère la fin de la string sql de create avec fermeture de parenthèse
     // option engine et charset
-    public static function createEnd(?array $option=null):array
+    final public static function createEnd(?array $option=null):array
     {
         $return = ['sql'=>''];
         $return['sql'] .= ')';
@@ -2794,8 +2793,7 @@ abstract class Syntax extends Main\Root
     // les défaut seulement pour requête select, update ou delete
     // possibilité d'avoir une option defaultCallable pour aller chercher des options pour une table via une callable
     // est cast par défaut à la sortie
-    // méthode protégé
-    protected static function prepareDefault(string $type,array $option):?array
+    final protected static function prepareDefault(string $type,array $option):?array
     {
         $return = null;
 
@@ -2821,7 +2819,7 @@ abstract class Syntax extends Main\Root
 
     // make
     // construit une requête sql à partir d'un type et un array de valeur
-    public static function make(string $type,array $array,?array $option=null):?array
+    final public static function make(string $type,array $array,?array $option=null):?array
     {
         $return = null;
         $option = static::option($option);
@@ -2896,7 +2894,7 @@ abstract class Syntax extends Main\Root
 
     // makeParses
     // parse l'ensemble d'un tableau pour un type de requête
-    public static function makeParses(string $type,array $array):?array
+    final public static function makeParses(string $type,array $array):?array
     {
         $return = null;
 
@@ -2919,7 +2917,7 @@ abstract class Syntax extends Main\Root
 
     // makeParse
     // retourne la valeur d'une partie du tableau make selon le type et clé
-    public static function makeParse(string $type,string $key,array $array)
+    final public static function makeParse(string $type,string $key,array $array)
     {
         $return = null;
 
@@ -2943,7 +2941,7 @@ abstract class Syntax extends Main\Root
 
     // makeSelectFrom
     // fait une requête select à partir d'une requête insert, update ou delete
-    public static function makeSelectFrom(string $type,array $array,?array $option=null)
+    final public static function makeSelectFrom(string $type,array $array,?array $option=null)
     {
         $return = null;
 
@@ -2986,7 +2984,7 @@ abstract class Syntax extends Main\Root
 
     // makeSelect
     // fait une requête de type select
-    public static function makeSelect(array $value,?array $option=null):?array
+    final public static function makeSelect(array $value,?array $option=null):?array
     {
         return static::make('select',$value,$option);
     }
@@ -2994,7 +2992,7 @@ abstract class Syntax extends Main\Root
 
     // makeShow
     // fait une requête de type show
-    public static function makeShow(array $value,?array $option=null):?array
+    final public static function makeShow(array $value,?array $option=null):?array
     {
         return static::make('show',$value,$option);
     }
@@ -3002,7 +3000,7 @@ abstract class Syntax extends Main\Root
 
     // makeInsert
     // fait une requête de type insert
-    public static function makeInsert(array $value,?array $option=null):?array
+    final public static function makeInsert(array $value,?array $option=null):?array
     {
         return static::make('insert',$value,$option);
     }
@@ -3010,7 +3008,7 @@ abstract class Syntax extends Main\Root
 
     // makeUpdate
     // fait une requête de type update
-    public static function makeUpdate(array $value,?array $option=null):?array
+    final public static function makeUpdate(array $value,?array $option=null):?array
     {
         return static::make('update',$value,$option);
     }
@@ -3018,7 +3016,7 @@ abstract class Syntax extends Main\Root
 
     // makeDelete
     // fait une requête de type delete
-    public static function makeDelete(array $value,?array $option=null):?array
+    final public static function makeDelete(array $value,?array $option=null):?array
     {
         return static::make('delete',$value,$option);
     }
@@ -3026,7 +3024,7 @@ abstract class Syntax extends Main\Root
 
     // makeCreate
     // fait une requête de type create
-    public static function makeCreate(array $value,?array $option=null):?array
+    final public static function makeCreate(array $value,?array $option=null):?array
     {
         return static::make('create',$value,$option);
     }
@@ -3034,7 +3032,7 @@ abstract class Syntax extends Main\Root
 
     // makeAlter
     // fait une requête de type alter
-    public static function makeAlter(array $value,?array $option=null):?array
+    final public static function makeAlter(array $value,?array $option=null):?array
     {
         return static::make('alter',$value,$option);
     }
@@ -3042,7 +3040,7 @@ abstract class Syntax extends Main\Root
 
     // makeTruncate
     // fait une requête de type truncate
-    public static function makeTruncate(array $value,?array $option=null):?array
+    final public static function makeTruncate(array $value,?array $option=null):?array
     {
         return static::make('truncate',$value,$option);
     }
@@ -3050,7 +3048,7 @@ abstract class Syntax extends Main\Root
 
     // makeDrop
     // fait une requête de type drop
-    public static function makeDrop(array $value,?array $option=null):?array
+    final public static function makeDrop(array $value,?array $option=null):?array
     {
         return static::make('drop',$value,$option);
     }
@@ -3059,7 +3057,7 @@ abstract class Syntax extends Main\Root
     // select
     // fait une requête de type select
     // les arguments sont pack
-    public static function select(...$values):?array
+    final public static function select(...$values):?array
     {
         return static::makeSelect($values);
     }
@@ -3068,7 +3066,7 @@ abstract class Syntax extends Main\Root
     // show
     // fait une requête de type show
     // les arguments sont pack
-    public static function show(...$values):?array
+    final public static function show(...$values):?array
     {
         return static::makeShow($values);
     }
@@ -3077,7 +3075,7 @@ abstract class Syntax extends Main\Root
     // insert
     // fait une requête de type insert
     // les arguments sont pack
-    public static function insert(...$values):?array
+    final public static function insert(...$values):?array
     {
         return static::makeInsert($values);
     }
@@ -3086,7 +3084,7 @@ abstract class Syntax extends Main\Root
     // update
     // fait une requête de type update
     // les arguments sont pack
-    public static function update(...$values):?array
+    final public static function update(...$values):?array
     {
         return static::makeUpdate($values);
     }
@@ -3095,7 +3093,7 @@ abstract class Syntax extends Main\Root
     // delete
     // fait une requête de type delete
     // les arguments sont pack
-    public static function delete(...$values):?array
+    final public static function delete(...$values):?array
     {
         return static::makeDelete($values);
     }
@@ -3104,7 +3102,7 @@ abstract class Syntax extends Main\Root
     // create
     // fait une requête de type create
     // les arguments sont pack
-    public static function create(...$values):?array
+    final public static function create(...$values):?array
     {
         return static::makeCreate($values);
     }
@@ -3113,7 +3111,7 @@ abstract class Syntax extends Main\Root
     // alter
     // fait une requête de type alter
     // les arguments sont pack
-    public static function alter(...$values):?array
+    final public static function alter(...$values):?array
     {
         return static::makeAlter($values);
     }
@@ -3122,7 +3120,7 @@ abstract class Syntax extends Main\Root
     // truncate
     // fait une requête de type truncate
     // les arguments sont pack
-    public static function truncate(...$values):?array
+    final public static function truncate(...$values):?array
     {
         return static::makeTruncate($values);
     }
@@ -3131,7 +3129,7 @@ abstract class Syntax extends Main\Root
     // drop
     // fait une requête de type drop
     // les arguments sont pack
-    public static function drop(...$values):?array
+    final public static function drop(...$values):?array
     {
         return static::makeDrop($values);
     }
@@ -3139,7 +3137,7 @@ abstract class Syntax extends Main\Root
 
     // selectCount
     // fait une requête de type select count, pas besoin de donner what
-    public static function selectCount(...$values):?array
+    final public static function selectCount(...$values):?array
     {
         return static::makeSelectCount($values);
     }
@@ -3147,7 +3145,7 @@ abstract class Syntax extends Main\Root
 
     // makeSelectCount
     // génère une requête select count, what est la function count
-    public static function makeSelectCount(array $value,?array $option=null):?array
+    final public static function makeSelectCount(array $value,?array $option=null):?array
     {
         return static::makeSelect(Base\Arr::unshift($value,[[($primary = static::option($option)['primary']),'count',$primary]]),$option);
     }
@@ -3155,7 +3153,7 @@ abstract class Syntax extends Main\Root
 
     // makeSelectAll
     // génère une requête select all, what est *
-    public static function makeSelectAll(array $value,?array $option=null):?array
+    final public static function makeSelectAll(array $value,?array $option=null):?array
     {
         return static::makeSelect(Base\Arr::unshift($value,'*'),$option);
     }
@@ -3163,7 +3161,7 @@ abstract class Syntax extends Main\Root
 
     // makeSelectFunction
     // génère une requête select function, what est est une colonne avec function
-    public static function makeSelectFunction($what,string $function,array $value,?array $option=null):?array
+    final public static function makeSelectFunction($what,string $function,array $value,?array $option=null):?array
     {
         return static::makeSelect(Base\Arr::unshift($value,[[Base\Obj::cast($what,1),$function,Base\Obj::cast($what,1)]]),$option);
     }
@@ -3171,7 +3169,7 @@ abstract class Syntax extends Main\Root
 
     // makeSelectDistinct
     // génère une requête select distinct, what est est une colonne pour passage à la function distinct
-    public static function makeSelectDistinct($what,array $value,?array $option=null):?array
+    final public static function makeSelectDistinct($what,array $value,?array $option=null):?array
     {
         return static::makeSelect(Base\Arr::unshift($value,[[Base\Obj::cast($what,1),'distinct',Base\Obj::cast($what,1)]]),$option);
     }
@@ -3179,7 +3177,7 @@ abstract class Syntax extends Main\Root
 
     // makeSelectColumn
     // génère une requête select column, what est est une seule colonne
-    public static function makeSelectColumn($what,array $value,?array $option=null):?array
+    final public static function makeSelectColumn($what,array $value,?array $option=null):?array
     {
         return static::makeSelect(Base\Arr::unshift($value,[$what]),$option);
     }
@@ -3187,7 +3185,7 @@ abstract class Syntax extends Main\Root
 
     // makeSelectKeyPair
     // génère une requête select keyValue, what est deux colonnes key et pair
-    public static function makeSelectKeyPair($key,$pair,array $value,?array $option=null):?array
+    final public static function makeSelectKeyPair($key,$pair,array $value,?array $option=null):?array
     {
         return static::makeSelect(Base\Arr::unshift($value,[Base\Obj::cast($key,1),Base\Obj::cast($pair,1)]),$option);
     }
@@ -3195,7 +3193,7 @@ abstract class Syntax extends Main\Root
 
     // makeselectPrimary
     // génère une requête select id, what est option primary
-    public static function makeselectPrimary(array $value,?array $option=null):?array
+    final public static function makeselectPrimary(array $value,?array $option=null):?array
     {
         return static::makeSelect(Base\Arr::unshift($value,static::option($option)['primary']),$option);
     }
@@ -3203,7 +3201,7 @@ abstract class Syntax extends Main\Root
 
     // makeselectPrimaryPair
     // génère une requête select idPair, what est option primary avec pair une autre colonne
-    public static function makeselectPrimaryPair($pair,array $value,?array $option=null):?array
+    final public static function makeselectPrimaryPair($pair,array $value,?array $option=null):?array
     {
         return static::makeSelect(Base\Arr::unshift($value,[static::option($option)['primary'],Base\Obj::cast($pair,1)]),$option);
     }
@@ -3213,7 +3211,7 @@ abstract class Syntax extends Main\Root
     // génère une requête selectSegment, what est généré automatiquement à partir d'une string segment []
     // les segments identiques sont ignorés, le segment id est toujours inclu et comme premier what
     // ceci va permettre à pdo de mettre le id comme clé
-    public static function makeSelectSegment(string $key,array $value,?array $option=null):?array
+    final public static function makeSelectSegment(string $key,array $value,?array $option=null):?array
     {
         $return = null;
         $option = static::option($option);
@@ -3233,7 +3231,7 @@ abstract class Syntax extends Main\Root
     // makeShowDatabase
     // fait une requête de type show pour obtenir le nom d'une ou plusieurs databases
     // value peut être une string qui représente like
-    public static function makeShowDatabase($value=null,?array $option=null):?array
+    final public static function makeShowDatabase($value=null,?array $option=null):?array
     {
         $return = null;
         $value = Base\Obj::cast($value,2);
@@ -3252,7 +3250,7 @@ abstract class Syntax extends Main\Root
     // makeShowVariable
     // fait une requête de type show pour obtenir le nom d'une ou plusieurs variables
     // value peut être une string qui représente like
-    public static function makeShowVariable($value=null,?array $option=null):?array
+    final public static function makeShowVariable($value=null,?array $option=null):?array
     {
         $return = null;
         $value = Base\Obj::cast($value);
@@ -3286,7 +3284,7 @@ abstract class Syntax extends Main\Root
     // makeShowTable
     // fait une requête de type show pour obtenir le nom d'une ou plusieurs tables
     // value peut être une string qui représente like
-    public static function makeShowTable($value=null,?array $option=null):?array
+    final public static function makeShowTable($value=null,?array $option=null):?array
     {
         $return = null;
         $value = Base\Obj::cast($value,2);
@@ -3305,7 +3303,7 @@ abstract class Syntax extends Main\Root
     // makeShowTableStatus
     // fait une requête de type show pour obtenir le statut d'une ou plusieurs tables
     // value peut être une string qui représente like
-    public static function makeShowTableStatus($value=null,?array $option=null):?array
+    final public static function makeShowTableStatus($value=null,?array $option=null):?array
     {
         $return = null;
         $value = Base\Obj::cast($value,2);
@@ -3324,7 +3322,7 @@ abstract class Syntax extends Main\Root
     // makeShowTableColumn
     // fait une requête de type show pour obtenir la description d'une ou plusieurs colonnes dans une table
     // value est le nom de la colonne
-    public static function makeShowTableColumn($table,$value=null,?array $option=null):?array
+    final public static function makeShowTableColumn($table,$value=null,?array $option=null):?array
     {
         $return = null;
         $table = Base\Obj::cast($table,1);
@@ -3356,7 +3354,7 @@ abstract class Syntax extends Main\Root
 
     // makeAlterAutoIncrement
     // fait une requête de type alter pour changer le autoincrement d'une table
-    public static function makeAlterAutoIncrement($table,int $value=0,?array $option=null):?array
+    final public static function makeAlterAutoIncrement($table,int $value=0,?array $option=null):?array
     {
         $return = null;
         $table = Base\Obj::cast($table,1);
@@ -3380,7 +3378,7 @@ abstract class Syntax extends Main\Root
     // parseReturn
     // valide le format d'un tableau de retour sql
     // ajoute la clé type si non existante
-    public static function parseReturn($value):?array
+    final public static function parseReturn($value):?array
     {
         $return = null;
 
@@ -3416,7 +3414,7 @@ abstract class Syntax extends Main\Root
 
     // type
     // retourne le type de requête à partir d'une string sql
-    public static function type(string $value):?string
+    final public static function type(string $value):?string
     {
         $return = null;
         $value = Base\Str::wordExplodeIndex(0,$value);
@@ -3437,7 +3435,7 @@ abstract class Syntax extends Main\Root
     // émule une requête sql avec tableau prepare
     // toutes les valeurs du tableau prepare sont quote, même si numérique ou null
     // replaceDoubleEscape est true par défaut, va remplacer tous les double \\ par \, comme emulate est surtout utilisé pour de l'affichage ou debug
-    public static function emulate(string $return,?array $prepare=null,?callable $callable=null,bool $replaceDoubleEscape=true):string
+    final public static function emulate(string $return,?array $prepare=null,?callable $callable=null,bool $replaceDoubleEscape=true):string
     {
         if(is_array($prepare))
         {
@@ -3460,7 +3458,7 @@ abstract class Syntax extends Main\Root
 
     // debug
     // retourne le maximum d'informations à partir du tableau de retour sql
-    public static function debug($value,?callable $callable=null,bool $replaceDoubleEscape=true):?array
+    final public static function debug($value,?callable $callable=null,bool $replaceDoubleEscape=true):?array
     {
         $return = static::parseReturn($value);
 
@@ -3473,7 +3471,7 @@ abstract class Syntax extends Main\Root
 
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
-    public static function getOverloadKeyPrepend():?string
+    final public static function getOverloadKeyPrepend():?string
     {
         return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Syntax':null;
     }

@@ -16,7 +16,7 @@ use Quid\Orm;
 class PdoSql extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $boot = $data['boot'];

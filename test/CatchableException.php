@@ -17,7 +17,7 @@ use Quid\Orm;
 class CatchableException extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // construct
         $e = new Orm\CatchableException('blabla');

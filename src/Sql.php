@@ -21,7 +21,7 @@ class Sql extends PdoSql
     // setOutput
     // change le output de la requête
     // si le output est de row, change what pour *
-    public function setOutput($output=true):parent
+    final public function setOutput($output=true):parent
     {
         parent::setOutput($output);
         $db = $this->db();
@@ -35,7 +35,7 @@ class Sql extends PdoSql
 
     // getTableObject
     // retourne l'objet table lié à l'objet sql si existant
-    public function getTableObject():?Table
+    final public function getTableObject():?Table
     {
         $return = null;
         $db = $this->db();
@@ -51,7 +51,7 @@ class Sql extends PdoSql
     // checkTableObject
     // retourne l'objet table lié à l'objet sql
     // envoie une exception si non existant
-    public function checkTableObject():Table
+    final public function checkTableObject():Table
     {
         $return = $this->getTableObject();
 
@@ -65,7 +65,7 @@ class Sql extends PdoSql
     // filter
     // gère un filtre pour un objet sql
     // il doit y avoir un table object
-    public function filter(array $values):self
+    final public function filter(array $values):self
     {
         $table = $this->checkTableObject();
 
@@ -104,7 +104,7 @@ class Sql extends PdoSql
 
     // filterEmptyNotEmpty
     // gère empty not empty pour un filtre
-    protected function filterEmptyNotEmpty(array $values,Col $col):array
+    final protected function filterEmptyNotEmpty(array $values,Col $col):array
     {
         $return = [];
 
@@ -126,8 +126,7 @@ class Sql extends PdoSql
 
     // checkMake
     // retourne le tableau make, si problème ou retour vide lance une exception
-    // méthode protégé
-    protected function checkMake($output,?array $option=null):?array
+    final protected function checkMake($output,?array $option=null):?array
     {
         $return = null;
         $arr = $this->arr();
@@ -163,7 +162,7 @@ class Sql extends PdoSql
     // row
     // vide l'objet, change le type pour select avec output row
     // argument est table
-    public function row($value=null):self
+    final public function row($value=null):self
     {
         $this->setType('select');
         $this->setOutput('row');
@@ -178,7 +177,7 @@ class Sql extends PdoSql
     // rows
     // vide l'objet, change le type pour select avec output rows
     // argument est table
-    public function rows($value=null):self
+    final public function rows($value=null):self
     {
         $this->setType('select');
         $this->setOutput('rows');
@@ -193,7 +192,7 @@ class Sql extends PdoSql
     // triggerTableCount
     // retourne le nombre de ligne dans la table, peu importe le reste de la requête
     // possible de mettre le retour en cache, via la classe core/table
-    public function triggerTableCount(bool $cache=false):?int
+    final public function triggerTableCount(bool $cache=false):?int
     {
         return $this->checkTableObject()->rowsCount(true,$cache);
     }
@@ -201,7 +200,7 @@ class Sql extends PdoSql
 
     // triggerRow
     // trigge l'objet sql et retourne un objet row
-    public function triggerRow():Row
+    final public function triggerRow():Row
     {
         return $this->set('what','*')->trigger('row');
     }
@@ -209,7 +208,7 @@ class Sql extends PdoSql
 
     // triggerRows
     // trigge l'objet sql et retourne un objet rows
-    public function triggerRows():Rows
+    final public function triggerRows():Rows
     {
         return $this->set('what','*')->trigger('rows');
     }

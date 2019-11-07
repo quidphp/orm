@@ -24,7 +24,7 @@ abstract class Relation extends Main\ArrMap
 
     // set
     // set pas permis
-    public function set():void
+    final public function set():void
     {
         static::throw('notAllowed');
 
@@ -34,7 +34,7 @@ abstract class Relation extends Main\ArrMap
 
     // unset
     // unset pas permis
-    public function unset():void
+    final public function unset():void
     {
         static::throw('notAllowed');
 

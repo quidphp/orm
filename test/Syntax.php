@@ -16,7 +16,7 @@ use Quid\Orm;
 class Syntax extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // mysql
         $syntax = Orm\Syntax\Mysql::class;

@@ -113,7 +113,7 @@ class Pdo extends Main\Root
 
     // destruct
     // lors de destruction de la classe
-    public function __destruct()
+    final public function __destruct()
     {
         $this->pdo = null;
 
@@ -123,7 +123,7 @@ class Pdo extends Main\Root
 
     // invoke
     // appel de la classe, renvoie vers query
-    public function __invoke(...$args)
+    final public function __invoke(...$args)
     {
         return $this->query(...$args);
     }
@@ -131,7 +131,7 @@ class Pdo extends Main\Root
 
     // toString
     // retourne le nom de la base de donnée
-    public function __toString():string
+    final public function __toString():string
     {
         return $this->name();
     }
@@ -139,7 +139,7 @@ class Pdo extends Main\Root
 
     // cast
     // retourne la valeur cast
-    public function _cast():string
+    final public function _cast():string
     {
         return $this->name();
     }
@@ -147,8 +147,7 @@ class Pdo extends Main\Root
 
     // onSetInst
     // méthode appeler après setInst
-    // méthode protégé
-    protected function onSetInst():void
+    final protected function onSetInst():void
     {
         $this->checkReady(true);
 
@@ -158,7 +157,6 @@ class Pdo extends Main\Root
 
     // onBeforeMakeStatement
     // callback avant la création du statement dans makeStatement
-    // méthode protégé
     protected function onBeforeMakeStatement(array $value):void
     {
         return;
@@ -167,7 +165,6 @@ class Pdo extends Main\Root
 
     // onAfterMakeStatement
     // callback après la création du statement dans makeStatement
-    // méthode protégé
     protected function onAfterMakeStatement(array $value,\PdoStatement $statement):void
     {
         if(!empty($value['type']))
@@ -186,7 +183,7 @@ class Pdo extends Main\Root
 
     // instName
     // retourne le nom à utiliser pour storage dans inst
-    public function instName():string
+    final public function instName():string
     {
         return $this->dsn();
     }
@@ -233,7 +230,7 @@ class Pdo extends Main\Root
 
     // pdo
     // retourne l'objet pdo
-    public function pdo():\Pdo
+    final public function pdo():\Pdo
     {
         return $this->pdo;
     }
@@ -241,7 +238,7 @@ class Pdo extends Main\Root
 
     // primary
     // retourne le nom de la clé primaire
-    public function primary():string
+    final public function primary():string
     {
         return $this->getAttr('primary');
     }
@@ -249,7 +246,7 @@ class Pdo extends Main\Root
 
     // charset
     // retourne le nom du charset
-    public function charset():string
+    final public function charset():string
     {
         return $this->getAttr('charset');
     }
@@ -257,7 +254,7 @@ class Pdo extends Main\Root
 
     // collation
     // retourne la collation de la base de données
-    public function collation():?string
+    final public function collation():?string
     {
         return $this->showVariable('collation_database');
     }
@@ -265,7 +262,7 @@ class Pdo extends Main\Root
 
     // dsn
     // retourne le dsn
-    public function dsn():string
+    final public function dsn():string
     {
         return $this->dsn;
     }
@@ -273,7 +270,7 @@ class Pdo extends Main\Root
 
     // setDsn
     // change le dsn
-    protected function setDsn(string $value):void
+    final protected function setDsn(string $value):void
     {
         $this->checkReady(false);
         $this->dsn = $value;
@@ -284,7 +281,7 @@ class Pdo extends Main\Root
 
     // getSyntax
     // retourne la classe de syntaxe à utiliser avec la base de donnée
-    public function getSyntax():string
+    final public function getSyntax():string
     {
         return $this->syntax;
     }
@@ -292,7 +289,7 @@ class Pdo extends Main\Root
 
     // setSyntax
     // permet d'enregister la classe de syntaxe à utiliser
-    protected function setSyntax():void
+    final protected function setSyntax():void
     {
         $driver = $this->driver();
 
@@ -312,7 +309,7 @@ class Pdo extends Main\Root
 
     // syntaxCall
     // permet d'appeler une méthode sur la classe de syntaxe
-    public function syntaxCall(string $method,...$args)
+    final public function syntaxCall(string $method,...$args)
     {
         return $this->getSyntax()::$method(...$args);
     }
@@ -320,7 +317,7 @@ class Pdo extends Main\Root
 
     // driver
     // retourne le driver du dsn
-    public function driver():?string
+    final public function driver():?string
     {
         return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['driver'] ?? null;
     }
@@ -328,7 +325,7 @@ class Pdo extends Main\Root
 
     // host
     // retourne le host du dsn
-    public function host():?string
+    final public function host():?string
     {
         return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['host'] ?? null;
     }
@@ -336,7 +333,7 @@ class Pdo extends Main\Root
 
     // dbName
     // retourne le dbname du dsn
-    public function dbName():?string
+    final public function dbName():?string
     {
         return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['dbname'] ?? null;
     }
@@ -344,7 +341,7 @@ class Pdo extends Main\Root
 
     // username
     // retourne le username
-    public function username():?string
+    final public function username():?string
     {
         return $this->username;
     }
@@ -352,7 +349,7 @@ class Pdo extends Main\Root
 
     // setUsername
     // change le username
-    protected function setUsername(string $value):void
+    final protected function setUsername(string $value):void
     {
         $this->checkReady(false);
         $this->username = $value;
@@ -363,7 +360,7 @@ class Pdo extends Main\Root
 
     // name
     // retourne le nom de l'objet db
-    public function name():string
+    final public function name():string
     {
         return $this->checkReady()->dsn().'@'.$this->username();
     }
@@ -371,7 +368,7 @@ class Pdo extends Main\Root
 
     // clientVersion
     // retourne l'attribut client version
-    public function clientVersion():string
+    final public function clientVersion():string
     {
         return $this->getPdoAttr(\PDO::ATTR_CLIENT_VERSION);
     }
@@ -379,7 +376,7 @@ class Pdo extends Main\Root
 
     // connectionStatus
     // retourne l'attribut connection status
-    public function connectionStatus():string
+    final public function connectionStatus():string
     {
         return $this->getPdoAttr(\PDO::ATTR_CONNECTION_STATUS);
     }
@@ -387,7 +384,7 @@ class Pdo extends Main\Root
 
     // serverVersion
     // retourne l'attribut server version
-    public function serverVersion():string
+    final public function serverVersion():string
     {
         return $this->getPdoAttr(\PDO::ATTR_SERVER_VERSION);
     }
@@ -395,7 +392,7 @@ class Pdo extends Main\Root
 
     // serverInfo
     // retourne l'attribut server info
-    public function serverInfo():string
+    final public function serverInfo():string
     {
         return $this->getPdoAttr(\PDO::ATTR_SERVER_INFO);
     }
@@ -411,7 +408,7 @@ class Pdo extends Main\Root
 
     // setDebug
     // change la valeur de option debug, si value est null, toggle
-    public function setDebug(?bool $value=null):self
+    final public function setDebug(?bool $value=null):self
     {
         if($value === null)
         $value = ($this->getAttr('debug') === true)? false:true;
@@ -422,7 +419,7 @@ class Pdo extends Main\Root
 
     // isReady
     // retourne vrai si une connection est établi
-    public function isReady():bool
+    final public function isReady():bool
     {
         return ($this->pdo instanceof \PDO)? true:false;
     }
@@ -430,7 +427,7 @@ class Pdo extends Main\Root
 
     // checkReady
     // lance une exception si le status n'est pas le même que celui donné en argument
-    public function checkReady(bool $value=true):self
+    final public function checkReady(bool $value=true):self
     {
         $ready = $this->isReady();
 
@@ -446,7 +443,7 @@ class Pdo extends Main\Root
 
     // setRollback
     // change la valeur de option rollback, si value est null, toggle
-    public function setRollback(?bool $value=null):self
+    final public function setRollback(?bool $value=null):self
     {
         if($value === null)
         $value = ($this->getAttr('rollback') === true)? false:true;
@@ -457,8 +454,7 @@ class Pdo extends Main\Root
 
     // makeHistory
     // créer l'objet history
-    // méthode protégé
-    protected function makeHistory():void
+    final protected function makeHistory():void
     {
         $this->history = History::newOverload();
 
@@ -468,7 +464,7 @@ class Pdo extends Main\Root
 
     // history
     // retourne l'objet de l'historique de db
-    public function history():History
+    final public function history():History
     {
         return $this->history;
     }
@@ -476,7 +472,7 @@ class Pdo extends Main\Root
 
     // setHistory
     // change la valeur de option history, si value est null, toggle
-    public function setHistory(?bool $value=null):self
+    final public function setHistory(?bool $value=null):self
     {
         if($value === null)
         $value = ($this->getAttr('history') === true)? false:true;
@@ -488,7 +484,7 @@ class Pdo extends Main\Root
     // historyRollback
     // lance le rollback sur une requête dnas l'historique
     // le type est requis et un index peut être spécifié
-    public function historyRollback(string $type,int $index=-1,$output=true)
+    final public function historyRollback(string $type,int $index=-1,$output=true)
     {
         $return = null;
         $history = $this->history()->typeIndex($type,$index);
@@ -535,7 +531,7 @@ class Pdo extends Main\Root
     // importantVariables
     // retourne un tableau avec toutes les noms et valeurs des variables importantes, tel que défini dans config
     // output est keyValues
-    public function importantVariables(?array $option=null):?array
+    final public function importantVariables(?array $option=null):?array
     {
         return $this->showVariables($this->getAttr('importantVariables'),$option);
     }
@@ -543,7 +539,7 @@ class Pdo extends Main\Root
 
     // getPdoAttr
     // retourne un attribut de l'objet pdo ou pdoStatement
-    public function getPdoAttr(int $key,?\PDOStatement $statement=null)
+    final public function getPdoAttr(int $key,?\PDOStatement $statement=null)
     {
         $return = null;
 
@@ -559,7 +555,7 @@ class Pdo extends Main\Root
 
     // setPdoAttr
     // change un attribut de l'objet pdo ou pdoStatement
-    public function setPdoAttr(int $key,$value,?\PDOStatement $statement=null):bool
+    final public function setPdoAttr(int $key,$value,?\PDOStatement $statement=null):bool
     {
         $return = false;
 
@@ -575,7 +571,7 @@ class Pdo extends Main\Root
 
     // errorCode
     // retourne un code décrivant la dernière erreur de pdo ou d'un statement
-    public function errorCode(?\PDOStatement $statement=null)
+    final public function errorCode(?\PDOStatement $statement=null)
     {
         $return = null;
 
@@ -591,7 +587,7 @@ class Pdo extends Main\Root
 
     // errorInfo
     // retourne un tableau décrivant la dernière erreur de pdo ou d'un statement
-    public function errorInfo(?\PDOStatement $statement=null):?array
+    final public function errorInfo(?\PDOStatement $statement=null):?array
     {
         $return = null;
 
@@ -607,7 +603,7 @@ class Pdo extends Main\Root
 
     // beginTransaction
     // débute une transaction
-    public function beginTransaction():bool
+    final public function beginTransaction():bool
     {
         return $this->checkReady()->pdo()->beginTransaction();
     }
@@ -615,7 +611,7 @@ class Pdo extends Main\Root
 
     // inTransaction
     // retourne vrai si une transaction est active
-    public function inTransaction():bool
+    final public function inTransaction():bool
     {
         return $this->checkReady()->pdo()->inTransaction();
     }
@@ -623,7 +619,7 @@ class Pdo extends Main\Root
 
     // commit
     // commet la transaction
-    public function commit():bool
+    final public function commit():bool
     {
         return $this->checkReady()->pdo()->commit();
     }
@@ -631,7 +627,7 @@ class Pdo extends Main\Root
 
     // rollback
     // annule la transaction
-    public function rollback():bool
+    final public function rollback():bool
     {
         return $this->checkReady()->pdo()->rollback();
     }
@@ -639,7 +635,7 @@ class Pdo extends Main\Root
 
     // lastInsertId
     // retourne le dernier id inséré
-    public function lastInsertId(?string $name=null):?int
+    final public function lastInsertId(?string $name=null):?int
     {
         $return = null;
         $this->checkReady();
@@ -654,7 +650,7 @@ class Pdo extends Main\Root
 
     // quote
     // quote une variable via pdo
-    public function quote($value,?int $type=null):?string
+    final public function quote($value,?int $type=null):?string
     {
         $return = null;
         $this->checkReady();
@@ -674,7 +670,7 @@ class Pdo extends Main\Root
     // makeStatement
     // prend un tableau query et retourne un objet pdo statement
     // gère le try catch
-    public function makeStatement($value,?array $attr=[]):?\PDOStatement
+    final public function makeStatement($value,?array $attr=[]):?\PDOStatement
     {
         $return = null;
         $value = $this->syntaxCall('parseReturn',$value);
@@ -721,7 +717,7 @@ class Pdo extends Main\Root
 
     // infoStatement
     // retourne le maximum d'informations sur le statement selon le type de requête
-    public function infoStatement($value,\PDOStatement $statement):?array
+    final public function infoStatement($value,\PDOStatement $statement):?array
     {
         $return = $this->debug($value);
 
@@ -753,7 +749,7 @@ class Pdo extends Main\Root
 
     // outputStatement
     // gère le output pour pdoStatement
-    public function outputStatement($value,$output,\PDOStatement $statement)
+    final public function outputStatement($value,$output,\PDOStatement $statement)
     {
         $return = null;
         $value = $this->syntaxCall('parseReturn',$value);
@@ -799,7 +795,7 @@ class Pdo extends Main\Root
 
     // getColumnMeta
     // retourne un tableau multidimensionnel avec les meta des colonnes du statement
-    public function getColumnMeta(\PDOStatement $value):array
+    final public function getColumnMeta(\PDOStatement $value):array
     {
         $return = [];
 
@@ -821,7 +817,7 @@ class Pdo extends Main\Root
     // retourne une key pair à partir d'un statement
     // arg peut être des clés, indexes ou null
     // fonctionne même si le statement contient plus de deux colonnes
-    public function fetchKeyPairStatement(?array $arg,\PDOStatement $statement):?array
+    final public function fetchKeyPairStatement(?array $arg,\PDOStatement $statement):?array
     {
         $return = null;
         $count = $statement->columnCount();
@@ -853,7 +849,7 @@ class Pdo extends Main\Root
     // retourne les key pairs à partir d'un statement
     // arg peut être des clés, indexes ou null
     // fonctionne même si le statement contient plus de deux colonnes
-    public function fetchKeyPairsStatement(?array $arg,\PDOStatement $statement):?array
+    final public function fetchKeyPairsStatement(?array $arg,\PDOStatement $statement):?array
     {
         $return = null;
         $count = $statement->columnCount();
@@ -884,7 +880,7 @@ class Pdo extends Main\Root
     // fetchColumnStatement
     // retourne une colonne d'une ligne à partir d'un statement
     // arg peut être index ou nom de colonne
-    public function fetchColumnStatement($arg,\PDOStatement $statement)
+    final public function fetchColumnStatement($arg,\PDOStatement $statement)
     {
         $return = null;
         $arg = $this->syntaxCall('shortcut',array_values((array) $arg));
@@ -905,7 +901,7 @@ class Pdo extends Main\Root
     // fetchColumnsStatement
     // retourne une colonne sur toutes les lignes d'un statement
     // arg peut être index ou nom de colonne
-    public function fetchColumnsStatement($arg,\PDOStatement $statement):?array
+    final public function fetchColumnsStatement($arg,\PDOStatement $statement):?array
     {
         $return = null;
         $arg = $this->syntaxCall('shortcut',array_values((array) $arg));
@@ -926,7 +922,7 @@ class Pdo extends Main\Root
     // fetchSegmentStatement
     // retourne la string avec segments remplacés
     // arg doit être un tableau contenant la string comme première valeur
-    public function fetchSegmentStatement(array $arg,\PDOStatement $statement):?string
+    final public function fetchSegmentStatement(array $arg,\PDOStatement $statement):?string
     {
         $return = null;
         $arg = current($arg);
@@ -942,7 +938,7 @@ class Pdo extends Main\Root
     // retounre un tableau avec les ids comme clés et la string avec segments remplacés comme valeur
     // arg doit être un tableau contenant la string comme première valeur
     // une exception peut être envoyé si la clé est invalide ou déjà existante dans le tableau de retour
-    public function fetchSegmentsStatement(array $arg,\PDOStatement $statement):?array
+    final public function fetchSegmentsStatement(array $arg,\PDOStatement $statement):?array
     {
         $return = null;
         $arg = current($arg);
@@ -1021,7 +1017,7 @@ class Pdo extends Main\Root
 
     // statement
     // effectue la requête à la base de donnée et retourne l'objet pdoStatement
-    public function statement($value):?\PDOStatement
+    final public function statement($value):?\PDOStatement
     {
         return $this->query($value,null);
     }
@@ -1029,8 +1025,7 @@ class Pdo extends Main\Root
 
     // queryBeforeAfter
     // permet de retourner le contenu d'une ou plusieurs lignes avant ou après les changements effectués via insert, update ou delete
-    // méthode protégé
-    protected function queryBeforeAfter(string $type,array $value,$output=true)
+    final protected function queryBeforeAfter(string $type,array $value,$output=true)
     {
         $return = null;
 
@@ -1049,8 +1044,7 @@ class Pdo extends Main\Root
 
     // preparedStatement
     // construit un prepared statement
-    // méthode protégé
-    protected function preparedStatement(string $value,array $prepare,?array $attr=[]):?\PDOStatement
+    final protected function preparedStatement(string $value,array $prepare,?array $attr=[]):?\PDOStatement
     {
         $return = null;
         $query = $this->pdo()->prepare($value,$attr);
@@ -1083,8 +1077,7 @@ class Pdo extends Main\Root
 
     // outputStatementSelectShow
     // gère le output pour pdoStatement pour select ou show
-    // méthode protégé
-    protected function outputStatementSelectShow(array $value,array $output,\PDOStatement $statement)
+    final protected function outputStatementSelectShow(array $value,array $output,\PDOStatement $statement)
     {
         $return = null;
 
@@ -1152,7 +1145,7 @@ class Pdo extends Main\Root
 
     // make
     // construit et soumet une requête généré par la classe sql
-    public function make(string $type,array $array,$output=true,?array $option=null)
+    final public function make(string $type,array $array,$output=true,?array $option=null)
     {
         $return = null;
 
@@ -1170,7 +1163,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête select généré par la classe sql
     // une valeur numérique limit peut être ajouté dans le tableau input sql si le type est select
     // par exemple pour select assoc, limit 1 est ajouté
-    public function makeSelect(array $array,$output=true,?array $option=null)
+    final public function makeSelect(array $array,$output=true,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeSelect',$this->selectLimit($output,$array),$this->getSqlOption($option)),$output);
     }
@@ -1178,7 +1171,7 @@ class Pdo extends Main\Root
 
     // makeShow
     // construit et soumet une requête show généré par la classe sql
-    public function makeShow(array $array,$output=true,?array $option=null)
+    final public function makeShow(array $array,$output=true,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeShow',$array,$this->getSqlOption($option)),$output);
     }
@@ -1188,7 +1181,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête insert généré par la classe sql
     // possible de faire une requête insertion vide si un tableau vide est fourni comme insertSet
     // option rollback possible
-    public function makeInsert(array $array,$output=true,?array $option=null)
+    final public function makeInsert(array $array,$output=true,?array $option=null)
     {
         $return = null;
         $option = $this->getSqlOption($option);
@@ -1209,7 +1202,7 @@ class Pdo extends Main\Root
     // makeUpdate
     // construit et soumet une requête update généré par la classe sql
     // option rollback possible
-    public function makeUpdate(array $array,$output=true,?array $option=null)
+    final public function makeUpdate(array $array,$output=true,?array $option=null)
     {
         $return = null;
         $option = $this->getSqlOption($option);
@@ -1230,7 +1223,7 @@ class Pdo extends Main\Root
     // makeDelete
     // construit et soumet une requête delete généré par la classe sql
     // option rollback possible
-    public function makeDelete(array $array,$output=true,?array $option=null)
+    final public function makeDelete(array $array,$output=true,?array $option=null)
     {
         $return = null;
         $option = $this->getSqlOption($option);
@@ -1250,7 +1243,7 @@ class Pdo extends Main\Root
 
     // makeCreate
     // construit et soumet une requête create généré par la classe sql
-    public function makeCreate(array $array,$output=true,?array $option=null)
+    final public function makeCreate(array $array,$output=true,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeCreate',$array,$this->getSqlOption($option)),$output);
     }
@@ -1258,7 +1251,7 @@ class Pdo extends Main\Root
 
     // makeAlter
     // construit et soumet une requête alter généré par la classe sql
-    public function makeAlter(array $array,$output=true,?array $option=null)
+    final public function makeAlter(array $array,$output=true,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeAlter',$array,$this->getSqlOption($option)),$output);
     }
@@ -1266,7 +1259,7 @@ class Pdo extends Main\Root
 
     // makeTruncate
     // construit et soumet une requête truncate généré par la classe sql
-    public function makeTruncate(array $array,$output=true,?array $option=null)
+    final public function makeTruncate(array $array,$output=true,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeTruncate',$array,$this->getSqlOption($option)),$output);
     }
@@ -1274,7 +1267,7 @@ class Pdo extends Main\Root
 
     // makeDrop
     // construit et soumet une requête drop généré par la classe sql
-    public function makeDrop(array $array,$output=true,?array $option=null)
+    final public function makeDrop(array $array,$output=true,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeDrop',$array,$this->getSqlOption($option)),$output);
     }
@@ -1283,7 +1276,7 @@ class Pdo extends Main\Root
     // prepareRollback
     // prépare la requête rollback pour une requête insert, update ou delete
     // il y aura seulement un rollback si le tableau sql contient select, une table et un id numérique
-    public function prepareRollback(string $type,array $return,?array $option=null):array
+    final public function prepareRollback(string $type,array $return,?array $option=null):array
     {
         if(in_array($type,['insert','update','delete'],true) && $this->syntaxCall('isReturnRollback',$return))
         {
@@ -1317,7 +1310,7 @@ class Pdo extends Main\Root
     // select
     // construit et soumet une requête select généré par la classe sql
     // les arguments sont pack et output est toujours true
-    public function select(...$values)
+    final public function select(...$values)
     {
         return $this->makeSelect($values,true);
     }
@@ -1325,7 +1318,7 @@ class Pdo extends Main\Root
 
     // selectAssoc
     // construit et soumet une requête select avec output assoc
-    public function selectAssoc(...$values):?array
+    final public function selectAssoc(...$values):?array
     {
         return $this->makeSelect($values,'assoc');
     }
@@ -1333,7 +1326,7 @@ class Pdo extends Main\Root
 
     // selectAssocs
     // construit et soumet une requête select avec output assocs
-    public function selectAssocs(...$values):?array
+    final public function selectAssocs(...$values):?array
     {
         return $this->makeSelect($values,'assocs');
     }
@@ -1341,7 +1334,7 @@ class Pdo extends Main\Root
 
     // selectAssocsUnique
     // construit et soumet une requête select avec output assocsUnique
-    public function selectAssocsUnique(...$values):?array
+    final public function selectAssocsUnique(...$values):?array
     {
         return $this->makeSelect($values,'assocsUnique');
     }
@@ -1350,7 +1343,7 @@ class Pdo extends Main\Root
     // selectAssocsKey
     // construit et soumet une requête select avec output assocsKey
     // key est le champ qui sera utilisé pour la clé du tableau de retour, peut aussi être un index
-    public function selectAssocsKey($key,...$values):?array
+    final public function selectAssocsKey($key,...$values):?array
     {
         return $this->makeSelect($values,['assocsKey','key'=>Base\Obj::cast($key)]);
     }
@@ -1360,7 +1353,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête select avec output assocsKey
     // les clés du tableau sont primary
     // le colonne clé primaire est ajouté dans what si what n'est pas *
-    public function selectAssocsPrimary(...$values):?array
+    final public function selectAssocsPrimary(...$values):?array
     {
         return $this->makeSelect($values,['assocsKey','key'=>$this->primary()]);
     }
@@ -1368,7 +1361,7 @@ class Pdo extends Main\Root
 
     // selectColumnIndex
     // construit et soumet une requête select avec output column et un index
-    public function selectColumnIndex(int $index,...$values)
+    final public function selectColumnIndex(int $index,...$values)
     {
         return $this->makeSelect($values,['column','arg'=>$index]);
     }
@@ -1376,7 +1369,7 @@ class Pdo extends Main\Root
 
     // selectColumnsIndex
     // construit et soumet une requête select avec output columns et un index
-    public function selectColumnsIndex(int $index,...$values):?array
+    final public function selectColumnsIndex(int $index,...$values):?array
     {
         return $this->makeSelect($values,['columns','arg'=>$index]);
     }
@@ -1384,7 +1377,7 @@ class Pdo extends Main\Root
 
     // selectRowCount
     // construit et soumet une requête select avec output rowCount
-    public function selectRowCount(...$values):?int
+    final public function selectRowCount(...$values):?int
     {
         return $this->makeSelect($values,'rowCount');
     }
@@ -1392,7 +1385,7 @@ class Pdo extends Main\Root
 
     // selectColumnCount
     // construit et soumet une requête select avec output columnCount
-    public function selectColumnCount(...$values):?int
+    final public function selectColumnCount(...$values):?int
     {
         return $this->makeSelect($values,'columnCount');
     }
@@ -1401,7 +1394,7 @@ class Pdo extends Main\Root
     // show
     // construit et soumet une requête show généré par la classe sql
     // les arguments sont pack et output est toujours true
-    public function show(...$values)
+    final public function show(...$values)
     {
         return $this->makeShow($values,true);
     }
@@ -1409,7 +1402,7 @@ class Pdo extends Main\Root
 
     // showAssoc
     // construit et soumet une requête show avec output assoc
-    public function showAssoc(...$values):?array
+    final public function showAssoc(...$values):?array
     {
         return $this->makeShow($values,'assoc');
     }
@@ -1417,7 +1410,7 @@ class Pdo extends Main\Root
 
     // showAssocs
     // construit et soumet une requête show avec output assocs
-    public function showAssocs(...$values):?array
+    final public function showAssocs(...$values):?array
     {
         return $this->makeShow($values,'assocs');
     }
@@ -1426,7 +1419,7 @@ class Pdo extends Main\Root
     // showAssocsKey
     // construit et soumet une requête show avec output assocsKey
     // key est le champ qui sera utilisé pour la clé du tableau de retour, peut aussi être un index
-    public function showAssocsKey($key,...$values):?array
+    final public function showAssocsKey($key,...$values):?array
     {
         return $this->makeShow($values,['assocsKey','key'=>Base\Obj::cast($key,3)]);
     }
@@ -1434,7 +1427,7 @@ class Pdo extends Main\Root
 
     // showColumn
     // construit et soumet une requête show avec output column et un what qui doit être string ou int
-    public function showColumn($what,...$values)
+    final public function showColumn($what,...$values)
     {
         return $this->makeShow($values,['column','arg'=>Base\Obj::cast($what,3)]);
     }
@@ -1442,7 +1435,7 @@ class Pdo extends Main\Root
 
     // showColumns
     // construit et soumet une requête show avec output columns et un what qui doit être string ou int
-    public function showColumns($what,...$values):?array
+    final public function showColumns($what,...$values):?array
     {
         return $this->makeShow($values,['columns','arg'=>Base\Obj::cast($what,3)]);
     }
@@ -1450,7 +1443,7 @@ class Pdo extends Main\Root
 
     // showKeyValue
     // construit et soumet une requête show avec output keyValue
-    public function showKeyValue($key,$pair,...$values):?array
+    final public function showKeyValue($key,$pair,...$values):?array
     {
         return $this->makeShow($values,['keyPair','arg'=>[Base\Obj::cast($key,3),Base\Obj::cast($pair,3)]]);
     }
@@ -1458,7 +1451,7 @@ class Pdo extends Main\Root
 
     // showKeyValues
     // construit et soumet une requête show avec output keyValues
-    public function showKeyValues($key,$pair,...$values):?array
+    final public function showKeyValues($key,$pair,...$values):?array
     {
         return $this->makeShow($values,['keyPairs','arg'=>[Base\Obj::cast($key,3),Base\Obj::cast($pair,3)]]);
     }
@@ -1466,7 +1459,7 @@ class Pdo extends Main\Root
 
     // showCount
     // construit et soumet une requête show avec output rowCount
-    public function showCount(...$values):?int
+    final public function showCount(...$values):?int
     {
         return $this->makeShow($values,'rowCount');
     }
@@ -1474,7 +1467,7 @@ class Pdo extends Main\Root
 
     // showColumnCount
     // construit et soumet une requête show avec output columnCount
-    public function showColumnCount(...$values):?int
+    final public function showColumnCount(...$values):?int
     {
         return $this->makeShow($values,'columnCount');
     }
@@ -1484,7 +1477,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête insert généré par la classe sql
     // possible de faire une requête insertion vide si un tableau vide est fourni comme insertSet
     // les arguments sont pack et output est true, ce qui est insertId
-    public function insert(...$values)
+    final public function insert(...$values)
     {
         return $this->makeInsert($values,true);
     }
@@ -1498,7 +1491,7 @@ class Pdo extends Main\Root
     // du au format de inserts, les valeurs à insérer ne peuvent pas gérés les callables
     // retourne un tableau avec tous les insert ids
     // une exception peut être envoyé si une insertion ne couvre pas tous les fields
-    public function inserts($table,array $fields,array ...$values):array
+    final public function inserts($table,array $fields,array ...$values):array
     {
         $return = [];
         $count = count($fields);
@@ -1523,7 +1516,7 @@ class Pdo extends Main\Root
 
     // insertBeforeAfter
     // construit et soumet une requête insert avec output beforeAfter assoc
-    public function insertBeforeAfter(...$values):?array
+    final public function insertBeforeAfter(...$values):?array
     {
         return $this->makeInsert($values,['beforeAfter'=>'assoc']);
     }
@@ -1531,7 +1524,7 @@ class Pdo extends Main\Root
 
     // insertBeforeAfters
     // construit et soumet une requête insert avec output beforeAfter assocs
-    public function insertBeforeAfters(...$values):?array
+    final public function insertBeforeAfters(...$values):?array
     {
         return $this->makeInsert($values,['beforeAfter'=>'assocs']);
     }
@@ -1540,7 +1533,7 @@ class Pdo extends Main\Root
     // update
     // construit et soumet une requête update généré par la classe sql
     // les arguments sont pack et output est true, ce qui est rowCount
-    public function update(...$values)
+    final public function update(...$values)
     {
         return $this->makeUpdate($values,true);
     }
@@ -1548,7 +1541,7 @@ class Pdo extends Main\Root
 
     // updateBeforeAfter
     // construit et soumet une requête update avec output beforeAfter assoc
-    public function updateBeforeAfter(...$values):?array
+    final public function updateBeforeAfter(...$values):?array
     {
         return $this->makeUpdate($values,['beforeAfter'=>'assoc']);
     }
@@ -1556,7 +1549,7 @@ class Pdo extends Main\Root
 
     // updateBeforeAfters
     // construit et soumet une requête update avec output beforeAfter assocs
-    public function updateBeforeAfters(...$values):?array
+    final public function updateBeforeAfters(...$values):?array
     {
         return $this->makeUpdate($values,['beforeAfter'=>'assocs']);
     }
@@ -1565,7 +1558,7 @@ class Pdo extends Main\Root
     // delete
     // construit et soumet une requête delete généré par la classe sql
     // les arguments sont pack et output est toujours true, ce qui est rowCount
-    public function delete(...$values)
+    final public function delete(...$values)
     {
         return $this->makeDelete($values,true);
     }
@@ -1573,7 +1566,7 @@ class Pdo extends Main\Root
 
     // deleteBeforeAfter
     // construit et soumet une requête delete avec output beforeAfter assoc
-    public function deleteBeforeAfter(...$values):?array
+    final public function deleteBeforeAfter(...$values):?array
     {
         return $this->makeDelete($values,['beforeAfter'=>'assoc']);
     }
@@ -1581,7 +1574,7 @@ class Pdo extends Main\Root
 
     // deleteBeforeAfters
     // construit et soumet une requête delete avec output beforeAfter assocs
-    public function deleteBeforeAfters(...$values):?array
+    final public function deleteBeforeAfters(...$values):?array
     {
         return $this->makeDelete($values,['beforeAfter'=>'assocs']);
     }
@@ -1590,7 +1583,7 @@ class Pdo extends Main\Root
     // create
     // construit et soumet une requête create généré par la classe sql
     // les arguments sont pack et output est true, ce qui est statement
-    public function create(...$values)
+    final public function create(...$values)
     {
         return $this->makeCreate($values,true);
     }
@@ -1599,7 +1592,7 @@ class Pdo extends Main\Root
     // alter
     // construit et soumet une requête alter généré par la classe sql
     // les arguments sont pack et output est true, ce qui est statement
-    public function alter(...$values)
+    final public function alter(...$values)
     {
         return $this->makeAlter($values,true);
     }
@@ -1608,7 +1601,7 @@ class Pdo extends Main\Root
     // truncate
     // construit et soumet une requête truncate généré par la classe sql
     // les arguments sont pack et output est true, ce qui est statement
-    public function truncate(...$values)
+    final public function truncate(...$values)
     {
         return $this->makeTruncate($values,true);
     }
@@ -1617,7 +1610,7 @@ class Pdo extends Main\Root
     // drop
     // construit et soumet une requête drop généré par la classe sql
     // les arguments sont pack et output est true, ce qui est statement
-    public function drop(...$values)
+    final public function drop(...$values)
     {
         return $this->makeDrop($values,true);
     }
@@ -1626,7 +1619,7 @@ class Pdo extends Main\Root
     // reservePrimary
     // réserve une clé primaire dans une table et retourne le id
     // la ligne est crée et immédiatemment effacé
-    public function reservePrimary($value,?array $option=null):?int
+    final public function reservePrimary($value,?array $option=null):?int
     {
         $return = null;
         $option = Base\Arr::plus(['primary'=>$this->primary()],$option);
@@ -1658,7 +1651,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête select count généré par la classe sql, pas besoin de donner what
     // plus rapide que selectRowCount
     // output est column
-    public function selectCount(...$values):?int
+    final public function selectCount(...$values):?int
     {
         return $this->query($this->syntaxCall('makeSelectCount',$this->selectLimit('column',$values),$this->getSqlOption()),'column');
     }
@@ -1667,7 +1660,7 @@ class Pdo extends Main\Root
     // selectAll
     // construit et soumet une requête select avec output assoc
     // what est *
-    public function selectAll(...$values)
+    final public function selectAll(...$values)
     {
         return $this->query($this->syntaxCall('makeSelectAll',$this->selectLimit('assoc',$values),$this->getSqlOption()),'assoc');
     }
@@ -1676,7 +1669,7 @@ class Pdo extends Main\Root
     // selectAlls
     // construit et soumet une requête select avec output assocs
     // what est *
-    public function selectAlls(...$values):?array
+    final public function selectAlls(...$values):?array
     {
         return $this->query($this->syntaxCall('makeSelectAll',$values,$this->getSqlOption()),'assocs');
     }
@@ -1685,7 +1678,7 @@ class Pdo extends Main\Root
     // selectAllsKey
     // construit et soumet une requête select avec output assocsKey
     // what est *, key est le champ qui sera utilisé pour la clé du tableau de retour, peut aussi être un index
-    public function selectAllsKey($key,...$values):?array
+    final public function selectAllsKey($key,...$values):?array
     {
         return $this->query($this->syntaxCall('makeSelectAll',$values,$this->getSqlOption()),['assocsKey','key'=>Base\Obj::cast($key,3)]);
     }
@@ -1694,7 +1687,7 @@ class Pdo extends Main\Root
     // selectAllsPrimary
     // construit et soumet une requête select avec output assocsKey
     // what est *, les clés du tableau sont primary
-    public function selectAllsPrimary(...$values):?array
+    final public function selectAllsPrimary(...$values):?array
     {
         return $this->query($this->syntaxCall('makeSelectAll',$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
     }
@@ -1703,7 +1696,7 @@ class Pdo extends Main\Root
     // selectFunction
     // construit et soumet une requête select avec output column
     // what et function doivent être fourni
-    public function selectFunction($what,string $function,...$values)
+    final public function selectFunction($what,string $function,...$values)
     {
         return $this->query($this->syntaxCall('makeSelectFunction',$what,$function,$this->selectLimit('column',$values,1),$this->getSqlOption()),'column');
     }
@@ -1712,7 +1705,7 @@ class Pdo extends Main\Root
     // selectFunctions
     // construit et soumet une requête select avec output columns
     // what et function doivent être fourni
-    public function selectFunctions($what,string $function,...$values)
+    final public function selectFunctions($what,string $function,...$values)
     {
         return $this->query($this->syntaxCall('makeSelectFunction',$what,$function,$values,$this->getSqlOption()),'columns');
     }
@@ -1721,7 +1714,7 @@ class Pdo extends Main\Root
     // selectDistinct
     // construit et soumet une requête select avec output columns
     // what est distinct what
-    public function selectDistinct($what,...$values)
+    final public function selectDistinct($what,...$values)
     {
         return $this->query($this->syntaxCall('makeSelectDistinct',$what,$values,$this->getSqlOption()),'columns');
     }
@@ -1730,7 +1723,7 @@ class Pdo extends Main\Root
     // selectColumn
     // construit et soumet une requête select avec output column
     // what peut être string ou array pour 1 colonne
-    public function selectColumn($what,...$values)
+    final public function selectColumn($what,...$values)
     {
         return $this->query($this->syntaxCall('makeSelectColumn',$what,$this->selectLimit('column',$values,1),$this->getSqlOption()),'column');
     }
@@ -1739,7 +1732,7 @@ class Pdo extends Main\Root
     // selectColumns
     // construit et soumet une requête select avec output columns
     // what peut être string ou array pour 1 colonne
-    public function selectColumns($what,...$values):?array
+    final public function selectColumns($what,...$values):?array
     {
         return $this->query($this->syntaxCall('makeSelectColumn',$what,$values,$this->getSqlOption()),'columns');
     }
@@ -1747,7 +1740,7 @@ class Pdo extends Main\Root
 
     // selectKeyPair
     // construit et soumet une requête select avec output keyValue
-    public function selectKeyPair($key,$pair,...$values):?array
+    final public function selectKeyPair($key,$pair,...$values):?array
     {
         return $this->query($this->syntaxCall('makeselectKeyPair',$key,$pair,$this->selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
     }
@@ -1755,7 +1748,7 @@ class Pdo extends Main\Root
 
     // selectKeyPairs
     // construit et soumet une requête select avec output keyValues
-    public function selectKeyPairs($key,$pair,...$values):?array
+    final public function selectKeyPairs($key,$pair,...$values):?array
     {
         return $this->query($this->syntaxCall('makeselectKeyPair',$key,$pair,$values,$this->getSqlOption()),'keyPairs');
     }
@@ -1764,7 +1757,7 @@ class Pdo extends Main\Root
     // selectPrimary
     // construit et soumet une requête select avec output column
     // what est primary
-    public function selectPrimary(...$values)
+    final public function selectPrimary(...$values)
     {
         return $this->query($this->syntaxCall('makeselectPrimary',$this->selectLimit('column',$values,1),$this->getSqlOption()),'column');
     }
@@ -1773,7 +1766,7 @@ class Pdo extends Main\Root
     // selectPrimaries
     // construit et soumet une requête select avec output columns
     // what est primary
-    public function selectPrimaries(...$values):?array
+    final public function selectPrimaries(...$values):?array
     {
         return $this->query($this->syntaxCall('makeselectPrimary',$values,$this->getSqlOption()),'columns');
     }
@@ -1782,7 +1775,7 @@ class Pdo extends Main\Root
     // selectPrimaryPair
     // construit et soumet une requête select avec output keyValue
     // la key est primary
-    public function selectPrimaryPair($pair,...$values):?array
+    final public function selectPrimaryPair($pair,...$values):?array
     {
         return $this->query($this->syntaxCall('makeselectPrimaryPair',$pair,$this->selectLimit('keyPair',$values,1),$this->getSqlOption()),'keyPair');
     }
@@ -1791,7 +1784,7 @@ class Pdo extends Main\Root
     // selectPrimaryPairs
     // construit et soumet une requête select avec output keyValues
     // la key est primary
-    public function selectPrimaryPairs($pair,...$values):?array
+    final public function selectPrimaryPairs($pair,...$values):?array
     {
         return $this->query($this->syntaxCall('makeselectPrimaryPair',$pair,$values,$this->getSqlOption()),'keyPairs');
     }
@@ -1800,7 +1793,7 @@ class Pdo extends Main\Root
     // selectSegment
     // construit et soumet une requête select avec output segment
     // key doit être une string avec segment []
-    public function selectSegment(string $key,...$values):?string
+    final public function selectSegment(string $key,...$values):?string
     {
         return $this->query($this->syntaxCall('makeSelectSegment',$key,$this->selectLimit('segment',$values,1),$this->getSqlOption()),['segment','arg'=>$key]);
     }
@@ -1810,7 +1803,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête select avec output segments
     // la clé du tableau sera la clé primaire
     // key doit être une string avec segment []
-    public function selectSegments(string $key,...$values):?array
+    final public function selectSegments(string $key,...$values):?array
     {
         return $this->query($this->syntaxCall('makeSelectSegment',$key,$values,$this->getSqlOption()),['segments','arg'=>$key]);
     }
@@ -1819,7 +1812,7 @@ class Pdo extends Main\Root
     // selectSegmentAssoc
     // construit et soumet une requête select avec output assoc
     // key doit être une string avec segment []
-    public function selectSegmentAssoc(string $key,...$values):?array
+    final public function selectSegmentAssoc(string $key,...$values):?array
     {
         return $this->query($this->syntaxCall('makeSelectSegment',$key,$this->selectLimit('segment',$values,1),$this->getSqlOption()),'assoc');
     }
@@ -1828,7 +1821,7 @@ class Pdo extends Main\Root
     // selectSegmentAssocs
     // construit et soumet une requête select avec output assocs
     // l'argument key doit être une string avec segment []
-    public function selectSegmentAssocs(string $key,...$values):?array
+    final public function selectSegmentAssocs(string $key,...$values):?array
     {
         return $this->query($this->syntaxCall('makeSelectSegment',$key,$values,$this->getSqlOption()),'assocs');
     }
@@ -1838,7 +1831,7 @@ class Pdo extends Main\Root
     // construit et soumet une requête select avec output assocsKey
     // la clé primaire sera la clé du tableau
     // l'argument key doit être une string avec segment []
-    public function selectSegmentAssocsKey(string $key,...$values):?array
+    final public function selectSegmentAssocsKey(string $key,...$values):?array
     {
         return $this->query($this->syntaxCall('makeSelectSegment',$key,$values,$this->getSqlOption()),['assocsKey','key'=>$this->primary()]);
     }
@@ -1847,7 +1840,7 @@ class Pdo extends Main\Root
     // selectTableColumnCount
     // fait une requête pour obtenir le nombre des colonnes dans une table
     // utilise select car plus rapide, output est rowCount
-    public function selectTableColumnCount($value,?array $option=null):?int
+    final public function selectTableColumnCount($value,?array $option=null):?int
     {
         return $this->query($this->syntaxCall('makeSelect',['*',$value,'limit'=>0],$this->getSqlOption($option)),'columnCount');
     }
@@ -1857,7 +1850,7 @@ class Pdo extends Main\Root
     // retourne le nom de la première database trouvé
     // value doit être une string qui représente like
     // output est column
-    public function showDatabase($value,?array $option=null)
+    final public function showDatabase($value,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeShowDatabase',Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
     }
@@ -1867,7 +1860,7 @@ class Pdo extends Main\Root
     // retourne un tableau avec tous les noms de database
     // value peut être une string qui représente like
     // output est columns
-    public function showDatabases($value=null,?array $option=null):?array
+    final public function showDatabases($value=null,?array $option=null):?array
     {
         return $this->query($this->syntaxCall('makeShowDatabase',$value,$this->getSqlOption($option)),'columns');
     }
@@ -1877,7 +1870,7 @@ class Pdo extends Main\Root
     // retourne la valeur de la première variable trouvé
     // value doit être une string qui représente like
     // output est column
-    public function showVariable($value,?array $option=null)
+    final public function showVariable($value,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeShowVariable',Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>1]);
     }
@@ -1887,7 +1880,7 @@ class Pdo extends Main\Root
     // retourne un tableau avec toutes les noms et valeurs des variables
     // value peut être une string qui représente like
     // output est keyValues
-    public function showVariables($value=null,?array $option=null):?array
+    final public function showVariables($value=null,?array $option=null):?array
     {
         return $this->query($this->syntaxCall('makeShowVariable',$value,$this->getSqlOption($option)),'keyPairs');
     }
@@ -1897,7 +1890,7 @@ class Pdo extends Main\Root
     // retourne le nom de la première table trouvé
     // value doit être une string qui représente like
     // output est column
-    public function showTable($value,?array $option=null)
+    final public function showTable($value,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeShowTable',Base\Obj::cast($value,1),$this->getSqlOption($option)),'column');
     }
@@ -1907,7 +1900,7 @@ class Pdo extends Main\Root
     // retourne un tableau avec tous les noms de table dans la base de donnée
     // value peut être une string qui représente like
     // output est columns
-    public function showTables($value=null,?array $option=null):?array
+    final public function showTables($value=null,?array $option=null):?array
     {
         return $this->query($this->syntaxCall('makeShowTable',$value,$this->getSqlOption($option)),'columns');
     }
@@ -1915,7 +1908,7 @@ class Pdo extends Main\Root
 
     // showTableStatus
     // output est assoc
-    public function showTableStatus($value,?array $option=null)
+    final public function showTableStatus($value,?array $option=null)
     {
         return $this->query($this->syntaxCall('makeShowTableStatus',Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
     }
@@ -1923,7 +1916,7 @@ class Pdo extends Main\Root
 
     // showTableAutoIncrement
     // retourne la valeur auto increment courante de la table
-    public function showTableAutoIncrement($value,?array $option=null):?int
+    final public function showTableAutoIncrement($value,?array $option=null):?int
     {
         $return = null;
         $status = $this->showTableStatus($value,$option);
@@ -1937,7 +1930,7 @@ class Pdo extends Main\Root
 
     // showTablesColumns
     // retourne un tableau multidimensionnel détailéé de toutes les tables avec les descriptions de toutes les colonnes
-    public function showTablesColumns($value=null,?array $option=null):?array
+    final public function showTablesColumns($value=null,?array $option=null):?array
     {
         $return = null;
         $tables = static::showTables($value,$option);
@@ -1958,7 +1951,7 @@ class Pdo extends Main\Root
     // showTableColumn
     // fait une requête de type show pour obtenir la description d'une colonne dans une table
     // output est assoc
-    public function showTableColumn($table,$value,?array $option=null):?array
+    final public function showTableColumn($table,$value,?array $option=null):?array
     {
         return $this->query($this->syntaxCall('makeShowTableColumn',$table,Base\Obj::cast($value,1),$this->getSqlOption($option)),'assoc');
     }
@@ -1967,7 +1960,7 @@ class Pdo extends Main\Root
     // showTableColumnField
     // fait une requête de type show pour vérifier l'existence d'une colonne dans une table
     // output est column avec champ field
-    public function showTableColumnField($table,$value,?array $option=null)
+    final public function showTableColumnField($table,$value,?array $option=null)
     {
         $option = Base\Arr::plus($option,['full'=>false]);
         return $this->query($this->syntaxCall('makeShowTableColumn',$table,Base\Obj::cast($value,1),$this->getSqlOption($option)),['column','arg'=>'Field']);
@@ -1977,7 +1970,7 @@ class Pdo extends Main\Root
     // showTableColumns
     // fait une requête de type show pour obtenir le nom des colonnes dans une table
     // output est assocsKey, la clé est field
-    public function showTableColumns($value,?array $option=null):?array
+    final public function showTableColumns($value,?array $option=null):?array
     {
         return $this->query($this->syntaxCall('makeShowTableColumn',$value,null,$this->getSqlOption($option)),['assocsKey','key'=>'Field']);
     }
@@ -1986,7 +1979,7 @@ class Pdo extends Main\Root
     // showTableColumnsField
     // fait une requête de type show pour obtenir le nom des colonnes dans une table
     // output est columns, la clé est field
-    public function showTableColumnsField($value,?array $option=null):?array
+    final public function showTableColumnsField($value,?array $option=null):?array
     {
         return $this->query($this->syntaxCall('makeShowTableColumn',$value,null,$this->getSqlOption($option)),['columns','arg'=>'Field']);
     }
@@ -1995,7 +1988,7 @@ class Pdo extends Main\Root
     // updateColumn
     // change la valeur d'une colonne
     // output est true par défaut
-    public function updateColumn($what,$value,$table,$where=null,$output=true,?array $option=null)
+    final public function updateColumn($what,$value,$table,$where=null,$output=true,?array $option=null)
     {
         return $this->makeUpdate([$table,[Base\Obj::cast($what,1)=>$value],$where],$output,$option);
     }
@@ -2004,7 +1997,7 @@ class Pdo extends Main\Root
     // updateIncrement
     // incrément la valeur d'une colonne
     // output est true par défaut
-    public function updateIncrement($what,int $amount=1,$table,$where=null,$output=true,?array $option=null)
+    final public function updateIncrement($what,int $amount=1,$table,$where=null,$output=true,?array $option=null)
     {
         $return = null;
         $what = Base\Obj::cast($what,1);
@@ -2028,7 +2021,7 @@ class Pdo extends Main\Root
     // updateDecrement
     // décrement la valeur d'une colonne
     // output est true par défaut
-    public function updateDecrement($what,int $amount=1,$table,$where=null,$output=true,?array $option=null)
+    final public function updateDecrement($what,int $amount=1,$table,$where=null,$output=true,?array $option=null)
     {
         $return = null;
         $what = Base\Obj::cast($what,1);
@@ -2051,7 +2044,7 @@ class Pdo extends Main\Root
 
     // getDeleteTrimPrimaries
     // retourne les ids de toutes les lignes qui seraient effacés par delete trim
-    public function getDeleteTrimPrimaries($table,int $limit,?array $option=null):?array
+    final public function getDeleteTrimPrimaries($table,int $limit,?array $option=null):?array
     {
         $return = null;
         $primary = $this->primary();
@@ -2070,7 +2063,7 @@ class Pdo extends Main\Root
     // deleteTrim
     // efface toutes les lignes de la table plus ancienne que la limite
     // output est true
-    public function deleteTrim($table,int $limit,?array $option=null):?int
+    final public function deleteTrim($table,int $limit,?array $option=null):?int
     {
         $return = null;
         $primary = $this->primary();
@@ -2096,7 +2089,7 @@ class Pdo extends Main\Root
     // alterAutoIncrement
     // fait une requête de type alter pour changer le autoIncrement d'une table
     // output est statement
-    public function alterAutoIncrement($table,int $value=0,?array $option=null):?\PDOStatement
+    final public function alterAutoIncrement($table,int $value=0,?array $option=null):?\PDOStatement
     {
         return $this->query($this->syntaxCall('makeAlterAutoIncrement',$table,$value,$this->getSqlOption($option)),null);
     }
@@ -2104,7 +2097,7 @@ class Pdo extends Main\Root
 
     // emulate
     // émule une requête sql en utilisant la méthode quote de pdo
-    public function emulate(string $return,?array $prepare=null,bool $replaceDoubleEscape=true):string
+    final public function emulate(string $return,?array $prepare=null,bool $replaceDoubleEscape=true):string
     {
         return $this->syntaxCall('emulate',$return,$prepare,[$this,'quote'],$replaceDoubleEscape);
     }
@@ -2113,7 +2106,7 @@ class Pdo extends Main\Root
     // debug
     // retourne le maximum d'informations à partir du tableau de requête sql
     // la requête est émulé en utilisant la méthode quote de pdo
-    public function debug($value,bool $replaceDoubleEscape=true):?array
+    final public function debug($value,bool $replaceDoubleEscape=true):?array
     {
         return $this->syntaxCall('debug',$value,[$this,'quote'],$replaceDoubleEscape);
     }
@@ -2129,7 +2122,7 @@ class Pdo extends Main\Root
 
     // isOutput
     // retourne vrai si l'output est compatible avec le type de requête
-    public function isOutput(string $type,$value):bool
+    final public function isOutput(string $type,$value):bool
     {
         $return = false;
 
@@ -2163,7 +2156,7 @@ class Pdo extends Main\Root
     // output
     // retourne le tableau de configuration pour output
     // true retourne le output par défaut pour le type de requête
-    public function output(string $type,$value):?array
+    final public function output(string $type,$value):?array
     {
         $return = null;
 
@@ -2226,7 +2219,7 @@ class Pdo extends Main\Root
     // une valeur numérique limit peut être ajouté dans le tableau input sql si configuré
     // par exemple pour une requête select assoc, limit 1 est ajouté
     // offset permet de preprend une ou plusieurs entrées au tableau, par exemple si what n'est pas censé être dans le tableau
-    public function selectLimit($output,array $return,int $offset=0):array
+    final public function selectLimit($output,array $return,int $offset=0):array
     {
         $output = $this->output('select',$output);
 
@@ -2246,7 +2239,7 @@ class Pdo extends Main\Root
     // parseFetch
     // retourne le code numérique pour fetch
     // true retourne le code par défaut
-    public function parseFetch($value):?int
+    final public function parseFetch($value):?int
     {
         $return = null;
 
@@ -2262,7 +2255,7 @@ class Pdo extends Main\Root
 
     // defaultPort
     // retourne le port par défaut pour l'engin sql
-    public function defaultPort():int
+    final public function defaultPort():int
     {
         return $this->getAttr('defaultPort');
     }
@@ -2270,7 +2263,7 @@ class Pdo extends Main\Root
 
     // isDriver
     // retourne vrai si le driver est supporté par PDO
-    public static function isDriver($value):bool
+    final public static function isDriver($value):bool
     {
         return (is_string($value) && in_array($value,static::allDrivers(),true))? true:false;
     }
@@ -2279,7 +2272,7 @@ class Pdo extends Main\Root
     // parseDsn
     // parse une string dsn
     // le charset est ajouté à la fin du dsn de retour
-    public static function parseDsn(string $dsn,string $charset,int $defaultPort):?array
+    final public static function parseDsn(string $dsn,string $charset,int $defaultPort):?array
     {
         $return = null;
 
@@ -2317,7 +2310,7 @@ class Pdo extends Main\Root
 
     // parseDataType
     // retourne le datatype pour la valeur selon son type
-    public static function parseDataType($value):?int
+    final public static function parseDataType($value):?int
     {
         $return = null;
 
@@ -2343,7 +2336,7 @@ class Pdo extends Main\Root
     // outputKey
     // permet de placer la clé du tableau multidimensionnel à partir d'un nom ou index de colonne
     // supporte des tableaux avec objet
-    public static function outputKey($key,array $return):array
+    final public static function outputKey($key,array $return):array
     {
         if(is_scalar($key) && !empty($return))
         {
@@ -2387,7 +2380,7 @@ class Pdo extends Main\Root
 
     // allDrivers
     // retourne les drivers pdo disponibles
-    public static function allDrivers():array
+    final public static function allDrivers():array
     {
         return \PDO::getAvailableDrivers();
     }
@@ -2395,7 +2388,7 @@ class Pdo extends Main\Root
 
     // setDefaultHistory
     // change la valeur par défaut d'history dans option avant la création de l'objet db
-    public static function setDefaultHistory(bool $value):void
+    final public static function setDefaultHistory(bool $value):void
     {
         static::$config['option']['history'] = $value;
 

@@ -17,7 +17,7 @@ use Quid\Orm;
 class Col extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $db = Orm\Db::inst();
@@ -275,6 +275,7 @@ class Col extends Base\Test
         // roleValidateCommon
 
         // isEditable
+        assert($id->isEditable() === false);
         assert($col->isEditable() === true);
 
         // filterMethod

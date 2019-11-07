@@ -32,7 +32,7 @@ class Cells extends Main\Map
 
     // construct
     // construit un nouvel objet cells
-    public function __construct(...$values)
+    final public function __construct(...$values)
     {
         $this->add(...$values);
 
@@ -42,7 +42,7 @@ class Cells extends Main\Map
 
     // toString
     // retourne les noms de cellules séparés par des virgules
-    public function __toString():string
+    final public function __toString():string
     {
         return implode(',',$this->names());
     }
@@ -53,7 +53,7 @@ class Cells extends Main\Map
     // peut fournir un index, un tableau qui retournera la première existante, une string, une colonne ou une cellule
     // support pour shortcut
     // possibilité de donner un nom de classe aussi
-    protected function onPrepareKey($key)
+    final protected function onPrepareKey($key)
     {
         $return = null;
 
@@ -100,7 +100,7 @@ class Cells extends Main\Map
     // onPrepareReturns
     // prépare le retour pour indexes, gets, slice et slice index
     // les lignes sont toujours retournés dans un nouvel objet cells
-    protected function onPrepareReturns(array $array):self
+    final protected function onPrepareReturns(array $array):self
     {
         $return = new static();
 
@@ -116,7 +116,7 @@ class Cells extends Main\Map
 
     // cast
     // retourne la valeur cast
-    public function _cast():array
+    final public function _cast():array
     {
         return $this->names();
     }
@@ -124,7 +124,7 @@ class Cells extends Main\Map
 
     // offsetSet
     // arrayAccess offsetSet si la clé est null [] ou si la clé est un nom de cellule
-    public function offsetSet($key,$value):void
+    final public function offsetSet($key,$value):void
     {
         if($key === null)
         $this->add($value);
@@ -139,7 +139,7 @@ class Cells extends Main\Map
     // isWhere
     // retourne vrai si les cellules correspondent à la vérification where du tableau en argument
     // similaire à une syntaxe sql mais ne supporte pas les méthodes base/sql whereThree, ni les and, or et paranthèses
-    public function isWhere(array $array):bool
+    final public function isWhere(array $array):bool
     {
         $return = false;
         $array = Base\Obj::cast($array);
@@ -173,7 +173,7 @@ class Cells extends Main\Map
 
     // names
     // retourne les noms de cellules contenus dans l'objet
-    public function names():array
+    final public function names():array
     {
         return $this->keys();
     }
@@ -181,7 +181,7 @@ class Cells extends Main\Map
 
     // namesWithoutPrimary
     // retourne les noms de cellules contenus dans l'objet sans la cellule primaire
-    public function namesWithoutPrimary():array
+    final public function namesWithoutPrimary():array
     {
         $return = [];
 
@@ -197,7 +197,7 @@ class Cells extends Main\Map
 
     // db
     // retourne la db du premier objet
-    public function db():?Db
+    final public function db():?Db
     {
         $return = null;
         $first = $this->first();
@@ -210,7 +210,7 @@ class Cells extends Main\Map
 
     // table
     // retourne la table du premier objet
-    public function table():?Table
+    final public function table():?Table
     {
         $return = null;
         $first = $this->first();
@@ -223,7 +223,7 @@ class Cells extends Main\Map
 
     // row
     // retourne la row du premier objet
-    public function row():?Row
+    final public function row():?Row
     {
         $return = null;
         $first = $this->first();
@@ -240,7 +240,7 @@ class Cells extends Main\Map
     // valeurs doivent être des objets cell
     // deux objets identiques ne peuvent pas être ajoutés dans cells
     // des objets de différentes tables ou différentes lignes ne peuvent être ajoutés dans cells
-    public function add(...$values):self
+    final public function add(...$values):self
     {
         $this->checkAllowed('add');
         $values = $this->prepareValues(...$values);
@@ -280,7 +280,7 @@ class Cells extends Main\Map
 
     // withoutPrimary
     // retourne un objet avec les cellules sans la clé primaire
-    public function withoutPrimary():self
+    final public function withoutPrimary():self
     {
         return $this->gets(...$this->namesWithoutPrimary());
     }
@@ -288,7 +288,7 @@ class Cells extends Main\Map
 
     // isVisible
     // retourne vrai si tous les champs sont visibles
-    public function isVisible(?Main\Session $session=null):bool
+    final public function isVisible(?Main\Session $session=null):bool
     {
         $return = false;
         $args = [null,$session];
@@ -303,7 +303,7 @@ class Cells extends Main\Map
 
     // isHidden
     // retourne vrai si tous les champs sont cachés
-    public function isHidden(?Main\Session $session=null):bool
+    final public function isHidden(?Main\Session $session=null):bool
     {
         $return = false;
         $args = [null,$session];
@@ -319,7 +319,7 @@ class Cells extends Main\Map
     // isRequired
     // retourne un objet cells avec toutes les cellules requises
     // ne retourne pas la clé primaire
-    public function isRequired(bool $value=true):self
+    final public function isRequired(bool $value=true):self
     {
         return $this->filter(['isRequired'=>$value]);
     }
@@ -328,7 +328,7 @@ class Cells extends Main\Map
     // isStillRequired
     // retourne un objet cells avec toutes les cellules toujours requises
     // ne retourne pas la clé primaire
-    public function isStillRequired():self
+    final public function isStillRequired():self
     {
         $return = new static();
 
@@ -345,7 +345,7 @@ class Cells extends Main\Map
     // isStillRequiredEmpty
     // retourne vrai si l'objet isStillRequired est vide
     // ceci signifie que toutes les cellules requises ont une valeur
-    public function isStillRequiredEmpty():bool
+    final public function isStillRequiredEmpty():bool
     {
         return ($this->isStillRequired()->isEmpty())? true:false;
     }
@@ -355,7 +355,7 @@ class Cells extends Main\Map
     // retourne toutes les règles de validations et required des cellules
     // n'a pas de lien avec les valeurs courantes des cellules
     // possible de retourner les textes si lang est true
-    public function rules(bool $lang=false,bool $preValidate=false):array
+    final public function rules(bool $lang=false,bool $preValidate=false):array
     {
         return $this->pair('rules',$lang,$preValidate);
     }
@@ -363,7 +363,7 @@ class Cells extends Main\Map
 
     // preValidatePrepare
     // prépare un tableau de valeur en vue d'une prévalidation
-    public function preValidatePrepare(array $return):array
+    final public function preValidatePrepare(array $return):array
     {
         foreach ($return as $key => $value)
         {
@@ -377,7 +377,7 @@ class Cells extends Main\Map
 
     // preValidate
     // permet de pré-valider un tableau de valeur avant de set dans la cellule
-    public function preValidate(array $set=[],bool $lang=false,bool $filter=true):array
+    final public function preValidate(array $set=[],bool $lang=false,bool $filter=true):array
     {
         $return = [];
 
@@ -404,7 +404,7 @@ class Cells extends Main\Map
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les cellules qui passent le test ne sont pas retournés
     // par défaut cache est true, donc retourne la cache de la validation de la cellule
-    public function validate(bool $lang=false,bool $filter=true):array
+    final public function validate(bool $lang=false,bool $filter=true):array
     {
         $return = $this->pair('validate',$lang);
 
@@ -419,7 +419,7 @@ class Cells extends Main\Map
     // retourne une string pour chaque cellule qui ne passe pas le test required
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les cellules qui passent le test ne sont pas retournés
-    public function required(bool $lang=false,bool $filter=true):array
+    final public function required(bool $lang=false,bool $filter=true):array
     {
         $return = $this->pair('required',$lang);
 
@@ -434,7 +434,7 @@ class Cells extends Main\Map
     // retourne une string pour chaque cellule qui ne passe pas le test unique
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les cellules qui passent le test ne sont pas retournés
-    public function unique(bool $lang=false,bool $filter=true):array
+    final public function unique(bool $lang=false,bool $filter=true):array
     {
         $return = $this->pair('unique',$lang);
 
@@ -449,7 +449,7 @@ class Cells extends Main\Map
     // retourne une tableau pour chaque cellule qui ne passe pas le test compare
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les cellules qui passent le test ne sont pas retournés
-    public function compare(bool $lang=false,bool $filter=true):array
+    final public function compare(bool $lang=false,bool $filter=true):array
     {
         $return = $this->pair('compare',$lang);
 
@@ -465,7 +465,7 @@ class Cells extends Main\Map
     // possible de retourner le texte si lang est true
     // par défaut cache est true, donc retourne la cache de la validation de la cellule
     // par défaut filter est true, donc les cellules qui passent les tests ne sont pas retournés
-    public function completeValidation(bool $lang=false,bool $filter=true):array
+    final public function completeValidation(bool $lang=false,bool $filter=true):array
     {
         $return = $this->pair('completeValidation',$lang);
 
@@ -478,7 +478,7 @@ class Cells extends Main\Map
 
     // update
     // passe toutes les cellules, sauf la primaire, dans la méthode onUpdate
-    public function update(?array $option=null):self
+    final public function update(?array $option=null):self
     {
         foreach ($this->arr() as $key => $cell)
         {
@@ -492,7 +492,7 @@ class Cells extends Main\Map
 
     // delete
     // passe toutes les cellules, sauf la primaire, dans la méthode onDelete, si existante
-    public function delete(?array $option=null):self
+    final public function delete(?array $option=null):self
     {
         foreach ($this->arr() as $key => $cell)
         {
@@ -507,7 +507,7 @@ class Cells extends Main\Map
     // hasChanged
     // retourne vrai si une des cellules de cells a changé
     // si une cellule a un committed callback, on considère qu'elle a changé
-    public function hasChanged():bool
+    final public function hasChanged():bool
     {
         $return = false;
 
@@ -526,7 +526,7 @@ class Cells extends Main\Map
 
     // notEmpty
     // retourne un objet avec toutes les cellules non vides
-    public function notEmpty():self
+    final public function notEmpty():self
     {
         return $this->filter(['isNotEmpty'=>true]);
     }
@@ -534,7 +534,7 @@ class Cells extends Main\Map
 
     // firstNotEmpty
     // retoure la première cellule non vide
-    public function firstNotEmpty():?Cell
+    final public function firstNotEmpty():?Cell
     {
         return $this->notEmpty()->first();
     }
@@ -544,7 +544,7 @@ class Cells extends Main\Map
     // change la valeur d'une cellule
     // possible d'enrobber l'opération dans un tryCatch
     // possible de faire une prévalidation via option
-    public function set($key,$value,?array $option=null):parent
+    final public function set($key,$value,?array $option=null):parent
     {
         $option = Base\Arr::plus(['tryCatch'=>false],$option);
         $cell = $this->checkGet($key);
@@ -558,7 +558,7 @@ class Cells extends Main\Map
 
             catch (Main\CatchableException $e)
             {
-                $e->onCatched(['com'=>false]);
+                $e->catched(['com'=>false]);
                 $cell->setException($e);
             }
         }
@@ -574,7 +574,7 @@ class Cells extends Main\Map
     // change la valeur de toutes les cellules
     // les cellules sont regroupés par setPriority avant de faire le loop
     // possible de faire une prévalidation via option
-    public function sets(array $keyValue,?array $option=null):parent
+    final public function sets(array $keyValue,?array $option=null):parent
     {
         foreach ($this->groupSetPriority() as $cells)
         {
@@ -595,7 +595,7 @@ class Cells extends Main\Map
     // changed
     // retourne un objet des cellules qui ont changés
     // si include est true, inclut aussi les colonne ayant l'attribut include
-    public function changed(bool $included=false,?array $option=null):self
+    final public function changed(bool $included=false,?array $option=null):self
     {
         $return = ($included === true)? $this->included($option):new static();
 
@@ -613,7 +613,7 @@ class Cells extends Main\Map
     // retourne un objet des cellules avec les included
     // si la cellule incluse n'a pas changé et qu'elle a attrInclude, set sa propre valeur pour lancer les callback onSet
     // les cellules required sont include par défaut
-    public function included(?array $option=null):self
+    final public function included(?array $option=null):self
     {
         $return = new static();
         $option = Base\Arr::plus($option,['preValidate'=>false]);
@@ -636,7 +636,7 @@ class Cells extends Main\Map
     // keyValue
     // retourne les clés et valeurs des cellules de la ligne sous forme de tableau associatif
     // possible de retourner le résultat de get si get est true, sinon ce sera value
-    public function keyValue(bool $get=false):array
+    final public function keyValue(bool $get=false):array
     {
         return $this->pair(($get === true)? 'get':'value');
     }
@@ -644,7 +644,7 @@ class Cells extends Main\Map
 
     // label
     // retourne un tableau avec toutes les label des cellules
-    public function label($pattern=null,?string $lang=null,?array $option=null):array
+    final public function label($pattern=null,?string $lang=null,?array $option=null):array
     {
         return $this->pair('label',$pattern,$lang,$option);
     }
@@ -652,7 +652,7 @@ class Cells extends Main\Map
 
     // description
     // retourne un tableau avec toutes les descriptions des cellules
-    public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
+    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
     {
         return $this->pair('description',$pattern,$replace,$lang,$option);
     }
@@ -660,7 +660,7 @@ class Cells extends Main\Map
 
     // groupSetPriority
     // retourne un tableau avec les cellules regroupés par setPriority
-    public function groupSetPriority():array
+    final public function groupSetPriority():array
     {
         $return = $this->group('setPriority');
         $return = Base\Arr::keysSort($return,true);
@@ -671,7 +671,7 @@ class Cells extends Main\Map
 
     // form
     // génère les éléments formulaires pour toutes les cellules
-    public function form(bool $str=false)
+    final public function form(bool $str=false)
     {
         $return = $this->pair('form');
         return ($str === true)? implode($return):$return;
@@ -681,7 +681,7 @@ class Cells extends Main\Map
     // formPlaceholder
     // génère les éléments formulaires avec placeholder pour toutes les cellules
     // le placeholder est le label de la cellule
-    public function formPlaceholder(bool $str=false)
+    final public function formPlaceholder(bool $str=false)
     {
         $return = $this->pair('formPlaceholder');
         return ($str === true)? implode($return):$return;
@@ -690,7 +690,7 @@ class Cells extends Main\Map
 
     // formWrap
     // génère les éléments formWrap pour toutes les cellules
-    public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
+    final public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
     {
         $return = $this->pair('formWrap',$wrap,$pattern);
         return ($str === true)? implode($return):$return;
@@ -700,7 +700,7 @@ class Cells extends Main\Map
     // formPlaceholderWrap
     // génère les éléments formPlaceholderWrap pour toutes les cellules
     // le placeholder est le label de la cellule, donc le label apparaît deux fois
-    public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
+    final public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
     {
         $return = $this->pair('formPlaceholderWrap',$wrap,$pattern);
         return ($str === true)? implode($return):$return;
@@ -710,7 +710,7 @@ class Cells extends Main\Map
     // segment
     // permet de remplacer les segments d'une chaîne par le contenu des cellules
     // par défaut utilise value de cellule, si get est true utilise get
-    public function segment(string $value,bool $get=false):string
+    final public function segment(string $value,bool $get=false):string
     {
         $return = '';
         $segments = Base\Segment::get(null,$value);
@@ -725,7 +725,7 @@ class Cells extends Main\Map
     // htmlStr
     // retourne un tableau avec chaque cellule passé dans la méthode html
     // si str est true, retourne une string
-    public function htmlStr(string $html,bool $str=false,?array $option=null)
+    final public function htmlStr(string $html,bool $str=false,?array $option=null)
     {
         $return = $this->pair('htmlStr',$html,$option);
 
@@ -740,7 +740,7 @@ class Cells extends Main\Map
     // écrit les cellules dans l'objet file fourni en argument
     // par défaut le type est format, donc passe dans export
     // par exemple pour une ligne de csv
-    public function writeFile(Main\File $file,?array $option=null):self
+    final public function writeFile(Main\File $file,?array $option=null):self
     {
         $option = Base\Arr::plus(['context'=>'noHtml','type'=>'format'],$option);
         $array = [];
@@ -764,7 +764,7 @@ class Cells extends Main\Map
 
     // keyClassExtends
     // retourne un tableau utilisé par onPrepareKey
-    public static function keyClassExtends():array
+    final public static function keyClassExtends():array
     {
         return [Cell::getOverloadClass(),Col::getOverloadClass()];
     }
@@ -772,7 +772,7 @@ class Cells extends Main\Map
 
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
-    public static function getOverloadKeyPrepend():?string
+    final public static function getOverloadKeyPrepend():?string
     {
         return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Cells':null;
     }

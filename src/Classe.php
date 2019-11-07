@@ -40,7 +40,7 @@ class Classe extends Main\Map
 
     // construct
     // construit l'objet classe
-    public function __construct(Main\Extenders $extenders,?array $attr=null)
+    final public function __construct(Main\Extenders $extenders,?array $attr=null)
     {
         $this->makeAttr($attr);
         $this->setExtenders($extenders);
@@ -51,8 +51,7 @@ class Classe extends Main\Map
 
     // setExtenders
     // garde une copie de l'objet extenders
-    // méthode protégé
-    protected function setExtenders(Main\Extenders $extenders):void
+    final protected function setExtenders(Main\Extenders $extenders):void
     {
         $keys = $this->extendersKeys();
         $this->extenders = $extenders->filter(function($value,$key) use($keys) {
@@ -65,7 +64,7 @@ class Classe extends Main\Map
 
     // extenders
     // retourne l'objet extenders
-    public function extenders():Main\Extenders
+    final public function extenders():Main\Extenders
     {
         return $this->extenders;
     }
@@ -74,7 +73,7 @@ class Classe extends Main\Map
     // tableClasse
     // retourne un tableau avec toutes les classes pour une table (sauf col et cell)
     // gère la cache
-    public function tableClasse($table,bool $cache=true):TableClasse
+    final public function tableClasse($table,bool $cache=true):TableClasse
     {
         $return = null;
 
@@ -113,7 +112,7 @@ class Classe extends Main\Map
     // tableClasseCol
     // retourne la classe d'une colonne et ajoute dans l'objet tableClasse
     // gère la cache
-    public function tableClasseCol(Table $table,$col,?array $attr=null,bool $cache=true):string
+    final public function tableClasseCol(Table $table,$col,?array $attr=null,bool $cache=true):string
     {
         $return = null;
 
@@ -141,7 +140,7 @@ class Classe extends Main\Map
     // tableClasseCell
     // retourne la classe d'une cellule et ajoute dans l'objet tableClasse
     // gère la cache
-    public function tableClasseCell(Table $table,Col $col,bool $cache=true):string
+    final public function tableClasseCell(Table $table,Col $col,bool $cache=true):string
     {
         $return = null;
         $tableClasse = $this->tableClasse($table);
@@ -163,7 +162,7 @@ class Classe extends Main\Map
 
     // default
     // doit retourner une string, sinon une exception sera lancé
-    public function default(string $type):string
+    final public function default(string $type):string
     {
         return $this->getAttr(['default',$type]);
     }
@@ -172,8 +171,7 @@ class Classe extends Main\Map
     // find
     // doit toujours retourner quelque chose, sinon une exception est envoyé
     // retourne la classe à utiliser à partir d'un type et d'arguments
-    // méthode protégé
-    protected function find(string $type,$table,...$args):string
+    final protected function find(string $type,$table,...$args):string
     {
         $return = null;
         $default = $this->default($type);
@@ -226,8 +224,7 @@ class Classe extends Main\Map
     // colBefore
     // retourne la classe a utilisé pour une colonne à partir des config de la table
     // cette classe a priorité sur tout le reste pour trouver la colonne
-    // méthode protégé
-    protected function colBefore(Table $table,string $col,array $attr):?string
+    final protected function colBefore(Table $table,string $col,array $attr):?string
     {
         return $this->colFromAttr($table->colAttr($col),false);
     }
@@ -238,8 +235,7 @@ class Classe extends Main\Map
     // cette méthode est seulement appelé si le loop ne retourne rien, donc cette classe est retourné plutôt que default
     // le group de la colonne est considéré à la fin
     // une exception peut être envoyé
-    // méthode protégé
-    protected function colAfter(Table $table,string $col,array $attr):?string
+    final protected function colAfter(Table $table,string $col,array $attr):?string
     {
         $return = null;
         $patternType = ColSchema::patternType($col);
@@ -263,8 +259,7 @@ class Classe extends Main\Map
     // colFromAttr
     // méthode statique qui permet de parse une valeur attribut de colonne en provenance de db ou table
     // retourne null ou le nom de la classe à utiliser
-    // méthode protégé
-    protected function colFromAttr($value,bool $defaultEnum=false):?string
+    final protected function colFromAttr($value,bool $defaultEnum=false):?string
     {
         $return = null;
 
@@ -293,8 +288,7 @@ class Classe extends Main\Map
     // cell
     // retourne la classe à utiliser pour une cellule
     // est toujours dans la colonne
-    // méthode protégé
-    protected function cell(Col $col):?string
+    final protected function cell(Col $col):?string
     {
         return $col->cell();
     }
@@ -302,7 +296,7 @@ class Classe extends Main\Map
 
     // extendersKeys
     // retourne les clés de l'extender pour la db
-    protected function extendersKeys():array
+    final protected function extendersKeys():array
     {
         return $this->getAttr('extendersKeys');
     }

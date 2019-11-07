@@ -16,7 +16,7 @@ use Quid\Orm;
 class Row extends Base\Test
 {
     // trigger
-    public static function trigger(array $data):bool
+    final public static function trigger(array $data):bool
     {
         // prepare
         $db = Orm\Db::inst();
@@ -128,14 +128,6 @@ class Row extends Base\Test
         assert(count($row->value()) === 10);
         assert($row->value()['dateAdd'] === 1521762409);
 
-        // get
-        assert($row->get()['dateAdd'] === 'March 22, 2018 19:46:49');
-        assert(count($row->get()) === 10);
-        assert(count($row->get('id','active')) === 2);
-
-        // set
-        assert($row->set(['active'=>1]) === $row);
-
         // label
         assert($db['user'][1]->label() === 'User #1');
         assert($db['user'][1]->label('%:','fr') === 'Utilisateur #1:');
@@ -235,83 +227,66 @@ class Row extends Base\Test
         assert($rowz->isLinked());
         $rowz->refresh();
         assert(!$rowz->isLinked());
+        
+        // duplicate
+        assert($row->duplicate() instanceof Orm\Row);
+        assert($row->duplicate() !== $row);
 
+        // get
+        assert($row->get()['dateAdd'] === 'March 22, 2018 19:46:49');
+        assert(count($row->get()) === 10);
+        assert(count($row->get('id','active')) === 2);
+
+        // set
+        assert($row->set(['active'=>1]) === $row);
+        assert($row->update() === 1);
+        
         // preValidate
         assert($row->preValidate(['date'=>'a','active'=>['a']],['strict'=>false,'com'=>true]) === ['active'=>['a']]);
         assert(strlen($row->db()->com()->flush()) === 253);
 
         // setUpdateMethod
-        assert($row->setUpdateMethod('updateAll',['date'=>time(),'active'=>1]) === 1);
 
         // setUpdate
         assert($row->setUpdate(['active'=>null]) === 1);
-
-        // setUpdateValid
-        assert($row->setUpdateValid(['active'=>1],['com'=>true]) === 1);
-        assert($row->setUpdateValid(['active'=>1],['com'=>true]) === 0);
+        assert($row->setUpdate(['active'=>1],['com'=>true]) === 1);
+        assert($row->setUpdate(['active'=>1],['com'=>true]) === 0);
         $row->db()->com()->flush();
 
-        // setUpdateChangedIncluded
+        // setUpdateChanged
 
-        // setUpdateChangedIncludedValid
-        assert($row->setUpdateChangedIncludedValid(['active'=>1],['com'=>true]) === 0);
+        // setUpdateValid
+        assert($row->setUpdateValid(['active'=>1],['com'=>true]) === 0);
         assert(strlen($row->db()->com()->flush()) === 178);
-        assert($row->setUpdateChangedIncludedValid(['active'=>null],['com'=>true]) === 1);
+        assert($row->setUpdateValid(['active'=>null],['com'=>true]) === 1);
         assert(strlen($row->db()->com()->flush()) === 183);
-        assert($row->setUpdateChangedIncludedValid(['active'=>'a','name_en'=>'ok'],['com'=>true]) === 1);
+        assert($row->setUpdateValid(['active'=>'a','name_en'=>'ok'],['com'=>true]) === 1);
         assert(strlen($row->db()->com()->flush()) === 353);
         $row['active'] = 1;
-
-        // duplicate
-        assert($row->duplicate() instanceof Orm\Row);
-        assert($row->duplicate() !== $row);
 
         // update
         assert($row->hasChanged());
         assert($row->update() === 1);
         assert(!$row->hasChanged());
         assert($row->update() === 0);
-
-        // updateValid
-        $row['active'] = 'a';
-        assert($row->updateValid(['com'=>true]) === 0);
-        assert(strlen($row->db()->com()->flush()) === 340);
         $row['active'] = null;
-
+        
         // updateChanged
-
-        // updateChangedIncluded
-        assert($row->updateChangedIncluded() === 1);
+        assert($row->updateChanged() === 1);
         $row['name_en'] = 'blaz';
         assert($row->hasChanged());
         assert($row->cell('name_en')->valueInitial() === 'ok');
-        assert($row->updateChangedIncluded() === 1);
+        assert($row->updateChanged() === 1);
         assert($row->cell('name_en')->valueInitial() === 'blaz');
         assert(!$row->hasChanged());
 
-        // updateChangedIncludedValid
-        assert($row->updateChangedIncludedValid(['com'=>true]) === 0);
+        // updateValid
+        assert($row->updateValid(['com'=>true]) === 0);
         assert(strlen($row->db()->com()->flush()) === 178);
-
-        // updateAll
         $row['active'] = 1;
-        assert($row->updateAll() === 1);
-
-        // updateBeforeValid
-
-        // updateBeforeAssoc
-
-        // updateBeforeFinalValidate
-
-        // updateAssoc
-        assert($row->updateAssoc(['active'=>4]) === 1);
-        assert($row['active']->value() === 4);
-
+        assert($row->updateValid() === 1);
+        
         // updateCom
-
-        // updateAfter
-
-        // updateOnCommitted
 
         // delete
         assert($row->isLinked());
@@ -321,10 +296,6 @@ class Row extends Base\Test
         assert(!$tb->hasRow(1));
         assert($tb->row(1) === null);
         assert(!$row->isLinked());
-
-        // deleteCom
-
-        // deleteAfter
 
         // deleteOrDeactivate
         $row4 = $tb->insert(['date'=>time(),'name_en'=>'sure']);

@@ -32,7 +32,7 @@ class Cols extends Main\Map
 
     // construct
     // construit un nouvel objet cols
-    public function __construct(...$values)
+    final public function __construct(...$values)
     {
         $this->add(...$values);
 
@@ -42,7 +42,7 @@ class Cols extends Main\Map
 
     // toString
     // retourne les noms de colonnes séparés par des virgules
-    public function __toString():string
+    final public function __toString():string
     {
         return implode(',',$this->names());
     }
@@ -53,7 +53,7 @@ class Cols extends Main\Map
     // peut fournir un index, un tableau qui retournera la première existante, une string, une colonne ou une cellule
     // support pour shortcut si string
     // possibilité de donner un nom de classe aussi
-    protected function onPrepareKey($key)
+    final protected function onPrepareKey($key)
     {
         $return = null;
 
@@ -100,7 +100,7 @@ class Cols extends Main\Map
     // onPrepareReturns
     // prépare le retour pour indexes, gets, slice et slice index
     // les lignes sont toujours retournés dans un nouvel objet cols
-    protected function onPrepareReturns(array $array):self
+    final protected function onPrepareReturns(array $array):self
     {
         $return = new static();
 
@@ -116,7 +116,7 @@ class Cols extends Main\Map
 
     // cast
     // retourne la valeur cast
-    public function _cast():array
+    final public function _cast():array
     {
         return $this->names();
     }
@@ -124,7 +124,7 @@ class Cols extends Main\Map
 
     // offsetSet
     // arrayAccess offsetSet est seulement permis si la clé est null []
-    public function offsetSet($key,$value):void
+    final public function offsetSet($key,$value):void
     {
         if($key === null)
         $this->add($value);
@@ -138,7 +138,7 @@ class Cols extends Main\Map
 
     // names
     // retourne les noms de colonnes contenus dans l'objet
-    public function names():array
+    final public function names():array
     {
         return $this->keys();
     }
@@ -146,7 +146,7 @@ class Cols extends Main\Map
 
     // namesWithoutPrimary
     // retourne les noms de colonnes contenus dans l'objet sans la colonne primaire
-    public function namesWithoutPrimary():array
+    final public function namesWithoutPrimary():array
     {
         $return = [];
 
@@ -162,7 +162,7 @@ class Cols extends Main\Map
 
     // db
     // retourne la db du premier objet
-    public function db():?Db
+    final public function db():?Db
     {
         $return = null;
         $first = $this->first();
@@ -175,7 +175,7 @@ class Cols extends Main\Map
 
     // table
     // retourne la table du premier objet
-    public function table():?Table
+    final public function table():?Table
     {
         $return = null;
         $first = $this->first();
@@ -192,7 +192,7 @@ class Cols extends Main\Map
     // possible de fournir un objet cols
     // deux objets identiques ne peuvent pas être ajoutés dans cols
     // des objets de différentes tables ne peuvent être ajoutés dans cols
-    public function add(...$values):self
+    final public function add(...$values):self
     {
         $this->checkAllowed('add');
         $values = $this->prepareValues(...$values);
@@ -226,7 +226,7 @@ class Cols extends Main\Map
     // are
     // retourne vrai si le tableau est compatible avec les colonnes de la table
     // doit avoir exactement les mêmes noms et nombres de colonne, incluant la clé primaire
-    public function are(...$cols):bool
+    final public function are(...$cols):bool
     {
         return Base\Arr::keysAre($this->prepareKeys(...$cols),$this->arr());
     }
@@ -234,7 +234,7 @@ class Cols extends Main\Map
 
     // withoutPrimary
     // retourne un objet cols avec les colonnes sans la clé primaire
-    public function withoutPrimary():?self
+    final public function withoutPrimary():?self
     {
         return $this->gets(...$this->namesWithoutPrimary());
     }
@@ -243,7 +243,7 @@ class Cols extends Main\Map
     // default
     // retourne un tableau associatif avec toutes les colonnes ayant une valeur par défaut
     // ne retourne pas la clé primaire
-    public function default():array
+    final public function default():array
     {
         $return = [];
 
@@ -260,7 +260,7 @@ class Cols extends Main\Map
     // value
     // passe les valeurs de set dans les méthode onGet des colonnes
     // si onlyScalar est true, les valeurs de retour non scalaire ne sont pas conservés
-    public function value(array $set=[],bool $onlyScalar=false,bool $relation=false,?array $option=null):array
+    final public function value(array $set=[],bool $onlyScalar=false,bool $relation=false,?array $option=null):array
     {
         $return = [];
         $option = (array) $option;
@@ -275,7 +275,11 @@ class Cols extends Main\Map
                 $value = $col->relation()->getStr($value,', ',false,true,$option);
 
                 else
-                $value = $col->onGet($value,$option);
+                {
+                    $value = Base\Call::bindTo($col,function() use($value,$option) {
+                        return $this->onGet($value,$option);
+                    });
+                }
 
                 if($onlyScalar === false || is_scalar($value))
                 $return[$key] = $value;
@@ -288,7 +292,7 @@ class Cols extends Main\Map
 
     // isVisible
     // retourne vrai si tous les champs sont visibles
-    public function isVisible(?Main\Session $session=null):bool
+    final public function isVisible(?Main\Session $session=null):bool
     {
         $return = false;
         $args = [true,null,$session];
@@ -303,7 +307,7 @@ class Cols extends Main\Map
 
     // isHidden
     // retourne vrai si tous les champs sont cachés
-    public function isHidden(?Main\Session $session=null):bool
+    final public function isHidden(?Main\Session $session=null):bool
     {
         $return = false;
         $args = [true,null,$session];
@@ -319,7 +323,7 @@ class Cols extends Main\Map
     // isRequired
     // retourne un tableau associatif avec toutes les colonnes ainsi que leur valeur ou valeur par défaut
     // ne retourne pas la clé primaire
-    public function isRequired(array $set=[]):array
+    final public function isRequired(array $set=[]):array
     {
         $return = [];
 
@@ -339,7 +343,7 @@ class Cols extends Main\Map
     // isStillRequired
     // retourne un tableau associatif avec toutes les colonnes toujours requises
     // ne retourne pas la clé primaire
-    public function isStillRequired(array $set=[]):array
+    final public function isStillRequired(array $set=[]):array
     {
         $return = [];
 
@@ -358,7 +362,7 @@ class Cols extends Main\Map
     // isStillRequiredEmpty
     // retourne vrai si le tableau de isStillRequired est vide
     // ceci signifie que toutes les colonnes requises ont une valeur
-    public function isStillRequiredEmpty(array $set=[]):bool
+    final public function isStillRequiredEmpty(array $set=[]):bool
     {
         return (empty($this->isStillRequired($set)))? true:false;
     }
@@ -367,7 +371,7 @@ class Cols extends Main\Map
     // rules
     // retourne toutes les règles de validations et required des colonnes
     // possible de retourner les textes si lang est true
-    public function rules(bool $lang=false,bool $preValidate=false):array
+    final public function rules(bool $lang=false,bool $preValidate=false):array
     {
         return $this->pair('rules',$lang,$preValidate);
     }
@@ -375,7 +379,7 @@ class Cols extends Main\Map
 
     // preValidatePrepare
     // prépare un tableau de valeur en vue d'une prévalidation
-    public function preValidatePrepare(array $return):array
+    final public function preValidatePrepare(array $return):array
     {
         foreach ($return as $key => $value)
         {
@@ -392,7 +396,7 @@ class Cols extends Main\Map
     // la pré-validation n'a pas lieu si la valeur est vide
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
-    public function preValidate(array $set=[],bool $lang=false,bool $filter=true):array
+    final public function preValidate(array $set=[],bool $lang=false,bool $filter=true):array
     {
         return $this->triggerValidate('preValidate',$set,$lang,$filter);
     }
@@ -402,7 +406,7 @@ class Cols extends Main\Map
     // retourne un tableau avec les résultats des validations sur toutes les colonnes de l'objet
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
-    public function validate(array $set=[],bool $lang=false,bool $filter=true):array
+    final public function validate(array $set=[],bool $lang=false,bool $filter=true):array
     {
         return $this->triggerValidate('validate',$set,$lang,$filter);
     }
@@ -412,7 +416,7 @@ class Cols extends Main\Map
     // retourne une string pour chaque colonne qui ne passe pas le test required
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
-    public function required(array $set=[],bool $lang=false,bool $filter=true):array
+    final public function required(array $set=[],bool $lang=false,bool $filter=true):array
     {
         return $this->triggerValidate('required',$set,$lang,$filter);
     }
@@ -422,7 +426,7 @@ class Cols extends Main\Map
     // retourne une string pour chaque colonne qui ne passe pas le test unique
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
-    public function unique(array $set=[],bool $lang=false,bool $filter=true):array
+    final public function unique(array $set=[],bool $lang=false,bool $filter=true):array
     {
         return $this->triggerValidate('unique',$set,$lang,$filter);
     }
@@ -432,7 +436,7 @@ class Cols extends Main\Map
     // retourne une tableau pour chaque colonne qui ne passe pas le test compare
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
-    public function compare(array $set=[],bool $lang=false,bool $filter=true):array
+    final public function compare(array $set=[],bool $lang=false,bool $filter=true):array
     {
         return $this->triggerValidate('compare',$set,$lang,$filter,true);
     }
@@ -442,7 +446,7 @@ class Cols extends Main\Map
     // retourne un tableau avec les résultats de required et des validations sur toutes les colonnes de l'objet
     // possible de retourner le texte si lang est true
     // par défaut filter est true, donc les colonnes qui passent les tests ne sont pas retournés
-    public function completeValidation(array $set=[],bool $lang=false,bool $filter=true):array
+    final public function completeValidation(array $set=[],bool $lang=false,bool $filter=true):array
     {
         return $this->triggerValidate('completeValidation',$set,$lang,$filter,true);
     }
@@ -451,7 +455,7 @@ class Cols extends Main\Map
     // triggerValidate
     // méthode protégé utilisé par preValidate, validate, required et completeValidation
     // si argSet est true, alors le tableau set est passé en deuxième argument
-    protected function triggerValidate(string $method,array $set=[],bool $lang=false,bool $filter=true,bool $argSet=false):array
+    final protected function triggerValidate(string $method,array $set=[],bool $lang=false,bool $filter=true,bool $argSet=false):array
     {
         $return = [];
 
@@ -480,7 +484,7 @@ class Cols extends Main\Map
     // included
     // retourne un objet avec les colonnes incluses par défaut
     // inclusion des required est true par défaut
-    public function included(?array $option=null):self
+    final public function included(?array $option=null):self
     {
         return $this->filter(['isIncluded'=>true],'insert',$option['required'] ?? true);
     }
@@ -489,7 +493,7 @@ class Cols extends Main\Map
     // insert
     // change la valeur d'une colonne et retourne la valeur
     // possible d'enrobber l'opération dans un tryCatch
-    public function insert($key,$value,array $set=[],?array $option=null)
+    final public function insert($key,$value,array $set=[],?array $option=null)
     {
         $return = null;
         $option = Base\Arr::plus(['tryCatch'=>false],$option);
@@ -504,7 +508,7 @@ class Cols extends Main\Map
 
             catch (Main\CatchableException $e)
             {
-                $e->onCatched(['com'=>false]);
+                $e->catched(['com'=>false]);
                 $col->setException($e);
             }
         }
@@ -520,7 +524,7 @@ class Cols extends Main\Map
     // retourne le tableau d'insert avec toutes les valeurs de retour des colonnes ayant un callback onInsert, ayant l'attribut isIncluded ou étant dans le tableau set
     // si default est true dans option, les colonnes avec valeurs par défaut non incluses dans le tableau de retour sont ajoutés
     // ne retourne pas la clé primaire
-    public function inserts(array $set=[],?array $option=null):array
+    final public function inserts(array $set=[],?array $option=null):array
     {
         $return = [];
         $option = Base\Arr::plus(['default'=>false,'required'=>true],$option);
@@ -561,7 +565,7 @@ class Cols extends Main\Map
 
     // label
     // retourne le label de toutes les colonnes
-    public function label($pattern=null,?string $lang=null,?array $option=null):array
+    final public function label($pattern=null,?string $lang=null,?array $option=null):array
     {
         return $this->pair('label',$pattern,$lang,$option);
     }
@@ -569,7 +573,7 @@ class Cols extends Main\Map
 
     // description
     // retourne la description de toutes les colonnes
-    public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
+    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
     {
         return $this->pair('description',$pattern,$replace,$lang,$option);
     }
@@ -577,7 +581,7 @@ class Cols extends Main\Map
 
     // groupSetPriority
     // retourne un tableau avec les cellules regroupés par setPriority
-    public function groupSetPriority():array
+    final public function groupSetPriority():array
     {
         $return = $this->group('setPriority');
         $return = Base\Arr::keysSort($return,true);
@@ -588,7 +592,7 @@ class Cols extends Main\Map
 
     // form
     // génère les éléments formulaires pour toutes les colonnes
-    public function form(bool $str=false)
+    final public function form(bool $str=false)
     {
         $return = $this->pair('form');
         return ($str === true)? implode($return):$return;
@@ -598,7 +602,7 @@ class Cols extends Main\Map
     // formPlaceholder
     // génère les éléments formulaires avec placeholder pour toutes les colonnes
     // le placeholder est le label de la colonne
-    public function formPlaceholder(bool $str=false)
+    final public function formPlaceholder(bool $str=false)
     {
         $return = $this->pair('formPlaceholder');
         return ($str === true)? implode($return):$return;
@@ -607,7 +611,7 @@ class Cols extends Main\Map
 
     // formWrap
     // génère les éléments formWrap pour toutes les colonnes
-    public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
+    final public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
     {
         $return = $this->pair('formWrap',$wrap,$pattern);
         return ($str === true)? implode($return):$return;
@@ -617,7 +621,7 @@ class Cols extends Main\Map
     // formPlaceholderWrap
     // génère les éléments formPlaceholderWrap pour toutes les colonnes
     // le placeholder est le label de la colonne, donc le label apparaît deux fois
-    public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
+    final public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
     {
         $return = $this->pair('formPlaceholderWrap',$wrap,$pattern);
         return ($str === true)? implode($return):$return;
@@ -628,7 +632,7 @@ class Cols extends Main\Map
     // retourne un tableau avec chaque colonne passé dans la méthode html
     // la valeur est toujours celle par défaut
     // si str est true, retourne une string
-    public function htmlStr(string $html,bool $str=false)
+    final public function htmlStr(string $html,bool $str=false)
     {
         $return = $this->pair('htmlStr',true,$html);
         return ($str === true)? implode($return):$return;
@@ -637,7 +641,7 @@ class Cols extends Main\Map
 
     // general
     // retourne un objet cols avec toutes les colonnes dans general
-    public function general():self
+    final public function general():self
     {
         return $this->filter(['isGeneral'=>true]);
     }
@@ -645,7 +649,7 @@ class Cols extends Main\Map
 
     // orderable
     // retourne un objet cols avec toutes les colonnes ordonnables
-    public function orderable():self
+    final public function orderable():self
     {
         return $this->filter(['isOrderable'=>true]);
     }
@@ -653,7 +657,7 @@ class Cols extends Main\Map
 
     // filterable
     // retourne un objet cols avec toutes les colonnes filtrable
-    public function filterable():self
+    final public function filterable():self
     {
         return $this->filter(['isFilterable'=>true]);
     }
@@ -661,7 +665,7 @@ class Cols extends Main\Map
 
     // searchable
     // retourne un objet cols avec toutes les colonnes cherchables
-    public function searchable():self
+    final public function searchable():self
     {
         return $this->filter(['isSearchable'=>true]);
     }
@@ -669,7 +673,7 @@ class Cols extends Main\Map
 
     // searchMinLength
     // retourne la longueur de recherche minimale pour les colonnes
-    public function searchMinLength():?int
+    final public function searchMinLength():?int
     {
         $return = null;
 
@@ -687,7 +691,7 @@ class Cols extends Main\Map
 
     // isSearchTermValid
     // retourne vrai si un terme de recherche est valide pour toutes les colonnes de l'objet
-    public function isSearchTermValid($value):bool
+    final public function isSearchTermValid($value):bool
     {
         $return = false;
 
@@ -712,7 +716,7 @@ class Cols extends Main\Map
     // writeFile
     // écrit les colonnes dans l'objet file fourni en argument
     // par exemple pour une première ligne de csv
-    public function writeFile(Main\File $file,?Cells $cells=null,?array $option=null):self
+    final public function writeFile(Main\File $file,?Cells $cells=null,?array $option=null):self
     {
         $option = Base\Arr::plus(['type'=>'format'],$option);
         $array = [];
@@ -739,7 +743,7 @@ class Cols extends Main\Map
 
     // keyClassExtends
     // retourne un tableau utilisé par onPrepareKey
-    public static function keyClassExtends():array
+    final public static function keyClassExtends():array
     {
         return [Col::getOverloadClass(),Cell::getOverloadClass()];
     }
@@ -747,7 +751,7 @@ class Cols extends Main\Map
 
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
-    public static function getOverloadKeyPrepend():?string
+    final public static function getOverloadKeyPrepend():?string
     {
         return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Cols':null;
     }

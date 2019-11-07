@@ -26,7 +26,7 @@ class ColRelation extends Relation
 
     // construct
     // construit l'objet de relation de colonne
-    public function __construct(Col $col)
+    final public function __construct(Col $col)
     {
         $this->setLink($col->table(),false);
         $this->prepare($col);
@@ -39,8 +39,7 @@ class ColRelation extends Relation
     // vérifie les attributs de relation en provenance de la colonne
     // change le mode de la relation
     // si le type de relation est table, la propriété data est une référence des données de relation de la table (donc partagé par toutes les colonnes en relation avec la même table)
-    // méthode protégé
-    protected function prepare(Col $col):void
+    final protected function prepare(Col $col):void
     {
         if(!$col->canRelation())
         static::throw($col,'cannotRelation');
@@ -60,7 +59,7 @@ class ColRelation extends Relation
 
     // mode
     // retourne le mode de la relation (enum ou set)
-    public function mode():string
+    final public function mode():string
     {
         return $this->mode;
     }
@@ -68,7 +67,7 @@ class ColRelation extends Relation
 
     // attributes
     // retourne les attributes de la relation de la colonne
-    public function attributes()
+    final public function attributes()
     {
         $return = null;
         $col = $this->col();
@@ -88,7 +87,7 @@ class ColRelation extends Relation
 
     // whereTable
     // retourne le where dans les attributs si existnat
-    public function whereTable()
+    final public function whereTable()
     {
         $return = null;
         $attr = $this->attributes();
@@ -107,7 +106,7 @@ class ColRelation extends Relation
 
     // col
     // retourne la colonne de la relation
-    public function col():Col
+    final public function col():Col
     {
         return $this->table()->col($this->col);
     }
@@ -115,7 +114,7 @@ class ColRelation extends Relation
 
     // isEnum
     // retourne vrai si la relation est enum
-    public function isEnum():bool
+    final public function isEnum():bool
     {
         return ($this->mode === 'enum')? true:false;
     }
@@ -123,7 +122,7 @@ class ColRelation extends Relation
 
     // isSet
     // retourne vrai si la relation est set
-    public function isSet():bool
+    final public function isSet():bool
     {
         return ($this->mode === 'set')? true:false;
     }
@@ -131,7 +130,7 @@ class ColRelation extends Relation
 
     // isType
     // retourne vrai si le type est celui fourni en argument
-    public function isType(string $value):bool
+    final public function isType(string $value):bool
     {
         return $this->type() === $value;
     }
@@ -140,7 +139,7 @@ class ColRelation extends Relation
     // type
     // retourne le type de relation de la colonne
     // le type est gardé en cache dans la propriété type de l'objet
-    public function type():?string
+    final public function type():?string
     {
         $return = $this->type;
 
@@ -186,7 +185,7 @@ class ColRelation extends Relation
 
     // checkType
     // envoie une exception si le type de la relation est indéfini
-    public function checkType():string
+    final public function checkType():string
     {
         $return = $this->type();
 
@@ -199,7 +198,7 @@ class ColRelation extends Relation
 
     // isRelationTable
     // retourne vrai si le type de relation est table
-    public function isRelationTable():bool
+    final public function isRelationTable():bool
     {
         return ($this->isType('table'))? true:false;
     }
@@ -207,7 +206,7 @@ class ColRelation extends Relation
 
     // defaultOrderCode
     // retourne le code d'ordre par défaut pour la relation
-    public function defaultOrderCode():?int
+    final public function defaultOrderCode():?int
     {
         $return = $this->col()->getAttr('orderCode');
 
@@ -234,7 +233,7 @@ class ColRelation extends Relation
 
     // allowedOrdering
     // retourne un tableau définissant si la relation peut être ordonner par clé et ou valeur
-    public function allowedOrdering():array
+    final public function allowedOrdering():array
     {
         $return = [];
         $type = $this->type();
@@ -260,7 +259,7 @@ class ColRelation extends Relation
 
     // relationTable
     // retourne la table de relation si existante
-    public function relationTable():?Table
+    final public function relationTable():?Table
     {
         return ($this->type() === 'table')? $this->db()->table($this->attributes()):null;
     }
@@ -268,7 +267,7 @@ class ColRelation extends Relation
 
     // checkRelationTable
     // envoie une exception s'il n'est pas possible de retourner la table de la relation
-    public function checkRelationTable():Table
+    final public function checkRelationTable():Table
     {
         $return = $this->relationTable();
 
@@ -282,7 +281,7 @@ class ColRelation extends Relation
     // label
     // retourne le label à donner à la relation, par défaut utilise celui de la colonne
     // pour une relation table, le label de la table sera retourné
-    public function label():?string
+    final public function label():?string
     {
         $return = null;
         $type = $this->checkType();
@@ -299,7 +298,7 @@ class ColRelation extends Relation
 
     // size
     // retourne le nombre d'éléments dans la relation
-    public function size(bool $cache=true,?array $option=null):int
+    final public function size(bool $cache=true,?array $option=null):int
     {
         $return = 0;
         $type = $this->checkType();
@@ -325,7 +324,7 @@ class ColRelation extends Relation
     // si la référence vient de la table, la propriété relation sera une référence de la propriété relation de table
     // le retour de cette méthode est mis en cache par défaut
     // pour certains types de relation tableau, on sort par clé et on fait un array_values -> pas de clé string
-    public function all(bool $cache=true,?array $option=null):array
+    final public function all(bool $cache=true,?array $option=null):array
     {
         $return = [];
         $option = Base\Arr::plus(['not'=>null,'limit'=>null],$option);
@@ -417,7 +416,7 @@ class ColRelation extends Relation
     // exists
     // retourne vrai si la ou les clés existent dans la relation
     // cache est true par défaut
-    public function exists(...$keys):bool
+    final public function exists(...$keys):bool
     {
         $return = false;
         $type = $this->checkType();
@@ -440,7 +439,7 @@ class ColRelation extends Relation
     // in
     // retourne vrai si la ou les valeurs existent dans la relation
     // cache est true par défaut
-    public function in(...$values):bool
+    final public function in(...$values):bool
     {
         $return = false;
         $type = $this->checkType();
@@ -464,7 +463,7 @@ class ColRelation extends Relation
     // permet de faire une recherche dans la relation, que ce soit une relation tableau ou table
     // recherche insensible à la case et avec support pour un search separator
     // par défaut cache est false
-    public function search(string $value,?array $option=null):?array
+    final public function search(string $value,?array $option=null):?array
     {
         $return = null;
         $option = Base\Arr::plus(['searchSeparator'=>null],$option);
@@ -496,7 +495,7 @@ class ColRelation extends Relation
     // searchCount
     // retourne le nombre de résultat d'une recherche de relation
     // limite est toujours mis à null
-    public function searchCount(string $value,?array $option=null):?int
+    final public function searchCount(string $value,?array $option=null):?int
     {
         $return = null;
         $option = Base\Arr::plus($option,['limit'=>null]);
@@ -525,7 +524,7 @@ class ColRelation extends Relation
 
     // notOrderLimit
     // gère not, order et limit pour un tableau de retour
-    protected function notOrderLimit(array $return,?array $option=null):array
+    final protected function notOrderLimit(array $return,?array $option=null):array
     {
         if(is_array($option))
         {
@@ -545,7 +544,7 @@ class ColRelation extends Relation
 
     // keyValue
     // retourne la relation sous forme de tableau key -> value
-    public function keyValue($value,bool $found=false,bool $cache=true,?array $option=null):?array
+    final public function keyValue($value,bool $found=false,bool $cache=true,?array $option=null):?array
     {
         $return = null;
         $type = $this->checkType();
@@ -577,7 +576,7 @@ class ColRelation extends Relation
 
     // one
     // retourne la valeur d'un élément de relation
-    public function one($value,bool $cache=true,?array $option=null)
+    final public function one($value,bool $cache=true,?array $option=null)
     {
         $return = null;
 
@@ -598,7 +597,7 @@ class ColRelation extends Relation
 
     // many
     // retourne la valeur d'un élément de relation (peut conte nir plusiuers éléments)
-    public function many($value,bool $found=false,bool $cache=true,?array $option=null):?array
+    final public function many($value,bool $found=false,bool $cache=true,?array $option=null):?array
     {
         $return = null;
 
@@ -615,7 +614,7 @@ class ColRelation extends Relation
     // row
     // retourne la valeur de la relation sous forme de row
     // envoie une exception si le type de relation n'est pas table ou enum
-    public function row($value):?Row
+    final public function row($value):?Row
     {
         $return = null;
 
@@ -637,7 +636,7 @@ class ColRelation extends Relation
     // rows
     // retourne la valeur de la relation sous forme de rows
     // envoie une exception si le type de relation n'est pas table
-    public function rows($value):Rows
+    final public function rows($value):Rows
     {
         $return = null;
         $table = $this->checkRelationTable();
@@ -658,7 +657,7 @@ class ColRelation extends Relation
     // get
     // retourne la valeur d'une ou plusieurs relations, selon le type (enum ou set)
     // la valeur est passé dans onGet de la colonne
-    public function get($value=true,bool $found=false,bool $cache=true,?array $option=null)
+    final public function get($value=true,bool $found=false,bool $cache=true,?array $option=null)
     {
         $return = null;
         $col = $this->col();
@@ -677,7 +676,7 @@ class ColRelation extends Relation
     // getStr
     // retourne la valeur d'une ou plusieurs relations sous forme de string, selon le type (enum ou set)
     // le séparateur est spécifié en deuxième argument
-    public function getStr($value=true,string $separator=',',bool $found=false,bool $cache=true,?array $option=null):?string
+    final public function getStr($value=true,string $separator=',',bool $found=false,bool $cache=true,?array $option=null):?string
     {
         $return = $this->get($value,$found,$cache,$option);
 
@@ -694,7 +693,7 @@ class ColRelation extends Relation
     // getKeyValue
     // retourne la valeur d'une ou plusieurs relations sous une forme clé-valeur
     // la valeur est passé dans onGet de la colonne
-    public function getKeyValue($value=true,bool $found=false,bool $cache=true,?array $option=null):?array
+    final public function getKeyValue($value=true,bool $found=false,bool $cache=true,?array $option=null):?array
     {
         $return = null;
         $col = $this->col();
@@ -709,7 +708,7 @@ class ColRelation extends Relation
     // retourne la valeur d'une ou plusieurs relations, selon le type (enum ou set)
     // la valeur est passé dans onGet de la colonne
     // le retour est un objet row ou rows
-    public function getRow($value=true,?array $option=null)
+    final public function getRow($value=true,?array $option=null)
     {
         $return = null;
         $col = $this->col();

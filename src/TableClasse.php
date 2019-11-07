@@ -24,7 +24,7 @@ class TableClasse extends Main\Map
 
     // table
     // retourne la classe de la table, ne peut pas être vide
-    public function table():string
+    final public function table():string
     {
         return $this->get('table');
     }
@@ -32,7 +32,7 @@ class TableClasse extends Main\Map
 
     // rows
     // retourne la classe de la rows, ne peut pas être vide
-    public function rows():string
+    final public function rows():string
     {
         return $this->get('rows');
     }
@@ -40,7 +40,7 @@ class TableClasse extends Main\Map
 
     // row
     // retourne la classe de la row, ne peut pas être vide
-    public function row():string
+    final public function row():string
     {
         return $this->get('row');
     }
@@ -48,7 +48,7 @@ class TableClasse extends Main\Map
 
     // col
     // retourne la classe de la colonne
-    public function col($key):?string
+    final public function col($key):?string
     {
         return $this->get(['col',$key]);
     }
@@ -56,7 +56,7 @@ class TableClasse extends Main\Map
 
     // setCol
     // change la classe d'une colonne
-    public function setCol($key,string $class):self
+    final public function setCol($key,string $class):self
     {
         $key = $this->onPrepareKey(['col',$key]);
         $data =& $this->arr();
@@ -68,7 +68,7 @@ class TableClasse extends Main\Map
 
     // cols
     // retourne la classe de la cols, ne peut pas être vide
-    public function cols():string
+    final public function cols():string
     {
         return $this->get('cols');
     }
@@ -76,7 +76,7 @@ class TableClasse extends Main\Map
 
     // cell
     // retourne la classe de la cellule
-    public function cell($key):?string
+    final public function cell($key):?string
     {
         return $this->get(['cell',$key]);
     }
@@ -84,7 +84,7 @@ class TableClasse extends Main\Map
 
     // setCell
     // conserve la classe d'une cellule
-    public function setCell($key,string $class):self
+    final public function setCell($key,string $class):self
     {
         $key = $this->onPrepareKey(['cell',$key]);
         $data =& $this->arr();
@@ -96,7 +96,7 @@ class TableClasse extends Main\Map
 
     // cells
     // retourne la classe de la cells, ne peut pas être vide
-    public function cells():string
+    final public function cells():string
     {
         return $this->get('cells');
     }

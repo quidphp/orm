@@ -30,7 +30,7 @@ class Schema extends Main\Map
 
     // construct
     // construit l'objet schema
-    public function __construct(?array $data=null,Db $db)
+    final public function __construct(?array $data=null,Db $db)
     {
         $this->setDb($db);
 
@@ -44,7 +44,7 @@ class Schema extends Main\Map
     // tables
     // retourne le nom de toutes les tables
     // si cache est false, ignore la cache et ensuite écrase la
-    public function tables(bool $cache=true):array
+    final public function tables(bool $cache=true):array
     {
         $return = [];
         $tables = null;
@@ -77,7 +77,7 @@ class Schema extends Main\Map
     // table
     // retourne le schema pour une table
     // si cache est false, ignore la cache et ensuite écrase la
-    public function table($table,bool $cache=true):?array
+    final public function table($table,bool $cache=true):?array
     {
         $return = null;
         $table = Base\Obj::cast($table);
@@ -108,7 +108,7 @@ class Schema extends Main\Map
     // col
     // retourne le schema pour une colonne
     // si cache est false, ignore la cache et ensuite écrase la
-    public function col($table,$col,bool $cache=true):?array
+    final public function col($table,$col,bool $cache=true):?array
     {
         $return = null;
         $table = Base\Obj::cast($table);
@@ -139,7 +139,7 @@ class Schema extends Main\Map
 
     // all
     // recharge tout le schema de la base de données
-    public function all():?array
+    final public function all():?array
     {
         $return = null;
         $data =& $this->arr();

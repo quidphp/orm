@@ -32,7 +32,7 @@ class Rows extends Main\Map
 
     // construct
     // construit un nouvel objet rows
-    public function __construct(...$values)
+    final public function __construct(...$values)
     {
         $this->add(...$values);
 
@@ -42,7 +42,7 @@ class Rows extends Main\Map
 
     // toString
     // retourne les ids séparés par des virgules
-    public function __toString():string
+    final public function __toString():string
     {
         return implode(',',$this->primaries());
     }
@@ -51,7 +51,7 @@ class Rows extends Main\Map
     // onPrepareKey
     // prepare une clé pour les méthodes qui soumette une clé
     // peut fournir un tableau qui sera utilisé comme where
-    protected function onPrepareKey($key)
+    final protected function onPrepareKey($key)
     {
         $return = null;
 
@@ -86,7 +86,7 @@ class Rows extends Main\Map
     // onPrepareReturns
     // prépare le retour pour indexes, gets, slice et slice index
     // les lignes sont toujours retournés dans un nouvel objet rows
-    protected function onPrepareReturns(array $array):self
+    final protected function onPrepareReturns(array $array):self
     {
         $return = new static();
 
@@ -102,7 +102,7 @@ class Rows extends Main\Map
 
     // cast
     // retourne la valeur cast
-    public function _cast():array
+    final public function _cast():array
     {
         return $this->primaries();
     }
@@ -110,7 +110,7 @@ class Rows extends Main\Map
 
     // offsetSet
     // arrayAccess offsetSet est seulement permis si la clé est null []
-    public function offsetSet($key,$value):void
+    final public function offsetSet($key,$value):void
     {
         if($key === null)
         $this->add($value);
@@ -138,7 +138,7 @@ class Rows extends Main\Map
 
     // hasChanged
     // retourne vrai si une des lignes a changé
-    public function hasChanged():bool
+    final public function hasChanged():bool
     {
         $return = false;
 
@@ -171,7 +171,7 @@ class Rows extends Main\Map
 
     // checkCell
     // envoie une exception si toutes les lignes n'ont pas la cellule spécifiée en argument
-    public function checkCell($key):bool
+    final public function checkCell($key):bool
     {
         $return = $this->hasCell($key);
 
@@ -200,7 +200,7 @@ class Rows extends Main\Map
 
     // db
     // retourne la db du premier objet
-    public function db():?Db
+    final public function db():?Db
     {
         $return = null;
         $first = $this->first();
@@ -213,7 +213,7 @@ class Rows extends Main\Map
 
     // table
     // retourne la table du premier objet
-    public function table():?Table
+    final public function table():?Table
     {
         $return = null;
         $first = $this->first();
@@ -231,7 +231,7 @@ class Rows extends Main\Map
     // deux objets identiques ne peuvent pas être ajoutés dans rows
     // des objets de différentes tables ne peuvent être ajoutés dans rows
     // un mode doit être spécifié en premier argument (inOrder ou ordre d'ajout)
-    public function addMode(bool $inOrder=false,...$values):self
+    final public function addMode(bool $inOrder=false,...$values):self
     {
         $this->checkAllowed('add');
         $values = $this->prepareValues(...$values);
@@ -285,7 +285,7 @@ class Rows extends Main\Map
     // ajoute une ou plusieurs rows dans l'objet
     // possible de fournir un objet rows
     // les rows sont toujours ajoutés dans l'ordre naturel des ids, donc si la row 1 est ajouté après la 3 elle aura quand même la première position
-    public function addSort(...$values):self
+    final public function addSort(...$values):self
     {
         return $this->addMode(true,...$values);
     }
@@ -294,7 +294,7 @@ class Rows extends Main\Map
     // getRefresh
     // retourne un objet row ou null si non existant
     // met la row à jour avant de retourner
-    public function getRefresh($value):?Row
+    final public function getRefresh($value):?Row
     {
         $return = $this->get($value);
 
@@ -307,7 +307,7 @@ class Rows extends Main\Map
 
     // getsRefresh
     // retourne un nouvel objet rows avec les lignes refresh
-    public function getsRefresh(...$values):self
+    final public function getsRefresh(...$values):self
     {
         return $this->gets(...$values)->refresh();
     }
@@ -315,7 +315,7 @@ class Rows extends Main\Map
 
     // label
     // retourne les noms de toutes les lignes
-    public function label($pattern=null,?string $lang=null,?array $option=null):array
+    final public function label($pattern=null,?string $lang=null,?array $option=null):array
     {
         return $this->pair('label',$pattern,$lang,$option);
     }
@@ -323,7 +323,7 @@ class Rows extends Main\Map
 
     // description
     // retourne les descriptions de toutes les lignes
-    public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
+    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
     {
         return $this->pair('description',$pattern,$replace,$lang,$option);
     }
@@ -331,7 +331,7 @@ class Rows extends Main\Map
 
     // changed
     // retourne un nouvel objet rows avec les lignes qui ont changés
-    public function changed():self
+    final public function changed():self
     {
         $return = new static();
 
@@ -348,7 +348,7 @@ class Rows extends Main\Map
     // cell
     // permet de retourner un tableau id->cell pour toutes les lignes dans l'objet
     // envoie une exception si la cellule n'existe pas
-    public function cell($key):array
+    final public function cell($key):array
     {
         $return = [];
         $this->checkCell($key);
@@ -368,7 +368,7 @@ class Rows extends Main\Map
     // cellNotEmpty
     // retourne un tableau id->cell pour toutes les lignes de l'objet
     // retourne seulement la cellule si elle n'est pas vide
-    public function cellNotEmpty($key):array
+    final public function cellNotEmpty($key):array
     {
         $return = [];
 
@@ -384,7 +384,7 @@ class Rows extends Main\Map
 
     // cellFirstNotEmpty
     // retoure la première cellule spécifé en argument non vide des lignes
-    public function cellFirstNotEmpty($key):?Cell
+    final public function cellFirstNotEmpty($key):?Cell
     {
         $return = null;
         $this->checkCell($key);
@@ -407,7 +407,7 @@ class Rows extends Main\Map
     // setCell
     // permet de changer la valeur de la cellule dans toutes les lignes
     // envoie une exception si la cellule n'existe pas
-    public function setCell($key,$value):self
+    final public function setCell($key,$value):self
     {
         foreach ($this->cell($key) as $id => $cell)
         {
@@ -422,7 +422,7 @@ class Rows extends Main\Map
     // permet de reset la valeur de la cellule dans toutes les lignes
     // la valeur est ramené à sa dernière valeur commit
     // envoie une exception si la cellule n'existe pas
-    public function resetCell($key):self
+    final public function resetCell($key):self
     {
         foreach ($this->cell($key) as $id => $cell)
         {
@@ -437,7 +437,7 @@ class Rows extends Main\Map
     // permet de changer la valeur de la cellule dans toutes les lignes
     // la valeur de changement est mis à null
     // envoie une exception si la cellule n'existe pas
-    public function unsetCell($key):self
+    final public function unsetCell($key):self
     {
         foreach ($this->cell($key) as $id => $cell)
         {
@@ -451,7 +451,7 @@ class Rows extends Main\Map
     // cellValue
     // permet de retourner un tableau id->cellValue pour toutes les lignes dans l'objet
     // par défaut utilise value de cellule, si get est true utilise get
-    public function cellValue($value,bool $get=false):array
+    final public function cellValue($value,bool $get=false):array
     {
         $return = [];
 
@@ -467,7 +467,7 @@ class Rows extends Main\Map
     // htmlStr
     // permet de passer le htmlStr sur une cellule dans chaque ligne
     // éventuellement cette méthode devra être remplacé par la classe tablesCells
-    public function htmlStr($key,string $html,bool $str=false)
+    final public function htmlStr($key,string $html,bool $str=false)
     {
         $return = [];
         $cells = $this->cell($key);
@@ -487,7 +487,7 @@ class Rows extends Main\Map
     // segment
     // permet de remplacer les segments d'une chaîne par le contenu des cellules pour toutes les lignes
     // par défaut utilise value de cellule, si get est true utilise get
-    public function segment(string $value,bool $get=false,bool $str=false)
+    final public function segment(string $value,bool $get=false,bool $str=false)
     {
         $return = [];
 
@@ -506,7 +506,7 @@ class Rows extends Main\Map
     // keyValue
     // retourne un tableau associatif avec le contenu keyValue de toutes les lignes de l'objet
     // si get est true, value est passé dans get plutôt que value
-    public function keyValue($key,$value,bool $get=false):array
+    final public function keyValue($key,$value,bool $get=false):array
     {
         $return = [];
 
@@ -522,7 +522,7 @@ class Rows extends Main\Map
     // where
     // permet de filtrer des rows selon un tableau sql where
     // similaire à une syntaxe sql mais ne supporte pas les méthodes base/sql whereThree, ni les and, or et paranthèses
-    public function where(array $array):self
+    final public function where(array $array):self
     {
         $return = new static();
 
@@ -540,7 +540,7 @@ class Rows extends Main\Map
     // clone et sort l'objet de rows
     // support un sort par multiple cellule et direction
     // fournir un tableau cellule -> direction
-    public function order(array $array):self
+    final public function order(array $array):self
     {
         $return = $this->clone();
         $return->checkAllowed('sort');
@@ -566,7 +566,7 @@ class Rows extends Main\Map
     // limit
     // clone et filtre l'objet par une limit et possiblement un offset
     // similaire à une syntaxe sql
-    public function limit(int $value,?int $value2=null):self
+    final public function limit(int $value,?int $value2=null):self
     {
         $limit = (is_int($value2))? $value2:$value;
         $offset = (is_int($value2))? $value:0;
@@ -628,7 +628,7 @@ class Rows extends Main\Map
     // clean
     // enlève de l'objet toutes les lignes déliées
     // cette méthode ne tient pas compte de readOnly
-    public function clean():self
+    final public function clean():self
     {
         $data =& $this->arr();
 
@@ -647,7 +647,7 @@ class Rows extends Main\Map
     // les lignes sont retirés de cet objet, de rows table et prennent un statut inutilisable
     // cette méthode ne tient pas compte de readOnly
     // possible de donner un objet rows avec des lignes à ne pas unlink
-    public function unlink(?self $rows=null):self
+    final public function unlink(?self $rows=null):self
     {
         $data =& $this->arr();
 
@@ -672,25 +672,9 @@ class Rows extends Main\Map
     // toutes les cellules sont passés dans onUpdate avant
     // seuls les cellules ayant changés sont envoyés à la db
     // retourne un tableau avec les résultats pour chaque ligne
-    public function update(?array $option=null):array
+    final public function update(?array $option=null):array
     {
         $return = $this->pair('update',$option);
-        $this->checkAfter();
-
-        return $return;
-    }
-
-
-    // updateValid
-    // sauve toutes les lignes dans l'objet
-    // toutes les cellules sont passés dans update avant
-    // seuls les cellules valides sont envoyés à la db
-    // un message de communication est généré pour indiquer que la sauvegarde est partielle
-    // retourne 0 si rien n'a changé, null s'il y a une erreur lors du update
-    // com est true par défaut
-    public function updateValid(?array $option=null):array
-    {
-        $return = $this->pair('updateValid',$option);
         $this->checkAfter();
 
         return $return;
@@ -702,7 +686,7 @@ class Rows extends Main\Map
     // différence: onUpdate est seulement appelé si au moins une cellule a changé
     // seuls les cellules ayant changés sont envoyés à la db
     // retourne un tableau avec les résultats pour chaque ligne
-    public function updateChanged(?array $option=null):array
+    final public function updateChanged(?array $option=null):array
     {
         $return = $this->pair('updateChanged',$option);
         $this->checkAfter();
@@ -711,42 +695,14 @@ class Rows extends Main\Map
     }
 
 
-    // updateChangedIncluded
-    // sauve toutes les lignes dans l'objet: avec les include
-    // différence: onUpdate est seulement appelé si au moins une cellule a changé
-    // seuls les cellules ayant changés sont envoyés à la db
-    // retourne un tableau avec les résultats pour chaque ligne
-    public function updateChangedIncluded(?array $option=null):array
-    {
-        $return = $this->pair('updateChangedIncluded',$option);
-        $this->checkAfter();
-
-        return $return;
-    }
-
-
-    // updateChangedIncludedValid
+    // updateValid
     // sauve toutes les lignes dans l'objet: avec les include
     // différence: update est seulement appelé si au moins une cellule a changé
     // seuls les cellules valides sont envoyés à la db
     // retourne un tableau avec les résultats pour chaque ligne
-    public function updateChangedIncludedValid(?array $option=null):array
+    final public function updateValid(?array $option=null):array
     {
-        $return = $this->pair('updateChangedIncludedValid',$option);
-        $this->checkAfter();
-
-        return $return;
-    }
-
-
-    // updateAll
-    // sauve toutes les lignes dans l'objet
-    // toutes les cellules sont passés dans onUpdate avant
-    // toutes les cellules sont envoyés à la db
-    // retourne un tableau avec les résultats pour chaque ligne
-    public function updateAll(?array $option=null):array
-    {
-        $return = $this->pair('updateAll',$option);
+        $return = $this->pair('updateValid',$option);
         $this->checkAfter();
 
         return $return;
@@ -758,7 +714,7 @@ class Rows extends Main\Map
     // toutes les cellules sont passés dans onUpdate avant
     // seuls les cellules ayant changés sont envoyés à la db
     // retourne un tableau avec les résultats pour les lignes ayant changés
-    public function updateRowChanged(?array $option=null):array
+    final public function updateRowChanged(?array $option=null):array
     {
         $return = [];
 
@@ -778,7 +734,7 @@ class Rows extends Main\Map
     // efface les lignes, fait une requête pour l'ensemble
     // les lignes effacés sont terminate, effacé de l'objet table et de cet objet rows
     // retourne un tableau avec les résultats pour chaque ligne
-    public function delete(?array $option=null)
+    final public function delete(?array $option=null)
     {
         $return = null;
 
@@ -799,7 +755,7 @@ class Rows extends Main\Map
 
     // writeFile
     // écrit plusieurs lignes dans l'objet file fourni en argument
-    public function writeFile(Main\File $file,?array $option=null):self
+    final public function writeFile(Main\File $file,?array $option=null):self
     {
         $option = Base\Arr::plus(['header'=>false],$option);
 
@@ -817,7 +773,7 @@ class Rows extends Main\Map
 
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
-    public static function getOverloadKeyPrepend():?string
+    final public static function getOverloadKeyPrepend():?string
     {
         return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Rows':null;
     }

@@ -20,7 +20,7 @@ trait _dbAccess
     // serialize
     // serialize un objet
     // envoie une exception si l'objet db est stocké en objet (ne peut pas être serialize)
-    public function serialize():string
+    final public function serialize():string
     {
         if($this->db instanceof Pdo)
         static::throw('cannotSerializeDbObject');
@@ -34,8 +34,7 @@ trait _dbAccess
     // setDb
     // lie une base de donnée à l'objet
     // si la base de donnée est dans inst, met le inst name, sinon met l'objet
-    // méthode protégé
-    protected function setDb(Pdo $db):void
+    final protected function setDb(Pdo $db):void
     {
         if($db instanceof Db)
         {
@@ -55,7 +54,7 @@ trait _dbAccess
 
     // hasDb
     // retourne vrai si une base de donnée est lié à l'objet (via string ou objet)
-    public function hasDb():bool
+    final public function hasDb():bool
     {
         return (is_string($this->db) || $this->db instanceof Pdo)? true:false;
     }
@@ -64,7 +63,7 @@ trait _dbAccess
     // checkDb
     // envoie une exception si l'objet n'est pas lié à une base de donnée
     // retourne l'objet courant
-    public function checkDb():self
+    final public function checkDb():self
     {
         if(!$this->hasDb())
         static::throw('dbPropertyIsInvalid','objectUnusable');
@@ -76,7 +75,7 @@ trait _dbAccess
     // db
     // retourne l'objet base de données
     // retourne une erreur si le retour n'est pas instance de db
-    public function db():Pdo
+    final public function db():Pdo
     {
         $return = $this->db;
 
@@ -92,7 +91,7 @@ trait _dbAccess
 
     // isLinked
     // retourne vrai si l'objet est lié
-    public function isLinked():bool
+    final public function isLinked():bool
     {
         return ($this->hasDb())? true:false;
     }
@@ -100,7 +99,7 @@ trait _dbAccess
 
     // checkLink
     // retourne this si l'objet est lié, envoie une exception sinon
-    public function checkLink():self
+    final public function checkLink():self
     {
         if($this->isLinked() === false)
         static::throw();

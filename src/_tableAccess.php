@@ -24,8 +24,7 @@ trait _tableAccess
     // setLink
     // set la table et db à l'objet
     // envoie une exception si l'objet existe déjà
-    // méthode protégé
-    protected function setLink(Table $value,bool $checkLink=false):void
+    final protected function setLink(Table $value,bool $checkLink=false):void
     {
         $this->setDb($value->db());
         $this->table = $value->name();
@@ -39,7 +38,7 @@ trait _tableAccess
 
     // tableName
     // retourne la propriété protégé table
-    public function tableName():string
+    final public function tableName():string
     {
         return $this->table;
     }
@@ -47,7 +46,7 @@ trait _tableAccess
 
     // tables
     // retourne l'objet tables
-    public function tables():Tables
+    final public function tables():Tables
     {
         return $this->db()->tables();
     }
@@ -55,7 +54,7 @@ trait _tableAccess
 
     // table
     // retourne l'objet table
-    public function table():Table
+    final public function table():Table
     {
         return $this->db()->table($this->table);
     }
@@ -63,7 +62,7 @@ trait _tableAccess
 
     // sameTable
     // retourne vrai si l'objet et celui fourni ont la même table
-    public function sameTable($table):bool
+    final public function sameTable($table):bool
     {
         return ($this->db()->hasTable($table) && $this->table() === $this->db()->table($table))? true:false;
     }

@@ -85,7 +85,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // construct
     // construit l'objet table
-    public function __construct(string $name,Db $db,TableClasse $classe,array $attr)
+    final public function __construct(string $name,Db $db,TableClasse $classe,array $attr)
     {
         $this->setName($name);
         $this->setLink($db);
@@ -100,7 +100,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // toString
     // retourne la nom de la table
-    public function __toString():string
+    final public function __toString():string
     {
         return $this->name();
     }
@@ -109,8 +109,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // onColsLoad
     // est appelé après colsLoad
     // par défaut est utilisé pour faire un check de l'existance des colonnes décritent dans config/cols si l'attribut colsExists est true
-    // méthode protégé
-    protected function onColsLoad():void
+    final protected function onColsLoad():void
     {
         if($this->getAttr('colsExists') === true)
         {
@@ -153,8 +152,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // onMakeAttr
     // callback avant de mettre les attributs dans la propriété attr
-    // méthode protégé
-    protected function onMakeAttr(array $return):array
+    final protected function onMakeAttr(array $return):array
     {
         return $return;
     }
@@ -163,7 +161,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // onCheckAttr
     // callback dès que les attributs ont été set
     // permet d'envoyer des exceptions si les attributs sont inadéquats pour la table
-    protected function onCheckAttr():void
+    final protected function onCheckAttr():void
     {
         return;
     }
@@ -171,8 +169,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // onTruncated
     // appelé après un truncate réussie via la méthode truncate
-    // méthode protégé qui peut être étendu
-    protected function onTruncated(array $option):void
+    final protected function onTruncated(array $option):void
     {
         return;
     }
@@ -180,7 +177,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // onRolePermission
     // callback avant chaque appel à permission can, vérifie que la table à la permission access
-    protected function onRolePermission($key,array $array):bool
+    final protected function onRolePermission($key,array $array):bool
     {
         return (array_key_exists('access',$array) && $array['access'] === true)? true:false;
     }
@@ -188,7 +185,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // toArray
     // méthode utilisé pour obtenir du contenu tableau lors du remplacement via une méthode map
-    public function toArray():array
+    final public function toArray():array
     {
         return $this->keyValue(0,$this->getAttr('name'));
     }
@@ -196,7 +193,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // cast
     // retourne la valeur cast
-    public function _cast():string
+    final public function _cast():string
     {
         return $this->name();
     }
@@ -206,7 +203,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // arrayAccess offsetGet fait appel à la méthode row si key est int, ou col si key est string
     // tente de charger la row si non existante
     // lance une exception si rien d'existant
-    public function offsetGet($key)
+    final public function offsetGet($key)
     {
         $return = null;
 
@@ -225,7 +222,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // offsetSet
     // arrayAccess offsetSet n'est pas permis pour la classe
-    public function offsetSet($key,$value):void
+    final public function offsetSet($key,$value):void
     {
         static::throw('arrayAccess','setNotAllowed');
 
@@ -235,7 +232,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // offsetUnset
     // unlink une row ou envoie une exception si row non loader
-    public function offsetUnset($key):void
+    final public function offsetUnset($key):void
     {
         if(is_int($key) && $this->hasRow($key))
         $this->row($key)->unlink();
@@ -249,7 +246,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // arr
     // retourne le tableau de rows
-    protected function arr():array
+    final protected function arr():array
     {
         return $this->rows()->toArray();
     }
@@ -257,7 +254,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // isLinked
     // retourne vrai si la table est lié à l'objet db
-    public function isLinked():bool
+    final public function isLinked():bool
     {
         return ($this->hasDb() && $this->db()->table($this) === $this)? true:false;
     }
@@ -265,7 +262,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // alive
     // retourne vrai si la table existe dans la base de données
-    public function alive():bool
+    final public function alive():bool
     {
         return ($this->db()->showTable($this) === $this->name())? true:false;
     }
@@ -273,7 +270,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // shouldLogSql
     // retourne vrai si une requête pour la table devrait être loggé
-    public function shouldLogSql(string $type):bool
+    final public function shouldLogSql(string $type):bool
     {
         $return = false;
         $log = $this->getAttr(['logSql',$type]);
@@ -287,7 +284,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // attrPermissionRolesObject
     // retourne le rôles courants
-    public function attrPermissionRolesObject():Main\Roles
+    final public function attrPermissionRolesObject():Main\Roles
     {
         return $this->db()->roles();
     }
@@ -296,7 +293,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // isSearchable
     // retourne vrai si la table est cherchable
     // il doit aussi y avoir une colonne cherchable dans la table
-    public function isSearchable():bool
+    final public function isSearchable():bool
     {
         $return = ($this->getAttr('search') === true)? true:false;
 
@@ -316,7 +313,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // isSearchTermValid
     // retourne vrai si le terme de la recherche est valide pour les colonnes cherchables de la table
     // valeur peut être scalar, un tableau à un ou plusieurs niveau
-    public function isSearchTermValid($value):bool
+    final public function isSearchTermValid($value):bool
     {
         return $this->cols()->searchable()->isSearchTermValid($value);
     }
@@ -324,7 +321,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // sameTable
     // retourne vrai si l'objet et celui fourni ont la même table
-    public function sameTable($table):bool
+    final public function sameTable($table):bool
     {
         return ($this->db()->hasTable($table) && $this === $this->db()->table($table))? true:false;
     }
@@ -332,7 +329,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // hasPanel
     // retourne vrai si la table a des panels
-    public function hasPanel():bool
+    final public function hasPanel():bool
     {
         return ($this->getAttr('panel') === true)? true:false;
     }
@@ -340,8 +337,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // setClasse
     // stock l'objet tableClasse
-    // méthode protégé
-    protected function setClasse(TableClasse $classe):void
+    final protected function setClasse(TableClasse $classe):void
     {
         $this->classe = $classe;
 
@@ -351,7 +347,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // classe
     // retourne l'objet tableClasse
-    public function classe():TableClasse
+    final public function classe():TableClasse
     {
         return $this->classe;
     }
@@ -360,8 +356,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // setLink
     // set la tables et db à l'objet
     // envoie une exception si l'objet table existe déjà
-    // méthode protégé
-    protected function setLink(Db $value):void
+    final protected function setLink(Db $value):void
     {
         $this->setDb($value);
 
@@ -374,8 +369,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // setName
     // change le nom de la table après validation
-    // méthode protégé
-    protected function setName(string $name):void
+    final protected function setName(string $name):void
     {
         if(Base\Validate::isTable($name))
         $this->name = $name;
@@ -389,7 +383,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // name
     // retourne le nom de la table
-    public function name():string
+    final public function name():string
     {
         return $this->name;
     }
@@ -401,7 +395,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // si l'attribut contient la clé du type de l'application, ceci aura priorité sur tout le reste (dernier merge)
     // lance onMakeAttr avant d'écrire dans la propriété
     // le merge est unidimensionnel sauf pour la clé cols
-    protected function makeAttr($dbAttr,bool $config=true):void
+    final protected function makeAttr($dbAttr,bool $config=true):void
     {
         $db = $this->db();
         $rowClass = $this->rowClass();
@@ -433,7 +427,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // makeAttrParent
     // gère l'attribut parent si c'est un nom de classe de table ou de row
-    protected function makeAttrParent(?string $return):?string
+    final protected function makeAttrParent(?string $return):?string
     {
         if(is_string($return) && Base\Classe::extendOne(Tables::keyClassExtends(),$return))
         $return = $return::className(true);
@@ -444,8 +438,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // checkAttr
     // fait un check sur les attributs, vérifie parent et priority
-    // méthode protégé
-    protected function checkAttr(array $attr):void
+    final protected function checkAttr(array $attr):void
     {
         if(array_key_exists('parent',$attr))
         {
@@ -471,7 +464,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // parent
     // retourne le nom de parent de la table, ou null
-    public function parent():?string
+    final public function parent():?string
     {
         return $this->getAttr('parent');
     }
@@ -479,7 +472,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // priority
     // retourne le code de priorité de la table
-    public function priority():int
+    final public function priority():int
     {
         return $this->getAttr('priority');
     }
@@ -487,7 +480,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // where
     // retourne le where par défaut pour la table, possible d'append un tableau
-    public function where($value=null):array
+    final public function where($value=null):array
     {
         return $this->commonWhereFilter('where',$value);
     }
@@ -495,7 +488,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // filter
     // retourne le filter par défaut pour la table, possible d'append un tableau
-    public function filter($value=null):array
+    final public function filter($value=null):array
     {
         return $this->commonWhereFilter('filter',$value);
     }
@@ -503,8 +496,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // commonWhereFilter
     // méthode utilisé par where et filter
-    // méthode protégé
-    protected function commonWhereFilter(string $type,$value=null):array
+    final protected function commonWhereFilter(string $type,$value=null):array
     {
         $return = $this->getAttr($type);
         $db = $this->db();
@@ -525,8 +517,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // commonWhereFilterArg
     // méthode utilisé par commonWhereFilter pour traiter la valeur dans attribut ou l'argument value
     // les callables sont gérés
-    // méthode protégé
-    protected function commonWhereFilterArg($return,bool &$true):array
+    final protected function commonWhereFilterArg($return,bool &$true):array
     {
         $db = $this->db();
 
@@ -560,7 +551,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne where ou filter à utiliser si la valeur de l'attribut est true
     // retourne la colonne active à 1 si existante
     // retourne toutes les colonnes requises
-    public function whereFilterTrue():array
+    final public function whereFilterTrue():array
     {
         $return = [];
         $active = $this->colActive();
@@ -583,7 +574,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // whereFilter
     // retourne where et filter combiné
-    public function whereFilter(?array $value=null,string $method='findInSet'):array
+    final public function whereFilter(?array $value=null,string $method='findInSet'):array
     {
         $return = (array) $this->where($value);
         $filter = $this->filter();
@@ -606,7 +597,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // whereAll
     // retourne une variable where a utilisé pour prendre toutes les lignes de la table
-    public function whereAll():array
+    final public function whereAll():array
     {
         $return = [];
         $primary = $this->primary();
@@ -618,7 +609,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // like
     // retourne le pattern like à utiliser pour la table
-    public function like():?string
+    final public function like():?string
     {
         return $this->getAttr('like');
     }
@@ -628,7 +619,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne le longueur minimale pour une recherche dans la table
     // regarde en premier attribut de la table
     // sinon ce sera la plus petite longueur de recherche minimale d'une colonne
-    public function searchMinLength():int
+    final public function searchMinLength():int
     {
         return $this->cols()->searchable()->searchMinLength() ?? $this->getAttr('searchMinLength');
     }
@@ -640,7 +631,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de retourner order sous forme associative ou non, par défaut oui
     // possible aussi de retourner seulement une valeur du tableau
     // envoie une exception si vide
-    public function order($get=true)
+    final public function order($get=true)
     {
         $return = null;
         $order = $this->getAttr('order');
@@ -681,7 +672,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // limit
     // retourne la limite par défaut
-    public function limit():int
+    final public function limit():int
     {
         return $this->getAttr('limit');
     }
@@ -700,7 +691,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // status
     // retourne le tableau de status de la table
     // possible de mettre le résultat en cache
-    public function status(bool $cache=true):array
+    final public function status(bool $cache=true):array
     {
         return $this->cache(__METHOD__,function() {
             return $this->db()->showTableStatus($this);
@@ -710,7 +701,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // engine
     // retourne l'engin utilisé par la table, tel que décrit dans table status
-    public function engine(bool $cache=true):string
+    final public function engine(bool $cache=true):string
     {
         return Base\Arr::get('Engine',$this->status($cache));
     }
@@ -719,7 +710,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // autoIncrement
     // retourne le autoIncrement de la table, tel que décrit dans table status
     // par défaut, n'utilise pas la cache
-    public function autoIncrement(bool $cache=false):int
+    final public function autoIncrement(bool $cache=false):int
     {
         return Base\Arr::get('Auto_increment',$this->status($cache));
     }
@@ -727,7 +718,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // collation
     // retourne la collation de la table, tel que décrit dans table status
-    public function collation(bool $cache=true):string
+    final public function collation(bool $cache=true):string
     {
         return Base\Arr::get('Collation',$this->status($cache));
     }
@@ -736,7 +727,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // updateTime
     // retourne la date de dernière mise à jour de la table
     // retounre un timestamp ou une date formatté
-    public function updateTime($format=null,bool $cache=true)
+    final public function updateTime($format=null,bool $cache=true)
     {
         $return = null;
         $value = Base\Arr::get('Update_time',$this->status($cache));
@@ -754,7 +745,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // primary
     // retourne la clé primaire de la table
-    public function primary():string
+    final public function primary():string
     {
         return $this->db()->primary();
     }
@@ -762,7 +753,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // isColLinked
     // retourne vrai si l'objet col est linked
-    public function isColLinked(Col $col):bool
+    final public function isColLinked(Col $col):bool
     {
         return ($this->cols->in($col))? true:false;
     }
@@ -770,7 +761,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // hasCol
     // retourne vrai si la colonne existe dans la table
-    public function hasCol(...$keys):bool
+    final public function hasCol(...$keys):bool
     {
         return $this->cols()->exists(...$keys);
     }
@@ -778,7 +769,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // isColsReady
     // retourne vrai si l'objet colonne est entièrement chargé
-    public function isColsReady():bool
+    final public function isColsReady():bool
     {
         return ($this->colsReady === true)? true:false;
     }
@@ -787,7 +778,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // isColsEmpty
     // retourne vrai si cols est empty, donc n'a jamais été initialisé
     // ceci permet d'éviter la méthode cols si pas nécessaire
-    public function isColsEmpty():bool
+    final public function isColsEmpty():bool
     {
         return $this->cols->isEmpty();
     }
@@ -795,7 +786,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // setColsReady
     // permet de changer la valeur à l'attribut colsReady
-    protected function setColsReady(bool $value=true):void
+    final protected function setColsReady(bool $value=true):void
     {
         $this->colsReady = $value;
 
@@ -806,7 +797,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // colsNew
     // crée et retourne l'objet cols
     // si les colonnes n'ont pas encore été chargés, elles le seront
-    public function colsNew():Cols
+    final public function colsNew():Cols
     {
         $return = null;
         $class = $this->classe()->cols();
@@ -824,7 +815,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // compte le nombre total de colonne dans la table
     // si count est true, fait une requête dans la base de donnée
     // si cache est true, le résultat de la requête est mis en cache
-    public function colsCount(bool $count=false,bool $cache=false):int
+    final public function colsCount(bool $count=false,bool $cache=false):int
     {
         $return = 0;
 
@@ -848,7 +839,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // colsLoad
     // charge toutes les colonnes de la table, sauf celles ignorés
     // onColsLoad est appelé après la création de toutes les colonnes
-    public function colsLoad():self
+    final public function colsLoad():self
     {
         $this->checkLink();
 
@@ -907,8 +898,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // colMake
     // construit et store un objet colonne
-    // méthode protégé
-    protected function colMake(string $class,string $value,array $dbAttr):Col
+    final protected function colMake(string $class,string $value,array $dbAttr):Col
     {
         $return = new $class($value,$this,$dbAttr);
 
@@ -922,7 +912,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // colAttr
     // retourne un tableau des attributs de la colonne présent dans config de la table
     // peut retourner null, utiliser par dbClasse, a plus de priorité que db/colAttr
-    public function colAttr(string $col):?array
+    final public function colAttr(string $col):?array
     {
         $return = $this->attr['cols'][$col] ?? null;
 
@@ -938,7 +928,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // cols
     // retourne l'objet des colonnes
     // charge les colonnes si l'objet cols est toujours vide
-    public function cols(...$keys):Cols
+    final public function cols(...$keys):Cols
     {
         $return = null;
 
@@ -955,7 +945,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne l'objet d'une colonne
     // peut fournir un index, un tableau qui retournera la première existante, une string, une colonne ou une cellule
     // envoie une exception si non existant
-    public function col($col):Col
+    final public function col($col):Col
     {
         $return = $this->cols()->get($col);
 
@@ -971,7 +961,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // si un pattern est fourni, passe dans base/col addPattern
     // sinon si la colonne n'existe pas rajoute tous les patterns possibles dans le nom
     // sauf les patterns en lien avec la langue et qui n'est pas la langue courante
-    public function colPattern(string $col,?string $pattern=null):?Col
+    final public function colPattern(string $col,?string $pattern=null):?Col
     {
         $return = null;
 
@@ -991,7 +981,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // colActive
     // retourne la colonne active
     // peut retourner null, n'envoie pas d'exception
-    public function colActive():?Col
+    final public function colActive():?Col
     {
         $return = null;
         $active = $this->getAttr('active');
@@ -1006,7 +996,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // colKey
     // retourne la colonne key ou envoie une exception si non existante
     // possible de spécifier une langue, sinon langue courante ou pas de langue
-    public function colKey(?string $lang=null):Col
+    final public function colKey(?string $lang=null):Col
     {
         $return = $this->col($this->getAttr('key'));
 
@@ -1020,7 +1010,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // colName
     // retourne la name key ou envoie une exception si non existante
     // possible de spécifier une langue, sinon langue courante ou pas de langue
-    public function colName(?string $lang=null):Col
+    final public function colName(?string $lang=null):Col
     {
         $return = $this->col($this->getAttr('name'));
 
@@ -1034,7 +1024,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // colContent
     // retourne la colonne content ou envoie une exception si non existante
     // possible de spécifier une langue, sinon langue courante ou pas de langue
-    public function colContent(?string $lang=null):Col
+    final public function colContent(?string $lang=null):Col
     {
         $return = $this->col($this->getAttr('content'));
 
@@ -1047,7 +1037,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // isRowLinked
     // retourne vrai si l'objet row est linked
-    public function isRowLinked(Row $row):bool
+    final public function isRowLinked(Row $row):bool
     {
         return ($this->rows->in($row))? true:false;
     }
@@ -1056,7 +1046,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // hasRow
     // retourne vrai si la ligne existe dans la table
     // si la ligne n'existe pas, elle n'est pas chargé
-    public function hasRow(...$keys):bool
+    final public function hasRow(...$keys):bool
     {
         return $this->rows()->exists(...$keys);
     }
@@ -1066,7 +1056,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si la table ou rows est empty
     // si count est false, n'appele pas la méthode rows
     // cache est true par défaut
-    public function isRowsEmpty(bool $count=false,bool $cache=true):bool
+    final public function isRowsEmpty(bool $count=false,bool $cache=true):bool
     {
         $return = false;
 
@@ -1084,7 +1074,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si rows n'est pas vide
     // si count est false, n'appele pas la méthode rows
     // cache est true par défaut
-    public function isRowsNotEmpty(bool $count=false,bool $cache=true)
+    final public function isRowsNotEmpty(bool $count=false,bool $cache=true)
     {
         return ($this->isRowsEmpty($count,$cache))? false:true;
     }
@@ -1092,7 +1082,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowsNew
     // crée et retourne l'objet rows
-    public function rowsNew():Rows
+    final public function rowsNew():Rows
     {
         $return = null;
         $class = $this->rowsClass();
@@ -1110,7 +1100,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // compte le nombre total de ligne dans la table
     // si count est true, fait une requête dans la base de donnée
     // si cache est true, le résultat de la requête est mis en cache
-    public function rowsCount(bool $count=false,bool $cache=false,$where=null):int
+    final public function rowsCount(bool $count=false,bool $cache=false,$where=null):int
     {
         $return = 0;
 
@@ -1131,7 +1121,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // rowsLoad
     // charge toutes les ligne de la table pas encore chargé
     // retourne l'objet rows
-    public function rowsLoad():Rows
+    final public function rowsLoad():Rows
     {
         $return = $this->rows();
 
@@ -1159,7 +1149,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // rowsValue
     // retourne un tableau avec les idées de row pour un maximum de situation
     // si row est string, utilisé la colKey
-    public function rowsValue($row=null):array
+    final public function rowsValue($row=null):array
     {
         $return = [];
 
@@ -1183,7 +1173,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // si values a un argument et c'est true, retourne le résultat de rowsLoad
     // si values a un argument et c'est false, retourne le résultat de rowsNew
     // si values est un paquet de ids, une seule requête sera faite
-    public function rows(...$values):Rows
+    final public function rows(...$values):Rows
     {
         $return = null;
 
@@ -1225,8 +1215,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowsMakeIds
     // permet d'optimiser le chargement de rows à partir d'un tableau de ids
-    // méthode protégé
-    protected function rowsMakeIds(...$values):void
+    final protected function rowsMakeIds(...$values):void
     {
         if(Base\Arr::onlyNumeric($values))
         {
@@ -1263,7 +1252,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne l'objet rows de la table avec toutes les lignes rafraîchit
     // ou un nouvel objet rows avec les rows donnés en argument rafraîchit
     // les rows non existantes ne sont pas rafraîchit donc pas chargé deux fois
-    public function rowsRefresh(...$values):Rows
+    final public function rowsRefresh(...$values):Rows
     {
         $return = (empty($values))? $this->rows:$this->rowsNew();
 
@@ -1288,7 +1277,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // rowsIn
     // retourne un nouvel objet rows avec les rows existantes donnés en argument
     // les rows non existante ne sont pas chargé
-    public function rowsIn(...$values):Rows
+    final public function rowsIn(...$values):Rows
     {
         return $this->rows()->gets(...$values);
     }
@@ -1297,7 +1286,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // rowsInRefresh
     // retourne un nouvel objet rows avec les rows existantes donnés en argument
     // les rows non existante ne sont pas chargé, mais les rows retournés sont mis à jour
-    public function rowsInRefresh(...$values):Rows
+    final public function rowsInRefresh(...$values):Rows
     {
         return $this->rows()->getsRefresh(...$values);
     }
@@ -1306,7 +1295,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // rowsOut
     // retourne un nouvel objet rows avec les rows non existantes donnés en argument
     // les rows déjà existantes ne sont pas retournés
-    public function rowsOut(...$values):Rows
+    final public function rowsOut(...$values):Rows
     {
         $return = $this->rowsNew();
 
@@ -1334,7 +1323,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // efface toutes les lignes de rows ou seulement celles donnés en argument
     // les lignes sont aussi unlink
     // retourne rows de table
-    public function rowsDelete(...$values):Rows
+    final public function rowsDelete(...$values):Rows
     {
         $this->rows(...$values)->delete();
 
@@ -1346,7 +1335,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // vide l'objet rows ou certaines rows de l'objet
     // les lignes présentes sont unlink
     // retourne rows de table
-    public function rowsUnlink(...$values):Rows
+    final public function rowsUnlink(...$values):Rows
     {
         $this->rows(...$values)->unlink();
 
@@ -1356,7 +1345,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowsVisible
     // retourne un objet rows avec seulement les lignes visibles
-    public function rowsVisible(...$values):Rows
+    final public function rowsVisible(...$values):Rows
     {
         return $this->rows(...$values)->filter(['isVisible'=>true]);
     }
@@ -1364,7 +1353,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowsVisible
     // retourne un objet rows avec seulement les lignes visibles dans l'ordre par défaut de la table
-    public function rowsVisibleOrder(...$values):Rows
+    final public function rowsVisibleOrder(...$values):Rows
     {
         return $this->rowsVisible(...$values)->order($this->order());
     }
@@ -1372,7 +1361,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowsClass
     // retourne la classe à utiliser pour les rows
-    public function rowsClass():string
+    final public function rowsClass():string
     {
         return $this->classe()->rows();
     }
@@ -1380,7 +1369,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowClass
     // retourne la classe à utiliser pour la row
-    public function rowClass():string
+    final public function rowClass():string
     {
         return $this->classe()->row();
     }
@@ -1391,8 +1380,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // tableau data est facultatif
     // retourne la ligne ou null
     // les lignes ne sont pas ajoutés dans l'ordre
-    // méthode protégé
-    protected function rowMake(int $primary,?array $data=null):?Row
+    final protected function rowMake(int $primary,?array $data=null):?Row
     {
         $return = null;
         $exception = false;
@@ -1452,7 +1440,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne le id de la row pour un maximum de situation
     // si row est string, utilisé la colKey
     // si whereTrue est à true, ajoute true dans le where s'il y a une requête à la db
-    public function rowValue($row=null,bool $whereTrue=false):?int
+    final public function rowValue($row=null,bool $whereTrue=false):?int
     {
         $return = null;
         $where = null;
@@ -1495,7 +1483,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // si inOut est true, retourne seulement une ligne déjà chargé
     // si inOut est false, retourne seulement une ligne non chargé
     // retourne null si non existant
-    public function row($row,bool $refresh=false,?bool $inOut=null,bool $whereTrue=false):?Row
+    final public function row($row,bool $refresh=false,?bool $inOut=null,bool $whereTrue=false):?Row
     {
         $return = null;
         $rows = $this->rows();
@@ -1529,7 +1517,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // rowVisible
     // comme row, mais retourne seulement si la row est visible
     // la row est chargé quand même dans rows
-    public function rowVisible($row,bool $refresh=false,?bool $inOut=null,bool $whereTrue=false):?Row
+    final public function rowVisible($row,bool $refresh=false,?bool $inOut=null,bool $whereTrue=false):?Row
     {
         $return = null;
         $row = $this->row($row,$refresh,$inOut,true);
@@ -1543,7 +1531,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowRefresh
     // retourne une row et rafraîchit la si déjà existante
-    public function rowRefresh($row,?bool $inOut=null,bool $whereTrue=false):?Row
+    final public function rowRefresh($row,?bool $inOut=null,bool $whereTrue=false):?Row
     {
         return $this->row($row,true,$inOut,$whereTrue);
     }
@@ -1551,7 +1539,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowIn
     // retourne une row qui existe déjà
-    public function rowIn($row,bool $refresh=false,bool $whereTrue=false):?Row
+    final public function rowIn($row,bool $refresh=false,bool $whereTrue=false):?Row
     {
         return $this->row($row,$refresh,true,$whereTrue);
     }
@@ -1559,7 +1547,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowInRefresh
     // retourne une row qui existe déjà et rafraîchit la
-    public function rowInRefresh($row,bool $whereTrue=false):?Row
+    final public function rowInRefresh($row,bool $whereTrue=false):?Row
     {
         return $this->row($row,true,true,$whereTrue);
     }
@@ -1567,7 +1555,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // rowOut
     // retourne une row qui n'existe pas déjà
-    public function rowOut($row,bool $whereTrue=false):?Row
+    final public function rowOut($row,bool $whereTrue=false):?Row
     {
         return $this->row($row,true,false,$whereTrue);
     }
@@ -1576,7 +1564,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // checkRow
     // retourne l'objet row ou lance une exception si non existant
     // charge la row si non existante
-    public function checkRow($row,bool $refresh=false,?bool $inOut=null,bool $whereTrue=false):Row
+    final public function checkRow($row,bool $refresh=false,?bool $inOut=null,bool $whereTrue=false):Row
     {
         $return = $this->row($row,$refresh,$inOut,$whereTrue);
 
@@ -1590,7 +1578,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // select
     // permet de faire une requête select avec output row sur la table
     // utilise true pour obtenir les valeurs par défaut
-    public function select(...$values):?Row
+    final public function select(...$values):?Row
     {
         return $this->db()->row($this,...$values);
     }
@@ -1599,7 +1587,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // selectPrimary
     // permet de faire une requête select avec output de la clé primaire (id)
     // utilise true pour obtenir les valeurs par défaut
-    public function selectPrimary(...$values):?int
+    final public function selectPrimary(...$values):?int
     {
         return $this->db()->selectPrimary($this,...$values);
     }
@@ -1608,7 +1596,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // selects
     // permet de faire une requête select avec output rows sur la table
     // utilise true pour obtenir les valeurs par défaut
-    public function selects(...$values):Rows
+    final public function selects(...$values):Rows
     {
         return $this->db()->rows($this,...$values);
     }
@@ -1617,7 +1605,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // selectPrimaries
     // permet de faire une requête select avec output tableau avec clés primaires (id)
     // utilise true pour obtenir les valeurs par défaut
-    public function selectPrimaries(...$values):?array
+    final public function selectPrimaries(...$values):?array
     {
         return $this->db()->selectPrimaries($this,...$values);
     }
@@ -1626,7 +1614,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // grab
     // permet de faire une requête selects en utilisant table where et order
     // si visible est true, affiche seulement les lignes qui passe la méthode isVisible
-    public function grab($where=null,$limit=null,bool $visible=false):Rows
+    final public function grab($where=null,$limit=null,bool $visible=false):Rows
     {
         $return = $this->selects($this->where($where),$this->order(),$limit);
 
@@ -1640,7 +1628,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // grabVisible
     // permet de faire une requête selects en utilisant table where et order
     // visible est true
-    public function grabVisible($where=true,$limit=null):Rows
+    final public function grabVisible($where=true,$limit=null):Rows
     {
         $return = null;
         $db = $this->db();
@@ -1653,116 +1641,16 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // insert
     // tente l'insertion d'une nouvelle ligne dans la table
-    // insère les colonnes qui ont un insert ou qui sont dans le tableau set (après avoir passé dans onSet)
-    // les valeurs par défaut des colonnes ne sont pas insérés si option/default est false, donc les valeurs par défaut défini dans col seront ignorés
-    // envoie une exception si une des colonnes est toujours requises
-    // lance le callback onInserted sur la ligne chargée, une fois l'insertion réussie (seulement si option/row est true)
-    // si option/row est true, l'objet ligne sera retourné plutôt que le insertId, c'est le comportement par défaut
-    // option preValidate permet de lancer les tests de prévalidation sur les valeurs, faux par défaut, ce test permet de valider les valeurs en provenance de post
-    // par défaut l'événement est log, la validation a lieu, mais com est false
-    // option reservePrimary permet de connaître l'id de la ligne avant de faire le insert
-    public function insert(array $set=[],?array $option=null)
+    final public function insert(array $set=[],?array $option=null)
     {
-        $return = null;
-        $option = Base\Arr::plus(['row'=>true,'reservePrimary'=>true,'default'=>false,'log'=>true,'preValidate'=>false,'validate'=>true,'finalValidate'=>true,'com'=>false,'onCommitted'=>true],$option);
-        $cols = $this->cols();
-        $primary = $this->primary();
-
-        try
-        {
-            $result = null;
-
-            if(!empty($set) && !$cols->exists(...array_keys($set)))
-            static::throw('columnsNoMatch');
-
-            if($option['reservePrimary'] === true && empty($set[$primary]))
-            {
-                $reserved = $this->reservePrimary();
-                if(is_int($reserved))
-                $set[$primary] = $reserved;
-            }
-
-            $preValidate = true;
-            if($option['preValidate'] === true)
-            {
-                $set = $cols->preValidatePrepare($set);
-                $preValidate = $this->insertPreValidate($cols,$set,$option);
-                if(is_array($preValidate))
-                {
-                    if(empty($preValidate))
-                    static::throw('nothingValid');
-
-                    else
-                    $cols = $cols->gets(...$preValidate);
-                }
-            }
-
-            $set = $cols->inserts($set,$option);
-            $validate = ($option['validate'] === false || $this->insertValidate($cols,$set,$option))? true:false;
-
-            if($preValidate === true && $validate === true)
-            {
-                $finalValidate = ($option['finalValidate'] === false || $this->insertFinalValidate($cols,$set,$option))? true:false;
-
-                if($finalValidate === true)
-                {
-                    $db = $this->db();
-
-                    if($option['log'] === false)
-                    $db->off();
-
-                    $result = $db->insert($this,$set);
-
-                    if($option['log'] === false)
-                    $db->on();
-                }
-            }
-        }
-
-        catch (Main\Contract\Catchable $result)
-        {
-
-        }
-
-        $this->insertAfter($result,$option);
-
-        if(is_int($result))
-        {
-            $return = $result;
-
-            if($option['row'] === true || $option['onCommitted'] === true)
-            {
-                $row = null;
-
-                if(is_int($result) && $result > 0)
-                {
-                    $row = $this->row($return);
-
-                    if($option['onCommitted'] === true && !empty($return) && is_array($set) && !empty($set))
-                    $this->insertOnCommitted($row,$set,$option);
-                }
-
-                if($option['row'] === true)
-                {
-                    $return = $row;
-
-                    if(!$return instanceof Row)
-                    static::throw('databaseError');
-
-                    else
-                    $return->onInserted($option);
-                }
-            }
-        }
-
-        return $return;
+        return Operation\Insert::newOverload($this,$option)->trigger($set);
     }
 
 
     // insertCom
     // méthode utilisé pour générer la communication pour une insertion
     // si le value est associatif, envoie dans com/prepareIn
-    public function insertCom($value,string $type=null,?string $label=null,?array $replace=null,?array $attr=null,bool $prepend=false):Main\Com
+    final public function insertCom($value,string $type=null,?string $label=null,?array $replace=null,?array $attr=null,bool $prepend=false):Main\Com
     {
         $return = $this->db()->com();
 
@@ -1800,161 +1688,9 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     }
 
 
-    // insertPreValidate
-    // s'occupe de la pré-validation avant l'opération insert
-    // peut ajouter les erreurs à l'objet de communication ou envoyer une exception si strict est true
-    // retourne true ou le tableau des colonnes qui ont passsés le test prévalidate
-    // méthode protégé
-    protected function insertPreValidate(Cols $cols,array $set,?array $option=null)
-    {
-        $return = true;
-        $option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
-        $preValidate = $cols->preValidate($set,$option['com']);
-
-        if(!empty($preValidate))
-        {
-            $return = Base\Arr::valuesStrip(array_keys($preValidate),$cols->names());
-
-            if($option['com'] === true)
-            $this->insertCom($preValidate,null,null,null,['table']);
-
-            elseif($option['strict'] === true)
-            static::throw('invalid',$this,...array_keys($preValidate));
-        }
-
-        return $return;
-    }
-
-
-    // insertValidate
-    // s'occupe de la validation avant l'opération insert
-    // peut ajouter les erreurs à l'objet de communication ou envoyer une exception si strict est true
-    // retourne un booléean
-    // méthode protégé
-    protected function insertValidate(Cols $cols,array $set,?array $option=null):bool
-    {
-        $return = true;
-        $option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
-        $completeValidation = $cols->completeValidation($set,$option['com']);
-
-        if(!empty($completeValidation))
-        {
-            $return = false;
-
-            if($option['com'] === true)
-            $this->insertCom($completeValidation,null,null,null,['table']);
-
-            elseif($option['strict'] === true)
-            static::throw($this,$completeValidation);
-        }
-
-        return $return;
-    }
-
-
-    // insertFinalValidate
-    // s'occupe de la validation finale avant l'opération insert
-    // utilise la classe row
-    // peut ajouter les erreurs à l'objet de communication ou envoyer une exception si strict est true
-    // retourne un booléean
-    // méthode protégé
-    protected function insertFinalValidate(Cols $cols,array $set,?array $option=null):bool
-    {
-        $return = true;
-        $option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
-        $rowClass = $this->rowClass();
-        $finalValidation = $rowClass::insertFinalValidate($set,$option);
-
-        if(!empty($finalValidation))
-        {
-            $return = false;
-
-            if($option['com'] === true)
-            $this->insertCom($finalValidation,null,null,null,['table']);
-
-            elseif($option['strict'] === true)
-            static::throw($this,$finalValidation);
-        }
-
-        return $return;
-    }
-
-
-    // insertAfter
-    // gère la communication après la requête insert si option com est true
-    // si option com est false et qu'il y a une exception attrapable, renvoie
-    // méthode protégé
-    protected function insertAfter($result,?array $option=null):void
-    {
-        $option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
-
-        if($option['com'] === true)
-        {
-            $label = null;
-            $attr = [];
-            $in = [];
-            $lang = $this->db()->lang();
-            $name = $this->name();
-
-            if(is_int($result) && $result > 0)
-            {
-                $key = ($lang->existsCom('pos',"insert/$name/success"))? $name:'*';
-                $in[] = ['pos',"insert/$key/success"];
-                $label = $this->db()->lang()->rowLabel($result,$this->name());
-                $attr[] = 'row';
-                $attr['data']['primary'] = $result;
-            }
-
-            else
-            {
-                $attr[] = 'table';
-
-                if($result instanceof Main\Contract\Catchable)
-                {
-                    $key = ($lang->existsCom('neg',"insert/$name/exception"))? $name:'*';
-                    $in[] = ['neg',"insert/$key/exception",['exception'=>$result->classFqcn(),'message'=>$result->getMessageArgs($lang)]];
-                    $result->onCatched(['com'=>false]);
-                }
-
-                else
-                {
-                    $key = ($lang->existsCom('neg',"insert/$name/failure"))? $name:'*';
-                    $in[] = ['neg',"insert/$key/failure"];
-                }
-            }
-
-            $this->insertCom($in,null,$label,null,$attr,true);
-        }
-
-        elseif($result instanceof Main\Contract\Catchable)
-        throw $result;
-
-        elseif($option['strict'] === true && !(is_int($result) && $result > 0))
-        static::throw('insertFailed',$result);
-
-        return;
-    }
-
-
-    // insertOnCommitted
-    // lance le callback onCommitted sur toutes les colonnes
-    protected function insertOnCommitted(Row $row,array $set,array $option):void
-    {
-        $cells = $row->cells(...array_keys($set));
-
-        foreach ($cells as $key => $cell)
-        {
-            $v = $set[$key];
-            $cell->col()->onCommitted($cell,true,$option);
-        }
-
-        return;
-    }
-
-
     // label
     // retourne le label de la table
-    public function label($pattern=null,?string $lang=null,?array $option=null):?string
+    final public function label($pattern=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $obj = $this->db()->lang();
@@ -1972,7 +1708,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // description
     // retourne la description de la table
-    public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
+    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $obj = $this->db()->lang();
@@ -1994,7 +1730,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // allowsRelation
     // retourne vrai si la table supporte des relations
-    public function allowsRelation():bool
+    final public function allowsRelation():bool
     {
         return (!empty($this->getAttr('relation')))? true:false;
     }
@@ -2003,7 +1739,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // relation
     // crée l'objet de relation de table ou retourne l'objet si déjà existant
     // ne peut pas retourner null
-    public function relation():TableRelation
+    final public function relation():TableRelation
     {
         $return = $this->relation;
 
@@ -2018,7 +1754,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // fait une requête dans la table via une string contenant des segments
     // retourne un tableau avec la clé comme id et la valeur comme string avec segment
     // si get est true, les valeurs de chaque segment sont passés dans le onGet de la colonne
-    public function segment(string $key,bool $get=false,...$values):?array
+    final public function segment(string $key,bool $get=false,...$values):?array
     {
         $return = [];
 
@@ -2050,7 +1786,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // lorsque l'appel se fait dans table, une requete est fait à la base de données
     // utiliser keyValue dans l'objet rows pour retourner seulement les lignes chargés
     // si get est true, les valeurs du tableau sont passés dans le onGet de la colonne
-    public function keyValue($key,$value,bool $get=false,...$values):?array
+    final public function keyValue($key,$value,bool $get=false,...$values):?array
     {
         $return = [];
         $key = $this->col($key);
@@ -2061,7 +1797,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         {
             foreach ($return as $k => $v)
             {
-                $return[$k] = $value->onGet($v,[]);
+                $return[$k] = $value->get($v);
             }
         }
 
@@ -2074,7 +1810,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de changer le mode en deuxième argument, par défaut c'est b,i|like
     // retourne un tableau avec les ids et non pas un objet rows
     // envoie une exception si aucune colonne cherchable
-    public function search($search,?array $where=null,?array $whereAfter=null,?array $option=null)
+    final public function search($search,?array $where=null,?array $whereAfter=null,?array $option=null)
     {
         $return = [];
         $option = Base\Arr::plus(['what'=>null,'method'=>null,'cols'=>null,'output'=>'columns','searchSeparator'=>null,'searchTermValid'=>true],$option);
@@ -2125,7 +1861,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // delete
     // fait une requête delete sur la table
     // les rows effacés sont unlink après le delete
-    public function delete(...$values):?int
+    final public function delete(...$values):?int
     {
         $return = null;
         $db = $this->db();
@@ -2144,7 +1880,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // deleteTrim
     // trim la table après une limite
     // les rows effacés sont unlinks
-    public function deleteTrim(int $limit):?int
+    final public function deleteTrim(int $limit):?int
     {
         $return = null;
         $db = $this->db();
@@ -2164,86 +1900,9 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // truncate la table
     // les rows sont unlink
     // par défaut l'événement est log et com est false
-    public function truncate(?array $option=null):bool
+    final public function truncate(?array $option=null):bool
     {
-        $return = false;
-        $option = Base\Arr::plus(['log'=>true,'com'=>false],$option);
-        $db = $this->db();
-        $result = null;
-
-        try
-        {
-            if($option['log'] === false)
-            $db->off();
-
-            $result = $db->truncate($this);
-
-            if($option['log'] === false)
-            $db->on();
-        }
-
-        catch (Main\Contract\Catchable $result)
-        {
-
-        }
-
-        finally
-        {
-            $this->truncateAfter($result,$option);
-            $this->onTruncated($option);
-            $this->rowsUnlink();
-            $return = true;
-        }
-
-        return $return;
-    }
-
-
-    // truncateAfter
-    // gère la communication après la requête truncate si option com est true
-    // si option com est false et qu'il y a une exception attrapable, renvoie
-    // méthode protégé
-    protected function truncateAfter($result,?array $option=null):void
-    {
-        $option = Base\Arr::plus(['com'=>false,'strict'=>true],$option);
-
-        if($option['com'] === true)
-        {
-            $attr = ['table','truncate','data'=>['table'=>$this,'action'=>'truncate']];
-            $in = [];
-            $lang = $this->db()->lang();
-            $name = $this->name();
-
-            if($result instanceof Main\Contract\Catchable)
-            {
-                $key = ($lang->existsCom('neg',"truncate/$name/exception"))? $name:'*';
-                $in[] = ['neg',"truncate/$key/exception",['exception'=>$result->classFqcn(),'message'=>$result->getMessageArgs($lang)]];
-                $result->onCatched(['com'=>false]);
-            }
-
-            elseif($result instanceof \PDOStatement)
-            {
-                $key = ($lang->existsCom('pos',"truncate/$name/success"))? $name:'*';
-                $in[] = ['pos',"truncate/$key/success"];
-            }
-
-            else
-            {
-                $key = ($lang->existsCom('neg',"truncate/$name/system"))? $name:'*';
-                $in[] = ['neg',"truncate/$key/system"];
-            }
-
-            if(!empty($in))
-            $this->db()->com()->neutral($this->label(),null,$attr,...$in);
-        }
-
-        elseif($result instanceof Main\Contract\Catchable)
-        throw $result;
-
-        elseif($option['strict'] === true && !$result instanceof \PDOStatement)
-        static::throw('truncateFailed');
-
-        return;
+        return Operation\Truncate::newOverload($this,$option)->trigger();
     }
 
 
@@ -2252,7 +1911,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // la ligne est crée et effacée
     // retourne null si une des lignes n'a pas de valeur par défaut
     // par défaut false est false, donc l'insertion et suppression n'est pas loggé
-    public function reservePrimary(?array $option=null):?int
+    final public function reservePrimary(?array $option=null):?int
     {
         $return = null;
         $option = Base\Arr::plus(['log'=>false],$option);
@@ -2277,7 +1936,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // alter
     // alter la table
-    public function alter():self
+    final public function alter():self
     {
         static::throw('notAllowed');
 
@@ -2287,7 +1946,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // alterAutoIncrement
     // change le autoIncrement de la table
-    public function alterAutoIncrement(int $value=0):self
+    final public function alterAutoIncrement(int $value=0):self
     {
         $this->db()->alterAutoIncrement($this,$value);
 
@@ -2297,7 +1956,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // addKey
     // ajoute une clé à la table
-    public function addKey():self
+    final public function addKey():self
     {
         static::throw('notAllowed');
 
@@ -2307,7 +1966,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // addCol
     // ajoute une colonne à la table
-    public function addCol():self
+    final public function addCol():self
     {
         static::throw('notAllowed');
 
@@ -2317,7 +1976,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // drop
     // drop la table
-    public function drop():self
+    final public function drop():self
     {
         static::throw('notAllowed');
 
@@ -2327,7 +1986,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // dropKey
     // drop une clé de la table
-    public function dropKey():self
+    final public function dropKey():self
     {
         static::throw('notAllowed');
 
@@ -2339,7 +1998,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne un tableau unidimensionnel sur le total des colonnes, lignes et cellules chargés pour la table
     // si count est true, compte le nombre total de ligne et de colonne, pas seulement celle chargé
     // si count et cache sont true, retourne les counts en cache si existant
-    public function total(bool $count=false,bool $cache=false):array
+    final public function total(bool $count=false,bool $cache=false):array
     {
         $return = [];
         $row = $this->rowsCount($count,$cache);
@@ -2356,7 +2015,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne un tableau multidimensionnel qui contient des informations sur les colonnes, lignes et cellules chargés pour la table
     // si l'objet colonne est vide, la table est vide et ne charge pas toutes les colonnes
     // retourne aussi les informations sur le statut de la colonne
-    public function info(bool $count=false,bool $cache=false):array
+    final public function info(bool $count=false,bool $cache=false):array
     {
         $return = [];
 
@@ -2384,7 +2043,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // support pour what, search, where, filter, in, notIn, order, direction, page et limit
     // parfait pour une navigation pour page general
     // note: order id asc est ajouter par défaut, ceci avant de forcer un deuxième sort si la variable order est identique (ceci peut crée un problème dans le calcul de l'index pour navigation specifique)
-    public function sql(?array $array=null,?array $option=null):Sql
+    final public function sql(?array $array=null,?array $option=null):Sql
     {
         $return = $this->db()->sql()->rows($this);
         $primary = $this->primary();
@@ -2457,7 +2116,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // hierarchy
     // retourne la hierarchie d'une table à partir d'une colonne
-    public function hierarchy($col,bool $exists=true,$where=null,$order=null):array
+    final public function hierarchy($col,bool $exists=true,$where=null,$order=null):array
     {
         $return = [];
         $col = $this->col($col);
@@ -2478,7 +2137,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // sourceRewind
     // ramène le pointeur de la source au début
-    public function sourceRewind():void
+    final public function sourceRewind():void
     {
         return;
     }
@@ -2487,7 +2146,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // sourceOne
     // retourne une entrée de la source
     // i agit comme référence
-    public function sourceOne($offset=true,$length=true,int &$i,?array $option=null)
+    final public function sourceOne($offset=true,$length=true,int &$i,?array $option=null)
     {
         $return = null;
         $limit = null;
@@ -2513,7 +2172,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // targetInsert
     // fait une insertion sur la table, utilisé à partir de main/importer
-    public function targetInsert(array $data,?array $option=null):bool
+    final public function targetInsert(array $data,?array $option=null):bool
     {
         $return = false;
         $option = Base\Arr::plus($option,['row'=>false]);
@@ -2532,7 +2191,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // targetUpdate
     // fait une mise à jour sur la table, utilisé à partir de main/importer
-    public function targetUpdate(array $data,int $primary,?array $option=null):bool
+    final public function targetUpdate(array $data,int $primary,?array $option=null):bool
     {
         $return = false;
         $row = $this->row($primary);
@@ -2541,7 +2200,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         if(!empty($row))
         {
             $db->off();
-            $update = $row->setUpdateChangedIncludedValid($data);
+            $update = $row->setUpdateValid($data);
             $db->on();
             $row->unlink();
 
@@ -2555,7 +2214,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // targetDelete
     // fait une suppresion sur la table, utilisé à partir de main/importer
-    public function targetDelete(int $primary,?array $option=null):bool
+    final public function targetDelete(int $primary,?array $option=null):bool
     {
         $return = false;
         $row = $this->row($primary);
@@ -2577,7 +2236,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // targetTruncate
     // vide la table, utilisé à partir de main/importer
-    public function targetTruncate(?array $option=null):bool
+    final public function targetTruncate(?array $option=null):bool
     {
         return $this->truncate($option);
     }
@@ -2585,7 +2244,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // isIgnored
     // retourne vrai si la table est ignoré
-    public static function isIgnored():bool
+    final public static function isIgnored():bool
     {
         return (!empty(static::$config['ignore']) && static::$config['ignore'] === true)? true:false;
     }
@@ -2593,7 +2252,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // initReplaceMode
     // retourne le tableau des clés à ne pas merger recursivement
-    public static function initReplaceMode():array
+    final public static function initReplaceMode():array
     {
         return static::$replaceMode ?? [];
     }
@@ -2601,7 +2260,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
-    public static function getOverloadKeyPrepend():?string
+    final public static function getOverloadKeyPrepend():?string
     {
         return (static::class !== self::class && !Base\Fqcn::sameName(static::class,self::class))? 'Table':null;
     }
