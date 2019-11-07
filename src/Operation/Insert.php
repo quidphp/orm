@@ -8,9 +8,9 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm\Operation;
-use Quid\Orm;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
+use Quid\Orm;
 
 // insert
 // class used for a insert operation on a table
@@ -29,8 +29,8 @@ class Insert extends Orm\TableOperation
         'onCommitted'=>true,
         'strict'=>true
     ];
-    
-    
+
+
     // trigger
     // tente l'insertion d'une nouvelle ligne dans la table
     // insère les colonnes qui ont un insert ou qui sont dans le tableau set (après avoir passé dans onSet)
@@ -113,7 +113,7 @@ class Insert extends Orm\TableOperation
             $return = $result;
             $outputRow = $this->getAttr('row');
             $onCommitted = $this->getAttr('onCommitted');
-            
+
             if($outputRow === true || $onCommitted === true)
             {
                 $row = null;
@@ -145,8 +145,8 @@ class Insert extends Orm\TableOperation
 
         return $return;
     }
-    
-    
+
+
     // preValidate
     // s'occupe de la pré-validation avant l'opération insert
     // peut ajouter les erreurs à l'objet de communication ou envoyer une exception si strict est true
@@ -292,7 +292,7 @@ class Insert extends Orm\TableOperation
         {
             $v = $set[$key];
             $col = $cell->col();
-            
+
             Base\Call::bindTo($col,function() use($cell,$attr) {
                 $this->onCommitted($cell,true,$attr);
             });

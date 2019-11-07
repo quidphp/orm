@@ -8,9 +8,9 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm\Operation;
-use Quid\Orm;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
+use Quid\Orm;
 
 // delete
 // class used for a delete operation on a table row
@@ -22,8 +22,8 @@ class Delete extends Orm\RowOperation
         'com'=>false,
         'strict'=>true
     ];
-    
-    
+
+
     // trigger
     // efface une ligne de la base de donnée et délie l'objet de table
     // la ligne est ensuite empty et mis dans un état inutilisable
@@ -37,11 +37,11 @@ class Delete extends Orm\RowOperation
         $db = $this->db();
         $result = null;
         $attr = $this->attr();
-        
+
         try
         {
             $log = $this->getAttr('log');
-            
+
             if(!$row->isDeleteable($attr))
             static::catchable(null,'notDeleteable',$row);
 
@@ -82,7 +82,7 @@ class Delete extends Orm\RowOperation
 
         return $return;
     }
-    
+
 
     // after
     // gère la communication après la requête delete si com est true
@@ -95,7 +95,7 @@ class Delete extends Orm\RowOperation
             $row = $this->row();
             $name = $row->tableName();
             $in = [];
-            
+
             if($result === 1)
             {
                 $key = ($lang->existsCom('pos',"delete/$name/success"))? $name:'*';
@@ -138,20 +138,20 @@ class Delete extends Orm\RowOperation
 
         return;
     }
-    
-    
+
+
     // com
     // méthode utilisé pour générer la communication pour une suppression
     // si le value est associatif, envoie dans com/prepareIn
     final protected function com(array $value,?string $label=null,?array $replace=null,?array $attr=null,bool $prepend=false):void
     {
         $com = $this->db()->com();
-        
+
         if(!empty($value))
         {
             $row = $this->row();
             $table = $this->table();
-            
+
             $label = ($label === null)? $row->label():$label;
             $attr = Base\Attr::append(['row','delete','data'=>['table'=>$table,'primary'=>$row,'action'=>'delete']],$attr);
 

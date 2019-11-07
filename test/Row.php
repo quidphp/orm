@@ -227,7 +227,7 @@ class Row extends Base\Test
         assert($rowz->isLinked());
         $rowz->refresh();
         assert(!$rowz->isLinked());
-        
+
         // duplicate
         assert($row->duplicate() instanceof Orm\Row);
         assert($row->duplicate() !== $row);
@@ -240,7 +240,7 @@ class Row extends Base\Test
         // set
         assert($row->set(['active'=>1]) === $row);
         assert($row->update() === 1);
-        
+
         // preValidate
         assert($row->preValidate(['date'=>'a','active'=>['a']],['strict'=>false,'com'=>true]) === ['active'=>['a']]);
         assert(strlen($row->db()->com()->flush()) === 253);
@@ -270,7 +270,7 @@ class Row extends Base\Test
         assert(!$row->hasChanged());
         assert($row->update() === 0);
         $row['active'] = null;
-        
+
         // updateChanged
         assert($row->updateChanged() === 1);
         $row['name_en'] = 'blaz';
@@ -285,7 +285,7 @@ class Row extends Base\Test
         assert(strlen($row->db()->com()->flush()) === 178);
         $row['active'] = 1;
         assert($row->updateValid() === 1);
-        
+
         // updateCom
 
         // delete

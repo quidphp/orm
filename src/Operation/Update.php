@@ -8,9 +8,9 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm\Operation;
-use Quid\Orm;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
+use Quid\Orm;
 
 // update
 // class used for an update operation on a table row
@@ -27,11 +27,11 @@ class Update extends Orm\RowOperation
         'include'=>true // ceci est utilisé pour updateChanged
     ];
 
-    
+
     // types
-    protected static $types = array('update','updateChanged','updateValid'); // types de processus possible
-    
-    
+    protected static $types = ['update','updateChanged','updateValid']; // types de processus possible
+
+
     // trigger
     // lance l'opération update
     // le type doit être fourni
@@ -40,11 +40,11 @@ class Update extends Orm\RowOperation
         $return = null;
         static::checkType($type);
         $return = $this->$type();
-        
+
         return $return;
     }
-    
-    
+
+
     // update
     // sauve les cellules de la ligne ayant changés
     // toutes les cellules sont passés dans update avant
@@ -73,11 +73,11 @@ class Update extends Orm\RowOperation
     {
         $return = null;
         $include = $this->getAttr('include');
-        
+
         $attr = $this->attr();
         $cells = $this->cells();
         $changed = $cells->changed($include,$attr);
-        
+
         if($changed->isNotEmpty())
         {
             $cells->update($attr);
@@ -115,7 +115,7 @@ class Update extends Orm\RowOperation
                     $this->setAttr('partial',true);
                     $attr = $this->attr();
                 }
-                
+
                 $cells = $cells->update($attr)->changed(true,$attr);
 
                 foreach ($cells as $key => $cell)
@@ -256,7 +256,7 @@ class Update extends Orm\RowOperation
             else
             {
                 $log = $this->getAttr('log');
-                
+
                 if($log === false)
                 $db->off();
 
@@ -281,18 +281,18 @@ class Update extends Orm\RowOperation
                 Base\Call::bindTo($row,function() use($result,$attr,$set) {
                     if($result === 1)
                     $this->onInserted($attr);
-                    
+
                     $this->cellsRefresh($set);
                 });
-                
+
                 $return = $result;
             }
         }
 
         return $return;
     }
-    
-    
+
+
     // after
     // gère la communication après la requête update si com est true
     // si com est false et qu'il y a une exception attrapable, renvoie
@@ -351,7 +351,7 @@ class Update extends Orm\RowOperation
         elseif($result instanceof Main\Contract\Catchable)
         throw $result;
 
-        elseif($this->getAttr('strict')=== true && !in_array($result,[0,1],true))
+        elseif($this->getAttr('strict') === true && !in_array($result,[0,1],true))
         static::throw('updateFailed',$result,'strictMode');
 
         if($this->getAttr('onCommitted') === true && in_array($result,[0,1],true) && is_array($set) && !empty($set))
@@ -367,7 +367,7 @@ class Update extends Orm\RowOperation
     {
         $cells = $this->cells(...array_keys($set));
         $attr = $this->attr();
-        
+
         foreach ($cells as $key => $cell)
         {
             if($cell->hasChanged())
@@ -380,15 +380,15 @@ class Update extends Orm\RowOperation
 
         return;
     }
-    
-    
+
+
     // checkType
     // envoie une exception si le type donné en argument n'existe pas
-    final public static function checkType(string $value):void 
+    final public static function checkType(string $value):void
     {
         if(!in_array($value,static::$types,true))
         static::throw($value);
-        
+
         return;
     }
 }

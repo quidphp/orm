@@ -830,7 +830,7 @@ class Cell extends Main\Root
 
         if(is_scalar($value))
         $value = Base\Scalar::cast($value);
-        
+
         $col = $this->col();
         $cell = $this;
         $onGet = Base\Call::bindTo($col,function() use($cell,$option) {
@@ -922,7 +922,7 @@ class Cell extends Main\Root
         $col = $this->col();
         $row = $this->row();
         $cell = $this;
-        
+
         if(!empty($option['preValidate']) && $option['preValidate'] === true)
         {
             $value = $col->preValidatePrepare($value);
@@ -930,7 +930,7 @@ class Cell extends Main\Root
             if(is_array($preValidate))
             static::throw('preValidate',$this->name(),$preValidate);
         }
-        
+
         $onSet = Base\Call::bindTo($col,function() use($value,$row,$cell,$option) {
             return $this->onSet($value,$row->get(),$cell,$option);
         });
@@ -941,7 +941,7 @@ class Cell extends Main\Root
         $value = $col->autoCast($value);
 
         $this->value['change'] = $value;
-        
+
         Base\Call::bindTo($col,function() use($cell) {
             $this->onCellSet($cell);
         });
@@ -966,7 +966,7 @@ class Cell extends Main\Root
 
         $this->clearCommittedCallback();
         $this->clearException();
-        
+
         $cell = $this;
         Base\Call::bindTo($col,function() use($cell) {
             $this->onCellInit($cell);
@@ -993,7 +993,7 @@ class Cell extends Main\Root
     {
         if(array_key_exists('change',$this->value))
         unset($this->value['change']);
-        
+
         $col = $this->col();
         $cell = $this;
         Base\Call::bindTo($col,function() use($cell) {
@@ -1060,7 +1060,7 @@ class Cell extends Main\Root
         $col = $this->col();
         $cell = $this;
         $option = (array) $option;
-        
+
         Base\Call::bindTo($col,function() use($cell,$option) {
             $this->onDelete($cell,$option);
         });

@@ -720,7 +720,7 @@ class Row extends Main\ArrObj
         return $this;
     }
 
-    
+
     // duplicate
     // permet de dupliquer la ligne
     final public function duplicate(?array $option=null)
@@ -739,11 +739,11 @@ class Row extends Main\ArrObj
             {
                 $value = $cell->value();
                 $col = $cell->col();
-                
+
                 $value = Base\Call::bindTo($col,function() use($value,$rowGet,$cell,$option) {
                     return $this->onDuplicate($value,$rowGet,$cell,$option);
                 });
-                
+
                 $keyValue[$key] = $value;
             }
 
@@ -755,8 +755,8 @@ class Row extends Main\ArrObj
 
         return $return;
     }
-    
-    
+
+
     // get
     // retourne un tableau avec les valeurs get des cellules
     final public function get(...$keys):array
@@ -789,8 +789,8 @@ class Row extends Main\ArrObj
 
         return $this;
     }
-    
-    
+
+
     // preValidate
     // fait la prévalidation des données sur un tableau
     // option com et strict
@@ -826,7 +826,7 @@ class Row extends Main\ArrObj
         $return = null;
         $option = Base\Arr::plus(['log'=>true,'com'=>false,'preValidate'=>false],$option);
         Operation\Update::checkType($method);
-        
+
         try
         {
             $this->set($set,$option);

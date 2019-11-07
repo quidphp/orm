@@ -8,9 +8,9 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm\Operation;
-use Quid\Orm;
-use Quid\Main;
 use Quid\Base;
+use Quid\Main;
+use Quid\Orm;
 
 // truncate
 // class used for a truncate operation on a table
@@ -22,8 +22,8 @@ class Truncate extends Orm\TableOperation
         'com'=>false,
         'strict'=>true
     ];
-    
-    
+
+
     // trigger
     // truncate la table, les rows sont unlink
     // par défaut l'événement est log et com est false
@@ -34,11 +34,11 @@ class Truncate extends Orm\TableOperation
         $db = $this->db();
         $result = null;
         $attr = $this->attr();
-        
+
         try
         {
             $log = $this->getAttr('log');
-            
+
             if($log === false)
             $db->off();
 
@@ -56,19 +56,19 @@ class Truncate extends Orm\TableOperation
         finally
         {
             $this->after($result,$attr);
-            
+
             Base\Call::bindTo($table,function() use($attr) {
                 $this->onTruncated($attr);
             });
-            
+
             $table->rowsUnlink();
             $return = true;
         }
 
         return $return;
     }
-    
-    
+
+
     // after
     // gère la communication après la requête truncate si com est true
     // si com est false et qu'il y a une exception attrapable, renvoie
@@ -80,7 +80,7 @@ class Truncate extends Orm\TableOperation
             $name = $table->name();
             $db = $this->db();
             $lang = $db->lang();
-            
+
             $attr = ['table','truncate','data'=>['table'=>$table,'action'=>'truncate']];
             $in = [];
 
