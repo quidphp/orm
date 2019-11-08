@@ -537,10 +537,10 @@ class Pdo extends Base\Test
         // selectDistinct
         assert($pdo->selectDistinct('name_en',$table) === ['james','james2','james3']);
         assert($pdo->selectDistinct('dateAdd',$table) === [10,11]);
-        
+
         // selectCountDistinct
         assert($pdo->selectCountDistinct('dateAdd',$table) === 2);
-        
+
         // selectColumn
         assert($pdo->selectColumn('id',$table,null,['id'=>'desc']) === 3);
         assert($pdo->selectColumn(['dateAdd','sum()'],$table) === 31);

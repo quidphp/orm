@@ -298,11 +298,11 @@ class Col extends Base\Test
         assert($col->tag(['tag'=>'div']) === 'div');
         assert($col->tag(['tag'=>'textarea']) === 'textarea');
         assert($col->tag(['tag'=>'inputEmail']) === 'inputEmail');
-        
+
         // isPlainTag
         assert($col->isPlainTag(['tag'=>'div']));
         assert(!$email->isPlainTag());
-        
+
         // isFormTag
         assert($email->isFormTag());
         assert($col->isFormTag());
@@ -423,15 +423,15 @@ class Col extends Base\Test
         assert($col->duplicate('james',[2]) === [1]);
         assert($col->duplicate('james',1) === []);
         assert($col->duplicate(null) === []);
-        
+
         // distinctMethod
-        
+
         // distinct
         assert($col->distinct() === ['james','james2']);
-        
+
         // distinctCount
         assert($col->distinctCount() === 2);
-        
+
         // replace
         assert($email->replace('gmail.com','hotmail.com') === 2);
         assert($email->replace('gmail.com','hotmail.com') === 0);

@@ -513,7 +513,7 @@ class Col extends Main\Root
     {
         $option = Base\Arr::plus(['mb'=>true,'stripTags'=>true],$option);
         $excerpt = $this->getAttr('excerpt');
-        
+
         if(is_int($excerpt))
         {
             if(is_array($return))
@@ -883,15 +883,15 @@ class Col extends Main\Root
         return $return;
     }
 
-    
+
     // isPlainTag
     // retourne vrai si la tag est plain
-    final public function isPlainTag(?array $attr=null,bool $complex=false):bool 
+    final public function isPlainTag(?array $attr=null,bool $complex=false):bool
     {
         return ($this->tag($attr,$complex) === 'div')? true:false;
     }
-    
-    
+
+
     // isFormTag
     // retourne vrai si la tag lié à la colonne en est une de formulaire
     final public function isFormTag(?array $attr=null,bool $complex=false):bool
@@ -1361,10 +1361,10 @@ class Col extends Main\Root
         return $return;
     }
 
-    
+
     // distinctMethod
     // méthode protégé utilisé par distinct et distinctCount
-    final protected function distinctMethod(string $method,$notEmpty=true,$where=null,$order=null) 
+    final protected function distinctMethod(string $method,$notEmpty=true,$where=null,$order=null)
     {
         $return = null;
         $table = $this->table();
@@ -1383,8 +1383,8 @@ class Col extends Main\Root
 
         return $return;
     }
-    
-    
+
+
     // distinct
     // retourne un tableau des valeurs distincts pour la colonne
     // par défaut ne retourne pas les valeurs distinctes vides
@@ -1393,15 +1393,15 @@ class Col extends Main\Root
         return $this->distinctMethod('selectDistinct',$notEmpty,$where,$order);
     }
 
-    
+
     // distinctCount
     // retourne le nombre de valeur distinctes trouvés dans la colonne
     final public function distinctCount($notEmpty=true,$where=null,$order=null):int
     {
         return $this->distinctMethod('selectCountDistinct',$notEmpty,$where,$order);
     }
-    
-    
+
+
     // replace
     // permet de faire un remplacement sur toutes les valeurs d'une colonne
     // si where est true, met primary >= 1

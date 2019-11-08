@@ -283,7 +283,7 @@ class Syntax extends Base\Test
         assert(empty($syntax::what([['what','sum']])['cast']));
         assert($syntax::what([['(SELECT * FROM TABLE)','test']])['sql'] === '(SELECT * FROM TABLE) AS `test`');
         assert($syntax::what(['count()'=>'[DISTINCT `test`]'])['sql'] === 'COUNT(DISTINCT `test`)');
-        
+
         // whatPrepare
         assert($syntax::whatPrepare(['test','ok','*']) === [['test'],['ok'],['*']]);
         assert($syntax::whatPrepare(['test'=>'james']) === [['james','test']]);
@@ -800,10 +800,10 @@ class Syntax extends Base\Test
 
         // makeSelectDistinct
         assert($syntax::makeSelectDistinct('col',['james',2])['sql'] === 'SELECT DISTINCT `col` FROM `james` WHERE `id` = 2');
-        
+
         // makeSelectCountDistinct
         assert($syntax::makeSelectCountDistinct('col',['james',1])['sql'] === 'SELECT COUNT(DISTINCT `col`) FROM `james` WHERE `id` = 1');
-        
+
         // makeSelectColumn
         assert($syntax::makeSelectColumn('col',['james',2])['sql'] === 'SELECT `col` FROM `james` WHERE `id` = 2');
         assert($syntax::makeSelectColumn(['what','sum()'],['james'])['sql'] === 'SELECT SUM(`what`) FROM `james`');

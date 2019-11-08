@@ -1719,7 +1719,7 @@ class Pdo extends Main\Root
         return $this->query($this->syntaxCall('makeSelectDistinct',$what,$values,$this->getSqlOption()),'columns');
     }
 
-    
+
     // selectCountDistinct
     // construit et soumet une requête select avec output column
     // what est distinct what (passé à la méthode count)
@@ -1727,8 +1727,8 @@ class Pdo extends Main\Root
     {
         return $this->query($this->syntaxCall('makeSelectCountDistinct',$what,$values,$this->getSqlOption()),'column');
     }
-    
-    
+
+
     // selectColumn
     // construit et soumet une requête select avec output column
     // what peut être string ou array pour 1 colonne

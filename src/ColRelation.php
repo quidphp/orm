@@ -84,7 +84,7 @@ class ColRelation extends Relation
         return $return;
     }
 
-    
+
     // whereTable
     // retourne le where dans les attributs si existnat
     final public function whereTable()
@@ -302,20 +302,20 @@ class ColRelation extends Relation
     {
         $return = 0;
         $type = $this->checkType();
-        
+
         if($type === 'table')
         {
             $option = Base\Arr::plus($option,['where'=>$this->whereTable()]);
             $return = $this->checkRelationTable()->relation()->size($cache,$option);
         }
-        
+
         elseif($type === 'distinct')
         {
-            $return = $this->cache(array(__METHOD__,'distinct'),function() {
+            $return = $this->cache([__METHOD__,'distinct'],function() {
                 return $this->col()->distinctCount();
             },$cache);
         }
-        
+
         else
         {
             $all = $this->all($cache,$option);
