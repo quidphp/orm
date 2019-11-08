@@ -511,16 +511,16 @@ class Col extends Main\Root
     // créer une version résumé de la valeur si la longueur dépasse l'attribut excerpt
     final public function valueExcerpt($return,?array $option=null)
     {
-        $option = Base\Arr::plus(['mb'=>true],$option);
+        $option = Base\Arr::plus(['mb'=>true,'stripTags'=>true],$option);
         $excerpt = $this->getAttr('excerpt');
-
+        
         if(is_int($excerpt))
         {
             if(is_array($return))
-            $return = Base\Arr::valuesExcerpt($excerpt,$return,$option);
+            $return = Base\Arr::valuesExcerpt($excerpt,$return,true,$option);
 
             elseif(is_string($return))
-            $return = Base\Str::excerpt($excerpt,$return,$option);
+            $return = Base\Html::excerpt($excerpt,$return,$option);
         }
 
         return $return;
@@ -883,7 +883,15 @@ class Col extends Main\Root
         return $return;
     }
 
-
+    
+    // isPlainTag
+    // retourne vrai si la tag est plain
+    final public function isPlainTag(?array $attr=null,bool $complex=false):bool 
+    {
+        return ($this->tag($attr,$complex) === 'div')? true:false;
+    }
+    
+    
     // isFormTag
     // retourne vrai si la tag lié à la colonne en est une de formulaire
     final public function isFormTag(?array $attr=null,bool $complex=false):bool
@@ -1353,13 +1361,12 @@ class Col extends Main\Root
         return $return;
     }
 
-
-    // distinct
-    // retourne un tableau des valeurs distincts pour la colonne
-    // par défaut ne retourne pas les valeurs distinctes vides
-    final public function distinct($notEmpty=true,$where=null,$order=null):array
+    
+    // distinctMethod
+    // méthode protégé utilisé par distinct et distinctCount
+    final protected function distinctMethod(string $method,$notEmpty=true,$where=null,$order=null) 
     {
-        $return = [];
+        $return = null;
         $table = $this->table();
         $primary = $table->primary();
         $db = $table->db();
@@ -1372,12 +1379,29 @@ class Col extends Main\Root
         if($order === null)
         $order = [$primary=>'asc'];
 
-        $return = $db->selectDistinct($this,$table,$where,$order);
+        $return = $db->$method($this,$table,$where,$order);
 
         return $return;
     }
+    
+    
+    // distinct
+    // retourne un tableau des valeurs distincts pour la colonne
+    // par défaut ne retourne pas les valeurs distinctes vides
+    final public function distinct($notEmpty=true,$where=null,$order=null):array
+    {
+        return $this->distinctMethod('selectDistinct',$notEmpty,$where,$order);
+    }
 
-
+    
+    // distinctCount
+    // retourne le nombre de valeur distinctes trouvés dans la colonne
+    final public function distinctCount($notEmpty=true,$where=null,$order=null):int
+    {
+        return $this->distinctMethod('selectCountDistinct',$notEmpty,$where,$order);
+    }
+    
+    
     // replace
     // permet de faire un remplacement sur toutes les valeurs d'une colonne
     // si where est true, met primary >= 1

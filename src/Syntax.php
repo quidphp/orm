@@ -590,7 +590,10 @@ abstract class Syntax extends Main\Root
 
                 $return = implode('.',$x);
             }
-
+            
+            elseif(Base\Str::isStartEnd('[',']',$return))
+            $return = Base\Str::stripStartEnd('[',']',$return);
+            
             elseif(!Base\Str::isStartEnd('(',')',$return) && strpos($return,'@') !== 0)
             $return = Base\Str::wrapStartEnd('`','`',$return);
 
@@ -1129,12 +1132,13 @@ abstract class Syntax extends Main\Root
         {
             $as = ($as !== $key)? ' AS '.static::tick($as):'';
             $return['sql'] .= $function['key'];
-
+            $key = static::tick($key);
+            
             if($function['parenthesis'] === true)
-            $return['sql'] .= static::parenthesis(static::tick($key)).$as;
+            $return['sql'] .= static::parenthesis($key).$as;
 
             else
-            $return['sql'] .= ' '.static::tick($key).$as;
+            $return['sql'] .= ' '.$key.$as;
 
             $return['cast'] = true;
         }
@@ -3174,7 +3178,17 @@ abstract class Syntax extends Main\Root
         return static::makeSelect(Base\Arr::unshift($value,[[Base\Obj::cast($what,1),'distinct',Base\Obj::cast($what,1)]]),$option);
     }
 
-
+    
+    // makeSelectCountDistinct
+    // génère une requête select count distinct, what est est une colonne pour passage à la function count distinct
+    final public static function makeSelectCountDistinct($what,array $value,?array $option=null):?array
+    {
+        $what = Base\Obj::cast($what,1);
+        $what = '[DISTINCT '.static::tick($what).']';
+        return static::makeSelect(Base\Arr::unshift($value,[[$what,'count',Base\Obj::cast($what,1)]]),$option);
+    }
+    
+    
     // makeSelectColumn
     // génère une requête select column, what est est une seule colonne
     final public static function makeSelectColumn($what,array $value,?array $option=null):?array
