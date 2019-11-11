@@ -27,7 +27,8 @@ class Insert extends Orm\TableOperation
         'finalValidate'=>true,
         'com'=>false,
         'onCommitted'=>true,
-        'strict'=>true
+        'strict'=>true,
+        'catchException'=>false
     ];
 
 
@@ -88,13 +89,20 @@ class Insert extends Orm\TableOperation
 
                 if($finalValidate === true)
                 {
+                    $catchException = $this->getAttr('catchException');
                     $log = $this->getAttr('log');
 
                     if($log === false)
                     $db->off();
-
+                    
+                    if($catchException === true)
+                    $db->setExceptionClass(true);
+                    
                     $result = $db->insert($table,$set);
-
+                    
+                    if($catchException === true)
+                    $db->setExceptionClass(false);
+                    
                     if($log === false)
                     $db->on();
                 }

@@ -888,7 +888,7 @@ class Col extends Main\Root
     // retourne vrai si la tag est plain
     final public function isPlainTag(?array $attr=null,bool $complex=false):bool
     {
-        return ($this->tag($attr,$complex) === 'div')? true:false;
+        return (!$this->isEditable() || $this->tag($attr,$complex) === 'div')? true:false;
     }
 
 

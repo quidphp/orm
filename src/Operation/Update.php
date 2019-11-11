@@ -24,7 +24,8 @@ class Update extends Orm\RowOperation
         'strict'=>true,
         'finalValidate'=>true,
         'onCommitted'=>true,
-        'include'=>true // ceci est utilisé pour updateChanged
+        'include'=>true, // ceci est utilisé pour updateChanged
+        'catchException'=>false
     ];
 
 
@@ -255,13 +256,20 @@ class Update extends Orm\RowOperation
 
             else
             {
+                $catchException = $this->getAttr('catchException');
                 $log = $this->getAttr('log');
-
+                
                 if($log === false)
                 $db->off();
-
+                
+                if($catchException === true)
+                $db->setExceptionClass(true);
+                
                 $result = $db->update($table,$set,$row);
-
+                
+                if($catchException === true)
+                $db->setExceptionClass(false);
+                
                 if($log === false)
                 $db->on();
             }
