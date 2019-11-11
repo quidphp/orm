@@ -94,15 +94,15 @@ class Insert extends Orm\TableOperation
 
                     if($log === false)
                     $db->off();
-                    
+
                     if($catchException === true)
                     $db->setExceptionClass(true);
-                    
+
                     $result = $db->insert($table,$set);
-                    
+
                     if($catchException === true)
                     $db->setExceptionClass(false);
-                    
+
                     if($log === false)
                     $db->on();
                 }
