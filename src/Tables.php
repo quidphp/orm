@@ -407,9 +407,10 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     // hierarchy
     // retourne le tableau de la hiérarchie des éléments de l'objet
     // si existe est false, les parents de table non existants sont conservés
-    final public function hierarchy(bool $exists=true):array
+    // si climb est true, si un groupe n'a qu'un enfant, retire le groupe
+    final public function hierarchy(bool $exists=true,bool $climb=false):array
     {
-        return Base\Arrs::hierarchy($this->keyParent(),$exists);
+        return Base\Arrs::hierarchy($this->keyParent(),$exists,$climb);
     }
 
 

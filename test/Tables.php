@@ -119,7 +119,7 @@ class Tables extends Base\Test
         $deep = $tables['ormRowsIndexDeep'];
         $count = count($tables->hierarchy(true));
         assert(count($tables->hierarchy(false)) === ($count + 2));
-
+        
         // childsRecursive
         assert($tables->childsRecursive('ormTable') === null);
         assert(count($tables->childsRecursive('ormTable',false)) === 1);

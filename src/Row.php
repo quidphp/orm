@@ -201,7 +201,7 @@ class Row extends Main\ArrObj
     // retourne vrai si la row peut être updater
     public function isUpdateable(?array $option=null):bool
     {
-        return true;
+        return ($this->hasPermission('update'))? true:false;
     }
 
 
@@ -210,7 +210,7 @@ class Row extends Main\ArrObj
     // relationChilds est utilisé avec excludeSelf
     public function isDeleteable(?array $option=null):bool
     {
-        return ($this->hasRelationChilds(null,true) === true)? false:true;
+        return ($this->hasPermission('delete') && $this->hasRelationChilds(null,true) === true)? false:true;
     }
 
 

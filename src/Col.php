@@ -2074,7 +2074,7 @@ class Col extends Main\Root
     // génère la colonne dans un formWrap incluant le label et l'élément de formulaire
     final public function formWrap(?string $wrap=null,$pattern=null,$value=true,?array $attr=null,?array $replace=null,?array $option=null):string
     {
-        return $this->makeFormWrap('form',$wrap,$pattern,$value,$attr,$replace,$option);
+        return $this->makeFormWrap('form',false,$wrap,$pattern,$value,$attr,$replace,$option);
     }
 
 
@@ -2093,30 +2093,22 @@ class Col extends Main\Root
     // méthode protégé utilisé par formWrap et formComplexWrap
     // un id commun au label et élément de formulaire sera automatiquement ajouté
     // les formWrap sont définis dans les config de la classe base/html
-    final protected function makeFormWrap(string $method,?string $wrap=null,$pattern=null,$value=true,?array $attr=null,?array $replace=null,?array $option=null):string
+    final protected function makeFormWrap(string $method,bool $complex=false,?string $wrap=null,$pattern=null,$value=true,?array $attr=null,?array $replace=null,?array $option=null):string
     {
         $return = '';
+        $label = $this->label($pattern);
+        $id = null;
 
-        if(in_array($method,['form','formComplex'],true))
+        if($this->hasFormLabelId($attr,$complex))
         {
-            $complex = ($method === 'formComplex')? true:false;
-            $label = $this->label($pattern);
-            $id = null;
-
-            if($this->hasFormLabelId($attr,$complex))
-            {
-                $id = Base\Attr::randomId($attr['name'] ?? $this->name());
-                $attr = Base\Arr::plus($attr,['id'=>$id]);
-            }
-
-            $form = $this->$method($value,$attr,$option);
-
-            if(is_string($form))
-            $return = Base\Html::formWrapStr($label,$form,$wrap,$replace,$id);
+            $id = Base\Attr::randomId($attr['name'] ?? $this->name());
+            $attr = Base\Arr::plus($attr,['id'=>$id]);
         }
 
-        else
-        static::throw();
+        $form = $this->$method($value,$attr,$option);
+
+        if(is_string($form))
+        $return = Base\Html::formWrapStr($label,$form,$wrap,$replace,$id);
 
         return $return;
     }
