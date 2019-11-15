@@ -439,7 +439,7 @@ abstract class Syntax extends Main\Root
     // retourne la callable d'une méthode where
     final public static function getWhereMethod(string $value):?callable
     {
-        return (array_key_exists($value,static::$config['where']['method']) && static::classIsCallable(static::$config['where']['method'][$value]))? static::$config['where']['method'][$value]:null;
+        return (array_key_exists($value,static::$config['where']['method']) && static::isCallable(static::$config['where']['method'][$value]))? static::$config['where']['method'][$value]:null;
     }
 
 
@@ -488,7 +488,7 @@ abstract class Syntax extends Main\Root
     // retourne la callable d'une méthode order
     final public static function getOrderMethod(string $value):?callable
     {
-        return (array_key_exists($value,static::$config['order']['method']) && static::classIsCallable(static::$config['order']['method'][$value]))? static::$config['order']['method'][$value]:null;
+        return (array_key_exists($value,static::$config['order']['method']) && static::isCallable(static::$config['order']['method'][$value]))? static::$config['order']['method'][$value]:null;
     }
 
 
@@ -496,7 +496,7 @@ abstract class Syntax extends Main\Root
     // retourne la callable d'une méthode set
     final public static function getSetMethod(string $value):?callable
     {
-        return (array_key_exists($value,static::$config['set']['method']) && static::classIsCallable(static::$config['set']['method'][$value]))? static::$config['set']['method'][$value]:null;
+        return (array_key_exists($value,static::$config['set']['method']) && static::isCallable(static::$config['set']['method'][$value]))? static::$config['set']['method'][$value]:null;
     }
 
 
@@ -650,7 +650,7 @@ abstract class Syntax extends Main\Root
         {
             if(is_string($value))
             {
-                if(static::classIsCallable($callable))
+                if(static::isCallable($callable))
                 $return = $callable($value);
 
                 else

@@ -481,10 +481,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         $closure = $this->getAttr('classeClosure');
 
         if(!empty($closure))
-        {
-            $closure = $closure->bindTo($this,static::class);
-            $this->classe = $closure($extenders);
-        }
+        $this->classe = $this->callThis($closure,$extenders);
 
         else
         $this->classe = Classe::newOverload($extenders,$this->getAttr('classe'));

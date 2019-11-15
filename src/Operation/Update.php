@@ -286,7 +286,7 @@ class Update extends Orm\RowOperation
 
             if(is_int($result))
             {
-                Base\Call::bindTo($row,function() use($result,$attr,$set) {
+                $row->callThis(function() use($result,$attr,$set) {
                     if($result === 1)
                     $this->onInserted($attr);
 
@@ -380,7 +380,7 @@ class Update extends Orm\RowOperation
         {
             if($cell->hasChanged())
             {
-                Base\Call::bindTo($cell,function() use($attr) {
+                $cell->callThis(function() use($attr) {
                     $this->onCommitted(false,$attr);
                 });
             }

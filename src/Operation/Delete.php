@@ -69,7 +69,7 @@ class Delete extends Orm\RowOperation
             {
                 if($result === 1)
                 {
-                    Base\Call::bindTo($row,function() use($attr) {
+                    $row->callThis(function() use($attr) {
                         $this->onDeleted($attr);
                     });
                 }

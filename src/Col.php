@@ -131,10 +131,10 @@ class Col extends Main\Root
     // callback avant de mettre les attributs dans la propriété attr
     protected function onMakeAttr(array $return):array
     {
-        if(!empty($return['onMakeAttr']) && static::classIsCallable($return['onMakeAttr']))
+        if(!empty($return['onMakeAttr']) && static::isCallable($return['onMakeAttr']))
         $return = $return['onMakeAttr']($return);
 
-        if(!empty($return['relation']) && static::classIsCallable($return['relation']))
+        if(!empty($return['relation']) && static::isCallable($return['relation']))
         $return['relation'] = $return['relation']($this);
 
         return $return;
@@ -1619,10 +1619,10 @@ class Col extends Main\Root
 
         if(!empty($attr) && is_array($attr))
         {
-            if(static::classIsCallable($attr))
+            if(static::isCallable($attr))
             $return = ['callable'=>$attr,'args'=>[]];
 
-            elseif(static::classIsCallable(current($attr)))
+            elseif(static::isCallable(current($attr)))
             {
                 $callable = current($attr);
                 unset($attr[key($attr)]);

@@ -276,7 +276,7 @@ class Cols extends Main\Map
 
                 else
                 {
-                    $value = Base\Call::bindTo($col,function() use($value,$option) {
+                    $value = $col->callThis(function() use($value,$option) {
                         return $this->onGet($value,$option);
                     });
                 }

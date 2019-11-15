@@ -57,7 +57,7 @@ class Truncate extends Orm\TableOperation
         {
             $this->after($result,$attr);
 
-            Base\Call::bindTo($table,function() use($attr) {
+            $table->callThis(function() use($attr) {
                 $this->onTruncated($attr);
             });
 

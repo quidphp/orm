@@ -211,7 +211,17 @@ class Row extends Base\Test
         // cellContent
         assert($row->cellContent()->name() === 'content_en');
         assert($row->cellContent()(true) === '');
-
+        
+        // cellsDateCommit
+        assert(count($row->cellsDateCommit()) === 2);
+        assert(count($row->cellsDateCommit()['dateAdd']) === 2);
+        
+        // cellsOwner
+        assert($row->cellsOwner()->isCount(2));
+        
+        // lastDateCommit
+        assert(count($row->lastDateCommit()) === 2);
+        
         // namePrimary
         assert($row->namePrimary() === 'bla (#1)');
 

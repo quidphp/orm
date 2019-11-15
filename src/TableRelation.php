@@ -70,7 +70,7 @@ class TableRelation extends Relation
 
                 foreach ($attr as $key => $value)
                 {
-                    if(!empty($value) && static::classIsCallable($value))
+                    if(!empty($value) && static::isCallable($value))
                     {
                         $value = Base\Call::withObj($this,$value);
                         $attr[$key] = Base\Obj::cast($value);

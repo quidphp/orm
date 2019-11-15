@@ -143,7 +143,7 @@ class Insert extends Orm\TableOperation
 
                     else
                     {
-                        Base\Call::bindTo($return,function() use($attr) {
+                        $return->callThis(function() use($attr) {
                             $this->onInserted($attr);
                         });
                     }
@@ -301,7 +301,7 @@ class Insert extends Orm\TableOperation
             $v = $set[$key];
             $col = $cell->col();
 
-            Base\Call::bindTo($col,function() use($cell,$attr) {
+            $col->callThis(function() use($cell,$attr) {
                 $this->onCommitted($cell,true,$attr);
             });
         }

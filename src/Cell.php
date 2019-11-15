@@ -84,7 +84,7 @@ class Cell extends Main\Root
         $this->clearException();
         $col = $this->col();
         $cell = $this;
-        Base\Call::bindTo($col,function() use($cell,$insert,$option) {
+        $col->callThis(function() use($cell,$insert,$option) {
             $this->onCommitted($cell,$insert,$option);
         });
 
@@ -833,7 +833,7 @@ class Cell extends Main\Root
 
         $col = $this->col();
         $cell = $this;
-        $onGet = Base\Call::bindTo($col,function() use($cell,$option) {
+        $onGet = $col->callThis(function() use($cell,$option) {
             return $this->onGet($cell,$option);
         });
 
@@ -861,7 +861,7 @@ class Cell extends Main\Root
     {
         $col = $this->col();
         $cell = $this;
-        return Base\Call::bindTo($col,function() use($cell,$value,$option) {
+        return $col->callThis(function() use($cell,$value,$option) {
             return $this->onExport('cell',$value,$cell,$option);
         });
     }
@@ -931,7 +931,7 @@ class Cell extends Main\Root
             static::throw('preValidate',$this->name(),$preValidate);
         }
 
-        $onSet = Base\Call::bindTo($col,function() use($value,$row,$cell,$option) {
+        $onSet = $col->callThis(function() use($value,$row,$cell,$option) {
             return $this->onSet($value,$row->get(),$cell,$option);
         });
 
@@ -942,7 +942,7 @@ class Cell extends Main\Root
 
         $this->value['change'] = $value;
 
-        Base\Call::bindTo($col,function() use($cell) {
+        $col->callThis(function() use($cell) {
             $this->onCellSet($cell);
         });
 
@@ -968,7 +968,7 @@ class Cell extends Main\Root
         $this->clearException();
 
         $cell = $this;
-        Base\Call::bindTo($col,function() use($cell) {
+        $col->callThis(function() use($cell) {
             $this->onCellInit($cell);
         });
 
@@ -996,7 +996,7 @@ class Cell extends Main\Root
 
         $col = $this->col();
         $cell = $this;
-        Base\Call::bindTo($col,function() use($cell) {
+        $col->callThis(function() use($cell) {
             $this->onCellSet($cell);
         });
 
@@ -1061,7 +1061,7 @@ class Cell extends Main\Root
         $cell = $this;
         $option = (array) $option;
 
-        Base\Call::bindTo($col,function() use($cell,$option) {
+        $col->callThis(function() use($cell,$option) {
             $this->onDelete($cell,$option);
         });
 

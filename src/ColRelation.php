@@ -96,7 +96,7 @@ class ColRelation extends Relation
         {
             $return = $attr['where'];
 
-            if(!empty($return) && static::classIsCallable($return))
+            if(!empty($return) && static::isCallable($return))
             $return = $return($this);
         }
 
@@ -169,7 +169,7 @@ class ColRelation extends Relation
                 elseif(is_int($attr) || (is_array($attr) && Base\Arr::keysAre(['min','max','inc'],$attr)))
                 $return = 'range';
 
-                elseif(static::classIsCallable($attr))
+                elseif(static::isCallable($attr))
                 $return = 'callable';
 
                 elseif(is_array($attr))
