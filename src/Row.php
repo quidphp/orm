@@ -344,7 +344,7 @@ class Row extends Main\ArrObj
         $option = Base\Arr::plus($option,['pattern'=>$pattern]);
         $table = $this->table();
         $return = $obj->rowLabel($this->primary(),$table->name(),$lang,$option);
-        
+
         return $return;
     }
 
@@ -665,66 +665,66 @@ class Row extends Main\ArrObj
         return $this->cell($this->table()->colContent($lang));
     }
 
-    
+
     // cellsDateCommit
     // cette méthode retourne tous les commits existants selon l'attribut dateCommit
     // un commit peut avoir une cellule pour date et une autre pour user
-    final public function cellsDateCommit():array 
+    final public function cellsDateCommit():array
     {
-        $return = array();
-        
-        foreach ($this->table()->colsDateCommit() as $array) 
+        $return = [];
+
+        foreach ($this->table()->colsDateCommit() as $array)
         {
-            $r = array();
+            $r = [];
             ['date'=>$date,'user'=>$user] = $array;
             $key = $date->name();
-            
+
             $r['date'] = $this->cell($date);
             $r['user'] = null;
-            
+
             if(!empty($user))
             $r['user'] = $this->cell($user);
-            
+
             $return[$key] = $r;
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // cellsOwner
     // retourne un objet cells avec toutes les cellules représentant un propriétaire
     final public function cellsOwner():Cells
     {
         return $this->cells($this->table()->colsOwner());
     }
-    
-    
+
+
     // lastDateCommit
     // cette méthode retourne le commit le plus récent sur la row
     // retourne null ou un tableau avec date et user
-    final public function lastDateCommit():?array 
+    final public function lastDateCommit():?array
     {
         $return = null;
         $time = 0;
-        
-        foreach ($this->cellsDateCommit() as $array) 
+
+        foreach ($this->cellsDateCommit() as $array)
         {
             $cell = $array['date'] ?? null;
-            
+
             if(!empty($cell))
             {
                 $value = $cell->value();
-                
+
                 if(is_int($value) && $value > $time)
                 $return = $array;
             }
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // namePrimary
     // retourne le nom de la row avec la primary entre paranthèse
     final public function namePrimary(?string $pattern=null):string

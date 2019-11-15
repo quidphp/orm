@@ -8,7 +8,6 @@ declare(strict_types=1);
  */
 
 namespace Quid\Orm\Operation;
-use Quid\Base;
 use Quid\Main;
 use Quid\Orm;
 

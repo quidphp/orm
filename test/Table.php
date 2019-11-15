@@ -253,13 +253,13 @@ class Table extends Base\Test
 
         // colContent
         assert($tb->colContent()->name() === 'content_en');
-        
+
         // colsDateCommit
         assert(count($tb->colsDateCommit()) === 2);
-        
+
         // colsOwner
         assert($tb->colsOwner()->isCount(2));
-        
+
         // isRowLinked
 
         // hasRow

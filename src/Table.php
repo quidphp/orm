@@ -33,7 +33,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'active'=>'active', // colonne(s) utilisé pour déterminer si une ligne est active
         'name'=>['name_[lang]','name','id',0], // colonne(s) utilisé pour le nom d'une ligne
         'content'=>['content_[lang]','content'], // colonne(s) utilisé pour le contenu d'une ligne
-        'dateCommit'=>array('dateAdd'=>'userAdd','dateModify'=>'userModify'), // crée une relation entre un nom de colonne pour la date et un pour le user, le user peut être vide
+        'dateCommit'=>['dateAdd'=>'userAdd','dateModify'=>'userModify'], // crée une relation entre un nom de colonne pour la date et un pour le user, le user peut être vide
         'relation'=>['what'=>true], // champs pour représenter le what, order et output de la relation, si what est true utilise la colonne via name
         'where'=>null, // where par défaut pour la table
         'filter'=>null, // filter par défaut pour la table
@@ -1035,57 +1035,57 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         return $return;
     }
 
-    
+
     // colsDateCommit
     // méthode qui retourne un tableau avec toutes les colonnes représentant un commit de date
     // inclut aussi le user associé si existnt
     final public function colsDateCommit():array
     {
-        $return = array();
+        $return = [];
         $attr = $this->getAttr('dateCommit');
-        
+
         if(is_array($attr) && !empty($attr))
         {
-            foreach ($attr as $date => $user) 
+            foreach ($attr as $date => $user)
             {
                 if($this->hasCol($date))
                 {
-                    $r = array();
+                    $r = [];
                     $colDate = $this->col($date);
                     $key = $colDate->name();
                     $r['date'] = $colDate;
                     $r['user'] = null;
-                    
+
                     if(!is_bool($user) && $this->hasCol($user))
                     $r['user'] = $this->col($user);
-                    
+
                     $return[$key] = $r;
                 }
             }
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // colsOwner
     // retourne un objet cols avec toutes les colonnes représentant un propriétaire
-    final public function colsOwner():Cols 
+    final public function colsOwner():Cols
     {
         $return = $this->colsNew();
-        
-        foreach ($this->colsDateCommit() as $array) 
+
+        foreach ($this->colsDateCommit() as $array)
         {
             $user = $array['user'];
-            
+
             if(!empty($user))
             $return->add($user);
         }
-        
+
         return $return;
     }
-    
-    
+
+
     // isRowLinked
     // retourne vrai si l'objet row est linked
     final public function isRowLinked(Row $row):bool
