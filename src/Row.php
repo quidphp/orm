@@ -201,7 +201,7 @@ class Row extends Main\ArrObj
     // retourne vrai si la row peut être updater
     public function isUpdateable(?array $option=null):bool
     {
-        return ($this->hasPermission('update'))? true:false;
+        return ($this->table()->hasPermission('update'))? true:false;
     }
 
 
@@ -210,7 +210,16 @@ class Row extends Main\ArrObj
     // relationChilds est utilisé avec excludeSelf
     public function isDeleteable(?array $option=null):bool
     {
-        return ($this->hasPermission('delete') && $this->hasRelationChilds(null,true) === true)? false:true;
+        $return = false;
+        $option = Base\Arr::plus(array('relationChilds'=>true),$option);
+        
+        if($this->table()->hasPermission('delete'))
+        {
+            if(empty($option['relationChilds']) || !$this->hasRelationChilds(null,true))
+            $return = true;
+        }
+        
+        return $return;
     }
 
 
@@ -617,7 +626,7 @@ class Row extends Main\ArrObj
     // de même la permission view de la table doit être true
     public function isVisible():bool
     {
-        return ($this->hasPermission('view') && $this->isActive() && $this->cells()->isStillRequiredEmpty())? true:false;
+        return ($this->table()->hasPermission('view') && $this->isActive() && $this->cells()->isStillRequiredEmpty())? true:false;
     }
 
 
