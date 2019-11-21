@@ -213,14 +213,14 @@ class Row extends Main\ArrObj
     public function isDeleteable(?array $option=null):bool
     {
         $return = false;
-        $option = Base\Arr::plus(array('relationChilds'=>true),$option);
-        
+        $option = Base\Arr::plus(['relationChilds'=>true],$option);
+
         if($this->table()->hasPermission('delete'))
         {
             if(empty($option['relationChilds']) || !$this->hasRelationChilds(null,true))
             $return = true;
         }
-        
+
         return $return;
     }
 
