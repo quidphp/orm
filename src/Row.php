@@ -348,13 +348,22 @@ class Row extends Main\ArrObj
 
     // label
     // retourne le label de la row
-    final public function label($pattern=null,?string $lang=null,?array $option=null):?string
+    // possible d'inclure le nom et de mettre une longueur maximale au nom
+    final public function label($pattern=null,?int $withName=null,?string $lang=null,?array $option=null):?string
     {
         $return = null;
         $obj = $this->db()->lang();
         $option = Base\Arr::plus($option,['pattern'=>$pattern]);
         $table = $this->table();
-        $return = $obj->rowLabel($this->primary(),$table->name(),$lang,$option);
+        $name = null;
+        
+        if(is_int($withName))
+        {
+            $name = (string) $this->cellName($lang)->value();
+            $name = Base\Str::excerpt($withName,$name);
+        }
+        
+        $return = $obj->rowLabel($this->primary(),$table->name(),$name,$lang,$option);
 
         return $return;
     }

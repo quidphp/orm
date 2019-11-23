@@ -317,9 +317,9 @@ class Rows extends Main\Map
 
     // label
     // retourne les noms de toutes les lignes
-    final public function label($pattern=null,?string $lang=null,?array $option=null):array
+    final public function label($pattern=null,?int $withName=null,?string $lang=null,?array $option=null):array
     {
-        return $this->pair('label',$pattern,$lang,$option);
+        return $this->pair('label',$pattern,$withName,$lang,$option);
     }
 
 
