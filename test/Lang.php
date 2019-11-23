@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Quid\Test\Orm;
 use Quid\Base;
-use Quid\Orm;
 
 // lang
 // class for testing Quid\Orm\Lang
@@ -25,9 +24,9 @@ class Lang extends Base\Test
         $lang = $boot->lang();
         $lang->changeLang('fr');
         $frFile = $boot->getAttr('assert/langFile/fr');
-        
+
         // onChange
-        
+
         // direction
         assert($lang->direction('DESC') === 'Descendant');
 
@@ -60,7 +59,7 @@ class Lang extends Base\Test
         // panelLabel
 
         // panelDescription
-        
+
         // validate
         assert($lang->validate(['Doit être unique #6']) === 'Doit être unique #6');
         assert($lang->validate(['email']) === 'Doit être un courriel valide (x@x.com)');
@@ -125,11 +124,11 @@ class Lang extends Base\Test
         assert(count($lang->pathAlternateTake('unique')) === 2);
 
         // pathAlternateValue
-        
+
         // cleanup
         $lang->changeLang('en');
         assert($lang->allLang() === Base\Lang::all());
-        
+
         return true;
     }
 }

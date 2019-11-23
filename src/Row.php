@@ -356,13 +356,13 @@ class Row extends Main\ArrObj
         $option = Base\Arr::plus($option,['pattern'=>$pattern]);
         $table = $this->table();
         $name = null;
-        
+
         if(is_int($withName))
         {
             $name = (string) $this->cellName($lang)->value();
             $name = Base\Str::excerpt($withName,$name);
         }
-        
+
         $return = $obj->rowLabel($this->primary(),$table->name(),$name,$lang,$option);
 
         return $return;

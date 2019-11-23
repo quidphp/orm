@@ -20,7 +20,7 @@ class Lang extends Main\Lang
 {
     // config
     public static $config = [
-        'path'=>array(
+        'path'=>[
             'direction'=>'direction',
             'dbLabel'=>'db/label',
             'dbDescription'=>'db/description',
@@ -39,7 +39,7 @@ class Lang extends Main\Lang
             'validate'=>'validate',
             'required'=>'required',
             'editable'=>'editable',
-            'unique'=>'unique')
+            'unique'=>'unique']
     ];
 
 
@@ -55,7 +55,7 @@ class Lang extends Main\Lang
         return;
     }
 
-    
+
     // direction
     // retourne le texte pour une direction, asc ou desc
     final public function direction(string $key,$lang=null,?array $option=null):?string
@@ -198,8 +198,8 @@ class Lang extends Main\Lang
     {
         return $this->safe($this->getPath('panelDescription',$panel),$replace,$lang,$option);
     }
-    
-    
+
+
     // validate
     // si value est null, retourne tout le tableau de contenu validate dans la langue
     // compatible avec base/lang

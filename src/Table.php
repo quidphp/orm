@@ -1016,7 +1016,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final public function colName(?string $lang=null):Col
     {
         $return = $this->col($this->getAttr('name'));
-        
+
         if(is_string($lang) && !empty($return))
         {
             $stripPattern = $return->nameStripPattern();

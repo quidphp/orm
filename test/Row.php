@@ -134,7 +134,7 @@ class Row extends Base\Test
         assert($db['user'][1]->label() === 'User #1');
         assert($db['user'][1]->label('%:',null,'fr') === 'Utilisateur #1:');
         assert($db['user'][1]->label(null,8,'fr') === 'Utilisateur #1 | nobody');
-        
+
         // description
         assert($db['user'][1]->description() === null);
 
