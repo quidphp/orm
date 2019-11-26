@@ -1072,7 +1072,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     {
         $return = $this->colsNew();
         $attr = $this->getAttr('owner');
-        
+
         if(is_array($attr) && !empty($attr))
         {
             foreach ($attr as $name)

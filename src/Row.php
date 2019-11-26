@@ -640,7 +640,7 @@ class Row extends Main\ArrObj
         return ($this->table()->hasPermission('view') && $this->isActive() && $this->cells()->isStillRequiredEmpty())? true:false;
     }
 
-    
+
     // cellActive
     // retourne la cellule active, tel que défini dans la table
     // peut retourner null si non existante
