@@ -171,9 +171,6 @@ class Cols extends Base\Test
         assert($cols->htmlStr("<div class='%name%'>%label%: %value%</div>")['name_en'] === "<div class='name_en'>[col/label/*/name_en]: LOL</div>");
         assert(is_string($cols->htmlStr("<div class='%name%'>%label%: %value%</div>",true)));
 
-        // general
-        assert($cols->general()->isCount(6));
-
         // orderable
         assert($cols->orderable()->isCount(9));
 
@@ -204,7 +201,6 @@ class Cols extends Base\Test
         assert($cols->filter(['value'=>1],true)->isCount(1));
         assert(!$cols->filter(['value'=>1],false)->isCount(1));
         assert(count($cols->group('kind')) === 2);
-        assert(count($cols->group('panel')) === 2);
         $sort = $clone->sortBy('name',false);
         assert($sort->first()->name() === 'userModify');
         assert($sort !== $clone);

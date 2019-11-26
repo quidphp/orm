@@ -31,20 +31,19 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'searchMinLength'=>3, // longueur minimale de la recherche, si null renvoie vers les colonnes
         'label'=>null, // chemin label qui remplace le défaut dans lang
         'description'=>null, // chemin description qui remplace le défaut dans lang
-        'key'=>['key',0], // colonne(s) utilisé pour key
-        'active'=>'active', // colonne(s) utilisé pour déterminer si une ligne est active
-        'name'=>['name_[lang]','name','id',0], // colonne(s) utilisé pour le nom d'une ligne
-        'content'=>['content_[lang]','content'], // colonne(s) utilisé pour le contenu d'une ligne
-        'dateCommit'=>['dateAdd'=>'userAdd','dateModify'=>'userModify'], // crée une relation entre un nom de colonne pour la date et un pour le user, le user peut être vide
+        'active'=>null, // colonne(s) utilisé pour déterminer si une ligne est active
+        'key'=>0, // colonne(s) utilisé pour key
+        'name'=>0, // colonne(s) utilisé pour le nom d'une ligne
+        'content'=>0, // colonne(s) utilisé pour le contenu d'une ligne
+        'dateCommit'=>null, // crée une relation entre un nom de colonne pour la date et un pour le user, le user peut être vide
+        'owner'=>null, // champs qui définissent le ou les propriétaires d'une ligne
+        'order'=>[0=>'desc'], // ordre et direction à utiliser par défaut, prend la première qui existe
         'relation'=>['what'=>true], // champs pour représenter le what, order et output de la relation, si what est true utilise la colonne via name
         'where'=>null, // where par défaut pour la table
         'filter'=>null, // filter par défaut pour la table
         'like'=>'like', // méthode à utiliser pour like
-        'order'=>['order'=>'asc','date'=>'desc','name_[lang]'=>'asc','key'=>'asc','id'=>'desc'], // ordre et direction à utiliser par défaut, prend la première qui existe
         'orderCode'=>2, // code d'ordre pour les relations
         'limit'=>20, // limit à utiliser par défaut
-        'panel'=>true, // si panel sont actifs ou non
-        'inRelation'=>true, // active ou non la validation que la valeur des relations sont dans la relation
         'logSql'=>[ // défini si le type de requête à la table doit être loggé
             'select'=>false,
             'show'=>false,
@@ -60,6 +59,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'permission'=>[
             '*'=>[
                 'access'=>true,
+                'view'=>true, // pouvoir voir le contenu de la table
                 'select'=>true,
                 'show'=>true,
                 'insert'=>false,
@@ -74,7 +74,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
 
     // replaceMode
-    protected static $replaceMode = ['=key','=active','=name','=content','relation','=where','=filter','=order']; // défini les config à ne pas merger récursivement
+    protected static $replaceMode = ['=key','=active','=name','=content','=dateCommit','=owner','relation','=where','=filter','=order']; // défini les config à ne pas merger récursivement
 
 
     // dynamique
@@ -327,14 +327,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final public function sameTable($table):bool
     {
         return ($this->db()->hasTable($table) && $this === $this->db()->table($table))? true:false;
-    }
-
-
-    // hasPanel
-    // retourne vrai si la table a des panels
-    final public function hasPanel():bool
-    {
-        return ($this->getAttr('panel') === true)? true:false;
     }
 
 
@@ -1079,13 +1071,18 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final public function colsOwner():Cols
     {
         $return = $this->colsNew();
-
-        foreach ($this->colsDateCommit() as $array)
+        $attr = $this->getAttr('owner');
+        
+        if(is_array($attr) && !empty($attr))
         {
-            $user = $array['user'];
-
-            if(!empty($user))
-            $return->add($user);
+            foreach ($attr as $name)
+            {
+                if($this->hasCol($name))
+                {
+                    $col = $this->col($name);
+                    $return->add($col);
+                }
+            }
         }
 
         return $return;

@@ -221,8 +221,6 @@ class Cells extends Base\Test
         // mapObj
         assert($cells->pair('form')['name_en'] === "<input data-required='1' maxlength='100' name='name_en' type='text' value='bla'/>");
         assert($cells->pairStr('label') === 'Id[col/label/*/name_en]ActiveEmailDateAdded byDate addedModified byLast modification');
-        assert($cells->filter(['colKind'=>'char'])->isCount(2));
-        assert(count($cells->group('colKind')) === 2);
         $sort = $clone->sortBy('name');
         assert($sort->first()->name() === 'active');
         assert($sort !== $clone);

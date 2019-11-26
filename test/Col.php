@@ -184,12 +184,6 @@ class Col extends Base\Test
         // isMedia
         assert(!$email->isMedia());
 
-        // isGeneral
-        assert($col->isGeneral());
-
-        // generalExcerptMin
-        assert($col->generalExcerptMin() === 100);
-
         // valueExcerpt
         assert($col->valueExcerpt('test') === 'test');
 
@@ -583,9 +577,6 @@ class Col extends Base\Test
         assert($email->collation() === 'utf8mb4_general_ci');
         assert($dateAdd->collation() === null);
 
-        // panel
-        assert($email->panel() === 'default');
-
         // formAttr
         assert($email->formAttr() === ['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']);
         assert($email->formAttr(['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']) === ['data-required'=>true,'data-pattern'=>'^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$','maxlength'=>100,'name'=>'email']);
@@ -666,9 +657,6 @@ class Col extends Base\Test
         assert($lang->relation() instanceof Orm\ColRelation);
         assert($date->relation() instanceof Orm\ColRelation);
 
-        // isRelationSearchRequired
-        assert(is_bool($lang->isRelationSearchRequired()));
-
         // primaries
         assert($id->primaries(1) === [1]);
 
@@ -689,7 +677,7 @@ class Col extends Base\Test
         assert($col::getOverloadKeyPrepend() === null);
 
         // attr
-        assert(count($col->attr()) >= 61);
+        assert(count($col->attr()) >= 59);
         assert($col->isAttrNotEmpty('kind'));
         assert(!$col->isAttrNotEmpty('kindz'));
 

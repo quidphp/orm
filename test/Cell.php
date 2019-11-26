@@ -85,9 +85,6 @@ class Cell extends Base\Test
         // isPrimary
         assert(!$cell->isPrimary());
 
-        // acceptsNull
-        assert(!$cell->acceptsNull());
-
         // isRequired
         assert($cell->isRequired());
 
@@ -129,13 +126,6 @@ class Cell extends Base\Test
         assert($cell->isEditable() === true);
 
         // attrPermissionRolesObject
-
-        // generalExcerptMin
-        assert($cell->generalExcerptMin() === 100);
-        assert($userAdd->generalExcerptMin() === null);
-
-        // group
-        assert($userAdd->group() === 'relation');
 
         // tag
         assert($cell->tag() === 'inputText');
@@ -187,15 +177,6 @@ class Cell extends Base\Test
         assert($cell->set(2) === $cell);
         assert($cell->completeValidation() === true);
 
-        // isColKindInt
-        assert(!$cell->isColKindInt());
-
-        // isColKindChar
-        assert($cell->isColKindChar());
-
-        // isColKindText
-        assert(!$cell->isColKindText());
-
         // isWhere
         assert($cell->isWhere(['='=>'2']));
         assert($cell->isWhere([true,'notNull']));
@@ -239,23 +220,11 @@ class Cell extends Base\Test
         // setPriority
         assert($cell->setPriority() === 5);
 
-        // colType
-        assert($cell->colType() === 'varchar');
-
-        // colKind
-        assert($cell->colKind() === 'char');
-
-        // colLength
-        assert($cell->colLength() === 100);
-
         // colDefault
         assert($cell->colDefault() === '');
 
-        // colUnique
-        assert(!$cell->colUnique());
-
         // attrRef
-        assert(count($cell->attr()) >= 62);
+        assert(count($cell->attr()) >= 60);
         assert($cell->getAttr('kind') === 'char');
         assert($cell->isAttrNotEmpty('kind'));
         assert(!$cell->isAttrNotEmpty('kindz'));

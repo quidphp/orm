@@ -182,14 +182,6 @@ class Cell extends Main\Root
     }
 
 
-    // acceptsNull
-    // retourne vrai si la colonne de la cellule accepte null
-    final public function acceptsNull():bool
-    {
-        return $this->col()->acceptsNull();
-    }
-
-
     // isRequired
     // retourne vrai si la colonne de la cellule est requise
     final public function isRequired():bool
@@ -276,22 +268,6 @@ class Cell extends Main\Root
     final protected function attrPermissionRolesObject():Main\Roles
     {
         return $this->col()->attrPermissionRolesObject();
-    }
-
-
-    // generalExcerptMin
-    // retourne la longueur de l'excerpt pour general
-    final public function generalExcerptMin():?int
-    {
-        return $this->col()->generalExcerptMin();
-    }
-
-
-    // group
-    // retourne le groupe de la colonne
-    final public function group():string
-    {
-        return $this->col()->group();
     }
 
 
@@ -402,30 +378,6 @@ class Cell extends Main\Root
         $array['editable'] = $this->editable($lang);
 
         return $this->col()->makeCompleteValidation($array);
-    }
-
-
-    // isColKindInt
-    // retourne vrai si la colonne de la cellule est de type int
-    final public function isColKindInt():bool
-    {
-        return $this->col()->isKindInt();
-    }
-
-
-    // isColKindChar
-    // retourne vrai si la colonne de la cellule est de type char
-    final public function isColKindChar():bool
-    {
-        return $this->col()->isKindChar();
-    }
-
-
-    // isColKindText
-    // retourne vrai si la colonne de la cellule est de type text
-    final public function isColKindText():bool
-    {
-        return $this->col()->isKindText();
     }
 
 
@@ -581,30 +533,6 @@ class Cell extends Main\Root
     }
 
 
-    // colType
-    // retourne le type de la colonne de la cellule
-    final public function colType()
-    {
-        return $this->col()->type();
-    }
-
-
-    // colKind
-    // retourne le kind de la colonne de la cellule
-    final public function colKind()
-    {
-        return $this->col()->kind();
-    }
-
-
-    // colLength
-    // retourne la length de la colonne de la cellule, si spécifié
-    final public function colLength():?int
-    {
-        return $this->col()->length();
-    }
-
-
     // colDefault
     // retourne la valeur par défaut de la colonne de la cellule
     // préférable d'appeler hasDefault avant pour être certain qu'il y a un réelement attribut défaut de spécifié
@@ -613,14 +541,6 @@ class Cell extends Main\Root
     final public function colDefault()
     {
         return $this->col()->default();
-    }
-
-
-    // colUnique
-    // retorune vrai si la colonne doit avoir une valeur unique
-    final public function colUnique():bool
-    {
-        return $this->col()->shouldBeUnique();
     }
 
 

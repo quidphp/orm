@@ -101,9 +101,6 @@ class Table extends Base\Test
         // sameTable
         assert($tb->sameTable($tb[1]));
 
-        // hasPanel
-        assert($tb->hasPanel());
-
         // setClasse
 
         // classe

@@ -641,14 +641,6 @@ class Cols extends Main\Map
     }
 
 
-    // general
-    // retourne un objet cols avec toutes les colonnes dans general
-    final public function general():self
-    {
-        return $this->filter(['isGeneral'=>true]);
-    }
-
-
     // orderable
     // retourne un objet cols avec toutes les colonnes ordonnables
     final public function orderable():self

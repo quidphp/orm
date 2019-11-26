@@ -43,11 +43,9 @@ class Col extends Main\Root
         'filterMethod'=>'or|=', // méthode utilisé lors du findInSet
         'filterEmptyNotEmpty'=>false, // affiche empty not empty dans le filtre
         'order'=>true, // la colonne est ordonnable
-        'general'=>null, // la colonne est considéré comme général
         'label'=>null, // chemin label qui remplace le défaut dans lang
         'description'=>null, // chemin description qui remplace le défaut dans lang
         'collate'=>null, // collation de la colonne
-        'panel'=>null, // retourne le panel de la colonne
         'tag'=>null, // tag à utiliser lors de la créaiton de l'élément formulaire
         'complex'=>null, // défini les tags complexes à utiliser (pour relation et media)
         'attr'=>null, // attribut additionnel à ajouter à l'élément de formulaire
@@ -66,7 +64,6 @@ class Col extends Main\Root
         'direction'=>null, // direction par défaut
         'date'=>null, // défini si la colonne est de type date, un format doit y être inscrit
         'relation'=>null, // défini la relation pour la colonne, donne accès à la méthode relation
-        'relationSearchRequired'=>false, // si la recherche est obligatoire pour une relation
         'enum'=>null, // défini la relation comme simple (enum)
         'set'=>null, // défini la relation comme multiple (set)
         'media'=>null, // défini le nombre maximal de media que contient la colonne
@@ -84,7 +81,6 @@ class Col extends Main\Root
         'onInsert'=>null, // callback sur insertion
         'onUpdate'=>null, // callback sur update
         'onCommit'=>null, // callack sur insertion ou update
-        'generalExcerptMin'=>null, // excerpt min pour l'affichage dans general
         'excerpt'=>75, // longueur de l'excerpt
         'permission'=>[ // tableau des permissions
             '*'=>[
@@ -490,22 +486,6 @@ class Col extends Main\Root
     final public function isMedia():bool
     {
         return (is_int($this->getAttr('media')))? true:false;
-    }
-
-
-    // isGeneral
-    // retourne vrai si la colonne doit apparaître dans general
-    final public function isGeneral():bool
-    {
-        return ($this->getAttr('general',true) === true)? true:false;
-    }
-
-
-    // generalExcerptMin
-    // retourne la longueur de l'excerpt pour general
-    final public function generalExcerptMin():?int
-    {
-        return $this->getAttr('generalExcerptMin');
     }
 
 
@@ -1945,20 +1925,6 @@ class Col extends Main\Root
     }
 
 
-    // panel
-    // retourne le panel de la colonne
-    // retourne la string default si vide
-    final public function panel():string
-    {
-        $return = $this->getAttr('panel');
-
-        if(empty($return) || !is_string($return))
-        $return = 'default';
-
-        return $return;
-    }
-
-
     // formAttr
     // retourne les attributs de formulaires avec un tableau d'attributs en argument facultatif
     // si la colonne est requise, ajoute la propriété required dans les attributs
@@ -2260,14 +2226,6 @@ class Col extends Main\Root
         $return = $this->relation = ColRelation::newOverload($this);
 
         return $return;
-    }
-
-
-    // isRelationSearchRequired
-    // retourne vrai si la recherche est requise pour la relation
-    final public function isRelationSearchRequired():bool
-    {
-        return ($this->getAttr('relationSearchRequired') === true)? true:false;
     }
 
 
