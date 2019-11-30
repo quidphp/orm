@@ -359,7 +359,7 @@ class Row extends Main\ArrObj
 
         if(is_int($withName))
         {
-            $name = (string) $this->cellName($lang)->value();
+            $name = (string) $this->cellName($lang)->htmlOutput();
             $name = Base\Str::excerpt($withName,$name);
         }
 
