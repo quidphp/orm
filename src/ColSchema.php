@@ -304,7 +304,7 @@ class ColSchema extends Main\Root
                 if(array_key_exists('Default',$value))
                 {
                     if(is_numeric($value['Default']))
-                    $value['Default'] = Base\Number::cast($value['Default']);
+                    $value['Default'] = Base\Num::cast($value['Default']);
 
                     if(is_scalar($value['Default']) || ($value['Default'] === null && !empty($return['null'])))
                     $return['default'] = $value['Default'];

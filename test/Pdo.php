@@ -364,12 +364,12 @@ class Pdo extends Base\Test
         assert(count($pdo->select(true,$table,['id'=>[1,2,4]])) === 2);
         assert(count($pdo->select(true,$table,[['id','notIn',[2,3]]])) === 1);
         assert(count($pdo->select(true,$table,null,['id'=>'DESC'],'1,2')) === 2);
-        assert($pdo->insert($table,['id'=>4,'name_en'=>'james','dateAdd'=>Base\Date::mk(2017,1,5)]) === 4);
-        assert(count($pdo->select(true,$table,[['dateAdd','day',Base\Date::mk(2017,1,5)]])) === 1);
-        assert(count($pdo->select(true,$table,[['dateAdd','day',Base\Date::mk(2017,1,6)]])) === 0);
-        assert(count($pdo->select(true,$table,[['dateAdd','year',Base\Date::mk(2017,3)]])) === 1);
-        assert(count($pdo->select(true,$table,[['dateAdd','month',Base\Date::mk(2017,1,20)]])) === 1);
-        assert(count($pdo->select(true,$table,[['dateAdd','year',Base\Date::mk(2018,3)]])) === 0);
+        assert($pdo->insert($table,['id'=>4,'name_en'=>'james','dateAdd'=>Base\Datetime::mk(2017,1,5)]) === 4);
+        assert(count($pdo->select(true,$table,[['dateAdd','day',Base\Datetime::mk(2017,1,5)]])) === 1);
+        assert(count($pdo->select(true,$table,[['dateAdd','day',Base\Datetime::mk(2017,1,6)]])) === 0);
+        assert(count($pdo->select(true,$table,[['dateAdd','year',Base\Datetime::mk(2017,3)]])) === 1);
+        assert(count($pdo->select(true,$table,[['dateAdd','month',Base\Datetime::mk(2017,1,20)]])) === 1);
+        assert(count($pdo->select(true,$table,[['dateAdd','year',Base\Datetime::mk(2018,3)]])) === 0);
         assert(count($pdo->select(true,$table,[['name_en','%like','ja'],'or',['name_en','like%','s2']])) === 4);
         assert(count($pdo->select(true,$table,[['name_en','%like','ja'],'and',['name_en','like%','s2']])) === 1);
         assert(count($pdo->select(true,$table,[['id','findInSet',[1,2]]])) === 0);

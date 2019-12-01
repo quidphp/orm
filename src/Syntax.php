@@ -1950,19 +1950,19 @@ abstract class Syntax extends Main\Root
                 $v = [$v];
 
                 if($method === 'year')
-                $floorCeil = Base\Date::floorCeilYear(...$v);
+                $floorCeil = Base\Datetime::floorCeilYear(...$v);
 
                 elseif($method === 'month')
-                $floorCeil = Base\Date::floorCeilMonth(...$v);
+                $floorCeil = Base\Datetime::floorCeilMonth(...$v);
 
                 elseif($method === 'day')
-                $floorCeil = Base\Date::floorCeilDay(...$v);
+                $floorCeil = Base\Datetime::floorCeilDay(...$v);
 
                 elseif($method === 'hour')
-                $floorCeil = Base\Date::floorCeilHour(...$v);
+                $floorCeil = Base\Datetime::floorCeilHour(...$v);
 
                 elseif($method === 'minute')
-                $floorCeil = Base\Date::floorCeilMinute(...$v);
+                $floorCeil = Base\Datetime::floorCeilMinute(...$v);
 
                 if(!empty($floorCeil) && is_int($floorCeil['floor']) && is_int($floorCeil['ceil']))
                 {

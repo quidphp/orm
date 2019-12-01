@@ -401,7 +401,7 @@ class Col extends Main\Root
         {
             $value = $this->value($value);
             $removeWhiteSpace = $this->shouldRemoveWhiteSpace('required');
-            $return = Base\Validate::isReallyEmpty($value,$removeWhiteSpace);
+            $return = Base\Vari::isReallyEmpty($value,$removeWhiteSpace);
         }
 
         return $return;
@@ -1225,7 +1225,7 @@ class Col extends Main\Root
             $value = $this->value($value);
             $isNull = ($value === null && $acceptsNull === true);
             $isDefault = ($this->hasDefault() && $value === $this->default());
-            $isEmpty = ($ignoreEmpty === true && Base\Validate::isReallyEmpty($value));
+            $isEmpty = ($ignoreEmpty === true && Base\Vari::isReallyEmpty($value));
 
             if($isNull === false && $isDefault === false && $isEmpty === false)
             {
@@ -1258,7 +1258,7 @@ class Col extends Main\Root
         if($row instanceof Row)
         $row = $row->value();
 
-        if($this->hasCompare() && is_array($row) && !empty($row) && !Base\Validate::isReallyEmpty($value))
+        if($this->hasCompare() && is_array($row) && !empty($row) && !Base\Vari::isReallyEmpty($value))
         {
             $error = [];
             $attr = $this->attrCompare();
@@ -1266,7 +1266,7 @@ class Col extends Main\Root
             foreach ($attr as $symbol => $col)
             {
                 $name = $col->name();
-                if(array_key_exists($name,$row) && !Base\Validate::isReallyEmpty($row[$name]))
+                if(array_key_exists($name,$row) && !Base\Vari::isReallyEmpty($row[$name]))
                 {
                     if(!Base\Validate::compare($value,$symbol,$row[$name]))
                     $error[$symbol] = ($lang === true)? $col->label():$col;
@@ -1728,7 +1728,7 @@ class Col extends Main\Root
         if(is_array($return) || is_object($return))
         $return = Base\Obj::cast($return);
 
-        if(Base\Validate::isReallyEmpty($return,$removeWhiteSpace))
+        if(Base\Vari::isReallyEmpty($return,$removeWhiteSpace))
         {
             if($this->acceptsNull())
             $return = null;
@@ -1748,10 +1748,10 @@ class Col extends Main\Root
             $str = Base\Str::removeWhiteSpace($str);
 
             if($kind === 'int')
-            $return = Base\Number::castToInt($return) ?? $str;
+            $return = Base\Num::castToInt($return) ?? $str;
 
             elseif($kind === 'float')
-            $return = Base\Number::castToFloat($return) ?? $str;
+            $return = Base\Num::castToFloat($return) ?? $str;
 
             elseif(in_array($kind,['char','text'],true))
             $return = $str;

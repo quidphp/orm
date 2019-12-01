@@ -495,15 +495,15 @@ class Syntax extends Base\Test
         assert(current($syntax::whereLike('james.bla','\\','like',$syntax::option())['prepare']) === '\\\\');
 
         // whereDate
-        assert($syntax::whereDate('james',Base\Date::mk(2017,1,2),'year')['sql'] === '(`james` >= 1483246800 AND `james` <= 1514782799)');
-        assert($syntax::whereDate('james',Base\Date::mk(2017,2,2),'month')['sql'] === '(`james` >= 1485925200 AND `james` <= 1488344399)');
-        assert($syntax::whereDate('james',Base\Date::mk(2017,1,2),'day')['sql'] === '(`james` >= 1483333200 AND `james` <= 1483419599)');
-        assert($syntax::whereDate('james',Base\Date::mk(2017,1,2),'hour')['sql'] === '(`james` >= 1483333200 AND `james` <= 1483336799)');
-        assert($syntax::whereDate('james',Base\Date::mk(2017,1,2),'minute')['sql'] === '(`james` >= 1483333200 AND `james` <= 1483333259)');
+        assert($syntax::whereDate('james',Base\Datetime::mk(2017,1,2),'year')['sql'] === '(`james` >= 1483246800 AND `james` <= 1514782799)');
+        assert($syntax::whereDate('james',Base\Datetime::mk(2017,2,2),'month')['sql'] === '(`james` >= 1485925200 AND `james` <= 1488344399)');
+        assert($syntax::whereDate('james',Base\Datetime::mk(2017,1,2),'day')['sql'] === '(`james` >= 1483333200 AND `james` <= 1483419599)');
+        assert($syntax::whereDate('james',Base\Datetime::mk(2017,1,2),'hour')['sql'] === '(`james` >= 1483333200 AND `james` <= 1483336799)');
+        assert($syntax::whereDate('james',Base\Datetime::mk(2017,1,2),'minute')['sql'] === '(`james` >= 1483333200 AND `james` <= 1483333259)');
         assert($syntax::whereDate('james',['2017-01-02','ymd'],'day')['sql'] === '');
         assert($syntax::whereDate('james',[['2017-01-02','ymd']],'day')['sql'] === '(`james` >= 1483333200 AND `james` <= 1483419599)');
-        assert($syntax::whereDate('james',[Base\Date::mk(2017,1,2),Base\Date::mk(2017,1,3)],'month')['sql'] === '((`james` >= 1483246800 AND `james` <= 1485925199) AND (`james` >= 1483246800 AND `james` <= 1485925199))');
-        assert($syntax::whereDate('james',[Base\Date::mk(2017,1,2),Base\Date::mk(2017,1,3)],'month',['separator'=>'or'])['sql'] === '((`james` >= 1483246800 AND `james` <= 1485925199) OR (`james` >= 1483246800 AND `james` <= 1485925199))');
+        assert($syntax::whereDate('james',[Base\Datetime::mk(2017,1,2),Base\Datetime::mk(2017,1,3)],'month')['sql'] === '((`james` >= 1483246800 AND `james` <= 1485925199) AND (`james` >= 1483246800 AND `james` <= 1485925199))');
+        assert($syntax::whereDate('james',[Base\Datetime::mk(2017,1,2),Base\Datetime::mk(2017,1,3)],'month',['separator'=>'or'])['sql'] === '((`james` >= 1483246800 AND `james` <= 1485925199) OR (`james` >= 1483246800 AND `james` <= 1485925199))');
 
         // group
         assert($syntax::group('test, test2.test, test')['sql'] === 'test, test2.test, test');
@@ -694,7 +694,7 @@ class Syntax extends Base\Test
         assert($syntax::make('select',['*','james',null,null,0])['sql'] === 'SELECT * FROM `james` LIMIT 0');
         assert(count($syntax::make('select',['*','james',[],null,0])) === 3);
         assert($syntax::make('select',['*','james',['active'=>1,[12312312,'`between`',['from','to']]]])['sql'] === 'SELECT * FROM `james` WHERE `active` = 1 AND 12312312 BETWEEN `from` AND `to`');
-        assert(strlen($syntax::make('select',['*','james',['active'=>1,'date'=>Base\Date::timestamp()]])['sql']) === 64);
+        assert(strlen($syntax::make('select',['*','james',['active'=>1,'date'=>Base\Datetime::timestamp()]])['sql']) === 64);
 
         // makeParses
         assert($syntax::makeParses('select',['*','table',2,'id',3]) === ['what'=>'*','table'=>'table','where'=>2,'order'=>'id','limit'=>3]);

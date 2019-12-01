@@ -329,7 +329,7 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
         foreach ($this->arr() as $key => $value)
         {
             $total = $value->total($count,$cache);
-            $return = Base\Number::combine('+',$return,$total);
+            $return = Base\Num::combine('+',$return,$total);
         }
 
         return $return;

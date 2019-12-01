@@ -310,8 +310,8 @@ class Db extends Base\Test
         assert(Base\Obj::cast([$col,$row,[$cell]]) === ['id',1,[1]]);
         assert(Base\Obj::casts(0,$col,$row,[$cell]) === ['id',1,[1]]);
         assert(Base\Html::div($cell,['col'=>$col,'data-ids'=>$rows,'table'=>$table,'style'=>['color'=>$col]]) === "<div col='id' data-ids='[1,3,2]' table='ormDb' style='color: id;'>1</div>");
-        assert(Base\Date::time($row) === 1);
-        assert(Base\Date::format('ymdhis',$row) === '1969-12-31 19:00:01');
+        assert(Base\Datetime::time($row) === 1);
+        assert(Base\Datetime::format('ymdhis',$row) === '1969-12-31 19:00:01');
 
         // true
         assert($db->setDebug(true) === $db);
@@ -342,10 +342,10 @@ class Db extends Base\Test
         assert($db->makeInsert([$tb,['id'=>100,'name_[lang]'=>'OK']],['beforeAfter'=>'assoc']) === ['before'=>null,'query'=>100,'after'=>['id'=>100,'name_en'=>'OK','dateAdd'=>null]]);
         assert($db->makeDelete([$tb,['id'=>6]]) === 1);
         assert(count($db->select(true,$tb,null,['id'=>'DESC'],'1,2')) === 2);
-        assert($db->inserts($tb,[$tb['id'],$tb['name_[lang]'],'dateAdd'],[4,'james',Base\Date::mk(2017,1,5)]) === [4]);
-        assert(count($db->select(true,$tb,[['dateAdd','day',Base\Date::mk(2017,1,5)]])) === 1);
-        assert(count($db->select(true,$tb,[[$tb->col('dateAdd'),'year',Base\Date::mk(2017,3)]])) === 1);
-        assert(count($db->select(true,$tb,[['dateAdd','month',Base\Date::mk(2017,1,20)]])) === 1);
+        assert($db->inserts($tb,[$tb['id'],$tb['name_[lang]'],'dateAdd'],[4,'james',Base\Datetime::mk(2017,1,5)]) === [4]);
+        assert(count($db->select(true,$tb,[['dateAdd','day',Base\Datetime::mk(2017,1,5)]])) === 1);
+        assert(count($db->select(true,$tb,[[$tb->col('dateAdd'),'year',Base\Datetime::mk(2017,3)]])) === 1);
+        assert(count($db->select(true,$tb,[['dateAdd','month',Base\Datetime::mk(2017,1,20)]])) === 1);
         assert(count($db->select(true,$tb,[['name_[lang]','%like','ja'],'and',[$tb->col('name_[lang]'),'like%','s2']])) === 1);
         assert(count($db->select(true,$tb,[[$tb->col('id'),'or|findInSet',[1,2]]])) === 2);
         assert($db->makeDelete([$tb,['id'=>[4,100]]]) === 2);

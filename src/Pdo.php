@@ -1137,7 +1137,7 @@ class Pdo extends Main\Root
                 $return = $statement->fetchObject(...$arg);
 
                 if($cast === true && is_numeric($return))
-                $return = Base\Number::cast($return);
+                $return = Base\Num::cast($return);
             }
         }
 

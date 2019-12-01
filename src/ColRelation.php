@@ -558,7 +558,7 @@ class ColRelation extends Relation
         $return = null;
         $type = $this->checkType();
 
-        if(!Base\Validate::isReallyEmpty($value))
+        if(!Base\Vari::isReallyEmpty($value))
         {
             if(!is_array($value))
             $value = [$value];

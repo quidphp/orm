@@ -728,10 +728,10 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $value = Base\Arr::get('Update_time',$this->status($cache));
         if(is_string($value))
         {
-            $return = Base\Date::time($value,'sql');
+            $return = Base\Datetime::time($value,'sql');
 
             if(is_int($return) && $format !== null)
-            $return = Base\Date::format($format,$return);
+            $return = Base\Datetime::format($format,$return);
         }
 
         return $return;
