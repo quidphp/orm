@@ -694,7 +694,7 @@ class Syntax extends Base\Test
         assert($syntax::make('select',['*','james',null,null,0])['sql'] === 'SELECT * FROM `james` LIMIT 0');
         assert(count($syntax::make('select',['*','james',[],null,0])) === 3);
         assert($syntax::make('select',['*','james',['active'=>1,[12312312,'`between`',['from','to']]]])['sql'] === 'SELECT * FROM `james` WHERE `active` = 1 AND 12312312 BETWEEN `from` AND `to`');
-        assert(strlen($syntax::make('select',['*','james',['active'=>1,'date'=>Base\Datetime::timestamp()]])['sql']) === 64);
+        assert(strlen($syntax::make('select',['*','james',['active'=>1,'date'=>Base\Datetime::now()]])['sql']) === 64);
 
         // makeParses
         assert($syntax::makeParses('select',['*','table',2,'id',3]) === ['what'=>'*','table'=>'table','where'=>2,'order'=>'id','limit'=>3]);
