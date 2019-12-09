@@ -76,7 +76,7 @@ class Lang extends Base\Test
         assert($lang->validate(['closure']) === 'Doit passer le test de la fonction anynonyme');
         assert($lang->validate(['instance'=>\DateTime::class]) === 'Doit être une instance de DateTime');
         assert($lang->validate(['uriPath'],'en') === 'Must be a valid uri path');
-        assert($lang->validate(['numberWholeNotEmpty']) === 'Doit être un chiffre entier non vide');
+        assert($lang->validate(['intCastNotEmpty']) === 'Doit être un chiffre entier non vide');
         assert($lang->validate(['scalarNotBool']) === 'Doit être chaîne scalaire non booléenne');
         assert($lang->validate(['extension'=>['jpg','png']]) === "L'extension du fichier doit être: jpg, png");
         assert($lang->validate(['maxFilesize'=>'5 Ko']) === 'La taille du fichier doit être plus petite que 5 Ko');

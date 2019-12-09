@@ -1748,10 +1748,10 @@ class Col extends Main\Root
             $str = Base\Str::removeWhiteSpace($str);
 
             if($kind === 'int')
-            $return = Base\Num::castToInt($return) ?? $str;
+            $return = Base\Integer::cast($return) ?? $str;
 
             elseif($kind === 'float')
-            $return = Base\Num::castToFloat($return) ?? $str;
+            $return = Base\Floating::cast($return) ?? $str;
 
             elseif(in_array($kind,['char','text'],true))
             $return = $str;
