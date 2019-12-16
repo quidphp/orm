@@ -137,15 +137,15 @@ class ColRelation extends Relation
         return $this->type() === $value;
     }
 
-    
+
     // searchMinLength
     // retourne la longueur minimale de la recherche
-    final public function searchMinLength():int 
+    final public function searchMinLength():int
     {
         return $this->col()->searchMinLength();
     }
-    
-    
+
+
     // type
     // retourne le type de relation de la colonne
     // le type est gardé en cache dans la propriété type de l'objet

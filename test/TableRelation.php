@@ -47,10 +47,10 @@ class TableRelation extends Base\Test
         // prepareAttrWithMethod
 
         // prepareOption
-        
+
         // searchMinLength
         assert($rel->searchMinLength() === 3);
-        
+
         // shouldCache
 
         // isOutputMethod
