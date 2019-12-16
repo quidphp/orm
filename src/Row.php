@@ -1050,10 +1050,10 @@ class Row extends Main\ArrObj
     }
 
 
-    // terminate
+    // teardown
     // vide un objet ligne
     // l'objet devient inutilisable
-    final public function terminate():self
+    final public function teardown():self
     {
         $this->primary = 0;
         $this->table = null;
@@ -1061,7 +1061,7 @@ class Row extends Main\ArrObj
 
         foreach ($this->cells() as $cell)
         {
-            $cell->terminate();
+            $cell->teardown();
         }
 
         return $this;
@@ -1077,7 +1077,7 @@ class Row extends Main\ArrObj
         $rows->remove($this);
         $rows->readOnly(true);
 
-        $this->terminate();
+        $this->teardown();
 
         return $this;
     }

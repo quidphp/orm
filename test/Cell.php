@@ -386,7 +386,7 @@ class Cell extends Base\Test
         assert($cell->refresh()->value() === '');
         assert($cell->set('ok') === $cell);
 
-        // terminate
+        // teardown
 
         // initReplaceMode
 

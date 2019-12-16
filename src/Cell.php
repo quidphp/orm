@@ -1009,10 +1009,10 @@ class Cell extends Main\Root
     }
 
 
-    // terminate
+    // teardown
     // vide un objet cell
     // l'objet devient inutilisable
-    final public function terminate():self
+    final public function teardown():self
     {
         $this->value = [];
         $this->col = null;

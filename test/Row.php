@@ -314,7 +314,7 @@ class Row extends Base\Test
         $row4 = $tb->insert(['date'=>time(),'name_en'=>'sure']);
         assert($row4->deleteOrDeactivate() === 1);
 
-        // terminate
+        // teardown
 
         // unlink
 

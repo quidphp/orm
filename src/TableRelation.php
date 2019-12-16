@@ -164,7 +164,15 @@ class TableRelation extends Relation
         return $return;
     }
 
-
+    
+    // searchMinLength
+    // retourne la longueur minimale de la recherche
+    final public function searchMinLength():int 
+    {
+        return $this->table()->searchMinLength();
+    }
+    
+    
     // shouldCache
     // retourne si l'argument cache doit être respecté
     final public function shouldCache(bool $return,$option=null)

@@ -76,7 +76,10 @@ class ColRelation extends Base\Test
 
         // isType
         assert($array->isType('array'));
-
+        
+        // searchMinLength
+        assert($array->searchMinLength() === 3);
+        
         // type
         assert($array->type() === 'array');
         assert($range->type() === 'range');

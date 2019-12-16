@@ -264,7 +264,7 @@ class Table extends Base\Test
         // hasRow
         assert($tb->hasRow(1));
         assert(!$tb->hasRow(2));
-        $tb[2]->terminate();
+        $tb[2]->teardown();
         assert($tb->hasRow(2));
         assert($tb->rows()->clean() instanceof Orm\Rows);
 
