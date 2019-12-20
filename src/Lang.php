@@ -222,26 +222,29 @@ class Lang extends Main\Lang
 
             if($v instanceof \Closure)
             $v = $v('lang');
-
-            if(is_array($v))
-            $v = implode(', ',$v);
-
-            if(is_numeric($k))
-            $path = $this->pathAlternateValue('validate',$v,true,$option['path']);
-
-            else
+            
+            if($v !== null)
             {
-                $path = $this->pathAlternateValue('validate',$k,true,$option['path']);
-                $replace = ['%'=>$v];
+                if(is_array($v))
+                $v = implode(', ',$v);
 
-                if(is_int($v) || is_array($v))
-                $plural = $v;
+                if(is_numeric($k))
+                $path = $this->pathAlternateValue('validate',$v,true,$option['path']);
+
+                else
+                {
+                    $path = $this->pathAlternateValue('validate',$k,true,$option['path']);
+                    $replace = ['%'=>$v];
+
+                    if(is_int($v) || is_array($v))
+                    $plural = $v;
+                }
+
+                if(empty($plural))
+                $return = $this->same($path,$replace,$lang,$option);
+                else
+                $return = $this->plural($plural,$path,$replace,['s'=>'s'],$lang,$option);
             }
-
-            if(empty($plural))
-            $return = $this->same($path,$replace,$lang,$option);
-            else
-            $return = $this->plural($plural,$path,$replace,['s'=>'s'],$lang,$option);
         }
 
         else
@@ -266,8 +269,11 @@ class Lang extends Main\Lang
                 $key = key($value);
                 $value = current($value);
             }
-
-            $return[] = $this->validate([$key=>$value],$lang,$option);
+            
+            $validate = $this->validate([$key=>$value],$lang,$option);
+            
+            if($validate !== null)
+            $return[] = $validate;
         }
 
         return $return;

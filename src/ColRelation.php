@@ -370,8 +370,8 @@ class ColRelation extends Relation
 
                 if(in_array($type,['array','callable','lang'],true))
                 {
-                    $sort = true;
-                    $values = true;
+                    $sort = $col->getAttr('relationSortKey');
+                    $values = $col->getAttr('relationIndex');
 
                     if($type === 'array')
                     $new = $attr;
