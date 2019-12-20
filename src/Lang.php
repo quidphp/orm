@@ -222,7 +222,7 @@ class Lang extends Main\Lang
 
             if($v instanceof \Closure)
             $v = $v('lang');
-            
+
             if($v !== null)
             {
                 if(is_array($v))
@@ -269,9 +269,9 @@ class Lang extends Main\Lang
                 $key = key($value);
                 $value = current($value);
             }
-            
+
             $validate = $this->validate([$key=>$value],$lang,$option);
-            
+
             if($validate !== null)
             $return[] = $validate;
         }
