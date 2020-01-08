@@ -1405,7 +1405,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     }
 
 
-    // rowsVisible
+    // rowsVisibleOrder
     // retourne un objet rows avec seulement les lignes visibles dans l'ordre par défaut de la table
     final public function rowsVisibleOrder(...$values):Rows
     {

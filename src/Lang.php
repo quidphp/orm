@@ -202,9 +202,8 @@ class Lang extends Main\Lang
 
     // validate
     // si value est null, retourne tout le tableau de contenu validate dans la langue
+    // retourne null si inexistant
     // compatible avec base/lang
-    // sinon retourne un texte d'erreur de validation
-    // utilise def, donc aucune erreur envoyé si inexistant
     final public function validate(?array $value=null,?string $lang=null,?array $option=null)
     {
         $return = null;
@@ -219,27 +218,28 @@ class Lang extends Main\Lang
             $v = current($value);
             $replace = null;
             $plural = null;
-
+            $path = null;
+            
             if($v instanceof \Closure)
             $v = $v('lang');
+            
+            if(is_array($v) && Base\Arr::isIndexed($v))
+            $v = implode(', ',$v);
+            
+            if(is_numeric($k))
+            $path = (is_string($v))? $this->pathAlternateValue('validate',$v,true,$option['path']):null;
 
-            if($v !== null)
+            elseif(is_string($k) && $v !== null)
             {
-                if(is_array($v))
-                $v = implode(', ',$v);
+                $path = $this->pathAlternateValue('validate',$k,true,$option['path']);
+                $replace = ['%'=>$v];
 
-                if(is_numeric($k))
-                $path = $this->pathAlternateValue('validate',$v,true,$option['path']);
-
-                else
-                {
-                    $path = $this->pathAlternateValue('validate',$k,true,$option['path']);
-                    $replace = ['%'=>$v];
-
-                    if(is_int($v) || is_array($v))
-                    $plural = $v;
-                }
-
+                if(is_int($v) || is_array($v))
+                $plural = $v;
+            }
+            
+            if($path !== null)
+            {
                 if(empty($plural))
                 $return = $this->same($path,$replace,$lang,$option);
                 else
@@ -247,17 +247,13 @@ class Lang extends Main\Lang
             }
         }
 
-        else
-        static::throw('invalidValue','arrayNeedsToHaveOneKey');
-
         return $return;
     }
 
 
     // validates
-    // retourne plusieurs textes d'erreur de validation
-    // utilise def, donc aucune erreur envoyé si inexistant
-    // retourne un tableau
+    // retourne un tableau avec plusieurs textes d'erreur de validation
+    // ne retourne rien pour les entrées non existantes (et pas d'erreur)
     final public function validates(array $values,?string $lang=null,?array $option=null):array
     {
         $return = [];
