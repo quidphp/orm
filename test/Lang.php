@@ -80,9 +80,9 @@ class Lang extends Base\Test
         assert($lang->validate(['scalarNotBool']) === 'Doit être chaîne scalaire non booléenne');
         assert($lang->validate(['extension'=>['jpg','png']]) === "L'extension du fichier doit être: jpg, png");
         assert($lang->validate(['maxFilesize'=>'5 Ko']) === 'La taille du fichier doit être plus petite que 5 Ko');
-        assert($lang->validate(array('test'=>2,'ok'=>'what')) === null);
-        assert($lang->validate(array(null)) === null);
-        assert($lang->validate(array(false)) === null);
+        assert($lang->validate(['test'=>2,'ok'=>'what']) === null);
+        assert($lang->validate([null]) === null);
+        assert($lang->validate([false]) === null);
         assert(count($lang->validate()) === 116);
 
         // validates
@@ -91,8 +91,8 @@ class Lang extends Base\Test
         assert($lang->validates(['maxLength'=>45]) === ['Doit avoir une longueur maximale de 45 caractères']);
         assert($lang->validates([['maxLength'=>55]]) === ['Doit avoir une longueur maximale de 55 caractères']);
         assert($lang->validates([['maxLength'=>45],null,false]) === ['Doit avoir une longueur maximale de 45 caractères']);
-        assert($lang->validates([['maxLength'=>45,'ok'=>2],false]) === array());
-        
+        assert($lang->validates([['maxLength'=>45,'ok'=>2],false]) === []);
+
         // compare
         assert($lang->compare(['>'=>'james']) === 'Doit être plus grand que james');
         assert($lang->compare(['>'=>'james','<'=>'test']) === null);

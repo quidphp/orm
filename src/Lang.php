@@ -219,13 +219,13 @@ class Lang extends Main\Lang
             $replace = null;
             $plural = null;
             $path = null;
-            
+
             if($v instanceof \Closure)
             $v = $v('lang');
-            
+
             if(is_array($v) && Base\Arr::isIndexed($v))
             $v = implode(', ',$v);
-            
+
             if(is_numeric($k))
             $path = (is_string($v))? $this->pathAlternateValue('validate',$v,true,$option['path']):null;
 
@@ -237,7 +237,7 @@ class Lang extends Main\Lang
                 if(is_int($v) || is_array($v))
                 $plural = $v;
             }
-            
+
             if($path !== null)
             {
                 if(empty($plural))
