@@ -393,8 +393,7 @@ class ColRelation extends Relation
                         if(is_int($attr))
                         $attr = ['min'=>1,'max'=>$attr,'inc'=>1];
 
-                        $range = Base\Arr::range($attr['min'],$attr['max'],$attr['inc']);
-                        $new = array_combine($range,$range);
+                        $new = Base\Arr::range($attr['min'],$attr['max'],$attr['inc']);
                     }
 
                     elseif($type === 'date')
