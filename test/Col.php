@@ -324,13 +324,13 @@ class Col extends Base\Test
         assert($col->ruleValidate(true)[0] === 'Must be a string');
 
         // rulePreValidateCommon
-        
+
         // preValidateClosure
         assert($col->preValidateClosure() === null);
-        
+
         // validateClosure
         assert($col->validateClosure() === null);
-        
+
         // attrCompare
         assert($col->attrCompare() === []);
         assert($dateStart->attrCompare()['<='] instanceof Orm\Col);
