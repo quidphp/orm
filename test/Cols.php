@@ -168,7 +168,7 @@ class Cols extends Base\Test
         assert(is_string($cols->formPlaceholderWrap('br',null,true)));
 
         // htmlStr
-        assert($cols->htmlStr("<div class='%name%'>%label%: %value%</div>")['name_en'] === "<div class='name_en'>English name: LOL</div>");
+        assert(is_string($cols->htmlStr("<div class='%name%'>%label%: %value%</div>")['name_en']));
         assert(is_string($cols->htmlStr("<div class='%name%'>%label%: %value%</div>",true)));
 
         // orderable

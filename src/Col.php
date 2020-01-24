@@ -923,7 +923,16 @@ class Col extends Main\Root
 
         if(!is_array($return))
         $return = (array) $return;
-
+        
+        $method = $type.'Closure';
+        $closure = $this->$method();
+        if(!empty($closure))
+        {
+            $key = $closure('lang');
+            if(!empty($key))
+            $return[$key] = $closure;
+        }
+        
         if($lang === true && !empty($return))
         {
             $lang = $this->db()->lang();
@@ -934,7 +943,23 @@ class Col extends Main\Root
         return $return;
     }
 
-
+    
+    // preValidateClosure
+    // retourne la closure pour la prévalidation
+    public function preValidateClosure():?\Closure 
+    {
+        return null;
+    }
+    
+    
+    // validateClosure
+    // retourne la closure pour la validation
+    public function validateClosure():?\Closure 
+    {
+        return null;
+    }
+    
+    
     // attrCompare
     // retourne le tableau des attributs pour compare
     // les colonnes de comparaison non existantes ne créent pas d'erreur

@@ -83,7 +83,7 @@ class Lang extends Base\Test
         assert($lang->validate(['test'=>2,'ok'=>'what']) === null);
         assert($lang->validate([null]) === null);
         assert($lang->validate([false]) === null);
-        assert(count($lang->validate()) === 116);
+        assert(count($lang->validate()) === 117);
 
         // validates
         assert($lang->validates(['alpha','!'=>3,'>'=>2])[1] === 'Ne doit pas être égal à 3');
@@ -122,7 +122,7 @@ class Lang extends Base\Test
         assert($lang->pathAlternate('required',null) === 'required');
 
         // pathAlternateTake
-        assert(count($lang->pathAlternateTake('validate')) === 116);
+        assert(count($lang->pathAlternateTake('validate')) === 117);
         assert(count($lang->pathAlternateTake('compare')) === 11);
         assert(count($lang->pathAlternateTake('compare',null,['table','what'])) === 11);
         assert(count($lang->pathAlternateTake('required')) === 2);
