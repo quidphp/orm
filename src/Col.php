@@ -1723,6 +1723,9 @@ class Col extends Main\Root
 
             if(is_string($return) && strpos($return,'/') !== false)
             $return = $this->db()->lang()->safe($return) ?? $return;
+            
+            elseif(static::isCallable($return))
+            $return = $return($this);
         }
 
         elseif(empty($this->attr['null']))
