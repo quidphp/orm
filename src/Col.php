@@ -64,6 +64,8 @@ class Col extends Main\Root
         'direction'=>null, // direction par défaut
         'date'=>null, // défini si la colonne est de type date, un format doit y être inscrit
         'relation'=>null, // défini la relation pour la colonne, donne accès à la méthode relation
+        'relationSortKey'=>true, // si la relation est sort par clé automatiquement
+        'relationIndex'=>true, // si la relation est indexé (donc si les clés sont string transforme en index) -> attention si une valeur contient un caractère non url ou - ça ca causer des problèmes
         'enum'=>null, // défini la relation comme simple (enum)
         'set'=>null, // défini la relation comme multiple (set)
         'media'=>null, // défini le nombre maximal de media que contient la colonne
