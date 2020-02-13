@@ -290,7 +290,7 @@ class Update extends Orm\RowOperation
             {
                 $row->callThis(function() use($result,$attr,$set) {
                     if($result === 1)
-                    $this->onInserted($attr);
+                    $this->onUpdated($attr);
 
                     $this->cellsRefresh($set);
                 });
