@@ -60,13 +60,6 @@ class Insert extends Orm\TableOperation
             if(!empty($set) && !$cols->exists(...array_keys($set)))
             static::throw('columnsNoMatch');
 
-            if($this->getAttr('reservePrimary') === true && empty($set[$primary]))
-            {
-                $reserved = $table->reservePrimary();
-                if(is_int($reserved))
-                $set[$primary] = $reserved;
-            }
-
             $preValidate = true;
             if($this->getAttr('preValidate') === true)
             {
@@ -91,6 +84,13 @@ class Insert extends Orm\TableOperation
 
                 if($finalValidate === true)
                 {
+                    if($this->getAttr('reservePrimary') === true && empty($set[$primary]))
+                    {
+                        $reserved = $table->reservePrimary();
+                        if(is_int($reserved))
+                        $set[$primary] = $reserved;
+                    }
+
                     $catchException = $this->getAttr('catchException');
                     $log = $this->getAttr('log');
 
