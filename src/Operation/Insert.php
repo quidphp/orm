@@ -75,6 +75,13 @@ class Insert extends Orm\TableOperation
                 }
             }
 
+            if($this->getAttr('reservePrimary') === true && empty($set[$primary]))
+            {
+                $reserved = $table->reservePrimary();
+                if(is_int($reserved))
+                $set[$primary] = $reserved;
+            }
+
             $set = $cols->inserts($set,$attr);
             $validate = ($this->getAttr('validate') === false || $this->validate($cols,$set))? true:false;
 
@@ -92,13 +99,6 @@ class Insert extends Orm\TableOperation
 
                     if($catchException === true)
                     $db->setExceptionClass(true);
-
-                    if($this->getAttr('reservePrimary') === true && empty($set[$primary]))
-                    {
-                        $reserved = $table->reservePrimary();
-                        if(is_int($reserved))
-                        $set[$primary] = $reserved;
-                    }
 
                     $result = $db->insert($table,$set);
 
