@@ -1192,6 +1192,9 @@ abstract class Syntax extends Main\Root
 
         if(!empty($value))
         {
+            if(strpos($value,'\\') !== false && Base\Classe::extendOne(Tables::keyClassExtends(),$value))
+            $value = $value::tableFromFqcn()->name();
+
             $tickOrSpace = static::hasTickOrSpace($value);
             $return['sql'] .= ($tickOrSpace === false)? static::tick($value):$value;
 
