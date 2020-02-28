@@ -617,6 +617,7 @@ class Col extends Base\Test
         assert($dateAdd->emptyPlaceholder('bla') === null);
 
         // formWrap
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>true,'name'=>'notEmail'])) === 271);
         assert(strlen($email->formWrap('br',null,true,['name'=>'notEmail'])) === 251);
         assert(strlen($email->formWrap('br',null,true,['type'=>'text','name'=>'notEmail'])) === 251);
         assert(strlen($email->formWrap('br',null,true,['tag'=>'textarea','name'=>'notEmail'])) === 227);

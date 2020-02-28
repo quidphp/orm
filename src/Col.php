@@ -2103,6 +2103,9 @@ class Col extends Main\Root
             $attr = Base\Arr::plus($attr,['id'=>$id]);
         }
 
+        if(!empty($attr['placeholder']) && $attr['placeholder'] === true)
+        $attr['placeholder'] = $this->placeholder($attr['placeholder']);
+
         $form = $this->$method($value,$attr,$option);
 
         if(is_string($form))
