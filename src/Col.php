@@ -2097,7 +2097,7 @@ class Col extends Main\Root
         $label = $this->label($pattern);
         $id = null;
 
-        if($this->hasFormLabelId($attr,$complex))
+        if($this->hasFormLabelId($attr,$complex) || (!empty($attr['id']) && $attr['id'] === true))
         {
             $id = Base\Attr::randomId($attr['name'] ?? $this->name());
             $attr = Base\Arr::plus($attr,['id'=>$id]);
