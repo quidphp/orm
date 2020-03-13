@@ -639,7 +639,15 @@ class Col extends Main\Root
     // retourne le placeholder ou le label, si value n'est pas string
     final public function placeholder($value=null):?string
     {
-        return (is_string($value))? $value:$this->label();
+        $return = null;
+
+        if($value === true || $value === null)
+        $value = $this->label();
+
+        if(is_string($value))
+        $return = $value;
+
+        return $return;
     }
 
 
@@ -1991,6 +1999,7 @@ class Col extends Main\Root
                 if($isTextTag === true || $isInputMethod === true)
                 {
                     $pattern = $this->rulePattern();
+
                     if(!array_key_exists('data-pattern',$return) && !empty($pattern))
                     $return['data-pattern'] = $pattern;
                 }
@@ -2002,6 +2011,9 @@ class Col extends Main\Root
                     $return['maxlength'] = $length;
                 }
             }
+
+            if(array_key_exists('placeholder',$return) && $return['placeholder'] !== null)
+            $return['placeholder'] = $this->placeholder($return['placeholder']);
 
             if(!array_key_exists('name',$return))
             $return['name'] = $this->name();
@@ -2102,9 +2114,6 @@ class Col extends Main\Root
             $id = Base\Attr::randomId($attr['name'] ?? $this->name());
             $attr = Base\Arr::plus($attr,['id'=>$id]);
         }
-
-        if(!empty($attr['placeholder']) && $attr['placeholder'] === true)
-        $attr['placeholder'] = $this->placeholder($attr['placeholder']);
 
         $form = $this->$method($value,$attr,$option);
 

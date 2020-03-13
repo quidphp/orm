@@ -602,6 +602,8 @@ class Col extends Base\Test
         assert(strlen($col->form([1=>'no',2=>'yes'],['tag'=>'checkbox'])) === 249);
         assert($col->form([1=>'no',2=>'yes'],['name'=>'ok','tag'=>'select','data-required'=>null]) === "<select name='ok'><option value='1'>no</option><option value='2'>yes</option></select>");
         assert(strlen($col->form([1=>'no',2=>'yes'],['data-required'=>null,'name'=>'ok','tag'=>'radio'])) === 191);
+        assert(strlen($email->form('james',['placeholder'=>'BLA'])) === 180);
+        assert(strlen($email->form('james',['placeholder'=>true])) === 182);
 
         // formHidden
         assert($email->formHidden() === "<input data-required='1' name='email' type='hidden'/>");
@@ -617,6 +619,10 @@ class Col extends Base\Test
         assert($dateAdd->emptyPlaceholder('bla') === null);
 
         // formWrap
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>false,'name'=>'notEmail'])) === 251);
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>true,'name'=>'notEmail'])) === 271);
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>null,'name'=>'notEmail'])) === 251);
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>'JAMESz','name'=>'notEmail'])) === 272);
         assert(strlen($email->formWrap('br',null,true,['placeholder'=>true,'name'=>'notEmail'])) === 271);
         assert(strlen($email->formWrap('br',null,true,['name'=>'notEmail'])) === 251);
         assert(strlen($email->formWrap('br',null,true,['type'=>'text','name'=>'notEmail'])) === 251);
