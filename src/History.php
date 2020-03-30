@@ -14,7 +14,7 @@ use Quid\Base;
 use Quid\Main;
 
 // history
-// class used to store the history of requests made to the PDO object
+// class used to store the history of requests made to the database object
 class History extends Main\Map
 {
     // config
