@@ -583,35 +583,39 @@ class Col extends Base\Test
         assert($email->collation() === 'utf8mb4_general_ci');
         assert($dateAdd->collation() === null);
 
+        // keyboard
+        assert($email->keyboard() === 'email');
+        assert($dateAdd->keyboard() === 'numeric');
+
         // formAttr
-        assert($email->formAttr() === ['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']);
-        assert($email->formAttr(['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']) === ['data-required'=>true,'data-pattern'=>'^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$','maxlength'=>100,'name'=>'email']);
+        assert($email->formAttr() === ['data-required'=>true,'data-pattern'=>'email','inputmode'=>'email','maxlength'=>100,'name'=>'email']);
+        assert($email->formAttr(['data-required'=>true,'data-pattern'=>'email','maxlength'=>100,'name'=>'email']) === ['data-required'=>true,'data-pattern'=>'^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$','maxlength'=>100,'name'=>'email','inputmode'=>'email']);
         assert($email->formAttr(['placeholder'=>'myplace','data-required'=>'ok'])['data-required'] === 'ok');
-        assert(count($email->formAttr(['placeholder'=>'myplace','data-required'=>'ok'])) === 5);
-        assert(count($email->formAttr(['placeholder'=>'myplace','ok','ok2','name'=>'james2','data-required'=>'ok'])) === 7);
+        assert(count($email->formAttr(['placeholder'=>'myplace','data-required'=>'ok'])) === 6);
+        assert(count($email->formAttr(['placeholder'=>'myplace','ok','ok2','name'=>'james2','data-required'=>'ok'])) === 8);
 
         // form
         assert($col->form('val',['name'=>'test','data-required'=>null]) === "<input name='test' maxlength='100' type='text' value='val'/>");
         assert($col->form() === "<input data-required='1' maxlength='100' name='name' type='text'/>");
-        assert($dateAdd->form() === "<input maxlength='11' name='dateAdd' type='text'/>");
-        assert($email->form() === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='default@def.james'/>");
-        assert($email->form('') === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value=''/>");
-        assert($email->form(false) === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='0'/>");
-        assert($email->form('test@gmail.com') === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='test@gmail.com'/>");
+        assert($dateAdd->form() === "<input inputmode='numeric' maxlength='11' name='dateAdd' type='text'/>");
+        assert($email->form() === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' inputmode='email' maxlength='100' name='email' type='text' value='default@def.james'/>");
+        assert($email->form('') === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' inputmode='email' maxlength='100' name='email' type='text' value=''/>");
+        assert($email->form(false) === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' inputmode='email' maxlength='100' name='email' type='text' value='0'/>");
+        assert($email->form('test@gmail.com') === "<input data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' inputmode='email' maxlength='100' name='email' type='text' value='test@gmail.com'/>");
         assert($password->form() === "<input data-required='1' data-pattern='^(?=.{5,30})(?=.*\d)(?=.*[A-z]).*' maxlength='100' name='password' type='password' value='lol2'/>");
         assert(strlen($col->form([1=>'no',2=>'yes'],['tag'=>'checkbox'])) === 249);
         assert($col->form([1=>'no',2=>'yes'],['name'=>'ok','tag'=>'select','data-required'=>null]) === "<select name='ok'><option value='1'>no</option><option value='2'>yes</option></select>");
         assert(strlen($col->form([1=>'no',2=>'yes'],['data-required'=>null,'name'=>'ok','tag'=>'radio'])) === 191);
-        assert(strlen($email->form('james',['placeholder'=>'BLA'])) === 180);
-        assert(strlen($email->form('james',['placeholder'=>true])) === 182);
+        assert(strlen($email->form('james',['placeholder'=>'BLA'])) === 198);
+        assert(strlen($email->form('james',['placeholder'=>true])) === 200);
 
         // formHidden
         assert($email->formHidden() === "<input data-required='1' name='email' type='hidden'/>");
         assert($email->formHidden(true,['data-required'=>null]) === "<input name='email' type='hidden' value='default@def.james'/>");
 
         // formPlaceholder
-        assert($email->formPlaceholder(true,'myPlaceholder') === "<input placeholder='myPlaceholder' data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' maxlength='100' name='email' type='text' value='default@def.james'/>");
-        assert(strlen($email->formPlaceholder(true)) === 194);
+        assert($email->formPlaceholder(true,'myPlaceholder') === "<input placeholder='myPlaceholder' data-required='1' data-pattern='^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{1,4})+$' inputmode='email' maxlength='100' name='email' type='text' value='default@def.james'/>");
+        assert(strlen($email->formPlaceholder(true)) === 212);
 
         // emptyPlaceholder
         assert($dateAdd->emptyPlaceholder(null) === 'NULL');
@@ -619,24 +623,24 @@ class Col extends Base\Test
         assert($dateAdd->emptyPlaceholder('bla') === null);
 
         // formWrap
-        assert(strlen($email->formWrap('br',null,true,['placeholder'=>false,'name'=>'notEmail'])) === 251);
-        assert(strlen($email->formWrap('br',null,true,['placeholder'=>true,'name'=>'notEmail'])) === 271);
-        assert(strlen($email->formWrap('br',null,true,['placeholder'=>null,'name'=>'notEmail'])) === 251);
-        assert(strlen($email->formWrap('br',null,true,['placeholder'=>'JAMESz','name'=>'notEmail'])) === 272);
-        assert(strlen($email->formWrap('br',null,true,['placeholder'=>true,'name'=>'notEmail'])) === 271);
-        assert(strlen($email->formWrap('br',null,true,['name'=>'notEmail'])) === 251);
-        assert(strlen($email->formWrap('br',null,true,['type'=>'text','name'=>'notEmail'])) === 251);
-        assert(strlen($email->formWrap('br',null,true,['tag'=>'textarea','name'=>'notEmail'])) === 227);
-        assert(strlen($email->formWrap('table')) === 279);
-        assert(strlen($email->formWrap('table',null,'james@ok')) === 270);
-        assert(strlen($email->formWrap('table','%:','james@ok')) === 271);
-        assert(strlen($email->formWrap('table',4,'james@ok')) === 269);
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>false,'name'=>'notEmail'])) === 269);
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>true,'name'=>'notEmail'])) === 289);
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>null,'name'=>'notEmail'])) === 269);
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>'JAMESz','name'=>'notEmail'])) === 290);
+        assert(strlen($email->formWrap('br',null,true,['placeholder'=>true,'name'=>'notEmail'])) === 289);
+        assert(strlen($email->formWrap('br',null,true,['name'=>'notEmail'])) === 269);
+        assert(strlen($email->formWrap('br',null,true,['type'=>'text','name'=>'notEmail'])) === 269);
+        assert(strlen($email->formWrap('br',null,true,['tag'=>'textarea','name'=>'notEmail'])) === 245);
+        assert(strlen($email->formWrap('table')) === 297);
+        assert(strlen($email->formWrap('table',null,'james@ok')) === 288);
+        assert(strlen($email->formWrap('table','%:','james@ok')) === 289);
+        assert(strlen($email->formWrap('table',4,'james@ok')) === 287);
 
         // formPlaceholderWrap
-        assert(strlen($email->formPlaceholderWrap('br',null,'james@ok','placehol')) === 256);
-        assert(strlen($email->formPlaceholderWrap('br','%:','james@ok','placehol')) === 257);
-        assert(strlen($email->formPlaceholderWrap('br')) === 262);
-        assert(strlen($email->formPlaceholderWrap('br',3)) === 260);
+        assert(strlen($email->formPlaceholderWrap('br',null,'james@ok','placehol')) === 274);
+        assert(strlen($email->formPlaceholderWrap('br','%:','james@ok','placehol')) === 275);
+        assert(strlen($email->formPlaceholderWrap('br')) === 280);
+        assert(strlen($email->formPlaceholderWrap('br',3)) === 278);
 
         // makeFormWrap
 

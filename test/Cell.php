@@ -253,7 +253,7 @@ class Cell extends Base\Test
         // form
         assert(strlen($cell->form()) === 76);
         assert($dateAdd->set(1234235434) === $dateAdd);
-        assert($dateAdd->form() === "<input maxlength='11' name='dateAdd' type='text' value='1234235434'/>");
+        assert($dateAdd->form() === "<input inputmode='numeric' maxlength='11' name='dateAdd' type='text' value='1234235434'/>");
         assert($cell->form() === "<input data-required='1' maxlength='100' name='name' type='text' value='2'/>");
         assert($cell->form(['data-required'=>false]) === "<input data-required='0' maxlength='100' name='name' type='text' value='2'/>");
         assert($cell->form(['data'=>['required'=>false]]) === "<input data-required='0' maxlength='100' name='name' type='text' value='2'/>");

@@ -84,6 +84,7 @@ class Col extends Main\Root
         'onUpdate'=>null, // callback sur update
         'onCommit'=>null, // callack sur insertion ou update
         'excerpt'=>75, // longueur de l'excerpt
+        'keyboard'=>null, // défini le keyboard à utiliser pour le champ (inputmode)
         'permission'=>[ // tableau des permissions
             '*'=>[
                 'nullPlaceholder'=>true]]
@@ -1963,6 +1964,14 @@ class Col extends Main\Root
     }
 
 
+    // keyboard
+    // retourne le keyboard à utiliser pour le champ (input mode)
+    final public function keyboard():?string
+    {
+        return $this->getAttr('keyboard');
+    }
+
+
     // formAttr
     // retourne les attributs de formulaires avec un tableau d'attributs en argument facultatif
     // si la colonne est requise, ajoute la propriété required dans les attributs
@@ -1998,10 +2007,14 @@ class Col extends Main\Root
             {
                 if($isTextTag === true || $isInputMethod === true)
                 {
+                    $keyboard = $this->keyboard();
                     $pattern = $this->rulePattern();
 
                     if(!array_key_exists('data-pattern',$return) && !empty($pattern))
                     $return['data-pattern'] = $pattern;
+
+                    if(!array_key_exists('inputmode',$return) && !empty($keyboard))
+                    $return['inputmode'] = $keyboard;
                 }
 
                 if($isInputMethod === true)
