@@ -1,7 +1,7 @@
 {
     "name": "quidphp/orm",
     "type": "library",
-    "description": "PHP library that provides database access and a comprehensive Object-Relational Mapper",
+    "description": "PHP library that provides database access and a comprehensive ORM",
     "keywords": ["quidphp","quid","framework"],
     "homepage": "https://quidphp.com",
     "license": "MIT",
@@ -11,8 +11,8 @@
     }],
     "require": {
         "php": ">=7.3.0",
-        "quidphp/base": "dev-master",
-        "quidphp/main": "dev-master"
+        "quidphp/base": "5.29",
+        "quidphp/main": "5.29"
     },
     "autoload": {
         "psr-4": {
