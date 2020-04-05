@@ -2297,7 +2297,7 @@ class Pdo extends Main\Root
                 $parse['dsn'] = $dsn;
                 $parse['charset'] = $charset;
 
-                if(!Base\Str::isEnd($charset,$return['dsn']))
+                if(!Base\Str::isEnd($charset,$parse['dsn']))
                 $parse['dsn'] .= ';charset='.$charset;
 
                 foreach(Base\Str::explode(';',$parse['path'],null,true,true) as $x)

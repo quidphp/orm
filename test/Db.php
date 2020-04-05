@@ -50,7 +50,6 @@ class Db extends Base\Test
         assert($db[$table] instanceof Orm\Table);
         assert(isset($db[$table]));
         assert(!empty($db[$table]));
-        assert(!array_key_exists($table,$db));
         $i = 0;
         foreach ($db as $key => $value)
         {
