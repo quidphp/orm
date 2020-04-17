@@ -11,8 +11,8 @@
     }],
     "require": {
         "php": ">=7.3.0",
-        "quidphp/base": "5.29",
-        "quidphp/main": "5.29"
+        "quidphp/base": "dev-master",
+        "quidphp/main": "dev-master"
     },
     "autoload": {
         "psr-4": {
