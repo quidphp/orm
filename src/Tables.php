@@ -15,10 +15,9 @@ use Quid\Main;
 
 // tables
 // class for a collection of many tables within a same database
-class Tables extends Main\Map implements Main\Contract\Hierarchy
+class Tables extends Main\MapObj implements Main\Contract\Hierarchy
 {
     // trait
-    use Main\Map\_obj;
     use Main\Map\_readOnly;
     use Main\Map\_sort;
 
@@ -27,9 +26,10 @@ class Tables extends Main\Map implements Main\Contract\Hierarchy
     public static $config = [];
 
 
-    // map
-    protected static $allow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
-    protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
+    // dynamique
+    protected $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
+    protected $mapIs = Table::class; // classe d'objet permis
+    protected $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
 
 
     // construct

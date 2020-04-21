@@ -26,8 +26,8 @@ class Schema extends Main\Map
     public static $config = [];
 
 
-    // map
-    protected static $allow = ['empty','jsonSerialize','serialize','clone']; // méthodes permises
+    // dynamique
+    protected $mapAllow = ['empty','jsonSerialize','serialize','clone']; // méthodes permises
 
 
     // construct

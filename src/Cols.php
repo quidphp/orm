@@ -15,10 +15,9 @@ use Quid\Main;
 
 // cols
 // class for a collection of many columns within a same table
-class Cols extends Main\Map
+class Cols extends Main\MapObj
 {
     // trait
-    use Main\Map\_obj;
     use Main\Map\_readOnly;
     use Main\Map\_sort;
 
@@ -27,9 +26,10 @@ class Cols extends Main\Map
     public static $config = [];
 
 
-    // map
-    protected static $allow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
-    protected static $sortDefault = 'priority'; // défini la méthode pour sort par défaut
+    // dynamique
+    protected $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
+    protected $mapIs = Col::class; // classe d'objet permis
+    protected $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
 
 
     // construct

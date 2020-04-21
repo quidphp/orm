@@ -32,11 +32,8 @@ class Classe extends Main\Map
     ];
 
 
-    // map
-    protected static $allow = ['jsonSerialize','serialize','clone']; // méthodes permises
-
-
     // dynamique
+    protected $mapAllow = ['jsonSerialize','serialize','clone']; // méthodes permises
     protected $extenders = null; // propriété pour conserver l'objet extenders
 
 

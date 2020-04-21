@@ -20,8 +20,8 @@ class TableClasse extends Main\Map
     public static $config = [];
 
 
-    // map
-    protected static $allow = ['jsonSerialize','serialize','clone']; // méthodes permises
+    // dynamique
+    protected $mapAllow = ['jsonSerialize','serialize','clone']; // méthodes permises
 
 
     // table

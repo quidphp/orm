@@ -24,9 +24,9 @@ class RowsIndex extends Rows
     public static $config = [];
 
 
-    // map
-    protected static $allow = ['add','unset','remove','empty','sequential','filter','sort','clone']; // méthodes permises
-    protected static $after = ['sequential']; // sequential après chaque appel qui modifie, sequential ne crée pas de clone
+    // dynamique
+    protected $mapAllow = ['add','unset','remove','empty','sequential','filter','sort','clone']; // méthodes permises
+    protected $mapAfter = ['sequential']; // sequential après chaque appel qui modifie, sequential ne crée pas de clone
 
 
     // isTable

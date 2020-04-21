@@ -15,10 +15,9 @@ use Quid\Main;
 
 // rows
 // class for a collection of many rows within a same table
-class Rows extends Main\Map
+class Rows extends Main\MapObj
 {
     // trait
-    use Main\Map\_obj;
     use Main\Map\_readOnly;
     use Main\Map\_sort;
 
@@ -27,9 +26,10 @@ class Rows extends Main\Map
     public static $config = [];
 
 
-    // map
-    protected static $allow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
-    protected static $sortDefault = 'primary'; // défini la méthode pour sort par défaut
+    // dynamique
+    protected $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
+    protected $mapIs = Row::class; // classe d'objet permis
+    protected $mapSortDefault = 'primary'; // défini la méthode pour sort par défaut
 
 
     // construct

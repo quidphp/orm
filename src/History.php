@@ -21,13 +21,10 @@ class History extends Main\Map
     public static $config = [];
 
 
-    // map
-    protected static $is = 'array'; // les valeurs doivent passés ce test de validation ou exception
-    protected static $allow = ['push','empty']; // méthodes permises
-
-
     // dynamique
+    protected $mapAllow = ['push','empty']; // méthodes permises
     protected $syntax = null; // garde une copie de la classe de syntaxe à utiliser
+    protected $mapIs = 'array'; // les valeurs doivent passés ce test de validation ou exception
 
 
     // invoke

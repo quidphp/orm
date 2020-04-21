@@ -32,11 +32,8 @@ class PdoSql extends Main\Map
     ];
 
 
-    // map
-    protected static $allow = ['set','unset','empty','overwrite','serialize','jsonSerialize','clone']; // méthodes permises
-
-
     // dynamique
+    protected $mapAllow = ['set','unset','empty','overwrite','serialize','jsonSerialize','clone']; // méthodes permises
     protected $type = null; // type de la requête
     protected $output = null; // output de la requête
     protected $count = []; // contient une cache des différents count
