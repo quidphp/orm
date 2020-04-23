@@ -546,7 +546,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne vrai si l'objet db a un objet lang lié
     final public function hasLang():bool
     {
-        return ($this->lang instanceof Main\Lang)? true:false;
+        return $this->lang instanceof Main\Lang;
     }
 
 
@@ -632,7 +632,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne vrai si l'objet db a un objet com lié
     final public function hasCom():bool
     {
-        return ($this->com instanceof Main\Com)? true:false;
+        return $this->com instanceof Main\Com;
     }
 
 
@@ -965,7 +965,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne vrai si le type de output est row/rows
     final public function isRowOutput($value):bool
     {
-        return (is_string($value) && in_array($value,$this->getAttr(['output','row']),true))? true:false;
+        return is_string($value) && in_array($value,$this->getAttr(['output','row']),true);
     }
 
 

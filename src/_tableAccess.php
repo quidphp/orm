@@ -66,7 +66,7 @@ trait _tableAccess
     // retourne vrai si l'objet et celui fourni ont la même table
     final public function sameTable($table):bool
     {
-        return ($this->db()->hasTable($table) && $this->table() === $this->db()->table($table))? true:false;
+        return $this->db()->hasTable($table) && $this->table() === $this->db()->table($table);
     }
 }
 ?>

@@ -182,7 +182,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // callback avant chaque appel à permission can, vérifie que la table à la permission access
     final protected function onRolePermission($key,array $array):bool
     {
-        return (array_key_exists('access',$array) && $array['access'] === true)? true:false;
+        return array_key_exists('access',$array) && $array['access'] === true;
     }
 
 
@@ -259,7 +259,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si la table est lié à l'objet db
     final public function isLinked():bool
     {
-        return ($this->hasDb() && $this->db()->table($this) === $this)? true:false;
+        return $this->hasDb() && $this->db()->table($this) === $this;
     }
 
 
@@ -267,7 +267,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si la table existe dans la base de données
     final public function alive():bool
     {
-        return ($this->db()->showTable($this) === $this->name())? true:false;
+        return $this->db()->showTable($this) === $this->name();
     }
 
 
@@ -298,7 +298,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // il doit aussi y avoir une colonne cherchable dans la table
     final public function isSearchable():bool
     {
-        $return = ($this->getAttr('search') === true)? true:false;
+        $return = ($this->getAttr('search') === true);
 
         if($return === true)
         {
@@ -326,7 +326,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si l'objet et celui fourni ont la même table
     final public function sameTable($table):bool
     {
-        return ($this->db()->hasTable($table) && $this === $this->db()->table($table))? true:false;
+        return $this->db()->hasTable($table) && $this === $this->db()->table($table);
     }
 
 
@@ -750,7 +750,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si l'objet col est linked
     final public function isColLinked(Col $col):bool
     {
-        return ($this->cols->in($col))? true:false;
+        return $this->cols->in($col);
     }
 
 
@@ -766,7 +766,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si l'objet colonne est entièrement chargé
     final public function isColsReady():bool
     {
-        return ($this->colsReady === true)? true:false;
+        return $this->colsReady === true;
     }
 
 
@@ -1093,7 +1093,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si l'objet row est linked
     final public function isRowLinked(Row $row):bool
     {
-        return ($this->rows->in($row))? true:false;
+        return $this->rows->in($row);
     }
 
 
@@ -1118,7 +1118,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return = $this->rows->isEmpty();
 
         else
-        $return = ($this->rowsCount($count,$cache) === 0)? true:false;
+        $return = ($this->rowsCount($count,$cache) === 0);
 
         return $return;
     }
@@ -1786,7 +1786,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si la table supporte des relations
     final public function allowsRelation():bool
     {
-        return (!empty($this->getAttr('relation')))? true:false;
+        return !empty($this->getAttr('relation'));
     }
 
 
@@ -2300,7 +2300,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si la table est ignoré
     final public static function isIgnored():bool
     {
-        return (!empty(static::$config['ignore']) && static::$config['ignore'] === true)? true:false;
+        return !empty(static::$config['ignore']) && static::$config['ignore'] === true;
     }
 
 

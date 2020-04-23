@@ -118,7 +118,7 @@ class ColRelation extends Relation
     // retourne vrai si la relation est enum
     final public function isEnum():bool
     {
-        return ($this->mode === 'enum')? true:false;
+        return $this->mode === 'enum';
     }
 
 
@@ -126,7 +126,7 @@ class ColRelation extends Relation
     // retourne vrai si la relation est set
     final public function isSet():bool
     {
-        return ($this->mode === 'set')? true:false;
+        return $this->mode === 'set';
     }
 
 
@@ -210,7 +210,7 @@ class ColRelation extends Relation
     // retourne vrai si le type de relation est table
     final public function isRelationTable():bool
     {
-        return ($this->isType('table'))? true:false;
+        return $this->isType('table');
     }
 
 

@@ -1739,7 +1739,7 @@ class PdoSql extends Main\Map
     // par défaut, garde en cache
     final public function isTriggerCountEmpty(bool $cache=true):bool
     {
-        return (empty($this->triggerCount($cache)))? true:false;
+        return empty($this->triggerCount($cache));
     }
 
 
@@ -1748,7 +1748,7 @@ class PdoSql extends Main\Map
     // par défaut, garde en cache
     final public function isTriggerCountNotEmpty(bool $cache=true):bool
     {
-        return (!empty($this->triggerCount($cache)))? true:false;
+        return !empty($this->triggerCount($cache));
     }
 
 

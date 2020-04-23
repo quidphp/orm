@@ -292,7 +292,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est lié à l'objet db
     final public function isLinked():bool
     {
-        return ($this->hasDb() && $this->table()->isColLinked($this))? true:false;
+        return $this->hasDb() && $this->table()->isColLinked($this);
     }
 
 
@@ -300,7 +300,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne existe dans la base de données
     final public function alive():bool
     {
-        return ($this->db()->showTableColumnField($this->table(),$this) === $this->name())? true:false;
+        return $this->db()->showTableColumnField($this->table(),$this) === $this->name();
     }
 
 
@@ -308,7 +308,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est ignoré
     final public function isIgnored():bool
     {
-        return ($this->getAttr('ignore') === true)? true:false;
+        return $this->getAttr('ignore') === true;
     }
 
 
@@ -316,7 +316,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est la clé primaire
     final public function isPrimary():bool
     {
-        return ($this->getAttr('group') === 'primary')? true:false;
+        return $this->getAttr('group') === 'primary';
     }
 
 
@@ -324,7 +324,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de kind int
     final public function isKindInt():bool
     {
-        return ($this->getAttr('kind') === 'int')? true:false;
+        return $this->getAttr('kind') === 'int';
     }
 
 
@@ -332,7 +332,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de kind char
     final public function isKindChar():bool
     {
-        return ($this->getAttr('kind') === 'char')? true:false;
+        return $this->getAttr('kind') === 'char';
     }
 
 
@@ -340,7 +340,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de kind text
     final public function isKindText():bool
     {
-        return ($this->getAttr('kind') === 'text')? true:false;
+        return $this->getAttr('kind') === 'text';
     }
 
 
@@ -348,7 +348,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne accepte null
     final public function acceptsNull():bool
     {
-        return ($this->getAttr('null') === true)? true:false;
+        return $this->getAttr('null') === true;
     }
 
 
@@ -356,7 +356,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a l'attribut include a true
     final public function hasAttrInclude():bool
     {
-        return ($this->getAttr('include') === true)? true:false;
+        return $this->getAttr('include') === true;
     }
 
 
@@ -389,7 +389,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est requise
     final public function isRequired():bool
     {
-        return ($this->getAttr('required') === true)? true:false;
+        return $this->getAttr('required') === true;
     }
 
 
@@ -416,7 +416,7 @@ class Col extends Main\Root
     // un type doit être fourni
     final public function shouldRemoveWhiteSpace(string $key):bool
     {
-        return ($this->getAttr(['removeWhiteSpace',$key]) === true)? true:false;
+        return $this->getAttr(['removeWhiteSpace',$key]) === true;
     }
 
 
@@ -424,7 +424,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est exportable
     final public function isExportable():bool
     {
-        return ($this->getAttr('export') === true && $this->isVisibleGeneral())? true:false;
+        return $this->getAttr('export') === true && $this->isVisibleGeneral();
     }
 
 
@@ -432,7 +432,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a des paramètres de comparaison
     final public function hasCompare():bool
     {
-        return (!empty($this->getAttr('compare')))? true:false;
+        return !empty($this->getAttr('compare'));
     }
 
 
@@ -440,7 +440,7 @@ class Col extends Main\Root
     // retourne vrai s'il faut afficher le max length de la colonne dans les détails
     public function showDetailsMaxLength():bool
     {
-        return (is_int($this->length()))? true:false;
+        return is_int($this->length());
     }
 
 
@@ -448,7 +448,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de type date
     final public function isDate():bool
     {
-        return (!empty($this->getAttr('date')))? true:false;
+        return !empty($this->getAttr('date'));
     }
 
 
@@ -456,7 +456,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de type relation
     final public function isRelation():bool
     {
-        return (!empty($this->getAttr('relation')))? true:false;
+        return !empty($this->getAttr('relation'));
     }
 
 
@@ -488,7 +488,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est de type media
     final public function isMedia():bool
     {
-        return (is_int($this->getAttr('media')))? true:false;
+        return is_int($this->getAttr('media'));
     }
 
 
@@ -516,7 +516,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a une valeur par défaut
     final public function hasDefault():bool
     {
-        return (isset($this->attr['default']) || $this->acceptsNull())? true:false;
+        return isset($this->attr['default']) || $this->acceptsNull();
     }
 
 
@@ -524,7 +524,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a une valeur par défaut null
     final public function hasNullDefault():bool
     {
-        return ($this->hasDefault() && !isset($this->attr['default']))? true:false;
+        return $this->hasDefault() && !isset($this->attr['default']);
     }
 
 
@@ -532,7 +532,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a un placeholder NULL, utiliser dans formComplex
     final public function hasNullPlaceholder():bool
     {
-        return ($this->acceptsNull() && $this->hasPermission('nullPlaceholder') && $this->table()->hasPermission('nullPlaceholder'))? true:false;
+        return $this->acceptsNull() && $this->hasPermission('nullPlaceholder') && $this->table()->hasPermission('nullPlaceholder');
     }
 
 
@@ -540,7 +540,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a une valeur par défaut qui n'est pas vide
     final public function hasNotEmptyDefault()
     {
-        return ($this->hasDefault() && !empty($this->getAttr('default')))? true:false;
+        return $this->hasDefault() && !empty($this->getAttr('default'));
     }
 
 
@@ -656,7 +656,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est cherchable
     final public function isSearchable():bool
     {
-        return ($this->getAttr('search') === true && $this->isVisibleGeneral())? true:false;
+        return $this->getAttr('search') === true && $this->isVisibleGeneral();
     }
 
 
@@ -692,7 +692,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est ordonnable
     final public function isOrderable():bool
     {
-        return ($this->getAttr('order') === true && $this->isVisibleGeneral())? true:false;
+        return $this->getAttr('order') === true && $this->isVisibleGeneral();
     }
 
 
@@ -700,7 +700,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne est cherchable
     final public function isFilterable():bool
     {
-        return ($this->canRelation() && $this->getAttr('filter',true) === true && $this->isVisibleGeneral())? true:false;
+        return $this->canRelation() && $this->getAttr('filter',true) === true && $this->isVisibleGeneral();
     }
 
 
@@ -708,7 +708,7 @@ class Col extends Main\Root
     // retourne vrai s'il faut afficher empty not empty dans le filtre
     final public function isFilterEmptyNotEmpty():bool
     {
-        return ($this->getAttr('filterEmptyNotEmpty') === true)? true:false;
+        return $this->getAttr('filterEmptyNotEmpty') === true;
     }
 
 
@@ -881,7 +881,7 @@ class Col extends Main\Root
     // retourne vrai si la tag est plain
     final public function isPlainTag(?array $attr=null,bool $complex=false):bool
     {
-        return (!$this->isEditable() || $this->tag($attr,$complex) === 'div')? true:false;
+        return !$this->isEditable() || $this->tag($attr,$complex) === 'div';
     }
 
 
@@ -1329,7 +1329,7 @@ class Col extends Main\Root
     // retourne vrai si la valeur est unique dans la colonne
     final public function isUnique($value,$notIn=null):bool
     {
-        return (empty($this->duplicate($value,$notIn)))? true:false;
+        return empty($this->duplicate($value,$notIn));
     }
 
 
@@ -1706,7 +1706,7 @@ class Col extends Main\Root
     // retourne null si la colonne n'est pas de kind int
     final public function unsigned():?bool
     {
-        return ($this->isKindInt())? (($this->getAttr('unsigned') === true)? true:false):null;
+        return ($this->isKindInt())? ($this->getAttr('unsigned') === true):null;
     }
 
 
@@ -1714,7 +1714,7 @@ class Col extends Main\Root
     // retourne vrai si la valeur de la colonne doit être unique
     final public function shouldBeUnique():bool
     {
-        return ($this->getAttr('unique') === true)? true:false;
+        return $this->getAttr('unique') === true;
     }
 
 
@@ -2332,7 +2332,7 @@ class Col extends Main\Root
     // retourne vrai si la valeur est pour un filtre empty/not empty
     final public static function isFilterEmptyNotEmptyValue($value):bool
     {
-        return (in_array($value,['00','01'],true))? true:false;
+        return in_array($value,['00','01'],true);
     }
 
 

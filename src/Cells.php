@@ -349,7 +349,7 @@ class Cells extends Main\MapObj
     // ceci signifie que toutes les cellules requises ont une valeur
     final public function isStillRequiredEmpty():bool
     {
-        return ($this->isStillRequired()->isEmpty())? true:false;
+        return $this->isStillRequired()->isEmpty();
     }
 
 

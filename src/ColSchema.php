@@ -61,7 +61,7 @@ class ColSchema extends Main\Root
     // retourne vrai si le nom de colonne a un pattern
     final public static function hasPattern($value):bool
     {
-        return (is_string($value) && static::pattern($value) !== null)? true:false;
+        return is_string($value) && static::pattern($value) !== null;
     }
 
 

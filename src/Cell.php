@@ -122,7 +122,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur est égale à l'argument
     final public function isEqual($value):bool
     {
-        return ($value === $this->value())? true:false;
+        return $value === $this->value();
     }
 
 
@@ -130,7 +130,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur n'est pas égale à l'argument
     final public function isNotEqual($value):bool
     {
-        return ($value !== $this->value())? true:false;
+        return $value !== $this->value();
     }
 
 
@@ -146,7 +146,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur est vide
     final public function isEmpty():bool
     {
-        return (empty($this->value()))? true:false;
+        return empty($this->value());
     }
 
 
@@ -154,7 +154,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur n'est pas vide
     final public function isNotEmpty():bool
     {
-        return (!empty($this->value()))? true:false;
+        return !empty($this->value());
     }
 
 
@@ -162,7 +162,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur est null
     final public function isNull():bool
     {
-        return ($this->value() === null)? true:false;
+        return $this->value() === null;
     }
 
 
@@ -170,7 +170,7 @@ class Cell extends Main\Root
     // retourne vrai si la valeur n'est pas null
     final public function isNotNull():bool
     {
-        return ($this->value() !== null)? true:false;
+        return $this->value() !== null;
     }
 
 
@@ -178,7 +178,7 @@ class Cell extends Main\Root
     // retourne vrai si la colonne de la cellule est la clé primaire
     final public function isPrimary():bool
     {
-        return ($this->col()->isPrimary())? true:false;
+        return $this->col()->isPrimary();
     }
 
 
@@ -433,7 +433,7 @@ class Cell extends Main\Root
     // retourne vrai si la cellule est lié à l'objet db
     final public function isLinked():bool
     {
-        return ($this->hasDb() && $this->row()->cells()->in($this))? true:false;
+        return $this->hasDb() && $this->row()->cells()->in($this);
     }
 
 
@@ -441,7 +441,7 @@ class Cell extends Main\Root
     // retourne vrai si la cellule existe dans la base de donnée
     final public function alive():bool
     {
-        return (!empty($this->db()->selectColumns($this->col(),$this->table(),$this->row())))? true:false;
+        return !empty($this->db()->selectColumns($this->col(),$this->table(),$this->row()));
     }
 
 
@@ -449,7 +449,7 @@ class Cell extends Main\Root
     // retourne vrai si l'objet et celui fourni ont la même ligne
     final public function sameRow($row):bool
     {
-        return ($this->row() === $this->table()->row($row))? true:false;
+        return $this->row() === $this->table()->row($row);
     }
 
 

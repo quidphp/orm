@@ -366,7 +366,7 @@ class Cols extends Main\MapObj
     // ceci signifie que toutes les colonnes requises ont une valeur
     final public function isStillRequiredEmpty(array $set=[]):bool
     {
-        return (empty($this->isStillRequired($set)))? true:false;
+        return empty($this->isStillRequired($set));
     }
 
 

@@ -69,7 +69,7 @@ trait _colCell
     // retourne vrai si l'objet contient un commited callback
     final public function hasCommittedCallback(string $key):bool
     {
-        return (!empty($this->getCommittedCallback($key)))? true:false;
+        return !empty($this->getCommittedCallback($key));
     }
 
 
@@ -105,7 +105,7 @@ trait _colCell
     // retourne vrai si l'objet contient une exception
     final public function hasException():bool
     {
-        return (!empty($this->exception))? true:false;
+        return !empty($this->exception);
     }
 
 

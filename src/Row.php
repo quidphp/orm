@@ -171,7 +171,7 @@ class Row extends Main\ArrObj
     // retourne vrai si la ligne est lié à l'objet db
     final public function isLinked():bool
     {
-        return ($this->hasDb() && $this->table()->isRowLinked($this))? true:false;
+        return $this->hasDb() && $this->table()->isRowLinked($this);
     }
 
 
@@ -179,7 +179,7 @@ class Row extends Main\ArrObj
     // retourne vrai si la ligne existe dans la table de la base de données
     final public function alive():bool
     {
-        return ($this->db()->selectCount($this->table(),$this) === 1)? true:false;
+        return $this->db()->selectCount($this->table(),$this) === 1;
     }
 
 
@@ -203,7 +203,7 @@ class Row extends Main\ArrObj
     // retourne vrai si la row peut être updater
     public function isUpdateable(?array $option=null):bool
     {
-        return ($this->table()->hasPermission('update'))? true:false;
+        return $this->table()->hasPermission('update');
     }
 
 
@@ -241,7 +241,7 @@ class Row extends Main\ArrObj
             $table = $table->name();
 
             if(is_string($table))
-            $return = (!empty($childs[$table]))? true:false;
+            $return = (!empty($childs[$table]));
 
             if($return === true && $excludeSelf === true)
             {
@@ -279,7 +279,7 @@ class Row extends Main\ArrObj
     // retourne vrai si l'objet et celui fourni ont la même ligne
     final public function sameRow($row):bool
     {
-        return ($this === $this->table()->row($row))? true:false;
+        return $this === $this->table()->row($row);
     }
 
 
@@ -637,7 +637,7 @@ class Row extends Main\ArrObj
     // de même la permission view de la table doit être true
     public function isVisible():bool
     {
-        return ($this->table()->hasPermission('view') && $this->isActive() && $this->cells()->isStillRequiredEmpty())? true:false;
+        return $this->table()->hasPermission('view') && $this->isActive() && $this->cells()->isStillRequiredEmpty();
     }
 
 

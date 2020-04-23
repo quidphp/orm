@@ -83,11 +83,11 @@ class Insert extends Orm\TableOperation
             }
 
             $set = $cols->inserts($set,$attr);
-            $validate = ($this->getAttr('validate') === false || $this->validate($cols,$set))? true:false;
+            $validate = ($this->getAttr('validate') === false || $this->validate($cols,$set));
 
             if($preValidate === true && $validate === true)
             {
-                $finalValidate = ($this->getAttr('finalValidate') === false || $this->finalValidate($cols,$set))? true:false;
+                $finalValidate = ($this->getAttr('finalValidate') === false || $this->finalValidate($cols,$set));
 
                 if($finalValidate === true)
                 {

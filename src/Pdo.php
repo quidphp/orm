@@ -423,7 +423,7 @@ class Pdo extends Main\Root
     // retourne vrai si une connection est établi
     final public function isReady():bool
     {
-        return ($this->pdo instanceof \PDO)? true:false;
+        return $this->pdo instanceof \PDO;
     }
 
 
@@ -981,7 +981,7 @@ class Pdo extends Main\Root
 
         elseif(!empty($value = $this->syntaxCall('parseReturn',$value)))
         {
-            $beforeAfter = (is_array($output) && array_key_exists('beforeAfter',$output) && in_array($value['type'],['insert','update','delete'],true))? true:false;
+            $beforeAfter = (is_array($output) && array_key_exists('beforeAfter',$output) && in_array($value['type'],['insert','update','delete'],true));
 
             if($beforeAfter === true)
             {
@@ -1087,7 +1087,7 @@ class Pdo extends Main\Root
         {
             $method = $output['method'];
             $arg = (array_key_exists('arg',$output) && is_array($output['arg']))? array_values($output['arg']):[];
-            $cast = (!empty($this->getAttr('cast')) || !empty($value['cast']))? true:false;
+            $cast = (!empty($this->getAttr('cast')) || !empty($value['cast']));
 
             if($method === 'columnCount')
             $return = $statement->columnCount();
@@ -2148,7 +2148,7 @@ class Pdo extends Main\Root
             $all = $this->getAttr(['output','all']);
 
             if($value === 'insertId')
-            $return = ($type === 'insert')? true:false;
+            $return = ($type === 'insert');
 
             elseif($value === 'rowCount' && in_array($type,['select','show','insert','update','delete'],true))
             $return = true;
@@ -2276,7 +2276,7 @@ class Pdo extends Main\Root
     // retourne vrai si le driver est supporté par PDO
     final public static function isDriver($value):bool
     {
-        return (is_string($value) && in_array($value,static::allDrivers(),true))? true:false;
+        return is_string($value) && in_array($value,static::allDrivers(),true);
     }
 
 

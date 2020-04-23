@@ -58,7 +58,7 @@ trait _dbAccess
     // retourne vrai si une base de donnée est lié à l'objet (via string ou objet)
     final public function hasDb():bool
     {
-        return (is_string($this->db) || $this->db instanceof Pdo)? true:false;
+        return is_string($this->db) || $this->db instanceof Pdo;
     }
 
 
@@ -95,7 +95,7 @@ trait _dbAccess
     // retourne vrai si l'objet est lié
     final public function isLinked():bool
     {
-        return ($this->hasDb())? true:false;
+        return $this->hasDb();
     }
 
 

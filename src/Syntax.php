@@ -168,7 +168,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si la valeur est un type de query
     final public static function isQuery($value):bool
     {
-        return (is_string($value) && array_key_exists($value,static::$config['query']) && is_array(static::$config['query'][$value]))? true:false;
+        return is_string($value) && array_key_exists($value,static::$config['query']) && is_array(static::$config['query'][$value]);
     }
 
 
@@ -176,7 +176,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si la valeur est quote
     final public static function isQuote($value):bool
     {
-        return (is_string($value) && Base\Str::isStartEnd("'","'",$value))? true:false;
+        return is_string($value) && Base\Str::isStartEnd("'","'",$value);
     }
 
 
@@ -184,7 +184,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si la valeur a un tick ou un espace
     final public static function hasTickOrSpace($value):bool
     {
-        return (is_string($value) && (strpos($value,' ') !== false || strpos($value,'`') !== false))? true:false;
+        return is_string($value) && (strpos($value,' ') !== false || strpos($value,'`') !== false);
     }
 
 
@@ -231,7 +231,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si le type de clé existe
     final public static function isKey($value):bool
     {
-        return (is_string($value) && array_key_exists($value,static::$config['key']))? true:false;
+        return is_string($value) && array_key_exists($value,static::$config['key']);
     }
 
 
@@ -239,7 +239,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si le type de colonne existe
     final public static function isColType($value):bool
     {
-        return (is_string($value) && array_key_exists($value,static::$config['col']))? true:false;
+        return is_string($value) && array_key_exists($value,static::$config['col']);
     }
 
 
@@ -247,7 +247,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si la valeur est un symbol where
     final public static function isWhereSymbol($value):bool
     {
-        return (is_string($value) && array_key_exists($value,static::$config['where']['symbol']))? true:false;
+        return is_string($value) && array_key_exists($value,static::$config['where']['symbol']);
     }
 
 
@@ -255,7 +255,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si la valeur est un séparateur where
     final public static function isWhereSeparator($value):bool
     {
-        return (is_string($value) && in_array(strtoupper($value),static::$config['where']['separator']['all'],true))? true:false;
+        return is_string($value) && in_array(strtoupper($value),static::$config['where']['separator']['all'],true);
     }
 
 
@@ -263,7 +263,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si la valeur est une des méthodes whereTwo
     final public static function isWhereTwo($value):bool
     {
-        return (in_array($value,[null,'null','notNull',false,'empty',true,'notEmpty'],true) || is_int($value))? true:false;
+        return in_array($value,[null,'null','notNull',false,'empty',true,'notEmpty'],true) || is_int($value);
     }
 
 
@@ -271,7 +271,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si la valeur est une direction
     final public static function isOrderDirection($value):bool
     {
-        return (is_string($value) && in_array(strtoupper($value),static::$config['order']['direction'],true))? true:false;
+        return is_string($value) && in_array(strtoupper($value),static::$config['order']['direction'],true);
     }
 
 
@@ -1287,7 +1287,7 @@ abstract class Syntax extends Main\Root
             {
                 if(!empty($prepare) && is_scalar($prepare[0]))
                 {
-                    $isSeparator = (count($prepare) === 1 && static::isWhereSeparator($prepare[0]))? true:false;
+                    $isSeparator = (count($prepare) === 1 && static::isWhereSeparator($prepare[0]));
                     if($isSeparator === true && empty($last))
                     continue;
 
@@ -1561,7 +1561,7 @@ abstract class Syntax extends Main\Root
                             $value[2] = Base\Arr::cast($value[2]);
 
                             $return['id'] = $value[2];
-                            $return['whereOnlyId'] = (count($array) === 1)? true:false;
+                            $return['whereOnlyId'] = (count($array) === 1);
 
                             break;
                         }
@@ -2871,7 +2871,7 @@ abstract class Syntax extends Main\Root
 
                             $return = static::returnMerge($return,$merge);
 
-                            $comma = (!empty($param['comma']))? true:false;
+                            $comma = (!empty($param['comma']));
                         }
                     }
 

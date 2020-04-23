@@ -54,7 +54,7 @@ class Classe extends Main\Map
     {
         $keys = $this->extendersKeys();
         $this->extenders = $extenders->filter(function($value,$key) use($keys) {
-            return (in_array($key,$keys,true))? true:false;
+            return in_array($key,$keys,true);
         });
 
         return;
