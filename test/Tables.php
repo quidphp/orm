@@ -168,9 +168,9 @@ class Tables extends Base\Test
         assert($tables->not($tables->gets('user','session'))->count() === ($tables->count() - 2));
         assert($tables->not($tables['user'],$tables['session'])->count() === ($tables->count() - 2));
         assert($tables->not('user','session')->count() === ($tables->count() - 2));
-        assert($tables->filter(['name'=>'ormTable'])->isCount(1));
-        assert($tables->first(['name'=>'ormTable']) instanceof Orm\Table);
-        assert($tables->filter(['hasPermission'=>false],'update')->isCount(7));
+        assert($tables->filter(fn($table) => $table->name() === 'ormTable')->isCount(1));
+        assert($tables->find(fn($table) => $table->name() === 'ormTable') instanceof Orm\Table);
+        assert($tables->filter(fn($table) => !$table->hasPermission('update'))->isCount(7));
         assert(count($tables->group('name')) === 25);
         $sort = $clone->sortBy('priority',false);
         assert($sort->first()->name() === 'ormDb');

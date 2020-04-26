@@ -17,11 +17,11 @@ use Quid\Main;
 class TableClasse extends Main\Map
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['jsonSerialize','serialize','clone']; // méthodes permises
+    protected ?array $mapAllow = ['jsonSerialize','serialize','clone']; // méthodes permises
 
 
     // table

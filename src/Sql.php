@@ -17,13 +17,13 @@ use Quid\Base;
 class Sql extends PdoSql
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // setOutput
     // change le output de la requête
     // si le output est de row, change what pour *
-    final public function setOutput($output=true):parent
+    final public function setOutput($output=true):self
     {
         parent::setOutput($output);
         $db = $this->db();
@@ -202,7 +202,7 @@ class Sql extends PdoSql
 
     // triggerRow
     // trigge l'objet sql et retourne un objet row
-    final public function triggerRow():Row
+    final public function triggerRow():?Row
     {
         return $this->set('what','*')->trigger('row');
     }

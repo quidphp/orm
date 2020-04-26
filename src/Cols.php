@@ -23,13 +23,13 @@ class Cols extends Main\MapObj
 
 
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
+    protected ?array $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
     protected $mapIs = Col::class; // classe d'objet permis
-    protected $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
+    protected ?string $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
 
 
     // construct
@@ -277,11 +277,7 @@ class Cols extends Main\MapObj
                 $value = $col->relation()->getStr($value,', ',false,true,$option);
 
                 else
-                {
-                    $value = $col->callThis(function() use($value,$option) {
-                        return $this->onGet($value,$option);
-                    });
-                }
+                $value = $col->callThis(fn() => $this->onGet($value,$option));
 
                 if($onlyScalar === false || is_scalar($value))
                 $return[$key] = $value;
@@ -488,7 +484,7 @@ class Cols extends Main\MapObj
     // inclusion des required est true par défaut
     final public function included(?array $option=null):self
     {
-        return $this->filter(['isIncluded'=>true],'insert',$option['required'] ?? true);
+        return $this->filter(fn($col) => $col->isIncluded('insert',$option['required'] ?? true));
     }
 
 
@@ -645,7 +641,7 @@ class Cols extends Main\MapObj
     // retourne un objet cols avec toutes les colonnes ordonnables
     final public function orderable():self
     {
-        return $this->filter(['isOrderable'=>true]);
+        return $this->filter(fn($col) => $col->isOrderable());
     }
 
 
@@ -653,7 +649,7 @@ class Cols extends Main\MapObj
     // retourne un objet cols avec toutes les colonnes filtrable
     final public function filterable():self
     {
-        return $this->filter(['isFilterable'=>true]);
+        return $this->filter(fn($col) => $col->isFilterable());
     }
 
 
@@ -661,7 +657,7 @@ class Cols extends Main\MapObj
     // retourne un objet cols avec toutes les colonnes cherchables
     final public function searchable():self
     {
-        return $this->filter(['isSearchable'=>true]);
+        return $this->filter(fn($col) => $col->isSearchable());
     }
 
 
@@ -739,7 +735,7 @@ class Cols extends Main\MapObj
     // retourne un tableau utilisé par onPrepareKey
     final public static function keyClassExtends():array
     {
-        return [Col::getOverloadClass(),Cell::getOverloadClass()];
+        return [Col::classOverload(),Cell::classOverload()];
     }
 
 

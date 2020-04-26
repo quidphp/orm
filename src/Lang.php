@@ -19,7 +19,7 @@ use Quid\Orm;
 class Lang extends Main\Lang
 {
     // config
-    public static $config = [
+    public static array $config = [
         'path'=>[
             'direction'=>'direction',
             'dbLabel'=>'db/label',

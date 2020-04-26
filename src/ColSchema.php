@@ -18,7 +18,7 @@ use Quid\Main;
 class ColSchema extends Main\Root
 {
     // config
-    public static $config = [
+    public static array $config = [
         'intMax'=>[ // détermine les valeurs maximales pour unt int
             'int'=>2147483647],
         'textLength'=>[

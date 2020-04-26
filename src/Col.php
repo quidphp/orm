@@ -24,7 +24,7 @@ class Col extends Main\Root
 
 
     // config
-    public static $config = [
+    public static array $config = [
         'ignore'=>null, // défini si la colonne est ignoré
         'cell'=>null, // détermine la class a utilisé pour la cell, si null laisse le loop de dbclasse faire son oeuvre
         'type'=>null, // type de la colonne
@@ -92,12 +92,12 @@ class Col extends Main\Root
 
 
     // replaceMode
-    protected static $replaceMode = []; // défini les colonnes à ne pas merger récursivement
+    protected static array $replaceMode = []; // défini les colonnes à ne pas merger récursivement
 
 
     // dynamique
-    protected $name = null; // nom de la colonne
-    protected $relation = null; // objet de relation de la colonne
+    protected string $name; // nom de la colonne
+    protected ?ColRelation $relation = null; // objet de relation de la colonne
 
 
     // construct
@@ -1190,11 +1190,7 @@ class Col extends Main\Root
         foreach ($return as $k => $v)
         {
             if($v instanceof \Closure)
-            {
-                $return[$k] = function() use($context,$v,$value) {
-                    return $v($context,$value);
-                };
-            }
+            $return[$k] = fn() => $v($context,$value);
         }
 
         return $return;
@@ -1459,9 +1455,7 @@ class Col extends Main\Root
         $array['required'] = $this->required($value,$lang);
         $array['validate'] = $this->validate($value,$lang);
         $array['compare'] = $this->compare($value,$row,$lang);
-        $array['unique'] = function() use($value,$lang) {
-            return $this->unique($value,null,$lang);
-        };
+        $array['unique'] = fn() => $this->unique($value,null,$lang);
         $array['editable'] = true;
 
         return $this->makeCompleteValidation($array);
@@ -2179,13 +2173,13 @@ class Col extends Main\Root
 
     // setCommittedCallback
     // set le callback à appeler après un commit, insert ou update
-    final public function setCommittedCallback(string $key,callable $callback,?Cell $cell=null):void
+    final public function setCommittedCallback(string $key,\Closure $closure,?Cell $cell=null):void
     {
         if(!empty($cell))
-        $cell->setCommittedCallback($key,$callback);
+        $cell->setCommittedCallback($key,$closure);
 
         else
-        $this->callback[$key] = $callback;
+        $this->callback[$key] = $closure;
 
         return;
     }

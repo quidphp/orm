@@ -24,13 +24,13 @@ class Cell extends Main\Root
 
 
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $value = []; // contient la valeur de base et de changement de la cellule
-    protected $col = null; // conserve l'objet de la colonne, ceci ne crée pas une référence récursive
-    protected $row = null; // lien vers la row
+    protected array $value = []; // contient la valeur de base et de changement de la cellule
+    protected ?string $col = null; // conserve le nom de la colonne, ceci ne crée pas une référence récursive
+    protected ?int $row = null; // lien vers la row
 
 
     // construct
@@ -86,9 +86,7 @@ class Cell extends Main\Root
         $this->clearException();
         $col = $this->col();
         $cell = $this;
-        $col->callThis(function() use($cell,$insert,$option) {
-            $this->onCommitted($cell,$insert,$option);
-        });
+        $col->callThis(fn() => $this->onCommitted($cell,$insert,$option));
 
         return;
     }
@@ -372,9 +370,7 @@ class Cell extends Main\Root
         $array['required'] = $this->required($lang);
         $array['validate'] = $this->validate($lang);
         $array['compare'] = $this->compare($lang);
-        $array['unique'] = function() use($lang) {
-            return $this->unique($lang);
-        };
+        $array['unique'] = fn() => $this->unique($lang);
         $array['editable'] = $this->editable($lang);
 
         return $this->col()->makeCompleteValidation($array);
@@ -755,9 +751,7 @@ class Cell extends Main\Root
 
         $col = $this->col();
         $cell = $this;
-        $onGet = $col->callThis(function() use($cell,$option) {
-            return $this->onGet($cell,$option);
-        });
+        $onGet = $col->callThis(fn() => $this->onGet($cell,$option));
 
         if($onGet !== $this)
         $value = $onGet;
@@ -783,9 +777,7 @@ class Cell extends Main\Root
     {
         $col = $this->col();
         $cell = $this;
-        return $col->callThis(function() use($cell,$value,$option) {
-            return $this->onExport('cell',$value,$cell,$option);
-        });
+        return $col->callThis(fn() => $this->onExport('cell',$value,$cell,$option));
     }
 
 
@@ -853,20 +845,15 @@ class Cell extends Main\Root
             static::throw('preValidate',$this->name(),$preValidate);
         }
 
-        $onSet = $col->callThis(function() use($value,$row,$cell,$option) {
-            return $this->onSet($value,$row->get(),$cell,$option);
-        });
+        $onSet = $col->callThis(fn() => $this->onSet($value,$row->get(),$cell,$option));
 
         if($onSet !== $this)
         $value = $onSet;
 
         $value = $col->autoCast($value);
-
         $this->value['change'] = $value;
 
-        $col->callThis(function() use($cell) {
-            $this->onCellSet($cell);
-        });
+        $col->callThis(fn() => $this->onCellSet($cell));
 
         return $this;
     }
@@ -890,9 +877,7 @@ class Cell extends Main\Root
         $this->clearException();
 
         $cell = $this;
-        $col->callThis(function() use($cell) {
-            $this->onCellInit($cell);
-        });
+        $col->callThis(fn() => $this->onCellInit($cell));
 
         return $this;
     }
@@ -918,9 +903,7 @@ class Cell extends Main\Root
 
         $col = $this->col();
         $cell = $this;
-        $col->callThis(function() use($cell) {
-            $this->onCellSet($cell);
-        });
+        $col->callThis(fn() => $this->onCellSet($cell));
 
         return $this;
     }
@@ -982,10 +965,7 @@ class Cell extends Main\Root
         $col = $this->col();
         $cell = $this;
         $option = (array) $option;
-
-        $col->callThis(function() use($cell,$option) {
-            $this->onDelete($cell,$option);
-        });
+        $col->callThis(fn() => $this->onDelete($cell,$option));
 
         return $this;
     }

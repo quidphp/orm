@@ -22,7 +22,7 @@ class Pdo extends Main\Root
 
 
     // config
-    public static $config = [
+    public static array $config = [
         'history'=>true, // les requêtes sont ajoutés à l'historique
         'rollback'=>true, // les rollback de requête sont générés, seulement si le tableau contient la table ainsi qu'un id numérique
         'debug'=>null, // les requêtes émulés sont retournés sans être lancés à la base de donnée
@@ -93,21 +93,20 @@ class Pdo extends Main\Root
 
 
     // dynamic
-    protected $dsn = null; // valeur qui content le dsn
-    protected $pdo = null; // valeur qui contient pdo
-    protected $syntax = null; // classe de syntax à utiliser
-    protected $username = null; // valeur qui content le username
-    protected $history = null; // objet history
+    protected ?string $dsn = null; // valeur qui content le dsn
+    protected ?\Pdo $pdo = null; // valeur qui contient pdo
+    protected ?string $syntax = null; // classe de syntax à utiliser
+    protected ?History $history = null; // objet history
 
 
     // construct
     // construction de la classe
-    public function __construct(string $dsn,string $username,string $password,?array $attr=null)
+    public function __construct(string $dsn,string $password,?array $attr=null)
     {
         $this->makeAttr($attr);
         $this->setDsn($dsn);
         $this->setSyntax();
-        $this->connect($username,$password);
+        $this->connect($password);
 
         return;
     }
@@ -193,26 +192,19 @@ class Pdo extends Main\Root
 
     // connect
     // connect à une base de donnée
-    public function connect(string $username,string $password):self
+    public function connect(string $password):self
     {
         $this->checkReady(false);
         $dsn = static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort());
 
-        if(!empty($dsn))
-        {
-            if(static::isDriver($dsn['scheme']))
-            {
-                $this->setUsername($username);
-                $this->pdo = new \PDO($dsn['dsn'],$username,$password,$this->getAttr('connect'));
-                $this->makeHistory();
-            }
-
-            else
-            static::throw('unsupportedDriver');
-        }
-
-        else
+        if(empty($dsn))
         static::throw('invalidDsn');
+
+        if(!static::isDriver($dsn['scheme']))
+        static::throw('unsupportedDriver');
+
+        $this->pdo = new \PDO($dsn['dsn'],null,$password,$this->getAttr('connect'));
+        $this->makeHistory();
 
         return $this;
     }
@@ -281,6 +273,15 @@ class Pdo extends Main\Root
     }
 
 
+    // getFromDsn
+    // permet de retourner une entrée du dsn
+    final public function getFromDsn(string $key):?string
+    {
+        $parse = static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort());
+        return $parse[$key] ?? null;
+    }
+
+
     // getSyntax
     // retourne la classe de syntaxe à utiliser avec la base de donnée
     final public function getSyntax():string
@@ -299,7 +300,7 @@ class Pdo extends Main\Root
         {
             $syntax = $this->getAttr(['syntax',$driver]);
             if(is_string($syntax))
-            $this->syntax = $syntax::getOverloadClass();
+            $this->syntax = $syntax::classOverload();
         }
 
         if(empty($this->syntax))
@@ -321,7 +322,7 @@ class Pdo extends Main\Root
     // retourne le driver du dsn
     final public function driver():?string
     {
-        return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['driver'] ?? null;
+        return $this->getFromDsn('driver');
     }
 
 
@@ -329,7 +330,7 @@ class Pdo extends Main\Root
     // retourne le host du dsn
     final public function host():?string
     {
-        return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['host'] ?? null;
+        return $this->getFromDsn('host');
     }
 
 
@@ -337,7 +338,7 @@ class Pdo extends Main\Root
     // retourne le dbname du dsn
     final public function dbName():?string
     {
-        return static::parseDsn($this->dsn(),$this->charset(),$this->defaultPort())['dbname'] ?? null;
+        return $this->getFromDsn('dbname');
     }
 
 
@@ -345,18 +346,7 @@ class Pdo extends Main\Root
     // retourne le username
     final public function username():?string
     {
-        return $this->username;
-    }
-
-
-    // setUsername
-    // change le username
-    final protected function setUsername(string $value):void
-    {
-        $this->checkReady(false);
-        $this->username = $value;
-
-        return;
+        return $this->getFromDsn('user');
     }
 
 
@@ -2300,7 +2290,7 @@ class Pdo extends Main\Root
                 if(!Base\Str::isEnd($charset,$parse['dsn']))
                 $parse['dsn'] .= ';charset='.$charset;
 
-                foreach(Base\Str::explode(';',$parse['path'],null,true,true) as $x)
+                foreach (Base\Str::explode(';',$parse['path'],null,true,true) as $x)
                 {
                     $keyValue = Base\Str::explodeKeyValue('=',$x,true,true);
                     if(!empty($keyValue))
@@ -2310,7 +2300,7 @@ class Pdo extends Main\Root
                 if(empty($parse['port']))
                 $parse['port'] = $defaultPort;
 
-                if(!empty($parse['host']) && !empty($parse['dbname']))
+                if(!empty($parse['host']) && !empty($parse['dbname']) && !empty($parse['user']))
                 $return = $parse;
             }
         }

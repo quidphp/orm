@@ -17,7 +17,7 @@ use Quid\Base;
 class TableRelation extends Relation
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // construct
@@ -74,7 +74,7 @@ class TableRelation extends Relation
                 {
                     if(!empty($value) && static::isCallable($value))
                     {
-                        $value = Base\Call::withObj($this,$value);
+                        $value = $value($this);
                         $attr[$key] = Base\Obj::cast($value);
                     }
 
@@ -100,7 +100,7 @@ class TableRelation extends Relation
         $return = [];
         $primary = $table->primary();
 
-        $attr['output'] = $attr['output'] ?? null;
+        $attr['output'] ??= null;
         if($attr['output'] === null)
         $attr['output'] = $attr['what'];
         if(!is_array($attr['output']))
@@ -114,9 +114,9 @@ class TableRelation extends Relation
             $attr['output'][] = $primary;
         }
 
-        $attr['where'] = $attr['where'] ?? null;
-        $attr['order'] = $attr['order'] ?? $table->order();
-        $attr['onGet'] = $attr['onGet'] ?? false;
+        $attr['where'] ??= null;
+        $attr['order'] ??= $table->order();
+        $attr['onGet'] ??= false;
 
         $return = $attr;
 
@@ -133,8 +133,8 @@ class TableRelation extends Relation
 
         if(array_key_exists('method',$attr) && is_string($attr['method']))
         {
-            $attr['where'] = $attr['where'] ?? null;
-            $attr['order'] = $attr['order'] ?? [$primary=>'asc'];
+            $attr['where'] ??= null;
+            $attr['order'] ??= [$primary=>'asc'];
 
             $return = $attr;
         }

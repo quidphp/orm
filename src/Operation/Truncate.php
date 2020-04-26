@@ -18,7 +18,7 @@ use Quid\Orm;
 class Truncate extends Orm\TableOperation
 {
     // config
-    public static $config = [
+    public static array $config = [
         'log'=>true,
         'com'=>false,
         'strict'=>true
@@ -58,9 +58,7 @@ class Truncate extends Orm\TableOperation
         {
             $this->after($result,$attr);
 
-            $table->callThis(function() use($attr) {
-                $this->onTruncated($attr);
-            });
+            $table->callThis(fn() => $this->onTruncated($attr));
 
             $table->rowsUnlink();
             $return = true;

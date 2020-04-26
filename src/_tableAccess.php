@@ -20,7 +20,7 @@ trait _tableAccess
 
 
     // dynamique
-    protected $table = null; // objet table
+    protected ?string $table = null; // objet table
 
 
     // setLink

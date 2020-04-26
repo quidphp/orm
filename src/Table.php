@@ -23,7 +23,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
 
     // config
-    public static $config = [
+    public static array $config = [
         'ignore'=>null, // défini si la table est ignoré
         'parent'=>null, // nom du parent de la classe table, possible aussi de mettre une classe
         'priority'=>null, // code de priorité de la table
@@ -74,16 +74,16 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
 
     // replaceMode
-    protected static $replaceMode = ['=key','=active','=name','=content','=dateCommit','=owner','relation','=where','=filter','=order']; // défini les config à ne pas merger récursivement
+    protected static array $replaceMode = ['=key','=active','=name','=content','=dateCommit','=owner','relation','=where','=filter','=order']; // défini les config à ne pas merger récursivement
 
 
     // dynamique
-    protected $name = null; // nom de la table
-    protected $relation = null; // conserve une copie de l'objet de relation de la table
-    protected $cols = null; // objet des colonnes
-    protected $colsReady = false; // se met à true lorsque les colonnes sont toutes chargés
-    protected $rows = null; // objet des lignes
-    protected $classe = null; // objet tableClassse
+    protected string $name; // nom de la table
+    protected Cols $cols; // objet des colonnes
+    protected bool $colsReady = false; // se met à true lorsque les colonnes sont toutes chargés
+    protected Rows $rows; // objet des lignes
+    protected TableClasse $classe; // objet tableClassse
+    protected ?TableRelation $relation = null; // conserve une copie de l'objet de relation de la table
 
 
     // construct
@@ -550,7 +550,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     {
         $return = [];
         $active = $this->colActive();
-        $required = $this->cols()->filter(['isRequired'=>true]);
+        $required = $this->cols()->filter(fn($col) => $col->isRequired());
 
         if(!empty($active))
         $return = [$active->name()=>1];
@@ -688,9 +688,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de mettre le résultat en cache
     final public function status(bool $cache=true):array
     {
-        return $this->cache(__METHOD__,function() {
-            return $this->db()->showTableStatus($this);
-        },$cache);
+        return $this->cache(__METHOD__,fn() => $this->db()->showTableStatus($this),$cache);
     }
 
 
@@ -818,9 +816,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         {
             if($count === true)
             {
-                $return = $this->cache(__METHOD__,function() {
-                    return $this->db()->selectTableColumnCount($this);
-                },$cache);
+                $closure = fn() => $this->db()->selectTableColumnCount($this);
+                $return = $this->cache(__METHOD__,$closure,$cache);
             }
         }
 
@@ -1160,9 +1157,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if($count === true)
         {
-            $return = $this->cache(__METHOD__,function() use($where) {
-                return $this->db()->selectCount($this,$where);
-            },$cache);
+            $closure = fn() => $this->db()->selectCount($this,$where);
+            $return = $this->cache(__METHOD__,$closure,$cache);
         }
 
         else
@@ -1401,7 +1397,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne un objet rows avec seulement les lignes visibles
     final public function rowsVisible(...$values):Rows
     {
-        return $this->rows(...$values)->filter(['isVisible'=>true]);
+        return $this->rows(...$values)->filter(fn($row) => $row->isVisible());
     }
 
 
@@ -1673,7 +1669,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return = $this->selects($this->where($where),$this->order(),$limit);
 
         if($visible === true)
-        $return = $return->filter(['isVisible'=>true]);
+        $return = $return->filter(fn($row) => $row->isVisible());
 
         return $return;
     }

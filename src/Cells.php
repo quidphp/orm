@@ -23,13 +23,13 @@ class Cells extends Main\MapObj
 
 
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
+    protected ?array $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
     protected $mapIs = Cell::class; // classe d'objet permis
-    protected $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
+    protected ?string $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
 
 
     // construct
@@ -323,7 +323,7 @@ class Cells extends Main\MapObj
     // ne retourne pas la clé primaire
     final public function isRequired(bool $value=true):self
     {
-        return $this->filter(['isRequired'=>$value]);
+        return $this->filter(fn($cell) => $cell->isRequired($value));
     }
 
 
@@ -530,7 +530,7 @@ class Cells extends Main\MapObj
     // retourne un objet avec toutes les cellules non vides
     final public function notEmpty():self
     {
-        return $this->filter(['isNotEmpty'=>true]);
+        return $this->filter(fn($cell) => $cell->isNotEmpty());
     }
 
 
@@ -546,7 +546,7 @@ class Cells extends Main\MapObj
     // change la valeur d'une cellule
     // possible d'enrobber l'opération dans un tryCatch
     // possible de faire une prévalidation via option
-    final public function set($key,$value,?array $option=null):parent
+    final public function set($key,$value,?array $option=null):self
     {
         $option = Base\Arr::plus(['tryCatch'=>false],$option);
         $cell = $this->checkGet($key);
@@ -576,7 +576,7 @@ class Cells extends Main\MapObj
     // change la valeur de toutes les cellules
     // les cellules sont regroupés par setPriority avant de faire le loop
     // possible de faire une prévalidation via option
-    final public function sets(array $keyValue,?array $option=null):parent
+    final public function sets(array $keyValue,?array $option=null):self
     {
         foreach ($this->groupSetPriority() as $cells)
         {
@@ -768,7 +768,7 @@ class Cells extends Main\MapObj
     // retourne un tableau utilisé par onPrepareKey
     final public static function keyClassExtends():array
     {
-        return [Cell::getOverloadClass(),Col::getOverloadClass()];
+        return [Cell::classOverload(),Col::classOverload()];
     }
 
 

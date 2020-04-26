@@ -17,8 +17,8 @@ use Quid\Main;
 trait _colCell
 {
     // dynamique
-    protected $callback = []; // permet d'entreposer un ou plusieurs committed callback, lors d'une opération réussi
-    protected $exception = null; // permet d'entreposer une exception, lors d'une opération raté
+    protected array $callback = []; // permet d'entreposer un ou plusieurs committed callback, lors d'une opération réussi
+    protected ?\Exception $exception = null; // permet d'entreposer une exception, lors d'une opération raté
 
 
     // exception
@@ -75,7 +75,7 @@ trait _colCell
 
     // getCommittedCallback
     // retourne le commited callback
-    final public function getCommittedCallback(string $key):?callable
+    final public function getCommittedCallback(string $key):?\Closure
     {
         return $this->callback[$key] ?? null;
     }
@@ -83,9 +83,9 @@ trait _colCell
 
     // setCommittedCallback
     // ajoute un commited callback
-    final public function setCommittedCallback(string $key,callable $callback):void
+    final public function setCommittedCallback(string $key,\Closure $closure):void
     {
-        $this->callback[$key] = $callback;
+        $this->callback[$key] = $closure;
 
         return;
     }

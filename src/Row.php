@@ -23,12 +23,12 @@ class Row extends Main\ArrObj
 
 
     // config
-    public static $config = []; // les config de row sont mergés à celles de table, avec priorité
+    public static array $config = []; // les config de row sont mergés à celles de table, avec priorité
 
 
     // dynamique
-    protected $primary = null; // int, clé primaire de la ligne
-    protected $cells = null; // objet cells
+    protected int $primary = 0; // int, clé primaire de la ligne
+    protected ?Cells $cells = null; // objet cells
 
 
     // construct
@@ -585,9 +585,7 @@ class Row extends Main\ArrObj
     // retourne toutes les lignes enfants de la ligne
     final public function relationChilds():array
     {
-        return $this->cache(__METHOD__,function() {
-            return $this->db()->tables()->relationChilds($this->table(),$this);
-        });
+        return $this->cache(__METHOD__,fn() => $this->db()->tables()->relationChilds($this->table(),$this));
     }
 
 
@@ -806,7 +804,7 @@ class Row extends Main\ArrObj
     {
         $return = null;
         $table = $this->table();
-        $cells = $this->cells()->withoutPrimary()->filter(['getAttr'=>true],'duplicate');
+        $cells = $this->cells()->withoutPrimary()->filter(fn($cell) => $cell->getAttr('duplicate') === true);
 
         if($cells->isNotEmpty())
         {
@@ -819,9 +817,7 @@ class Row extends Main\ArrObj
                 $value = $cell->value();
                 $col = $cell->col();
 
-                $value = $col->callThis(function() use($value,$rowGet,$cell,$option) {
-                    return $this->onDuplicate($value,$rowGet,$cell,$option);
-                });
+                $value = $col->callThis(fn() => $this->onDuplicate($value,$rowGet,$cell,$option));
 
                 $keyValue[$key] = $value;
             }
@@ -1064,6 +1060,8 @@ class Row extends Main\ArrObj
             $cell->teardown();
         }
 
+        $this->cells = null;
+
         return $this;
     }
 
@@ -1087,7 +1085,7 @@ class Row extends Main\ArrObj
     // écrit la ligne dans l'objet file fourni en argument
     final public function writeFile(Main\File $file,?array $option=null):self
     {
-        $cols = $this->table()->cols()->filter(['isExportable'=>true]);
+        $cols = $this->table()->cols()->filter(fn($col) => $col->isExportable());
         $cells = $this->cells($cols);
 
         if($option['header'] === true)

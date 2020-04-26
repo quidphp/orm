@@ -58,7 +58,7 @@ class Pdo extends Base\Test
 
         // disconnect
         assert($pdo->disconnect() === $pdo);
-        assert($pdo->connect($credentials[1],$credentials[2]) === $pdo);
+        assert($pdo->connect($credentials[1]) === $pdo);
 
         // pdo
         assert($pdo->pdo() instanceof \Pdo);
@@ -77,6 +77,9 @@ class Pdo extends Base\Test
 
         // setDsn
 
+        // getFromDsn
+        assert(is_string($pdo->getFromDsn('user')));
+
         // getSyntax
 
         // setSyntax
@@ -93,9 +96,7 @@ class Pdo extends Base\Test
         assert(!empty($pdo->dbName()));
 
         // username
-        assert($pdo->username() === $credentials[1]);
-
-        // setUsername
+        assert(is_string($pdo->username()));
 
         // name
         assert($pdo->name() === $pdo->_cast());
@@ -748,8 +749,8 @@ class Pdo extends Base\Test
         assert(!Orm\Pdo::isDriver('oracle'));
 
         // parseDsn
-        $dsn = 'mysql:host=localhost;dbname=quid995';
-        assert(count(Orm\Pdo::parseDsn($dsn,'utf8mb4',350)) === 8);
+        $dsn = 'mysql:host=localhost;dbname=quid995;user=test';
+        assert(count(Orm\Pdo::parseDsn($dsn,'utf8mb4',350)) === 9);
         assert(Orm\Pdo::parseDsn($dsn,'utf8',324)['dbname'] === 'quid995');
 
         // parseDataType

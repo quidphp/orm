@@ -19,7 +19,7 @@ use Quid\Orm;
 class Delete extends Orm\RowOperation
 {
     // config
-    public static $config = [
+    public static array $config = [
         'log'=>true,
         'com'=>false,
         'strict'=>true
@@ -70,11 +70,7 @@ class Delete extends Orm\RowOperation
             if(is_int($result))
             {
                 if($result === 1)
-                {
-                    $row->callThis(function() use($attr) {
-                        $this->onDeleted($attr);
-                    });
-                }
+                $row->callThis(fn() => $this->onDeleted($attr));
 
                 $row->unlink();
 

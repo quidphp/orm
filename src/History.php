@@ -18,12 +18,12 @@ use Quid\Main;
 class History extends Main\Map
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['push','empty']; // méthodes permises
-    protected $syntax = null; // garde une copie de la classe de syntaxe à utiliser
+    protected ?array $mapAllow = ['push','empty']; // méthodes permises
+    protected ?string $syntax = null; // garde une copie de la classe de syntaxe à utiliser
     protected $mapIs = 'array'; // les valeurs doivent passés ce test de validation ou exception
 
 

@@ -21,12 +21,12 @@ class RowsIndex extends Rows
 
 
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['add','unset','remove','empty','sequential','filter','sort','clone']; // méthodes permises
-    protected $mapAfter = ['sequential']; // sequential après chaque appel qui modifie, sequential ne crée pas de clone
+    protected ?array $mapAllow = ['add','unset','remove','empty','sequential','filter','sort','clone']; // méthodes permises
+    protected array $mapAfter = ['sequential']; // sequential après chaque appel qui modifie, sequential ne crée pas de clone
 
 
     // isTable
@@ -137,7 +137,7 @@ class RowsIndex extends Rows
     // deux objets identiques ne peuvent pas être ajoutés dans rows
     // des objets de différentes tables peuvent être ajoutés dans rowsIndex
     // n'appel pas sequential (checkAfter) après chaque ajout, c'est inutile
-    final public function add(...$values):parent
+    final public function add(...$values):self
     {
         $this->checkAllowed('add');
         $values = $this->prepareValues(...$values);
@@ -321,7 +321,7 @@ class RowsIndex extends Rows
     // sequential
     // ramène les clés de la map séquentielle, numérique et en ordre
     // ne clone pas l'objet comme les méthodes sort
-    final public function sequential():parent
+    final public function sequential():self
     {
         $this->checkAllowed('sequential');
         $data =& $this->arr();

@@ -22,7 +22,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
 
     // config
-    public static $config = [
+    public static array $config = [
         'permission'=>true, // la permission est vérifié avant la requête
         'autoSave'=>false, // active ou désactive le autoSave au closeDown
         'log'=>true, // si les requêtes sont log
@@ -63,14 +63,14 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
 
     // dynamique
-    protected $classe = null; // propriété qui contient l'objet classe
-    protected $schema = null; // propriété qui contient l'objet schema
-    protected $tables = null; // propriété qui contient l'objet tables
-    protected $lang = null; // propriété qui contient l'objet lang
-    protected $com = null; // propriété qui contient l'objet com
-    protected $roles = null; // propriété qui contient l'objet roles
-    protected $exception = null; // propriété qui conserve la classe d'exception à utiliser
-    protected $permission = [ // permissions racine de la base de donnée, les permissions des tables peuvent seulement mettre false des valeurs true, pas l'inverse
+    protected ?Classe $classe = null; // propriété qui contient l'objet classe
+    protected ?Schema $schema = null; // propriété qui contient l'objet schema
+    protected ?Tables $tables = null; // propriété qui contient l'objet tables
+    protected ?Main\Lang $lang = null; // propriété qui contient l'objet lang
+    protected ?Main\Com $com = null; // propriété qui contient l'objet com
+    protected ?Main\Roles $roles = null; // propriété qui contient l'objet roles
+    protected ?string $exception = null; // propriété qui conserve la classe d'exception à utiliser
+    protected array $permission = [ // permissions racine de la base de donnée, les permissions des tables peuvent seulement mettre false des valeurs true, pas l'inverse
         'select'=>true,
         'show'=>true,
         'insert'=>true,
@@ -84,13 +84,13 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
     // construct
     // construction de la classe
-    final public function __construct(string $dsn,string $username,string $password,Main\Extenders $extenders,Main\Roles $roles,?array $attr=null)
+    final public function __construct(string $dsn,string $password,Main\Extenders $extenders,Main\Roles $roles,?array $attr=null)
     {
         $this->makeAttr($attr);
         $this->setDsn($dsn);
         $this->setSyntax();
         $this->setRoles($roles);
-        $this->connect($username,$password,$extenders);
+        $this->connect($password,$extenders);
 
         return;
     }
@@ -166,9 +166,9 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
     // connect
     // connect à une base de donnée
-    final public function connect(string $username,string $password,...$args):parent
+    final public function connect(string $password,...$args):self
     {
-        parent::connect($username,$password);
+        parent::connect($password);
         $this->setInst();
         $this->makeSchema();
         $this->makeTables(...$args);
@@ -179,7 +179,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
     // disconnect
     // deconnect d'une base de donnée
-    final public function disconnect():parent
+    final public function disconnect():self
     {
         parent::disconnect();
         $this->unsetInst();
@@ -377,9 +377,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
             $this->makeClasse($extenders);
             $this->tablesLoad();
             $this->tables()->sortDefault()->readOnly(true);
-            Base\Response::onCloseDown(function() {
-                $this->onCloseDown();
-            });
+            Base\Response::onCloseDown(fn() => $this->onCloseDown());
         }
 
         else

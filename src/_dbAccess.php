@@ -16,20 +16,18 @@ namespace Quid\Orm;
 trait _dbAccess
 {
     // dynamique
-    protected $db = null; // objet db
+    protected $db = null; // objet db, peut être objet ou string
 
 
     // serialize
     // serialize un objet
     // envoie une exception si l'objet db est stocké en objet (ne peut pas être serialize)
-    final public function serialize():string
+    final public function __serialize():array
     {
         if($this->db instanceof Pdo)
         static::throw('cannotSerializeDbObject');
 
-        $return = parent::serialize();
-
-        return $return;
+        return parent::__serialize();
     }
 
 

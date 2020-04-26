@@ -23,7 +23,7 @@ abstract class Syntax extends Main\Root
 
 
     // config
-    public static $config = [
+    public static array $config = [
         'option'=>[ // tableau d'options
             'primary'=>'id', // nom de la clé primaire
             'prepare'=>true, // prépare la valeur ou non, priorité sur quote
@@ -153,7 +153,7 @@ abstract class Syntax extends Main\Root
 
 
     // prepared
-    protected static $prepared = 0; // valeur qui s'incrémente à chaque appel de prepare
+    protected static int $prepared = 0; // valeur qui s'incrémente à chaque appel de prepare
 
 
     // _construct
@@ -3464,9 +3464,8 @@ abstract class Syntax extends Main\Root
                 {
                     $replace = static::quote($v,$callable,$replaceDoubleEscape);
 
-                    $return = preg_replace_callback("/(?!'|\"):$k(?!'|\")/",function($match) use ($replace) {
-                        return $replace;
-                    },$return);
+                    $closure = fn($match) => $replace;
+                    $return = preg_replace_callback("/(?!'|\"):$k(?!'|\")/",$closure,$return);
                 }
             }
         }

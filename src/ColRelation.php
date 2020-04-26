@@ -17,13 +17,13 @@ use Quid\Base;
 class ColRelation extends Relation
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mode = null; // mode de la relation
-    protected $type = null; // garde en cache le type de la relation
-    protected $col = null; // objet colonne de la relation
+    protected string $mode; // mode de la relation
+    protected string $col; // objet colonne de la relation
+    protected ?string $type = null; // garde en cache le type de la relation
 
 
     // construct
@@ -321,9 +321,8 @@ class ColRelation extends Relation
 
         elseif($type === 'distinct')
         {
-            $return = $this->cache([__METHOD__,'distinct'],function() {
-                return $this->col()->distinctCount();
-            },$cache);
+            $closure = fn() => $this->col()->distinctCount();
+            $return = $this->cache([__METHOD__,'distinct'],$closure,$cache);
         }
 
         else

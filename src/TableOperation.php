@@ -16,11 +16,11 @@ namespace Quid\Orm;
 abstract class TableOperation extends Operation
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $table = null; // conserve la table pour l'opération
+    protected Table $table; // conserve la table pour l'opération
 
 
     // construct

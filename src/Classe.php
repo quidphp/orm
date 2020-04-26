@@ -17,7 +17,7 @@ use Quid\Main;
 class Classe extends Main\Map
 {
     // config
-    public static $config = [
+    public static array $config = [
         'default'=>[ // classe par défaut
             'table'=>Table::class,
             'col'=>Col::class,
@@ -33,8 +33,8 @@ class Classe extends Main\Map
 
 
     // dynamique
-    protected $mapAllow = ['jsonSerialize','serialize','clone']; // méthodes permises
-    protected $extenders = null; // propriété pour conserver l'objet extenders
+    protected ?array $mapAllow = ['jsonSerialize','serialize','clone']; // méthodes permises
+    protected Main\Extenders $extenders; // propriété pour conserver l'objet extenders
 
 
     // construct
@@ -53,9 +53,7 @@ class Classe extends Main\Map
     final protected function setExtenders(Main\Extenders $extenders):void
     {
         $keys = $this->extendersKeys();
-        $this->extenders = $extenders->filter(function($value,$key) use($keys) {
-            return in_array($key,$keys,true);
-        });
+        $this->extenders = $extenders->filter(fn($value,$key) => in_array($key,$keys,true));
 
         return;
     }
@@ -89,7 +87,7 @@ class Classe extends Main\Map
             foreach ($this->extendersKeys() as $key)
             {
                 if(!in_array($key,['col','cell'],true))
-                $array[$key] = $this->find($key,$table);
+                $array[$key] = $this->findClass($key,$table);
             }
 
             $return = TableClasse::newOverload($array);
@@ -126,7 +124,7 @@ class Classe extends Main\Map
         if(empty($return))
         {
             $attr = (array) $attr;
-            $return = $this->find('col',$table,$col,$attr);
+            $return = $this->findClass('col',$table,$col,$attr);
 
             if($cache === true)
             $tableClasse->setCol($col,$return);
@@ -149,7 +147,7 @@ class Classe extends Main\Map
 
         if(empty($return))
         {
-            $return = $this->find('cell',$table,$col);
+            $return = $this->findClass('cell',$table,$col);
 
             if($cache === true)
             $tableClasse->setCell($col,$return);
@@ -167,10 +165,10 @@ class Classe extends Main\Map
     }
 
 
-    // find
+    // findClass
     // doit toujours retourner quelque chose, sinon une exception est envoyé
     // retourne la classe à utiliser à partir d'un type et d'arguments
-    final protected function find(string $type,$table,...$args):string
+    final protected function findClass(string $type,$table,...$args):string
     {
         $return = null;
         $default = $this->default($type);
@@ -211,7 +209,7 @@ class Classe extends Main\Map
             $return = $default;
         }
 
-        $return = $return::getOverloadClass();
+        $return = $return::classOverload();
 
         if(!is_a($return,$default,true))
         static::throw($table,$return,'mustBeOrExtend',$default);

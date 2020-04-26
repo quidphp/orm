@@ -51,7 +51,7 @@ class Classe extends Base\Test
         assert(is_a($classe->default('cols'),Orm\Cols::class,true));
         assert(is_a($classe->default('cells'),Orm\Cells::class,true));
 
-        // find
+        // findClass
 
         // colBefore
 

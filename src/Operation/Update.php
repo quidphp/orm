@@ -19,7 +19,7 @@ use Quid\Orm;
 class Update extends Orm\RowOperation
 {
     // config
-    public static $config = [
+    public static array $config = [
         'partial'=>false,
         'log'=>true,
         'com'=>false,
@@ -32,7 +32,7 @@ class Update extends Orm\RowOperation
 
 
     // types
-    protected static $types = ['update','updateChanged','updateValid']; // types de processus possible
+    protected static array $types = ['update','updateChanged','updateValid']; // types de processus possible
 
 
     // trigger
@@ -381,11 +381,7 @@ class Update extends Orm\RowOperation
         foreach ($cells as $key => $cell)
         {
             if($cell->hasChanged())
-            {
-                $cell->callThis(function() use($attr) {
-                    $this->onCommitted(false,$attr);
-                });
-            }
+            $cell->callThis(fn() => $this->onCommitted(false,$attr));
         }
 
         return;

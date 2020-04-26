@@ -17,7 +17,7 @@ use Quid\Orm;
 class Mysql extends Orm\Syntax
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 }
 
 // init

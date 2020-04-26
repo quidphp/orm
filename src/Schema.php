@@ -23,11 +23,11 @@ class Schema extends Main\Map
 
 
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['empty','jsonSerialize','serialize','clone']; // méthodes permises
+    protected ?array $mapAllow = ['empty','jsonSerialize','serialize','clone']; // méthodes permises
 
 
     // construct

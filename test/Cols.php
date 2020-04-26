@@ -197,9 +197,9 @@ class Cols extends Base\Test
 
         // mapObj
         assert($cols->pair('isRequired')['id'] === false);
-        assert($cols->filter(['kind'=>'char'])->isCount(2));
-        assert($cols->filter(['value'=>1],true)->isCount(1));
-        assert(!$cols->filter(['value'=>1],false)->isCount(1));
+        assert($cols->filter(fn($col) => $col->kind() === 'char')->isCount(2));
+        assert($cols->filter(fn($col) => $col->value() === 1)->isCount(1));
+        assert(!$cols->filter(fn($col) => $col->value() !== 1)->isCount(1));
         assert(count($cols->group('kind')) === 2);
         $sort = $clone->sortBy('name',false);
         assert($sort->first()->name() === 'userModify');

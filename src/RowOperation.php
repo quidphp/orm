@@ -16,11 +16,11 @@ namespace Quid\Orm;
 abstract class RowOperation extends Operation
 {
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $row = null; // conserve la row pour l'opération
+    protected Row $row; // conserve la row pour l'opération
 
 
     // construct

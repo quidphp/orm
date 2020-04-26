@@ -22,7 +22,7 @@ class PdoSql extends Main\Map
 
 
     // config
-    public static $config = [
+    public static array $config = [
         'shortcut'=>[ // tableau des shortcuts de clause, utiliser par les méthodes array acces et aussi certaines méthodes shortcuts
             'into'=>['insert'=>'table'],
             'from'=>['select'=>'table','delete'=>'table'],
@@ -33,10 +33,10 @@ class PdoSql extends Main\Map
 
 
     // dynamique
-    protected $mapAllow = ['set','unset','empty','overwrite','serialize','jsonSerialize','clone']; // méthodes permises
-    protected $type = null; // type de la requête
+    protected ?array $mapAllow = ['set','unset','empty','overwrite','serialize','jsonSerialize','clone']; // méthodes permises
+    protected ?string $type = null; // type de la requête
     protected $output = null; // output de la requête
-    protected $count = []; // contient une cache des différents count
+    protected array $count = []; // contient une cache des différents count
 
 
     // construct
@@ -415,7 +415,7 @@ class PdoSql extends Main\Map
                 if(Base\Arr::isAssoc($value))
                 {
                     if($prepend === true)
-                    $target = Base\Arr::prepend($target,$value);
+                    $target = Base\Arr::append($value,$target);
                     else
                     $target = Base\Arr::append($target,$value);
                 }
@@ -423,7 +423,7 @@ class PdoSql extends Main\Map
                 else
                 {
                     if($prepend === true)
-                    $target = Base\Arr::prepend($target,(is_array($value))? [$value]:$value);
+                    $target = Base\Arr::append((is_array($value))? [$value]:$value,$target);
 
                     else
                     $target[] = $value;
@@ -500,7 +500,7 @@ class PdoSql extends Main\Map
 
     // set
     // change ou ajoute le contenu d'une clause
-    final public function set($key,$value):parent
+    final public function set($key,$value):self
     {
         $key = $this->getShortcut($key) ?? $key;
         $this->checkClause($key);

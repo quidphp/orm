@@ -23,13 +23,13 @@ class Rows extends Main\MapObj
 
 
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
+    protected ?array $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
     protected $mapIs = Row::class; // classe d'objet permis
-    protected $mapSortDefault = 'primary'; // défini la méthode pour sort par défaut
+    protected ?string $mapSortDefault = 'primary'; // défini la méthode pour sort par défaut
 
 
     // construct

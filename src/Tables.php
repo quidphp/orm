@@ -23,13 +23,13 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
 
 
     // config
-    public static $config = [];
+    public static array $config = [];
 
 
     // dynamique
-    protected $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
+    protected ?array $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
     protected $mapIs = Table::class; // classe d'objet permis
-    protected $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
+    protected ?string $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
 
 
     // construct
@@ -270,7 +270,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // permet de filtre les tables par une ou plusieurs permissions
     final public function hasPermission(string ...$types):self
     {
-        return $this->filter(['hasPermission'=>true],...$types);
+        return $this->filter(fn($table) => $table->hasPermission(...$types));
     }
 
 
@@ -348,7 +348,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // retourne un objet tables avec toutes les tables cherchables
     final public function searchable():self
     {
-        return $this->filter(['isSearchable'=>true]);
+        return $this->filter(fn($table) => $table->isSearchable());
     }
 
 
@@ -593,8 +593,8 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
         {
             foreach ($this->arr() as $key => $value)
             {
-                $cols = $value->cols()->filter(['isRelation'=>true]);
-                $cols = $cols->filter(['relationTable'=>$table]);
+                $cols = $value->cols()->filter(fn($col) => $col->isRelation());
+                $cols = $cols->filter(fn($col) => $col->relationTable() === $table);
 
                 if($cols->isNotEmpty())
                 {
@@ -618,7 +618,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // retourne un tableau utilisé par onPrepareKey
     final public static function keyClassExtends():array
     {
-        return [Row::getOverloadClass(),Table::getOverloadClass(),Rows::getOverloadClass(),Cells::getOverloadClass(),Cols::getOverloadClass()];
+        return [Row::classOverload(),Table::classOverload(),Rows::classOverload(),Cells::classOverload(),Cols::classOverload()];
     }
 }
 ?>

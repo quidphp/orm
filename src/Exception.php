@@ -17,14 +17,14 @@ use Quid\Main;
 class Exception extends Main\Exception
 {
     // config
-    public static $config = [
+    public static array $config = [
         'code'=>33, // code de l'exception
         'query'=>false // affiche la query
     ];
 
 
     // dynamique
-    protected $query = null; // conserve la requête sql sous forme de string
+    protected ?string $query = null; // conserve la requête sql sous forme de string
 
 
     // setQuery

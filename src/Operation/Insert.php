@@ -19,7 +19,7 @@ use Quid\Orm;
 class Insert extends Orm\TableOperation
 {
     // config
-    public static $config = [
+    public static array $config = [
         'row'=>true,
         'reservePrimary'=>true,
         'default'=>false,
@@ -144,11 +144,7 @@ class Insert extends Orm\TableOperation
                     static::throw('databaseError');
 
                     else
-                    {
-                        $return->callThis(function() use($attr) {
-                            $this->onInserted($attr);
-                        });
-                    }
+                    $return->callThis(fn() => $this->onInserted($attr));
                 }
             }
         }
@@ -303,9 +299,7 @@ class Insert extends Orm\TableOperation
             $v = $set[$key];
             $col = $cell->col();
 
-            $col->callThis(function() use($cell,$attr) {
-                $this->onCommitted($cell,true,$attr);
-            });
+            $col->callThis(fn() => $this->onCommitted($cell,true,$attr));
         }
 
         return;
