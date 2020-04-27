@@ -23,7 +23,7 @@ class Cells extends Main\MapObj
 
 
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique
@@ -755,7 +755,7 @@ class Cells extends Main\MapObj
             else
             $value = (string) $cell;
 
-            $array = Base\Arr::append($array,$value);
+            $array = Base\Arr::merge($array,$value);
         }
 
         $file->write($array,$option);

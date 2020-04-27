@@ -17,7 +17,7 @@ use Quid\Main;
 class CatchableException extends Exception implements Main\Contract\Catchable
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'code'=>34, // code de l'exception
         'query'=>false // affiche la query
     ];

@@ -21,7 +21,7 @@ class RowsIndex extends Rows
 
 
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique

@@ -24,7 +24,7 @@ class Cell extends Main\Root
 
 
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique

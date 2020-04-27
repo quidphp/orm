@@ -19,7 +19,7 @@ use Quid\Orm;
 class Insert extends Orm\TableOperation
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'row'=>true,
         'reservePrimary'=>true,
         'default'=>false,

@@ -22,7 +22,7 @@ class Pdo extends Main\Root
 
 
     // config
-    public static array $config = [
+    protected static array $config = [
         'history'=>true, // les requêtes sont ajoutés à l'historique
         'rollback'=>true, // les rollback de requête sont générés, seulement si le tableau contient la table ainsi qu'un id numérique
         'debug'=>null, // les requêtes émulés sont retournés sans être lancés à la base de donnée
@@ -394,7 +394,7 @@ class Pdo extends Main\Root
     // retourne les options pour la classe base sql
     public function getSqlOption(?array $option=null):array
     {
-        return Base\Arr::plus($this->getAttr('sql'),['primary'=>$this->primary(),'charset'=>$this->charset(),'quoteCallable'=>[$this,'quote']],$option);
+        return Base\Arr::plus($this->getAttr('sql'),['primary'=>$this->primary(),'charset'=>$this->charset(),'quoteClosure'=>$this->quoteClosure()],$option);
     }
 
 
@@ -656,6 +656,16 @@ class Pdo extends Main\Root
         }
 
         return $return;
+    }
+
+
+    // quoteClosure
+    // retourne la closure pour quoter la variable
+    final public function quoteClosure():\Closure
+    {
+        return function($value) {
+            return $this->quote($value);
+        };
     }
 
 
@@ -2100,7 +2110,7 @@ class Pdo extends Main\Root
     // émule une requête sql en utilisant la méthode quote de pdo
     final public function emulate(string $return,?array $prepare=null,bool $replaceDoubleEscape=true):string
     {
-        return $this->syntaxCall('emulate',$return,$prepare,[$this,'quote'],$replaceDoubleEscape);
+        return $this->syntaxCall('emulate',$return,$prepare,$this->quoteClosure(),$replaceDoubleEscape);
     }
 
 
@@ -2109,7 +2119,7 @@ class Pdo extends Main\Root
     // la requête est émulé en utilisant la méthode quote de pdo
     final public function debug($value,bool $replaceDoubleEscape=true):?array
     {
-        return $this->syntaxCall('debug',$value,[$this,'quote'],$replaceDoubleEscape);
+        return $this->syntaxCall('debug',$value,$this->quoteClosure(),$replaceDoubleEscape);
     }
 
 
@@ -2294,7 +2304,7 @@ class Pdo extends Main\Root
                 {
                     $keyValue = Base\Str::explodeKeyValue('=',$x,true,true);
                     if(!empty($keyValue))
-                    $parse = Base\Arr::append($parse,$keyValue);
+                    $parse = Base\Arr::merge($parse,$keyValue);
                 }
 
                 if(empty($parse['port']))

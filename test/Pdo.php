@@ -196,6 +196,8 @@ class Pdo extends Base\Test
         // quote
         assert($pdo->quote('TEST') === "'TEST'");
 
+        // quoteClosure
+
         // makeStatement
         assert($pdo->makeStatement("SELECT * FROM $table") instanceof \PDOStatement);
 

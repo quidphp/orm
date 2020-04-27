@@ -18,7 +18,7 @@ use Quid\Main;
 abstract class Operation extends Main\Root
 {
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // db

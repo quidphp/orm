@@ -19,7 +19,7 @@ use Quid\Orm;
 class Delete extends Orm\RowOperation
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'log'=>true,
         'com'=>false,
         'strict'=>true

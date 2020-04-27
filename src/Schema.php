@@ -23,7 +23,7 @@ class Schema extends Main\Map
 
 
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique

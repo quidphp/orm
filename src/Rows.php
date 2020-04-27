@@ -23,7 +23,7 @@ class Rows extends Main\MapObj
 
 
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique
@@ -514,7 +514,7 @@ class Rows extends Main\MapObj
 
         foreach ($this->arr() as $row)
         {
-            $return = Base\Arr::append($return,$row->keyValue($key,$value,$get));
+            $return = Base\Arr::replace($return,$row->keyValue($key,$value,$get));
         }
 
         return $return;

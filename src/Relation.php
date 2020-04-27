@@ -21,7 +21,7 @@ abstract class Relation extends Main\ArrMap
 
 
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // set

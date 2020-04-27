@@ -18,7 +18,7 @@ use Quid\Orm;
 class Truncate extends Orm\TableOperation
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'log'=>true,
         'com'=>false,
         'strict'=>true

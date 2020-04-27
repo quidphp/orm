@@ -22,7 +22,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
 
     // config
-    public static array $config = [
+    protected static array $config = [
         'permission'=>true, // la permission est vérifié avant la requête
         'autoSave'=>false, // active ou désactive le autoSave au closeDown
         'log'=>true, // si les requêtes sont log

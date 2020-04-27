@@ -190,11 +190,11 @@ class Syntax extends Base\Test
         // quote
         assert($syntax::quote('test') === "'test'");
         assert($syntax::quote(2) === 2);
-        assert($syntax::quote('test',[Base\Str::class,'upper']) === 'TEST');
+        assert($syntax::quote('test',fn($value) => Base\Str::upper($value)) === 'TEST');
 
         // quoteSet
         assert($syntax::quoteSet(['test',2,3]) === "'test',2,3");
-        assert($syntax::quoteSet(['test','bla'],[Base\Str::class,'upper']) === 'TEST,BLA');
+        assert($syntax::quoteSet(['test','bla'],fn($value) => Base\Str::upper($value)) === 'TEST,BLA');
 
         // unquote
         assert($syntax::unquote("'test'") === 'test');
@@ -235,7 +235,7 @@ class Syntax extends Base\Test
         // value
         assert(strlen($syntax::value('test',[],$syntax::option())['sql']) >= 8);
         assert(count($syntax::value('test',['sql'=>':test_0','prepare'=>['test_0'=>2]],$syntax::option())['prepare']) === 2);
-        assert($syntax::value('test',[],['quoteCallable'=>[Base\Str::class,'upper']])['sql'] === 'TEST');
+        assert($syntax::value('test',[],['quoteClosure'=>fn($value) => Base\Str::upper($value)])['sql'] === 'TEST');
         assert($syntax::value('test.bla',[],['quote'=>false])['sql'] === 'test.bla');
         assert($syntax::value(null,[])['sql'] === 'NULL');
         assert($syntax::value(true,[])['sql'] === '1');

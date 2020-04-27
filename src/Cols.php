@@ -23,7 +23,7 @@ class Cols extends Main\MapObj
 
 
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique
@@ -722,7 +722,7 @@ class Cols extends Main\MapObj
             else
             $value = $col->name();
 
-            $array = Base\Arr::append($array,$value);
+            $array = Base\Arr::merge($array,$value);
         }
 
         $file->write($array,$option);

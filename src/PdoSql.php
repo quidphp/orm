@@ -22,7 +22,7 @@ class PdoSql extends Main\Map
 
 
     // config
-    public static array $config = [
+    protected static array $config = [
         'shortcut'=>[ // tableau des shortcuts de clause, utiliser par les méthodes array acces et aussi certaines méthodes shortcuts
             'into'=>['insert'=>'table'],
             'from'=>['select'=>'table','delete'=>'table'],
@@ -415,15 +415,15 @@ class PdoSql extends Main\Map
                 if(Base\Arr::isAssoc($value))
                 {
                     if($prepend === true)
-                    $target = Base\Arr::append($value,$target);
+                    $target = Base\Arr::merge($value,$target);
                     else
-                    $target = Base\Arr::append($target,$value);
+                    $target = Base\Arr::merge($target,$value);
                 }
 
                 else
                 {
                     if($prepend === true)
-                    $target = Base\Arr::append((is_array($value))? [$value]:$value,$target);
+                    $target = Base\Arr::merge((is_array($value))? [$value]:$value,$target);
 
                     else
                     $target[] = $value;
@@ -1408,7 +1408,7 @@ class PdoSql extends Main\Map
         $tableName = $this->syntaxCall('tick',$table).' t';
         $what = ['t.'.$primary];
         if(!empty($where))
-        $what = Base\Arr::appendUnique($what,$this->syntaxCall('whatFromWhere',$where,'t'));
+        $what = Base\Arr::mergeUnique($what,$this->syntaxCall('whatFromWhere',$where,'t'));
         $what[] = ['@rownum := @rownum + 1','position'];
 
         $innerSql = clone $this;

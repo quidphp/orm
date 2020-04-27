@@ -19,7 +19,7 @@ use Quid\Orm;
 class Update extends Orm\RowOperation
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'partial'=>false,
         'log'=>true,
         'com'=>false,

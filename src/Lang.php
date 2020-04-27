@@ -19,7 +19,7 @@ use Quid\Orm;
 class Lang extends Main\Lang
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'path'=>[
             'direction'=>'direction',
             'dbLabel'=>'db/label',
@@ -424,7 +424,7 @@ class Lang extends Main\Lang
 
             if(!empty($alternate))
             {
-                $exists = Base\Arr::append($base,$alternate);
+                $exists = Base\Arr::merge($base,$alternate);
 
                 if($this->exists($exists))
                 $return = $exists;
@@ -463,10 +463,10 @@ class Lang extends Main\Lang
 
             if(!empty($alternate))
             {
-                $exists = Base\Arr::append($base,$alternate);
+                $exists = Base\Arr::merge($base,$alternate);
 
                 if($includeValue === true)
-                $exists = Base\Arr::append($exists,$value);
+                $exists = Base\Arr::merge($exists,$value);
 
                 if($this->exists($exists))
                 $return = $exists;
@@ -474,7 +474,7 @@ class Lang extends Main\Lang
 
             if(empty($return))
             {
-                $exists = Base\Arr::append($base,$value);
+                $exists = Base\Arr::merge($base,$value);
 
                 if($this->exists($exists))
                 $return = $exists;

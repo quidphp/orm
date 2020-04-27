@@ -23,12 +23,12 @@ abstract class Syntax extends Main\Root
 
 
     // config
-    public static array $config = [
+    protected static array $config = [
         'option'=>[ // tableau d'options
             'primary'=>'id', // nom de la clé primaire
             'prepare'=>true, // prépare la valeur ou non, priorité sur quote
             'quote'=>true, // quote la valeur
-            'quoteCallable'=>null, // callable pour quote, plutôt que celle par défaut
+            'quoteClosure'=>null, // callable pour quote, plutôt que celle par défaut
             'tick'=>false, // tick la valeur
             'makeSelectFrom'=>true, // fait des select à partir de insert, update ou delete, la base pour le rollback
             'createNotExists'=>false, // mot à ajouter pour requête create
@@ -644,7 +644,7 @@ abstract class Syntax extends Main\Root
     // les variables scalar non string ne sont pas quote
     // possible de passer une callable pour quote, sinon utilise str quote et addslashes
     // possible de remplacer les double \\ par \ (false par défaut)
-    final public static function quote($value,?callable $callable=null,bool $replaceDoubleEscape=false)
+    final public static function quote($value,?\Closure $closure=null,bool $replaceDoubleEscape=false)
     {
         $return = '';
 
@@ -652,8 +652,8 @@ abstract class Syntax extends Main\Root
         {
             if(is_string($value))
             {
-                if(static::isCallable($callable))
-                $return = $callable($value);
+                if(!empty($closure))
+                $return = $closure($value);
 
                 else
                 {
@@ -676,7 +676,7 @@ abstract class Syntax extends Main\Root
     // quoteSet
     // construit un champ set séparé par ,
     // chaque element est envoyé à la méthode quote
-    final public static function quoteSet(array $value,?callable $callable=null):string
+    final public static function quoteSet(array $value,?\Closure $closure=null):string
     {
         $return = '';
 
@@ -685,7 +685,7 @@ abstract class Syntax extends Main\Root
             foreach ($value as $v)
             {
                 $return .= (strlen($return))? ',':'';
-                $return .= static::quote($v,$callable);
+                $return .= static::quote($v,$closure);
             }
         }
 
@@ -843,7 +843,7 @@ abstract class Syntax extends Main\Root
                 $sql = static::tick($value);
 
                 elseif(!empty($option['quote']))
-                $sql = static::quote($value,$option['quoteCallable'] ?? null);
+                $sql = static::quote($value,$option['quoteClosure'] ?? null);
 
                 if(!empty($option['quoteChar']))
                 $sql = Base\Str::quoteChar($sql,$option['quoteChar']);
@@ -1071,7 +1071,7 @@ abstract class Syntax extends Main\Root
                     $return[] = [$v,$k];
 
                     elseif(is_array($v) && count($v) <= 2)
-                    $return[] = Base\Arr::append(array_values($v),$k);
+                    $return[] = Base\Arr::merge(array_values($v),$k);
                 }
             }
         }
@@ -1528,7 +1528,7 @@ abstract class Syntax extends Main\Root
         }
 
         if(!empty($merge))
-        $return = Base\Arr::append(...$merge);
+        $return = Base\Arr::merge(...$merge);
 
         return $return;
     }
@@ -3454,7 +3454,7 @@ abstract class Syntax extends Main\Root
     // émule une requête sql avec tableau prepare
     // toutes les valeurs du tableau prepare sont quote, même si numérique ou null
     // replaceDoubleEscape est true par défaut, va remplacer tous les double \\ par \, comme emulate est surtout utilisé pour de l'affichage ou debug
-    final public static function emulate(string $return,?array $prepare=null,?callable $callable=null,bool $replaceDoubleEscape=true):string
+    final public static function emulate(string $return,?array $prepare=null,?\Closure $closure=null,bool $replaceDoubleEscape=true):string
     {
         if(is_array($prepare))
         {
@@ -3462,10 +3462,10 @@ abstract class Syntax extends Main\Root
             {
                 if(is_string($k) && is_scalar($v))
                 {
-                    $replace = static::quote($v,$callable,$replaceDoubleEscape);
+                    $replace = static::quote($v,$closure,$replaceDoubleEscape);
 
-                    $closure = fn($match) => $replace;
-                    $return = preg_replace_callback("/(?!'|\"):$k(?!'|\")/",$closure,$return);
+                    $matchClosure = fn($match) => $replace;
+                    $return = preg_replace_callback("/(?!'|\"):$k(?!'|\")/",$matchClosure,$return);
                 }
             }
         }
@@ -3476,12 +3476,12 @@ abstract class Syntax extends Main\Root
 
     // debug
     // retourne le maximum d'informations à partir du tableau de retour sql
-    final public static function debug($value,?callable $callable=null,bool $replaceDoubleEscape=true):?array
+    final public static function debug($value,?\Closure $closure=null,bool $replaceDoubleEscape=true):?array
     {
         $return = static::parseReturn($value);
 
         if(!empty($return))
-        $return['emulate'] = static::emulate($return['sql'],$return['prepare'] ?? null,$callable,$replaceDoubleEscape);
+        $return['emulate'] = static::emulate($return['sql'],$return['prepare'] ?? null,$closure,$replaceDoubleEscape);
 
         return $return;
     }

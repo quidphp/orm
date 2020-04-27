@@ -120,7 +120,7 @@ class RowsIndex extends Base\Test
         assert($rows->order(['name'=>'DESC'])->first()['name']->value() === 'james3');
         assert($rows->limit(2,5)->isCount(4));
         assert($rows->where([['name','!','james'],['id','>',2]])->isCount(2));
-        assert(count($rows->keyValue(0,1)) === 6);
+        assert(count($rows->keyValue(0,1)) === 3); // collision de id
         assert(count($rows->segment('[id] [name]')) === 6);
 
         // cleanup

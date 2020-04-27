@@ -17,7 +17,7 @@ use Quid\Main;
 class Fr extends Main\Lang\Fr
 {
     // config
-    public static array $config = [
+    protected static array $config = [
 
         // error
         'error'=>[

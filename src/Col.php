@@ -24,7 +24,7 @@ class Col extends Main\Root
 
 
     // config
-    public static array $config = [
+    protected static array $config = [
         'ignore'=>null, // défini si la colonne est ignoré
         'cell'=>null, // détermine la class a utilisé pour la cell, si null laisse le loop de dbclasse faire son oeuvre
         'type'=>null, // type de la colonne
@@ -551,7 +551,7 @@ class Col extends Main\Root
     {
         $return = false;
 
-        if(method_exists($this,'onInsert') || method_exists($this,'onCommit'))
+        if($this->hasMethod('onInsert') || $this->hasMethod('onCommit'))
         $return = true;
 
         elseif(!empty($this->attr['onInsert']) || !empty($this->attr['onCommit']))
@@ -568,7 +568,7 @@ class Col extends Main\Root
     {
         $return = false;
 
-        if(method_exists($this,'onUpdate') || method_exists($this,'onCommit'))
+        if($this->hasMethod('onUpdate') || $this->hasMethod('onCommit'))
         $return = true;
 
         elseif(!empty($this->attr['onUpdate']) || !empty($this->attr['onCommit']))
@@ -1482,10 +1482,10 @@ class Col extends Main\Root
             $error[] = $array['editable'];
 
             if(!empty($array['validate']) && is_array($array['validate']))
-            $error = Base\Arr::append($error,$array['validate']);
+            $error = Base\Arr::merge($error,$array['validate']);
 
             if(!empty($array['compare']) && is_array($array['compare']))
-            $error = Base\Arr::append($error,$array['compare']);
+            $error = Base\Arr::merge($error,$array['compare']);
 
             if(empty($error) && !empty($array['unique']) && $array['unique'] instanceof \Closure)
             {
@@ -1609,7 +1609,7 @@ class Col extends Main\Root
         if(!empty($call))
         {
             if(!empty($call['args']))
-            $args = Base\Arr::append($call['args'],$args);
+            $args = Base\Arr::merge($call['args'],$args);
 
             if($value === true)
             $return = $this->value($return);
@@ -1799,10 +1799,10 @@ class Col extends Main\Root
     // si pas de méthode, retourne la valeur tel quelle
     final public function insertCallable($return,array $row,array $option)
     {
-        if(method_exists($this,'onInsert'))
+        if($this->hasMethod('onInsert'))
         $return = $this->onInsert($return,$row,$option);
 
-        elseif(method_exists($this,'onCommit'))
+        elseif($this->hasMethod('onCommit'))
         $return = $this->onCommit($return,$row,null,$option);
 
         elseif(!empty($this->attr['onInsert']))
@@ -1822,10 +1822,10 @@ class Col extends Main\Root
     {
         $value = $return;
 
-        if(method_exists($this,'onUpdate'))
+        if($this->hasMethod('onUpdate'))
         $value = $this->onUpdate($return,$option);
 
-        elseif(method_exists($this,'onCommit'))
+        elseif($this->hasMethod('onCommit'))
         $value = $this->onCommit($return->value(),$return->row()->get(),$return,$option);
 
         elseif(!empty($this->attr['onUpdate']))
@@ -1936,7 +1936,7 @@ class Col extends Main\Root
         }
 
         if(!empty($details))
-        $return = Base\Arr::append($return,$details);
+        $return = Base\Arr::merge($return,$details);
 
         return $return;
     }

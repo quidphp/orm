@@ -23,7 +23,7 @@ class Row extends Main\ArrObj
 
 
     // config
-    public static array $config = []; // les config de row sont mergés à celles de table, avec priorité
+    protected static array $config = []; // les config de row sont mergés à celles de table, avec priorité
 
 
     // dynamique

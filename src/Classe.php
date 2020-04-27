@@ -17,7 +17,7 @@ use Quid\Main;
 class Classe extends Main\Map
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'default'=>[ // classe par défaut
             'table'=>Table::class,
             'col'=>Col::class,

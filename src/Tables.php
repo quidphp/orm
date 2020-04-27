@@ -23,7 +23,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
 
 
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // dynamique

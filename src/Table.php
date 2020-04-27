@@ -23,7 +23,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
 
     // config
-    public static array $config = [
+    protected static array $config = [
         'ignore'=>null, // défini si la table est ignoré
         'parent'=>null, // nom du parent de la classe table, possible aussi de mettre une classe
         'priority'=>null, // code de priorité de la table
@@ -122,7 +122,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             {
                 $cols = $this->cols();
                 $missing = [];
-                $configExists = Col::$config['exists'];
+                $configExists = Col::getConfig('exists');
 
                 foreach ($array as $key => $value)
                 {
@@ -535,7 +535,9 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             }
         }
 
-        $return = Base\Call::digStaticMethod($return);
+        if(is_array($return))
+        $return = Base\Call::dig(true,$return);
+
         $return = $db->syntaxCall('removeDefault',$return);
 
         return $return;

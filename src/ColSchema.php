@@ -18,7 +18,7 @@ use Quid\Main;
 class ColSchema extends Main\Root
 {
     // config
-    public static array $config = [
+    protected static array $config = [
         'intMax'=>[ // détermine les valeurs maximales pour unt int
             'int'=>2147483647],
         'textLength'=>[
@@ -429,7 +429,7 @@ class ColSchema extends Main\Root
 
                 $int = static::parseValidateInt($array);
                 if(!empty($int))
-                $return = Base\Arr::append($return,$int);
+                $return = Base\Arr::merge($return,$int);
             }
 
             if($array['kind'] === 'float')
@@ -438,7 +438,7 @@ class ColSchema extends Main\Root
 
                 $float = static::parseValidateUnsigned($array);
                 if(!empty($float))
-                $return = Base\Arr::append($return,$float);
+                $return = Base\Arr::merge($return,$float);
             }
 
             elseif($array['kind'] === 'char')

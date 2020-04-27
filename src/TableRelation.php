@@ -17,7 +17,7 @@ use Quid\Base;
 class TableRelation extends Relation
 {
     // config
-    public static array $config = [];
+    protected static array $config = [];
 
 
     // construct
@@ -273,7 +273,7 @@ class TableRelation extends Relation
 
                 else
                 {
-                    $what = Base\Arr::append($primary,$what);
+                    $what = Base\Arr::merge($primary,$what);
                     $result = $db->selectAssocsUnique($what,$table,$where);
                 }
 
@@ -342,7 +342,7 @@ class TableRelation extends Relation
 
                 else
                 {
-                    $what = Base\Arr::append($primary,$attr['what']);
+                    $what = Base\Arr::merge($primary,$attr['what']);
                     $result = $db->selectAssocsUnique($what,$table,$where,$order,$limit);
                 }
 
@@ -534,7 +534,7 @@ class TableRelation extends Relation
 
             else
             {
-                $what = Base\Arr::append($table->primary(),$cols);
+                $what = Base\Arr::merge($table->primary(),$cols);
                 $searchOpt['what'] = $what;
                 $searchOpt['output'] = 'assocsUnique';
             }
