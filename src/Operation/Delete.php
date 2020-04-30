@@ -22,7 +22,8 @@ class Delete extends Orm\RowOperation
     protected static array $config = [
         'log'=>true,
         'com'=>false,
-        'strict'=>true
+        'strict'=>true,
+        'timestamp'=>null
     ];
 
 
@@ -39,6 +40,7 @@ class Delete extends Orm\RowOperation
         $db = $this->db();
         $result = null;
         $attr = $this->attr();
+        $timestamp = $this->getAttr('timestamp');
 
         try
         {
@@ -46,6 +48,9 @@ class Delete extends Orm\RowOperation
 
             if(!$row->isDeleteable($attr))
             static::catchable(null,'notDeleteable',$row);
+
+            elseif(is_int($timestamp) && !$this->isValidTimestamp($timestamp))
+            static::catchable(null,'notDeleteableTimestamp',$row,$table);
 
             $row->cells()->delete($attr);
 

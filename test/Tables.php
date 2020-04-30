@@ -108,7 +108,7 @@ class Tables extends Base\Test
         assert($tables->searchMinLength() === 3);
 
         // isSearchTermValid
-        assert($tables->isSearchTermValid('okz'));
+        assert($tables->gets('ormCell','ormCells','ormCol','ormCols')->isSearchTermValid('okz'));
         assert(!$tables->isSearchTermValid('k'));
 
         // keyParent

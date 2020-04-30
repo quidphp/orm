@@ -718,23 +718,46 @@ class Row extends Main\ArrObj
     }
 
 
-    // lastDateCommit
+    // newestDateCommit
     // cette méthode retourne le commit le plus récent sur la row
     // retourne null ou un tableau avec date et user
-    final public function lastDateCommit():?array
+    final public function newestDateCommit():?array
     {
         $return = null;
         $time = 0;
 
         foreach ($this->cellsDateCommit() as $array)
         {
-            $cell = $array['date'] ?? null;
+            $cell = $array['date'];
+            $value = $cell->value();
 
-            if(!empty($cell))
+            if(is_int($value) && $value > $time)
             {
-                $value = $cell->value();
+                $time = $value;
+                $return = $array;
+            }
+        }
 
-                if(is_int($value) && $value > $time)
+        return $return;
+    }
+
+
+    // oldestDateCommit
+    // cette méthode retourne le commit le plus ancien sur la row
+    // retourne null ou un tableau avec date et user
+    final public function oldestDateCommit():?array
+    {
+        $return = null;
+        $time = null;
+
+        foreach ($this->cellsDateCommit() as $array)
+        {
+            $cell = $array['date'];
+            $value = $cell->value();
+
+            if(is_int($value) && ($time === null || $value < $time))
+            {
+                $time = $value;
                 $return = $array;
             }
         }
@@ -809,16 +832,12 @@ class Row extends Main\ArrObj
         if($cells->isNotEmpty())
         {
             $keyValue = [];
-            $rowGet = $this->get();
             $option = (array) $option;
 
             foreach ($cells as $key => $cell)
             {
-                $value = $cell->value();
                 $col = $cell->col();
-
-                $value = $col->callThis(fn() => $this->onDuplicate($value,$rowGet,$cell,$option));
-
+                $value = $col->callThis(fn() => $this->onDuplicate($cell,$option));
                 $keyValue[$key] = $value;
             }
 

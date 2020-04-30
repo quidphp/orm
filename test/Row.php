@@ -222,8 +222,13 @@ class Row extends Base\Test
         // cellsOwner
         assert($row->cellsOwner()->isCount(2));
 
-        // lastDateCommit
-        assert(count($row->lastDateCommit()) === 2);
+        // newestDateCommit
+        assert(count($row->newestDateCommit()) === 2);
+        assert($row->newestDateCommit()['date']->name() === 'dateModify');
+
+        // oldestDateCommit
+        assert(count($row->oldestDateCommit()) === 2);
+        assert($row->oldestDateCommit()['date']->name() === 'dateAdd');
 
         // namePrimary
         assert($row->namePrimary() === 'bla (#1)');

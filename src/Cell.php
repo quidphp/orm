@@ -71,6 +71,15 @@ class Cell extends Main\Root
     }
 
 
+    // onInit
+    // callback lancé lors après le changement de valeur sur la cellule
+    // initial signifie que c'est le premier changement
+    protected function onInit(bool $initial):void
+    {
+        return;
+    }
+
+
     // onCommitted
     // callback après une mise à jour réussie
     // ne retourne rien
@@ -741,17 +750,16 @@ class Cell extends Main\Root
     final public function get(?array $option=null)
     {
         $return = null;
+        $col = $this->col();
 
         $value = $this->value();
         $option = (array) $option;
-        $option['cell'] = $this;
 
         if(is_scalar($value))
         $value = Base\Scalar::cast($value);
 
-        $col = $this->col();
         $cell = $this;
-        $onGet = $col->callThis(fn() => $this->onGet($cell,$option));
+        $onGet = $col->callThis(fn() => $this->onGet($value,$cell,$option));
 
         if($onGet !== $this)
         $value = $onGet;
@@ -775,9 +783,8 @@ class Cell extends Main\Root
     // méthode protégé utilisé par la méthode export des différentes classes de cellule
     final protected function exportCommon($value,?array $option=null):array
     {
-        $col = $this->col();
         $cell = $this;
-        return $col->callThis(fn() => $this->onExport('cell',$value,$cell,$option));
+        return $this->col()->callThis(fn() => $this->onExport($value,$cell,'cell',$option));
     }
 
 
@@ -824,7 +831,7 @@ class Cell extends Main\Root
     // set
     // change la valeur de la cellule
     // passe la valeur dans col/onSet et ensuite col/autoCast
-    // lance le callback onCellSet dans col après le changement et force la validation
+    // lance le callback onInit après le changement et force la validation
     // une exception peut être envoyer si preValidate dans option est true et que la nouvelle valeur ne passe pas le test
     // option preValidate avec preValidatePrepare
     public function set($value,?array $option=null):self
@@ -845,7 +852,7 @@ class Cell extends Main\Root
             static::throw('preValidate',$this->name(),$preValidate);
         }
 
-        $onSet = $col->callThis(fn() => $this->onSet($value,$row->get(),$cell,$option));
+        $onSet = $col->callThis(fn() => $this->onSet($value,$cell,$row->get(),$option));
 
         if($onSet !== $this)
         $value = $onSet;
@@ -853,7 +860,7 @@ class Cell extends Main\Root
         $value = $col->autoCast($value);
         $this->value['change'] = $value;
 
-        $col->callThis(fn() => $this->onCellSet($cell));
+        $this->onInit(false);
 
         return $this;
     }
@@ -862,7 +869,7 @@ class Cell extends Main\Root
     // setInitial
     // change la valeur initiale de la cellule
     // efface la valeur de changement de la cellule
-    // lance le callbacks onCellInit dans col
+    // lance le callback onInit dans cell
     // validate est mis à true par défaut lors de setInitial
     public function setInitial($value):self
     {
@@ -877,7 +884,7 @@ class Cell extends Main\Root
         $this->clearException();
 
         $cell = $this;
-        $col->callThis(fn() => $this->onCellInit($cell));
+        $this->onInit(true);
 
         return $this;
     }
@@ -895,7 +902,7 @@ class Cell extends Main\Root
     // reset
     // ramène la valeur de la cellule à sa dernière valeur commit
     // enlève la valeur de changement et remet validate à true
-    // lance le callback onCellSet dans col
+    // lance le callback onInit
     public function reset():self
     {
         if(array_key_exists('change',$this->value))
@@ -903,7 +910,7 @@ class Cell extends Main\Root
 
         $col = $this->col();
         $cell = $this;
-        $col->callThis(fn() => $this->onCellSet($cell));
+        $this->onInit(false);
 
         return $this;
     }

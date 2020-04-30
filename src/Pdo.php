@@ -672,6 +672,7 @@ class Pdo extends Main\Root
     // makeStatement
     // prend un tableau query et retourne un objet pdo statement
     // gère le try catch
+    // le onAfterMakeStatement a été déplacé dans la fonction query car ça causait des problèmes en cli (logNow)
     final public function makeStatement($value,?array $attr=[]):?\PDOStatement
     {
         $return = null;
@@ -692,9 +693,6 @@ class Pdo extends Main\Root
                     if($query instanceof \PDOStatement)
                     $return = $query;
                 }
-
-                if(!empty($return))
-                $this->onAfterMakeStatement($value,$return);
             }
         }
 
@@ -972,6 +970,7 @@ class Pdo extends Main\Root
     // méthode pour effectuer des requetes à la base de données
     // la requête n'est pas lancé si option debug est true ou output est debug
     // si output est un tableau avec clé beforeAfter, possibilité de retourner la ligne avant et/ou après le insert, update ou delete
+    // 28/04/2020 onAfterMakeStatement est déplacé ici car problème avec le logNow
     public function query($value,$output=true)
     {
         $return = null;
@@ -1006,6 +1005,8 @@ class Pdo extends Main\Root
                 else
                 {
                     $return = $this->outputStatement($value,$output,$statement);
+
+                    $this->onAfterMakeStatement($value,$statement);
 
                     if($return !== $statement)
                     $statement->closeCursor();

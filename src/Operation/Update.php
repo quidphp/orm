@@ -26,6 +26,7 @@ class Update extends Orm\RowOperation
         'strict'=>true,
         'finalValidate'=>true,
         'onCommitted'=>true,
+        'timestamp'=>null,
         'include'=>true, // ceci est utilisé pour updateChanged
         'catchException'=>false
     ];
@@ -241,6 +242,7 @@ class Update extends Orm\RowOperation
         $table = $this->table();
         $cells = $this->cells();
         $result = null;
+        $timestamp = $this->getAttr('timestamp');
 
         try
         {
@@ -254,7 +256,10 @@ class Update extends Orm\RowOperation
             static::throw('cannotSetPrimaryCell');
 
             elseif(!$row->isUpdateable($attr))
-            static::catchable(null,'notUpdatable',$row,$table);
+            static::catchable(null,'notUpdateable',$row,$table);
+
+            elseif(is_int($timestamp) && !$this->isValidTimestamp($timestamp))
+            static::catchable(null,'notUpdateableTimestamp',$row,$table);
 
             else
             {

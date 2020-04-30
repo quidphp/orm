@@ -70,19 +70,15 @@ class Col extends Base\Test
 
         // onUpdate
 
-        // onSet
-
         // onGet
+
+        // onSet
 
         // onDuplicate
 
-        // onExport
-
-        // onCellInit
-
-        // onCellSet
-
         // onDelete
+
+        // onExport
 
         // onCommitted
 
@@ -463,12 +459,6 @@ class Col extends Base\Test
         assert($col->langCode() === null);
 
         // makeAttr
-
-        // attrCallback
-
-        // attrParseCallable
-        assert($col->attrParseCallable('onGet') === null);
-        assert($dateAdd->attrParseCallable('onGet')['args'][0] === 'long');
 
         // priority
         assert($col->priority() === 40);

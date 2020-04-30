@@ -75,10 +75,11 @@ class Col extends Main\Root
         'exportSeparator'=>', ', // séparateur si plusieurs valeurs (tableau)
         'exists'=>true, // la colonne doit existé ou une erreur est envoyé, la valeur par défaut est prise ici, pour changer pour une colonne il faut le faire au niveau de la row/table/db
         'check'=>null, // envoie une exception si le tableau d'attribut ne contient pas les slices de check, voir makeAttr
-        'onSet'=>null, // callable pour onSet, appelé à chaque set de valeur
+        'onAttr'=>null, // callback lors de la création de la colonne, génération des attributs
         'onGet'=>null, // callable pour onGet, appelé pour avoir la version get d'une valeur
-        'onMakeAttr'=>null, // callback sur onMakeAttr lors de la création de la colonne
+        'onSet'=>null, // callable pour onSet, appelé à chaque set de valeur
         'onDuplicate'=>null, // callback sur duplication
+        'onDelete'=>null, // callback sur suppression de la ligne
         'onExport'=>null, // callback lors de l'exporation
         'onInsert'=>null, // callback sur insertion
         'onUpdate'=>null, // callback sur update
@@ -132,8 +133,8 @@ class Col extends Main\Root
     // callback avant de mettre les attributs dans la propriété attr
     protected function onMakeAttr(array $return):array
     {
-        if(!empty($return['onMakeAttr']) && static::isCallable($return['onMakeAttr']))
-        $return = $return['onMakeAttr']($return);
+        if(!empty($return['onAttr']) && static::isCallable($return['onAttr']))
+        $return = $return['onAttr']($return);
 
         if(!empty($return['relation']) && static::isCallable($return['relation']))
         $return['relation'] = $return['relation']($this);
@@ -156,51 +157,66 @@ class Col extends Main\Root
     // la valeur sera donné en premier argument
 
 
+    // onUpdate
+    // callback pour onUpdate, une cellule est donné en argument et retourné
+    // méthode peut être étendu
+    // possible aussi d'utiliser la méthode onCommit, onCommit a moins de priorité que onUpdate
+    // si la méthode de col ne retourne pas la cellule, la valeur sera set dans la cellule
+
+
     // onCommit
     // méthode à ajouter dans une classe qui étend
     // la valeur sera donné en premier argument
     // peut servir de remplacement à onInsert et onUpdate, mais a moins de priorité
 
 
-    // onUpdate
-    // callback pour onUpdate, une cellule est donné en argument et retourné
-    // méthode peut être étendu
-    // possible aussi d'utiliser la méthode onCommit, onCommit a moins de priorité que onUpdate
-    // si la méthode de col ne retourne pas la cellule, la valeur sera set dans la cellule
-    // méthode public car utilisé par cell
+    // onGet
+    // permet de formater une valeur simple vers un type plus complexe, par exemple lors d'un affichage
+    protected function onGet($return,?Cell $cell=null,array $option)
+    {
+        $return = $this->value($return);
+        $callable = $this->getAttr('onGet');
+
+        if(!empty($callable))
+        $return = $callable($return,$cell,$option);
+
+        return $return;
+    }
 
 
     // onSet
     // permet de formater une valeur complexe vers le simple, par exemple lors d'une insertion ou mise à jour
     // cell est fourni en troisième argument si c'est une update
-    // méthode publique car utilisé par cell
-    protected function onSet($return,array $row,?Cell $cell=null,array $option)
+    protected function onSet($return,?Cell $cell=null,array $row,array $option)
     {
-        return $this->attrCallback('onSet',false,$return,$row,$cell,$option);
-    }
-
-
-    // onGet
-    // permet de formater une valeur simple vers un type plus complexe, par exemple lors d'un affichage
-    // méthode publique car utilisé par cell et table
-    protected function onGet($return,array $option)
-    {
-        return $this->attrCallback('onGet',true,$return,$option);
+        $callable = $this->getAttr('onSet');
+        return (!empty($callable))? $callable($return,$cell,$row,$option):$return;
     }
 
 
     // onDuplicate
     // callback sur duplication
-    protected function onDuplicate($return,array $row,Cell $cell,array $option)
+    protected function onDuplicate(Cell $cell,array $option)
     {
-        return $this->attrCallback('onDuplicate',false,$return,$row,$cell,$option);
+        $callable = $this->getAttr('onDuplicate');
+        return (!empty($callable))? $callable($cell,$option):$cell;
+    }
+
+
+    // onDelete
+    // callback pour onDelete, une cellule est donné en argument
+    // envoie une exception si l'argument n'est pas une cellule
+    protected function onDelete(Cell $cell,array $option)
+    {
+        $callable = $this->getAttr('onDelete');
+        return (!empty($callable))? $callable($cell,$option):$cell;
     }
 
 
     // onExport
     // callback sur exportation
     // doit retourner un tableau
-    final protected function onExport(string $type,$value=null,Cell $cell,?array $option=null):array
+    final protected function onExport($value=null,Cell $cell,string $type,?array $option=null):array
     {
         $return = [];
 
@@ -211,7 +227,11 @@ class Col extends Main\Root
             if($type === 'col')
             $value = $this->label();
 
-            $return = $this->attrCallback('onExport',false,[$value],$type,$cell,(array) $option);
+            $return = [$value];
+
+            $callable = $this->getAttr('onExport');
+            if(!empty($callable))
+            $return = $callable($return,$type,$cell,$option);
 
             if(!is_array($return))
             $return = (array) $return;
@@ -226,38 +246,6 @@ class Col extends Main\Root
         static::throw();
 
         return $return;
-    }
-
-
-    // onCellInit
-    // callback lancé lorsqu'une cellule est passé dans setInitial
-    // par défaut, renvoie vers onCellSet
-    // méthode publique car appelé via cell
-    final protected function onCellInit(Cell $cell)
-    {
-        $this->onCellSet($cell);
-
-        return $this;
-    }
-
-
-    // onCellSet
-    // callback lancé lorsqu'une cellule change via la méthode set
-    // méthode publique car appelé via cell
-    protected function onCellSet(Cell $cell)
-    {
-        return $this;
-    }
-
-
-    // onDelete
-    // callback pour onDelete, une cellule est donné en argument et retourné
-    // méthode peut être étendu, ou utilise la config onDelete
-    // envoie une exception si l'argument n'est pas une cellule
-    // méthode public car utilisé par cell
-    protected function onDelete(Cell $return,array $option)
-    {
-        return;
     }
 
 
@@ -606,7 +594,7 @@ class Col extends Main\Root
     {
         $return = $this->value($return);
         $option = (array) $option;
-        $return = $this->onGet($return,$option);
+        $return = $this->onGet($return,null,$option);
 
         return $return;
     }
@@ -617,7 +605,7 @@ class Col extends Main\Root
     // doit retourner un tableau
     final public function export(Cell $cell,?array $option=null):array
     {
-        return $this->onExport('col',null,$cell,$option);
+        return $this->onExport(null,$cell,'col',$option);
     }
 
 
@@ -1599,54 +1587,6 @@ class Col extends Main\Root
     }
 
 
-    // attrCallback
-    // appele la callable lié à un attribut
-    // la valeur est passé dans value avant l'envoie à la méthode (donc la cellule est transformé)
-    final protected function attrCallback(string $key,bool $value=false,$return=null,...$args)
-    {
-        $call = $this->attrParseCallable($key);
-
-        if(!empty($call))
-        {
-            if(!empty($call['args']))
-            $args = Base\Arr::merge($call['args'],$args);
-
-            if($value === true)
-            $return = $this->value($return);
-
-            $return = $call['callable']($return,...$args);
-        }
-
-        return $return;
-    }
-
-
-    // attrParseCallable
-    // retourne un tableau pour une callable dans les attributs
-    // retourne null ou un tableau à deux arguments: callable et args
-    final public function attrParseCallable(string $key):?array
-    {
-        $return = null;
-        $attr = $this->getAttr($key);
-
-        if(!empty($attr) && is_array($attr))
-        {
-            if(static::isCallable($attr))
-            $return = ['callable'=>$attr,'args'=>[]];
-
-            elseif(static::isCallable(current($attr)))
-            {
-                $callable = current($attr);
-                unset($attr[key($attr)]);
-                $args = array_values($attr);
-                $return = ['callable'=>$callable,'args'=>$args];
-            }
-        }
-
-        return $return;
-    }
-
-
     // priority
     // retourne le code de priorité de la colonne
     final public function priority():int
@@ -1852,7 +1792,7 @@ class Col extends Main\Root
         $this->clearException();
         $return = $this->value($return);
         $row = Base\Obj::cast($row);
-        $return = $this->onSet($return,$row,null,$option);
+        $return = $this->onSet($return,null,$row,$option);
         $return = $this->insertCallable($return,$row,$option);
         $return = $this->autoCast($return);
 
@@ -2232,14 +2172,14 @@ class Col extends Main\Root
     {
         $return = [];
         $option = (array) $option;
-        $option['cell'] = ($value instanceof Cell)? $value:null;
+        $cell = ($value instanceof Cell)? $value:null;
         $value = $this->value($value);
 
         $return['name'] = $this->name();
         $return['label'] = $this->label();
         $return['tableLabel'] = $this->table()->label();
         $return['value'] = $value;
-        $return['get'] = $this->onGet($value,$option);
+        $return['get'] = $this->onGet($value,$cell,$option);
         $return['output'] = $this->htmlOutput($value);
 
         if($this->isRelation())

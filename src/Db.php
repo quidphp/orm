@@ -27,6 +27,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         'autoSave'=>false, // active ou désactive le autoSave au closeDown
         'log'=>true, // si les requêtes sont log
         'revert'=>null, // permet de conserver une clé à revert après une requête
+        'logMethod'=>'logCloseDownCliNow', // méthode à utiliser pour log
         'logClass'=>[ // classe à utiliser pour logger ces différents types de requêtes
             'select'=>null,
             'show'=>null,
@@ -127,7 +128,9 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
             if($this->getAttr('log') === true)
             {
                 $log = $this->getAttr('logClass/'.$value['type']);
-                if(!empty($log))
+                $logMethod = $this->getAttr('logMethod',true);
+
+                if(!empty($log) && !empty($logMethod))
                 {
                     $go = false;
 
@@ -142,7 +145,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
                     $go = true;
 
                     if($go === true)
-                    $log::logOnCloseDown($value['type'],$value);
+                    $log::$logMethod($value['type'],$value);
                 }
             }
         }

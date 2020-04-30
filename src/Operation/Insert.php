@@ -237,12 +237,13 @@ class Insert extends Orm\TableOperation
     // si com est false et qu'il y a une exception attrapable, renvoie
     final protected function after($result):void
     {
+        $table = $this->table();
+
         if($this->getAttr('com') === true)
         {
             $label = null;
             $attr = [];
             $in = [];
-            $table = $this->table();
             $db = $this->db();
             $lang = $db->lang();
             $name = $table->name();
@@ -281,7 +282,7 @@ class Insert extends Orm\TableOperation
         throw $result;
 
         elseif($this->getAttr('strict') === true && !(is_int($result) && $result > 0))
-        static::throw('insertFailed',$result);
+        static::throw('insertFailed',$table,$result);
 
         return;
     }

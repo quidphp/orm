@@ -277,7 +277,7 @@ class Cols extends Main\MapObj
                 $value = $col->relation()->getStr($value,', ',false,true,$option);
 
                 else
-                $value = $col->callThis(fn() => $this->onGet($value,$option));
+                $value = $col->callThis(fn() => $this->onGet($value,null,$option));
 
                 if($onlyScalar === false || is_scalar($value))
                 $return[$key] = $value;
