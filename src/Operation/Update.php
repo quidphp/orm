@@ -313,12 +313,15 @@ class Update extends Orm\RowOperation
     // si com est false et qu'il y a une exception attrapable, renvoie
     final public function after($result,?array $set=null):void
     {
+        $db = $this->db();
+        $table = $this->table();
+
         if($this->getAttr('com') === true)
         {
             $in = [];
             $row = $this->row();
-            $lang = $this->db()->lang();
-            $name = $this->table()->name();
+            $lang = $db->lang();
+            $name = $table->name();
 
             if($result === 1)
             {
@@ -367,7 +370,7 @@ class Update extends Orm\RowOperation
         throw $result;
 
         elseif($this->getAttr('strict') === true && !in_array($result,[0,1],true))
-        static::throw('updateFailed',$result,'strictMode');
+        static::throw('updateFailed',$table,$result,'strictMode');
 
         if($this->getAttr('onCommitted') === true && in_array($result,[0,1],true) && is_array($set) && !empty($set))
         $this->committed($set);

@@ -112,7 +112,7 @@ class Sql extends PdoSql
 
         foreach ($values as $value)
         {
-            if($col::isFilterEmptyNotEmptyValue($value))
+            if($col->isFilterEmptyNotEmptyValue($value))
             {
                 $v = ((int) $value === 0)? 'empty':'notEmpty';
                 $this->where($col,$v);
