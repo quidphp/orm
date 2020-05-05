@@ -250,6 +250,14 @@ class Row extends Base\Test
         assert($row->duplicate() instanceof Orm\Row);
         assert($row->duplicate() !== $row);
 
+        // before
+        assert($row->id() === 1);
+        assert($row->before() === null);
+
+        // after
+        assert($row->after()->id() === 2);
+        assert($row->after()->before() === $row);
+
         // get
         assert($row->get()['dateAdd'] === 'March 22, 2018 19:46:49');
         assert(count($row->get()) === 10);

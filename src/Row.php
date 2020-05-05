@@ -851,6 +851,32 @@ class Row extends Main\ArrObj
     }
 
 
+    // before
+    // retourne la ligne précédente à la courante, en utilisant le primary
+    final public function before($where=null):?self
+    {
+        $table = $this->table();
+        $primary = $table->primary();
+        $whereid = [[$primary,'<',$this->primary()]];
+        $where = $table->db()->syntaxCall('whereAppend',$where,$whereid);
+
+        return $table->select($where,[$primary=>'desc'],1);
+    }
+
+
+    // after
+    // retourne la ligne suivante à la courante, en utilisant le primary
+    final public function after($where=null):?self
+    {
+        $table = $this->table();
+        $primary = $table->primary();
+        $whereid = [[$primary,'>',$this->primary()]];
+        $where = $table->db()->syntaxCall('whereAppend',$where,$whereid);
+
+        return $table->select($where,[$primary=>'asc'],1);
+    }
+
+
     // get
     // retourne un tableau avec les valeurs get des cellules
     final public function get(...$keys):array

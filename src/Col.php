@@ -576,6 +576,7 @@ class Col extends Main\Root
 
     // value
     // retourne la valeur ou la valeur par défaut si value est true
+    // attention, cette méthode retourne le défaut si c'est true -> ceci cause confusion avec une colonne ou on voudrait que true se transforme en 1, j'ai ajouté un fix dans la méthode insert
     final public function value($return=true)
     {
         if($return instanceof Cell)
@@ -1783,13 +1784,19 @@ class Col extends Main\Root
 
     // insert
     // clearCommittedCalllback
-    // passe la valeur dans onInsert, si existant
-    // ensuite onSet et autoCast
+    // passe la valeur dans onInsert, si existant, ensuite onSet et autoCast
+    // ajouter un fix pour l'insertion d'une colonne relation ou l'on voudrait que true se tranforme en 1
+    // normalement à l'insertion true se transforme en défaut
     final public function insert($return,array $row,?array $option=null)
     {
         $option = (array) $option;
         $this->clearCommittedCallback();
         $this->clearException();
+
+        // fix pour pouvoir insérer une colonne relation avec true qui se transforme en 1
+        if($return === true && $this->isRelation() && ($this->hasNullDefault() || !$this->hasDefault()))
+        $return = 1;
+
         $return = $this->value($return);
         $row = Base\Obj::cast($row);
         $return = $this->onSet($return,null,$row,$option);
