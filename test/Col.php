@@ -533,6 +533,8 @@ class Col extends Base\Test
         assert($float->autoCast(true) === (float) 1);
         assert($float->autoCast(false) === (float) 0);
 
+        // autoCastRelation
+
         // insertCallable
         assert(is_int($dateAdd->insertCallable(null,[],[])));
         assert($col->insertCallable(null,[],[]) === null);

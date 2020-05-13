@@ -1713,8 +1713,8 @@ class Col extends Main\Root
 
         else
         {
-            if(is_array($return) && $this->isRelation())
-            $return = Base\Set::str($return);
+            if($this->isRelation())
+            $return = $this->autoCastRelation($return);
 
             $str = Base\Str::cast($return);
 
@@ -1730,6 +1730,20 @@ class Col extends Main\Root
             elseif(in_array($kind,['char','text'],true))
             $return = $str;
         }
+
+        return $return;
+    }
+
+
+    // autoCastRelation
+    // utilisé pour faire l'auto cast d'une relation
+    final protected function autoCastRelation($return)
+    {
+        if(is_array($return))
+        $return = Base\Set::str($return);
+
+        elseif($return === false && $this->acceptsNull())
+        $return = null;
 
         return $return;
     }
