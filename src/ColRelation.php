@@ -732,7 +732,7 @@ class ColRelation extends Relation
         if($this->isSet())
         {
             if(!is_array($value))
-            $value = Base\Set::onGet($value);
+            $value = Base\Set::arr($value,['cast'=>true]);
 
             $return = $this->rows($value);
         }
