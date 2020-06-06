@@ -249,7 +249,7 @@ class Rows extends Main\MapObj
             static::throw('requiresRow');
 
             $table = $value->table();
-            $firstTable = (empty($firstTable))? $table:$firstTable;
+            $firstTable = $firstTable ?: $table;
 
             if($table !== $firstTable)
             static::throw('rowMustBeFromSameTable');

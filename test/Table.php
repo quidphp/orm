@@ -45,9 +45,7 @@ class Table extends Base\Test
 
         // onColsLoad
 
-        // onMakeAttr
-
-        // onCheckAttr
+        // onAttr
 
         // onTruncated
 

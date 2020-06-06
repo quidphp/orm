@@ -207,7 +207,7 @@ class Cols extends Main\MapObj
             static::throw('requiresCol');
 
             $table = $value->table();
-            $firstTable = (empty($firstTable))? $table:$firstTable;
+            $firstTable = $firstTable ?: $table;
 
             if($table !== $firstTable)
             static::throw('colMustBeFromSameTable');
@@ -277,7 +277,7 @@ class Cols extends Main\MapObj
                 $value = $col->relation()->getStr($value,', ',false,true,$option);
 
                 else
-                $value = $col->callThis(fn() => $this->onGet($value,null,$option));
+                $value = $col->callThis(fn() => $this->get($value,$option));
 
                 if($onlyScalar === false || is_scalar($value))
                 $return[$key] = $value;

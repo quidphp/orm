@@ -258,8 +258,8 @@ class Cells extends Main\MapObj
             $table = $value->table();
             $row = $value->row();
 
-            $firstTable = (empty($firstTable))? $table:$firstTable;
-            $firstRow = (empty($firstRow))? $row:$firstRow;
+            $firstTable = $firstTable ?: $table;
+            $firstRow = $firstRow ?: $row;
 
             if($table !== $firstTable)
             static::throw('cellMustBeFromSameTable');

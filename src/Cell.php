@@ -759,7 +759,7 @@ class Cell extends Main\Root
         $value = Base\Scalar::cast($value);
 
         $cell = $this;
-        $onGet = $col->callThis(fn() => $this->onGet($value,$cell,$option));
+        $onGet = $col->callThis(fn() => $this->attrOrMethodCall('onGet',$value,$cell,$option));
 
         if($onGet !== $this)
         $value = $onGet;
@@ -852,7 +852,7 @@ class Cell extends Main\Root
             static::throw('preValidate',$this->name(),$preValidate);
         }
 
-        $onSet = $col->callThis(fn() => $this->onSet($value,$cell,$row->get(),$option));
+        $onSet = $col->callThis(fn() => $this->attrOrMethodCall('onSet',$value,$cell,$row->get(),$option));
 
         if($onSet !== $this)
         $value = $onSet;
@@ -957,7 +957,10 @@ class Cell extends Main\Root
     // méthode public car appelé dans row
     final public function update(?array $option=null):self
     {
-        $this->col()->updateCallable($this,(array) $option);
+        $col = $this->col();
+        $cell = $this;
+        $option = (array) $option;
+        $col->callThis(fn() => $this->updateCallable($cell,$option));
 
         return $this;
     }
@@ -972,7 +975,7 @@ class Cell extends Main\Root
         $col = $this->col();
         $cell = $this;
         $option = (array) $option;
-        $col->callThis(fn() => $this->onDelete($cell,$option));
+        $col->callThis(fn() => $this->attrOrMethodCall('onDelete',$cell,$option));
 
         return $this;
     }

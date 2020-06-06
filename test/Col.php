@@ -60,15 +60,13 @@ class Col extends Base\Test
         assert($other('direction',false) === 'ASC');
         assert($other('direction',true) === 'asc');
 
-        // onMakeAttr
-
-        // onCheckAttr
-
         // onInsert
 
         // onCommit
 
         // onUpdate
+
+        // onAttr
 
         // onGet
 
@@ -81,6 +79,8 @@ class Col extends Base\Test
         // onExport
 
         // onCommitted
+
+        // attrOrMethodCall
 
         // cast
         assert($col->_cast() === 'name');
@@ -536,8 +536,6 @@ class Col extends Base\Test
         // autoCastRelation
 
         // insertCallable
-        assert(is_int($dateAdd->insertCallable(null,[],[])));
-        assert($col->insertCallable(null,[],[]) === null);
 
         // updateCallable
 

@@ -198,7 +198,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
             static::throw('requiresTable');
 
             $db = $value->db();
-            $firstDb = (empty($firstDb))? $db:$firstDb;
+            $firstDb = $firstDb ?: $db;
 
             if($firstDb !== $db)
             static::throw('tableMustBeFromSameDb');

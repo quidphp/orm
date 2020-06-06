@@ -163,11 +163,11 @@ class Tables extends Base\Test
 
         // mapObj
         assert($tables->pair('hasPermission','delete')['email'] === true);
-        assert($tables->not($tables)->isEmpty());
-        assert($tables->not($tables) !== $tables);
-        assert($tables->not($tables->gets('user','session'))->count() === ($tables->count() - 2));
-        assert($tables->not($tables['user'],$tables['session'])->count() === ($tables->count() - 2));
-        assert($tables->not('user','session')->count() === ($tables->count() - 2));
+        assert($tables->filterReject($tables)->isEmpty());
+        assert($tables->filterReject($tables) !== $tables);
+        assert($tables->filterReject($tables->gets('user','session'))->count() === ($tables->count() - 2));
+        assert($tables->filterReject($tables['user'],$tables['session'])->count() === ($tables->count() - 2));
+        assert($tables->filterReject('user','session')->count() === ($tables->count() - 2));
         assert($tables->filter(fn($table) => $table->name() === 'ormTable')->isCount(1));
         assert($tables->find(fn($table) => $table->name() === 'ormTable') instanceof Orm\Table);
         assert($tables->filter(fn($table) => !$table->hasPermission('update'))->isCount(7));

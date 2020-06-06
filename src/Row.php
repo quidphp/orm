@@ -837,7 +837,7 @@ class Row extends Main\ArrObj
             foreach ($cells as $key => $cell)
             {
                 $col = $cell->col();
-                $value = $col->callThis(fn() => $this->onDuplicate($cell,$option));
+                $value = $col->callThis(fn() => $this->attrOrMethodCall('onDuplicate',$cell,$option));
                 $keyValue[$key] = $value;
             }
 

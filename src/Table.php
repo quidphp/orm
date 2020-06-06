@@ -155,18 +155,9 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // onMakeAttr
     // callback avant de mettre les attributs dans la propriété attr
-    final protected function onMakeAttr(array $return):array
+    final protected function onAttr(array $return):array
     {
         return $return;
-    }
-
-
-    // onCheckAttr
-    // callback dès que les attributs ont été set
-    // permet d'envoyer des exceptions si les attributs sont inadéquats pour la table
-    final protected function onCheckAttr():void
-    {
-        return;
     }
 
 
@@ -411,10 +402,9 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $attr = $callable(static::class,$dbAttr,$baseAttr,$tableAttr,$rowAttr);
         $attr['parent'] = $this->makeAttrParent($attr['parent'] ?? null);
 
-        $attr = $this->onMakeAttr($attr);
+        $attr = $this->onAttr($attr);
         $this->checkAttr($attr);
         $this->attr = $attr;
-        $this->onCheckAttr();
 
         return;
     }
@@ -1866,7 +1856,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     {
         $return = [];
         $option = Base\Arr::plus(['what'=>null,'method'=>null,'cols'=>null,'output'=>'columns','searchSeparator'=>null,'searchTermValid'=>true],$option);
-        $what = (!empty($option['what']))? $option['what']:$this->primary();
+        $what = $option['what'] ?: $this->primary();
         $method = (is_string($option['method']))? $option['method']:$this->like();
 
         if(!is_array($what))

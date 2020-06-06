@@ -129,29 +129,6 @@ class Col extends Main\Root
     }
 
 
-    // onMakeAttr
-    // callback avant de mettre les attributs dans la propriété attr
-    protected function onMakeAttr(array $return):array
-    {
-        if(!empty($return['onAttr']) && static::isCallable($return['onAttr']))
-        $return = $return['onAttr']($return);
-
-        if(!empty($return['relation']) && static::isCallable($return['relation']))
-        $return['relation'] = $return['relation']($this);
-
-        return $return;
-    }
-
-
-    // onCheckAttr
-    // callback dès que les attributs ont été set
-    // permet d'envoyer des exceptions si un attribut n'est pas de bon type pour la colonne
-    final protected function onCheckAttr()
-    {
-        return $this;
-    }
-
-
     // onInsert
     // méthode à ajouter dans une classe qui étend
     // la valeur sera donné en premier argument
@@ -170,16 +147,18 @@ class Col extends Main\Root
     // peut servir de remplacement à onInsert et onUpdate, mais a moins de priorité
 
 
+    // onAttr
+    // callback avant de mettre les attributs dans la propriété attr
+    protected function onAttr(array $return):array
+    {
+        return $return;
+    }
+
+
     // onGet
     // permet de formater une valeur simple vers un type plus complexe, par exemple lors d'un affichage
     protected function onGet($return,?Cell $cell=null,array $option)
     {
-        $return = $this->value($return);
-        $callable = $this->getAttr('onGet');
-
-        if(!empty($callable))
-        $return = $callable($return,$cell,$option);
-
         return $return;
     }
 
@@ -189,27 +168,24 @@ class Col extends Main\Root
     // cell est fourni en troisième argument si c'est une update
     protected function onSet($return,?Cell $cell=null,array $row,array $option)
     {
-        $callable = $this->getAttr('onSet');
-        return (!empty($callable))? $callable($return,$cell,$row,$option):$return;
+        return $return;
     }
 
 
     // onDuplicate
     // callback sur duplication
-    protected function onDuplicate(Cell $cell,array $option)
+    protected function onDuplicate(Cell $return,array $option)
     {
-        $callable = $this->getAttr('onDuplicate');
-        return (!empty($callable))? $callable($cell,$option):$cell;
+        return $return;
     }
 
 
     // onDelete
     // callback pour onDelete, une cellule est donné en argument
     // envoie une exception si l'argument n'est pas une cellule
-    protected function onDelete(Cell $cell,array $option)
+    protected function onDelete(Cell $return,array $option)
     {
-        $callable = $this->getAttr('onDelete');
-        return (!empty($callable))? $callable($cell,$option):$cell;
+        return $return;
     }
 
 
@@ -265,6 +241,24 @@ class Col extends Main\Root
         $this->clearException();
 
         return;
+    }
+
+
+    // attrOrMethodCall
+    // utilisé pour appeler en priorité la callable dans attr
+    // sinon appele la méthode de la classe
+    protected function attrOrMethodCall(string $type,...$args)
+    {
+        $return = null;
+        $callable = $this->getAttr($type);
+
+        if(!empty($callable))
+        $return = $callable($this,...$args);
+
+        elseif($this->hasMethod($type))
+        $return = $this->$type(...$args);
+
+        return $return;
     }
 
 
@@ -595,7 +589,7 @@ class Col extends Main\Root
     {
         $return = $this->value($return);
         $option = (array) $option;
-        $return = $this->onGet($return,null,$option);
+        $return = $this->attrOrMethodCall('onGet',$return,null,$option);
 
         return $return;
     }
@@ -1533,7 +1527,7 @@ class Col extends Main\Root
     // merge le tableau de propriété dbAttr avec le tableau static config et le tableau config de row
     // les clés avec valeurs null dans static config ne sont pas conservés
     // les règles de validation de config s'append sur celles de dbAttr, ne remplace pas
-    // lance onMakeAttr avant d'écrire dans la propriété
+    // lance onAttr avant d'écrire dans la propriété
     // le merge est unidimensionnel, c'est à dire que les valeurs tableaux sont écrasés et non pas merge
     // si l'attribut contient la clé du type, ceci aura priorité sur tout le reste (dernier merge)
     final protected function makeAttr($dbAttr,bool $config=true):void
@@ -1558,11 +1552,9 @@ class Col extends Main\Root
         $attr = $callable(static::class,$dbAttr,$baseAttr,$defaultAttr,$tableAttr);
         $attr['group'] = ColSchema::group($attr,true);
 
-        $attr = $this->onMakeAttr($attr);
-
-        $this->checkAttr($attr);
         $this->attr = $attr;
-        $this->onCheckAttr();
+        $this->attr = $this->attrOrMethodCall('onAttr',$attr);
+        $this->checkAttr();
 
         return;
     }
@@ -1570,8 +1562,10 @@ class Col extends Main\Root
 
     // checkAttr
     // fait un check sur les attributs, vérifie type, kind, group, priority et check
-    final protected function checkAttr(array $attr):self
+    final protected function checkAttr():self
     {
+        $attr = $this->attr;
+
         if(empty($attr['type']) || !is_string($attr['type']))
         static::throw($this,'invalidType');
 
@@ -1752,19 +1746,13 @@ class Col extends Main\Root
     // insertCallable
     // retourne la valeur après l'avoir passé dans la méthode onInsert ou attr ou onCommit, si existante
     // si pas de méthode, retourne la valeur tel quelle
-    final public function insertCallable($return,array $row,array $option)
+    final protected function insertCallable($return,array $row,array $option)
     {
-        if($this->hasMethod('onInsert'))
-        $return = $this->onInsert($return,$row,$option);
+        if(!empty($this->attr['onInsert']) || $this->hasMethod('onInsert'))
+        $return = $this->attrOrMethodCall('onInsert',$return,$row,$option);
 
-        elseif($this->hasMethod('onCommit'))
-        $return = $this->onCommit($return,$row,null,$option);
-
-        elseif(!empty($this->attr['onInsert']))
-        $return = $this->attr['onInsert']($this,$return,$row,null,$option);
-
-        elseif(!empty($this->attr['onCommit']))
-        $return = $this->attr['onCommit']($this,$return,$row,null,$option);
+        elseif(!empty($this->attr['onCommit']) || $this->hasMethod('onCommit'))
+        $return = $this->attrOrMethodCall('onCommit',$return,null,$row,$option);
 
         return $return;
     }
@@ -1773,21 +1761,18 @@ class Col extends Main\Root
     // updateCallable
     // retourne la cellule après l'avoir passé dans la méthode ou attr onUpdate ou onCommit, si existante
     // si pas de méthode, retourne la cellule tel quel
-    final public function updateCallable(Cell $return,array $option):Cell
+    final protected function updateCallable(Cell $return,array $option):Cell
     {
         $value = $return;
 
-        if($this->hasMethod('onUpdate'))
-        $value = $this->onUpdate($return,$option);
+        if(!empty($this->attr['onUpdate']) || $this->hasMethod('onUpdate'))
+        $value = $this->attrOrMethodCall('onUpdate',$return,$option);
 
-        elseif($this->hasMethod('onCommit'))
-        $value = $this->onCommit($return->value(),$return->row()->get(),$return,$option);
-
-        elseif(!empty($this->attr['onUpdate']))
-        $value = $this->attr['onUpdate']($this,$return,$option);
-
-        elseif(!empty($this->attr['onCommit']))
-        $value = $this->attr['onCommit']($this,$return->value(),$return->row()->get(),$return,$option);
+        elseif(!empty($this->attr['onCommit']) || $this->hasMethod('onCommit'))
+        {
+            $row = $return->row()->get();
+            $value = $this->attrOrMethodCall('onCommit',$return->value(),$return,$row,$option);
+        }
 
         if($value !== $return)
         $return->set($value);
@@ -1813,7 +1798,7 @@ class Col extends Main\Root
 
         $return = $this->value($return);
         $row = Base\Obj::cast($row);
-        $return = $this->onSet($return,null,$row,$option);
+        $return = $this->attrOrMethodCall('onSet',$return,null,$row,$option);
         $return = $this->insertCallable($return,$row,$option);
         $return = $this->autoCast($return);
 
@@ -2036,7 +2021,7 @@ class Col extends Main\Root
         if(is_object($value))
         $value = Base\Obj::cast($value);
 
-        if(in_array($value,['',null,[]],true))
+        if(Base\Vari::isReallyEmpty($value))
         {
             $return = '-';
 
@@ -2200,7 +2185,7 @@ class Col extends Main\Root
         $return['label'] = $this->label();
         $return['tableLabel'] = $this->table()->label();
         $return['value'] = $value;
-        $return['get'] = $this->onGet($value,$cell,$option);
+        $return['get'] = $this->attrOrMethodCall('onGet',$value,$cell,$option);
         $return['output'] = $this->htmlOutput($value);
 
         if($this->isRelation())

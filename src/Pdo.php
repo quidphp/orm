@@ -890,7 +890,7 @@ class Pdo extends Main\Root
 
         else
         {
-            $arg = (empty($arg))? [0]:$arg;
+            $arg = $arg ?: [0];
             $return = $statement->fetchColumn(...$arg);
         }
 
@@ -911,7 +911,7 @@ class Pdo extends Main\Root
 
         else
         {
-            $arg = (empty($arg))? [0]:$arg;
+            $arg = $arg ?: [0];
             $return = $statement->fetchAll(\PDO::FETCH_COLUMN,...$arg);
         }
 
