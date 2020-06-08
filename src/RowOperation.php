@@ -44,7 +44,7 @@ abstract class RowOperation extends Operation
         $commit = $row->newestDateCommit();
         $initial = (!empty($commit))? $commit['date']->valueInitial():null;
 
-        if(empty($initial) || $initial < $value)
+        if(empty($initial) || $initial <= $value)
         $return = true;
 
         return $return;

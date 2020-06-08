@@ -271,6 +271,19 @@ class ColRelation extends Base\Test
         assert($tb->selectPrimaries(['relationRange'=>2]) === [2]);
         assert($tb->selectPrimaries(['relationStr'=>0]) === [1]);
         assert($tb->selectPrimaries(['relationStr'=>'lol']) === [2]);
+        $row = $tb[1];
+        assert($row['relationStr']->value() === null);
+        $row['relationStr'] = true;
+        assert($row['relationStr']->value() === '1');
+        $row['relationStr'] = false;
+        assert($row['relationStr']->value() === '0');
+        $row['relationStr'] = null;
+        assert($row['relationRange']->value() === null);
+        $row['relationRange'] = false;
+        assert($row['relationRange']->value() === 0);
+        $row['relationRange'] = true;
+        assert($row['relationRange']->value() === 1);
+        $row['relationRange'] = null;
 
         // arrMap
         $clone = clone $lang;

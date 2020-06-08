@@ -207,8 +207,8 @@ class Table extends Base\Test
         assert($tb->colsNew() instanceof Orm\Cols);
 
         // colsCount
-        assert($tb->colsCount() === 12);
-        assert($tb->colsCount(false) === 12);
+        assert($tb->colsCount() === 13);
+        assert($tb->colsCount(false) === 13);
 
         // colsLoad
 
@@ -218,7 +218,7 @@ class Table extends Base\Test
         assert($tb2->colAttr('myRelation') === ['relation'=>['test',3,4,9=>'ok']]);
 
         // cols
-        assert(count($tb->cols()) === 12);
+        assert(count($tb->cols()) === 13);
         assert($tb->cols()->gets('id','dateAdd')->count() === 2);
         assert($tb->cols('id','name_[lang]')->count() === 2);
 
@@ -441,6 +441,14 @@ class Table extends Base\Test
         assert($tb->autoIncrement(false) === 1000);
         assert($idInsert->delete() === 1);
         assert($tb->alterAutoIncrement() === $tb);
+        $rowTrue = $tb->insert(['date'=>time(),'active'=>true,'relationRange'=>true,'name_fr'=>'nomFr']);
+        $rowFalse = $tb->insert(['date'=>time(),'active'=>false,'relationRange'=>false,'name_fr'=>'nomFr']);
+        assert($rowTrue['active']->value() === 1);
+        assert($rowTrue['relationRange']->value() === 1);
+        assert($rowFalse['active']->value() === null);
+        assert($rowFalse['relationRange']->value() === 0);
+        $rowTrue->delete();
+        $rowFalse->delete();
 
         // insertCom
 
@@ -499,7 +507,7 @@ class Table extends Base\Test
         assert(count($tb->rows()->keys()) === 3);
 
         // reservePrimary
-        assert($tb->reservePrimary() === 5);
+        assert($tb->reservePrimary() === 7);
 
         // alter
 
@@ -519,8 +527,8 @@ class Table extends Base\Test
         // dropKey
 
         // total
-        assert($tb->total()['cell'] === 36);
-        assert($tb->total(true)['cell'] > 36);
+        assert($tb->total()['cell'] === 39);
+        assert($tb->total(true)['cell'] > 39);
 
         // info
         assert(count($tb->info()) === 4);

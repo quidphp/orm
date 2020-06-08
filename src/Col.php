@@ -1736,7 +1736,7 @@ class Col extends Main\Root
         if(is_array($return))
         $return = Base\Set::str($return);
 
-        elseif($return === false && $this->acceptsNull())
+        elseif($return === false && !$this->relation()->exists(0))
         $return = null;
 
         return $return;
@@ -1792,9 +1792,9 @@ class Col extends Main\Root
         $this->clearCommittedCallback();
         $this->clearException();
 
-        // fix pour pouvoir insérer une colonne relation avec true qui se transforme en 1
-        if($return === true && $this->isRelation() && ($this->hasNullDefault() || !$this->hasDefault()))
-        $return = 1;
+        // fix pour pouvoir insérer une colonne relation avec un bool qui se transforme en 0/1
+        if(is_bool($return) && $this->isRelation() && ($this->hasNullDefault() || !$this->hasDefault()))
+        $return = Base\Boolean::toInt($return);
 
         $return = $this->value($return);
         $row = Base\Obj::cast($row);
