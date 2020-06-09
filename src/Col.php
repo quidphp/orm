@@ -1794,7 +1794,11 @@ class Col extends Main\Root
 
         // fix pour pouvoir insérer une colonne relation avec un bool qui se transforme en 0/1
         if(is_bool($return) && $this->isRelation() && ($this->hasNullDefault() || !$this->hasDefault()))
-        $return = Base\Boolean::toInt($return);
+        {
+            $return = $this->autoCastRelation($return);
+            if(is_bool($return))
+            $return = Base\Boolean::toInt($return);
+        }
 
         $return = $this->value($return);
         $row = Base\Obj::cast($row);

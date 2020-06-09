@@ -441,12 +441,12 @@ class Table extends Base\Test
         assert($tb->autoIncrement(false) === 1000);
         assert($idInsert->delete() === 1);
         assert($tb->alterAutoIncrement() === $tb);
-        $rowTrue = $tb->insert(['date'=>time(),'active'=>true,'relationRange'=>true,'name_fr'=>'nomFr']);
-        $rowFalse = $tb->insert(['date'=>time(),'active'=>false,'relationRange'=>false,'name_fr'=>'nomFr']);
+        $rowTrue = $tb->insert(['date'=>time(),'active'=>true,'relation'=>true,'name_fr'=>'nomFr']);
+        $rowFalse = $tb->insert(['date'=>time(),'active'=>false,'relation'=>false,'name_fr'=>'nomFr']);
         assert($rowTrue['active']->value() === 1);
-        assert($rowTrue['relationRange']->value() === 1);
+        assert($rowTrue['relation']->value() === 1);
         assert($rowFalse['active']->value() === null);
-        assert($rowFalse['relationRange']->value() === 0);
+        assert($rowFalse['relation']->value() === 0);
         $rowTrue->delete();
         $rowFalse->delete();
 
