@@ -768,11 +768,16 @@ class Row extends Main\ArrObj
 
     // namePrimary
     // retourne le nom de la row avec la primary entre paranthèse
-    final public function namePrimary(?string $pattern=null):string
+    final public function namePrimary(?string $pattern=null,?int $excerpt=null):string
     {
         $return = '';
         $pattern = (is_string($pattern))? $pattern:'%name% (#%primary%)';
-        $replace['%name%'] = $this->cellName();
+        $name = $this->cellName()->value();
+
+        if(is_int($excerpt))
+        $name = Base\Str::excerpt($excerpt,$name);
+
+        $replace['%name%'] = $name;
         $replace['%primary%'] = $this->primary();
         $return = Base\Str::replace($replace,$pattern);
 

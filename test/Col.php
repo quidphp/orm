@@ -668,7 +668,6 @@ class Col extends Base\Test
         assert($id->primaries(1) === [1]);
 
         // cell
-        assert($email->cell() === null);
 
         // alter
 

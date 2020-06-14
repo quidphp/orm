@@ -744,7 +744,7 @@ class Cells extends Main\MapObj
     // par exemple pour une ligne de csv
     final public function writeFile(Main\File $file,?array $option=null):self
     {
-        $option = Base\Arr::plus(['context'=>'noHtml','type'=>'format'],$option);
+        $option = Base\Arr::plus(['type'=>'format'],$option);
         $array = [];
 
         foreach ($this as $key => $cell)
