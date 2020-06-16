@@ -47,7 +47,7 @@ class ColRelation extends Relation
         static::throw($col,'cannotRelation');
 
         $this->col = $col->name();
-        $this->mode = ($col->isSet())? 'set':'enum';
+        $this->mode = ($col->isRelation() && $col->isSet())? 'set':'enum';
 
         if(empty($this->attributes()))
         static::throw('noRelationConfig');

@@ -26,14 +26,10 @@ class Col extends Main\Root
     // config
     protected static array $config = [
         'ignore'=>null, // défini si la colonne est ignoré
+        'group'=>null, // spécifie le groupe de la colonne
         'cell'=>null, // détermine la class a utilisé pour la cell, si null laisse le loop de dbclasse faire son oeuvre
-        'type'=>null, // type de la colonne
-        'kind'=>null, // kind de la colonne
-        'group'=>null, // group de la colonne
-        'length'=>null, // détermine la longueur de la colonne
-        'unsigned'=>null, // détermine si la colonne est un chiffre non signé
+        'length'=>null, // longueur de la colonne
         'unique'=>null, // détermine si la valeur de la colonne doit être unique
-        'null'=>null, // détermine si la colonne accepte null
         'default'=>null, // valeur par défaut de la colonne, si null doit accepter null (sinon pas de défaut)
         'priority'=>null, // code de priorité de la colonne
         'setPriority'=>5, // priority pour onSet, plus le chiffre est petit plus le onSet est appelé rapidement sur la colonne
@@ -45,7 +41,6 @@ class Col extends Main\Root
         'order'=>true, // la colonne est ordonnable
         'label'=>null, // chemin label qui remplace le défaut dans lang
         'description'=>null, // chemin description qui remplace le défaut dans lang
-        'collate'=>null, // collation de la colonne
         'tag'=>null, // tag à utiliser lors de la créaiton de l'élément formulaire
         'complex'=>null, // défini les tags complexes à utiliser (pour relation et media)
         'attr'=>null, // attribut additionnel à ajouter à l'élément de formulaire
@@ -54,26 +49,21 @@ class Col extends Main\Root
         'editable'=>true, // permet de spécifier si une colonne est readOnly (donc ne peut pas être modifié après l'insertion)
         'visibleGeneral'=>true, // permet d'afficher une colonne dans general, doit être booléean et utiliser la validation de role dans l'attribut visible
         'required'=>false, // détermine si la colonne est requise
-        'removeWhiteSpace'=>[ // détermine s'il faut enlever les whiteSpace lors du required ou du autocast
-            'required'=>true,
-            'cast'=>false],
+        'removeWhiteSpaceRequired'=>true, // détermine s'il faut enlever les whiteSpace lors du required
+        'removeWhiteSpaceCast'=>false, // détermine s'il faut enlever les whiteSpace lors du autocast
         'preValidate'=>null, // règle de validation pour la colonne, données au moment du set (en provenance du post par exemple)
         'validate'=>null, // règle de validation pour la colonne, données tel qu'inséré dans le post
         'compare'=>null, // règle de validation gérant la comparaison avec d'autres champs
         'pattern'=>null, // règle de validation spécifique pour la validation pattern en html
         'direction'=>null, // direction par défaut
-        'date'=>null, // défini si la colonne est de type date, un format doit y être inscrit
-        'relation'=>null, // défini la relation pour la colonne, donne accès à la méthode relation
-        'relationSortKey'=>true, // si la relation est sort par clé automatiquement
-        'relationIndex'=>true, // si la relation est indexé (donc si les clés sont string transforme en index) -> attention si une valeur contient un caractère non url ou - ça ca causer des problèmes
-        'enum'=>null, // défini la relation comme simple (enum)
-        'set'=>null, // défini la relation comme multiple (set)
-        'media'=>null, // défini le nombre maximal de media que contient la colonne
         'duplicate'=>true, // défini si la cellule doit être dupliqué
-        'version'=>null, // paramétrage pour version de média
         'export'=>true, // défini si la colonne est exportable
         'exportSeparator'=>', ', // séparateur si plusieurs valeurs (tableau)
         'exists'=>true, // la colonne doit existé ou une erreur est envoyé, la valeur par défaut est prise ici, pour changer pour une colonne il faut le faire au niveau de la row/table/db
+        'excerpt'=>75, // longueur de l'excerpt
+        'keyboard'=>null, // défini le keyboard à utiliser pour le champ (inputmode)
+        'relationSortKey'=>true, // si la relation est sort par clé automatiquement
+        'relationIndex'=>true, // si la relation est indexé (donc si les clés sont string transforme en index) -> attention si une valeur contient un caractère non url ou - ça ca causer des problèmes
         'check'=>null, // envoie une exception si le tableau d'attribut ne contient pas les slices de check, voir makeAttr
         'onAttr'=>null, // callback lors de la création de la colonne, génération des attributs
         'onGet'=>null, // callable pour onGet, appelé pour avoir la version get d'une valeur
@@ -84,8 +74,6 @@ class Col extends Main\Root
         'onInsert'=>null, // callback sur insertion
         'onUpdate'=>null, // callback sur update
         'onCommit'=>null, // callack sur insertion ou update
-        'excerpt'=>75, // longueur de l'excerpt
-        'keyboard'=>null, // défini le keyboard à utiliser pour le champ (inputmode)
         'permission'=>[ // tableau des permissions
             '*'=>[
                 'nullPlaceholder'=>true]]
@@ -98,16 +86,19 @@ class Col extends Main\Root
 
     // dynamique
     protected string $name; // nom de la colonne
+    protected ?ColSchema $schema = null; // objet du schema de la colonne
     protected ?ColRelation $relation = null; // objet de relation de la colonne
 
 
     // construct
     // construit l'objet colonne
-    final public function __construct(string $name,Table $table,array $attr)
+    final public function __construct(string $name,Table $table,ColSchema $colSchema,int $priority)
     {
         $this->setName($name);
+        $this->setSchema($colSchema);
         $this->setLink($table,true);
-        $this->makeAttr($attr);
+        $this->makeAttr($colSchema);
+        $this->makePriority($priority);
 
         return;
     }
@@ -296,41 +287,9 @@ class Col extends Main\Root
 
     // isPrimary
     // retourne vrai si la colonne est la clé primaire
-    final public function isPrimary():bool
+    public function isPrimary():bool
     {
-        return $this->getAttr('group') === 'primary';
-    }
-
-
-    // isKindInt
-    // retourne vrai si la colonne est de kind int
-    final public function isKindInt():bool
-    {
-        return $this->getAttr('kind') === 'int';
-    }
-
-
-    // isKindChar
-    // retourne vrai si la colonne est de kind char
-    final public function isKindChar():bool
-    {
-        return $this->getAttr('kind') === 'char';
-    }
-
-
-    // isKindText
-    // retourne vrai si la colonne est de kind text
-    final public function isKindText():bool
-    {
-        return $this->getAttr('kind') === 'text';
-    }
-
-
-    // acceptsNull
-    // retourne vrai si la colonne accepte null
-    final public function acceptsNull():bool
-    {
-        return $this->getAttr('null') === true;
+        return false;
     }
 
 
@@ -398,7 +357,7 @@ class Col extends Main\Root
     // un type doit être fourni
     final public function shouldRemoveWhiteSpace(string $key):bool
     {
-        return $this->getAttr(['removeWhiteSpace',$key]) === true;
+        return $this->getAttr('removeWhiteSpace'.ucfirst($key)) === true;
     }
 
 
@@ -418,59 +377,35 @@ class Col extends Main\Root
     }
 
 
-    // showDetailsMaxLength
-    // retourne vrai s'il faut afficher le max length de la colonne dans les détails
-    public function showDetailsMaxLength():bool
-    {
-        return is_int($this->length());
-    }
-
-
     // isDate
     // retourne vrai si la colonne est de type date
-    final public function isDate():bool
+    public function isDate():bool
     {
-        return !empty($this->getAttr('date'));
+        return false;
     }
 
 
     // isRelation
     // retourne vrai si la colonne est de type relation
-    final public function isRelation():bool
+    public function isRelation():bool
     {
-        return !empty($this->getAttr('relation'));
+        return false;
     }
 
 
     // canRelation
     // retourne vrai si la colonne peut avoir un objet colRelation
-    final public function canRelation():bool
+    public function canRelation():bool
     {
         return true;
     }
 
 
-    // isEnum
-    // retourne vrai si la colonne est de type relation enum
-    public function isEnum():bool
-    {
-        return false;
-    }
-
-
-    // isSet
-    // retourne vrai si la colonne est de type relation set
-    public function isSet():bool
-    {
-        return false;
-    }
-
-
     // isMedia
     // retourne vrai si la colonne est de type media
-    final public function isMedia():bool
+    public function isMedia():bool
     {
-        return is_int($this->getAttr('media'));
+        return false;
     }
 
 
@@ -498,7 +433,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a une valeur par défaut
     final public function hasDefault():bool
     {
-        return isset($this->attr['default']) || $this->acceptsNull();
+        return $this->getAttr('default') !== null || $this->schema()->hasDefault();
     }
 
 
@@ -506,15 +441,7 @@ class Col extends Main\Root
     // retourne vrai si la colonne a une valeur par défaut null
     final public function hasNullDefault():bool
     {
-        return $this->hasDefault() && !isset($this->attr['default']);
-    }
-
-
-    // hasNullPlaceholder
-    // retourne vrai si la colonne a un placeholder NULL, utiliser dans formComplex
-    final public function hasNullPlaceholder():bool
-    {
-        return $this->acceptsNull() && $this->hasPermission('nullPlaceholder') && $this->table()->hasPermission('nullPlaceholder');
+        return $this->schema()->hasNullDefault() || ($this->hasDefault() && $this->getAttr('default') === null);
     }
 
 
@@ -522,7 +449,15 @@ class Col extends Main\Root
     // retourne vrai si la colonne a une valeur par défaut qui n'est pas vide
     final public function hasNotEmptyDefault()
     {
-        return $this->hasDefault() && !empty($this->getAttr('default'));
+        return $this->schema()->hasNotEmptyDefault() || ($this->hasDefault() && !empty($this->getAttr('default')));
+    }
+
+
+    // hasNullPlaceholder
+    // retourne vrai si la colonne a un placeholder NULL, utiliser dans formComplex
+    final public function hasNullPlaceholder():bool
+    {
+        return $this->schema()->acceptsNull() && $this->hasPermission('nullPlaceholder') && $this->table()->hasPermission('nullPlaceholder');
     }
 
 
@@ -853,7 +788,7 @@ class Col extends Main\Root
         if(empty($return))
         {
             $attr = Base\Arr::plus($this->attr(),$attr);
-            $return = ColSchema::formTag($attr);
+            $return = $this->schema()->formTag($attr);
         }
 
         return $return;
@@ -896,7 +831,16 @@ class Col extends Main\Root
     // validation est la valeur avant l'insertion dans la base de données
     final public function rulePreValidate(bool $lang=false):array
     {
-        return $this->rulePreValidateCommon('preValidate',$lang);
+        return $this->ruleValidateCommon($this->getAttr('preValidate'),'preValidateClosure',$lang);
+    }
+
+
+    // ruleSchemaValidate
+    // retourne les paramètres de validation du schéma de la colonne
+    // si lang est true, retourne les textes plutôt que les règles de validation
+    final public function ruleSchemaValidate(bool $lang=false):array
+    {
+        return $this->ruleValidateCommon($this->schema()->validate(),null,$lang);
     }
 
 
@@ -905,26 +849,34 @@ class Col extends Main\Root
     // si lang est true, retourne les textes plutôt que les règles de validation
     final public function ruleValidate(bool $lang=false):array
     {
-        return $this->rulePreValidateCommon('validate',$lang);
+        return $this->ruleValidateCommon($this->getAttr('validate'),'validateClosure',$lang);
     }
 
 
-    // rulePreValidateCommon
-    // méthode commune utilisé par rulePreValidate et ruleValidate
-    final public function rulePreValidateCommon(string $type,bool $lang=false):array
+    // ruleValidateCombined
+    // retourne un tableau qui combine les règles de validation du schéma et la colonne
+    final public function ruleValidateCombined(bool $lang=false):array
     {
-        $return = $this->getAttr($type);
+        return Base\Arr::merge($this->ruleSchemaValidate($lang),$this->ruleValidate($lang));
+    }
 
+
+    // ruleValidateCommon
+    // méthode commune utilisé par rulePreValidate, ruleSchemaValidate et ruleValidate
+    final protected function ruleValidateCommon($return,?string $method,bool $lang=false):array
+    {
         if(!is_array($return))
         $return = (array) $return;
 
-        $method = $type.'Closure';
-        $closure = $this->$method();
-        if(!empty($closure))
+        if(!empty($method))
         {
-            $key = $closure('lang');
-            if(!empty($key))
-            $return[$key] = $closure;
+            $closure = $this->$method();
+            if(!empty($closure))
+            {
+                $key = $closure('lang');
+                if(!empty($key))
+                $return[$key] = $closure;
+            }
         }
 
         if($lang === true && !empty($return))
@@ -1109,6 +1061,7 @@ class Col extends Main\Root
         if($preValidate === true)
         $rules['preValidate'] = $this->rulePreValidate($lang);
 
+        $rules['schemaValidate'] = $this->ruleSchemaValidate($lang);
         $rules['validate'] = $this->ruleValidate($lang);
         $rules['compare'] = $this->ruleCompare($lang);
         $rules['pattern'] = $this->rulePattern($lang);
@@ -1146,7 +1099,7 @@ class Col extends Main\Root
             $pattern = $this->rulePreValidate();
 
             elseif($v === 'validate')
-            $pattern = $this->ruleValidate();
+            $pattern = $this->ruleValidateCombined();
 
             if(!empty($pattern))
             {
@@ -1224,7 +1177,7 @@ class Col extends Main\Root
     // si lang est true, retourne les textes plutôt que les règles de validation
     final public function validate($value,bool $lang=false)
     {
-        return $this->triggerValidate($value,$this->ruleValidate(),false,$lang);
+        return $this->triggerValidate($value,$this->ruleValidateCombined(),false,$lang);
     }
 
 
@@ -1233,7 +1186,7 @@ class Col extends Main\Root
     final protected function triggerValidate($value,array $rules,bool $ignoreEmpty=false,bool $lang=false)
     {
         $return = true;
-        $acceptsNull = $this->acceptsNull();
+        $acceptsNull = $this->schema()->acceptsNull();
 
         if(!empty($rules))
         {
@@ -1342,7 +1295,7 @@ class Col extends Main\Root
         if($value instanceof Cell)
         $value = $value->value();
 
-        if(!($value === null && $this->acceptsNull()))
+        if(!($value === null && $this->schema()->acceptsNull()))
         {
             $table = $this->table();
             $primary = $table->primary();
@@ -1489,7 +1442,7 @@ class Col extends Main\Root
     // change le nom de la colonne après validation
     final protected function setName(string $name):self
     {
-        if(ColSchema::is($name))
+        if(Base\Validate::isCol($name))
         $this->name = $name;
 
         else
@@ -1507,19 +1460,21 @@ class Col extends Main\Root
     }
 
 
-    // nameStripPattern
-    // retourne le nom de la colonne sans le pattern
-    final public function nameStripPattern(?array $pattern=null):?string
+    // setSchema
+    // permet de lier un objet colSchema à la colonne
+    final protected function setSchema(ColSchema $schema):void
     {
-        return ColSchema::stripPattern($this->name(),$pattern);
+        $this->schema = $schema;
+
+        return;
     }
 
 
-    // langCode
-    // retourne le code de langue à partir du nom
-    final public function langCode():?string
+    // schema
+    // retourne l'objet colSchema
+    final public function schema():ColSchema
     {
-        return ColSchema::langCode($this->name());
+        return $this->schema;
     }
 
 
@@ -1530,7 +1485,7 @@ class Col extends Main\Root
     // lance onAttr avant d'écrire dans la propriété
     // le merge est unidimensionnel, c'est à dire que les valeurs tableaux sont écrasés et non pas merge
     // si l'attribut contient la clé du type, ceci aura priorité sur tout le reste (dernier merge)
-    final protected function makeAttr($dbAttr,bool $config=true):void
+    final protected function makeAttr($colSchema,bool $config=true):void
     {
         $table = $this->table();
         $db = $table->db();
@@ -1541,17 +1496,10 @@ class Col extends Main\Root
         $callable = static::getInitCallable();
 
         if($config === true)
-        {
-            foreach (static::$config as $key => $value)
-            {
-                if($value !== null || !array_key_exists($key,$dbAttr))
-                $baseAttr[$key] = $value;
-            }
-        }
+        $baseAttr = static::$config;
 
-        $attr = $callable(static::class,$dbAttr,$baseAttr,$defaultAttr,$tableAttr);
-        $attr['group'] = ColSchema::group($attr,true);
-
+        $attr = $callable(static::class,$baseAttr,$defaultAttr,$tableAttr);
+        $attr = $this->prepareAttr($attr,$colSchema);
         $this->attr = $attr;
         $this->attr = $this->attrOrMethodCall('onAttr',$attr);
         $this->checkAttr();
@@ -1560,25 +1508,66 @@ class Col extends Main\Root
     }
 
 
+    // prepareAttr
+    // permet de faire des ajustements aux attribus après le merge, mais avant l'écriture dans la propriété
+    protected function prepareAttr(array $return,ColSchema $schema):array
+    {
+        // default
+        if(!isset($return['default']))
+        $return['default'] = $schema->default();
+
+        // unique
+        $unique = $schema->unique();
+        if(isset($return['unique']) && is_bool($return['unique']))
+        {
+            if($return['unique'] === false && $unique === true)
+            static::throw($this,'shouldBeUnique');
+        }
+
+        else
+        $return['unique'] = $unique;
+
+        // length
+        $length = $schema->length();
+        if(is_int($length))
+        {
+            if(!isset($return['length']))
+            $return['length'] = $length;
+
+            elseif($return['length'] > $length)
+            static::throw($this,'invalidLength',$return['length'],'biggerThan',$length);
+        }
+
+        // search
+        if(!isset($return['search']) && $schema->isKindCharOrText())
+        $return['search'] = true;
+
+        return $return;
+    }
+
+
     // checkAttr
-    // fait un check sur les attributs, vérifie type, kind, group, priority et check
+    // fait un check sur les attributs
     final protected function checkAttr():self
     {
         $attr = $this->attr;
 
-        if(empty($attr['type']) || !is_string($attr['type']))
-        static::throw($this,'invalidType');
-
-        if(empty($attr['group']) || !is_string($attr['group']))
-        static::throw($this,'invalidGroup');
-
-        if(empty($attr['priority']) || !is_int($attr['priority']))
-        static::throw($this,'invalidPriority');
-
-        if(!empty($attr['check']) && is_array($attr['check']) && !Base\Arr::hasSlices($attr['check'],$attr))
-        static::throw($this,$this->table(),'checkFailed');
+        $check = $attr['check'] ?? null;
+        $this->schema()->checkStructure($this,$check);
 
         return $this;
+    }
+
+
+    // makePriority
+    // sauvegarde la priorité de la colonne dans les attributs
+    final protected function makePriority(int $priority):void
+    {
+        $attrPriority = $this->getAttr('priority');
+        $priority = (is_int($attrPriority))? $attrPriority:$priority;
+        $this->setAttr('priority',$priority);
+
+        return;
     }
 
 
@@ -1598,44 +1587,19 @@ class Col extends Main\Root
     }
 
 
-    // type
-    // retourne le type de la colonne
-    final public function type():string
-    {
-        return $this->getAttr('type');
-    }
-
-
-    // kind
-    // retourne le kind de la colonne
-    final public function kind():string
-    {
-        return $this->getAttr('kind');
-    }
-
-
-    // group
-    // retourne le groupe, utiliser pour lier à la bonne classe de la cellule
-    final public function group():string
-    {
-        return $this->getAttr('group');
-    }
-
-
     // length
-    // retourne la length de la colonne, si spécifié
+    // retourne la longueur de la colonne
     final public function length():?int
     {
         return $this->getAttr('length');
     }
 
 
-    // unsigned
-    // retourne bool si la colonne est non signé
-    // retourne null si la colonne n'est pas de kind int
-    final public function unsigned():?bool
+    // group
+    // retourne le groupe de la colonne, à spécifier par des classes qui étendent
+    final public function group():?string
     {
-        return ($this->isKindInt())? ($this->getAttr('unsigned') === true):null;
+        return $this->getAttr('group');
     }
 
 
@@ -1669,17 +1633,9 @@ class Col extends Main\Root
         }
 
         elseif(empty($this->attr['null']))
-        $return = $this->kindDefault();
+        $return = $this->schema()->kindDefault();
 
         return $return;
-    }
-
-
-    // kindDefault
-    // retourne la valeur par défaut selon le kind
-    final public function kindDefault()
-    {
-        return ColSchema::kindDefault($this->kind());
     }
 
 
@@ -1690,7 +1646,8 @@ class Col extends Main\Root
     // le cast de string serialize les objets, lit les resources et json_encode les array
     final public function autoCast($return)
     {
-        $kind = $this->kind();
+        $schema = $this->schema();
+        $kind = $schema->kind();
         $removeWhiteSpace = $this->shouldRemoveWhiteSpace('cast');
 
         if(is_array($return) || is_object($return))
@@ -1698,11 +1655,11 @@ class Col extends Main\Root
 
         if(Base\Vari::isReallyEmpty($return,$removeWhiteSpace))
         {
-            if($this->acceptsNull())
+            if($schema->acceptsNull())
             $return = null;
 
             else
-            $return = ColSchema::kindDefault($kind);
+            $return = $schema->kindDefault();
         }
 
         else
@@ -1810,14 +1767,6 @@ class Col extends Main\Root
     }
 
 
-    // patternType
-    // retourne le pattern type à partir du nom de la colonne
-    final public function patternType():?string
-    {
-        return ColSchema::patternType($this->name());
-    }
-
-
     // label
     // retourne le label de la colonne
     // pattern permet de remplacer le label dans une string contenant d'autres caractères
@@ -1853,58 +1802,6 @@ class Col extends Main\Root
         $return = $obj->colDescription($this->name(),$this->tableName(),$replace,$lang,$option);
 
         return $return;
-    }
-
-
-    // details
-    // retourne un tableau de détail en lien avec la colonne
-    // les détails sont pour la plupart généré automatiquement
-    public function details(bool $lang=true):array
-    {
-        $return = [];
-        $details = $this->makeDetails();
-
-        if($this->isRequired())
-        {
-            $required = $this->ruleRequired($lang);
-            if(!empty($required))
-            $return[] = $required;
-        }
-
-        if($this->shouldBeUnique())
-        {
-            $unique = $this->ruleUnique($lang);
-            if(!empty($unique))
-            $return[] = $unique;
-        }
-
-        if($this->showDetailsMaxLength())
-        {
-            $maxLength = $this->ruleMaxLength($lang);
-            if(!empty($maxLength))
-            $return[] = $maxLength;
-        }
-
-        if(!empty($details))
-        $return = Base\Arr::merge($return,$details);
-
-        return $return;
-    }
-
-
-    // makeDetails
-    // méthode à étendre pour ajouter des détails en lien avec la colonne
-    final public function makeDetails():array
-    {
-        return [];
-    }
-
-
-    // collation
-    // retourne la collation de la colonne
-    final public function collation():?string
-    {
-        return $this->getAttr('collate');
     }
 
 

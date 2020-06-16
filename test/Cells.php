@@ -95,7 +95,7 @@ class Cells extends Base\Test
 
         // rules
         assert(count($cells->rules()) === 9);
-        assert($cells->rules(true)['id']['validate'][0] === 'Must be an integer');
+        assert($cells->rules(true)['id']['schemaValidate'][0] === 'Must be an integer');
         assert($cells->rules(false,false) !== $cells->rules(false,true));
 
         // preValidatePrepare

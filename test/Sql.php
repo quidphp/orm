@@ -52,8 +52,6 @@ class Sql extends Base\Test
 
         // filter
 
-        // filterEmptyNotEmpty
-
         // checkMake
 
         // row

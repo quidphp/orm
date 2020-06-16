@@ -206,46 +206,6 @@ class Cell extends Main\Root
     }
 
 
-    // isDate
-    // retourne vrai si la colonne est de type date
-    final public function isDate():bool
-    {
-        return $this->col()->isDate();
-    }
-
-
-    // isRelation
-    // retourne vrai si la colonne est de type relation
-    final public function isRelation():bool
-    {
-        return $this->col()->isRelation();
-    }
-
-
-    // isEnum
-    // retourne vrai si la colonne est de type relation enum
-    final public function isEnum():bool
-    {
-        return $this->col()->isEnum();
-    }
-
-
-    // isSet
-    // retourne vrai si la colonne est de type relation set
-    final public function isSet():bool
-    {
-        return $this->col()->isSet();
-    }
-
-
-    // isMedia
-    // retourne vrai si la colonne est de type media
-    final public function isMedia():bool
-    {
-        return $this->col()->isMedia();
-    }
-
-
     // isVisible
     // retourne vrai si la cellule est visible, prend en compte la valeur de la cellule
     final public function isVisible(?array $attr=null,?Main\Session $session=null):bool
@@ -426,14 +386,6 @@ class Cell extends Main\Root
     }
 
 
-    // hasDefault
-    // retourne vrai si la colonne de la cellule a une valeur par défaut
-    final public function hasDefault():bool
-    {
-        return $this->col()->hasDefault();
-    }
-
-
     // isLinked
     // retourne vrai si la cellule est lié à l'objet db
     final public function isLinked():bool
@@ -595,14 +547,6 @@ class Cell extends Main\Root
     final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
     {
         return $this->col()->description($pattern,$replace,$lang,$option);
-    }
-
-
-    // details
-    // retourne les détails de la cellule
-    final public function details(bool $lang=true):array
-    {
-        return $this->col()->details($lang);
     }
 
 
@@ -922,7 +866,7 @@ class Cell extends Main\Root
     public function unset():self
     {
         $initial = $this->valueInitial();
-        $default = $this->colDefault();
+        $default = $this->col()->default();
 
         if($initial !== $default)
         $this->set($default);

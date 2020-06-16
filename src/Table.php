@@ -841,18 +841,16 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
                 foreach ($dbCols as $value => $dbAttr)
                 {
-                    $dbAttr = ColSchema::prepareAttr($dbAttr);
+                    $colSchema = new ColSchema($dbAttr);
 
-                    if(is_string($value) && is_array($dbAttr))
+                    if(is_string($value))
                     {
-                        $class = $dbClasse->tableClasseCol($this,$value,$dbAttr);
+                        $class = $dbClasse->tableClasseCol($this,$value,$colSchema);
 
                         if(!empty($class))
                         {
                             $priority += $increment;
-                            $dbAttr['priority'] = $priority;
-
-                            $col = $this->colMake($class,$value,$dbAttr);
+                            $col = $this->colMake($class,$value,$colSchema,$priority);
                             $dbClasse->tableClasseCell($this,$col);
                         }
 
@@ -882,9 +880,9 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // colMake
     // construit et store un objet colonne
-    final protected function colMake(string $class,string $value,array $dbAttr):Col
+    final protected function colMake(string $class,string $value,ColSchema $colSchema,int $priority):Col
     {
-        $return = new $class($value,$this,$dbAttr);
+        $return = new $class($value,$this,$colSchema,$priority);
 
         if(!$return->isIgnored())
         $this->cols->add($return);
@@ -985,7 +983,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return = $this->col($this->getAttr('key'));
 
         if(is_string($lang) && !empty($return))
-        $return = $this->colPattern($return->nameStripPattern(),$lang);
+        $return = $this->colPattern($return->schema()->nameStripPattern(),$lang);
 
         return $return;
     }
@@ -1000,7 +998,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if(is_string($lang) && !empty($return))
         {
-            $stripPattern = $return->nameStripPattern();
+            $stripPattern = $return->schema()->nameStripPattern();
             if(is_string($stripPattern))
             $return = $this->colPattern($stripPattern,$lang);
         }
@@ -1017,7 +1015,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return = $this->col($this->getAttr('content'));
 
         if(is_string($lang) && !empty($return))
-        $return = $this->colPattern($return->nameStripPattern(),$lang);
+        $return = $this->colPattern($return->schema()->nameStripPattern(),$lang);
 
         return $return;
     }

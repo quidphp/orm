@@ -67,7 +67,7 @@ class Sql extends PdoSql
     // filter
     // gère un filtre pour un objet sql
     // il doit y avoir un table object
-    final public function filter(array $values):self
+    final public function filter(array $values,string $filterAndOr='or'):self
     {
         $table = $this->checkTableObject();
 
@@ -79,50 +79,54 @@ class Sql extends PdoSql
             {
                 $method = $col->filterMethod();
 
-                if(is_string($method))
+                if(is_string($method) && $col->canRelation())
                 {
-                    if($col->canRelation())
+                    $loop = [];
+                    $rel = $col->relation();
+
+                    if(!is_array($value))
+                    $value = [$value];
+
+                    foreach ($value as $k => $v)
                     {
-                        if(!is_array($value))
-                        $value = [$value];
-
-                        $rel = $col->relation();
-
-                        if($col->isFilterEmptyNotEmpty() && !empty($value))
-                        $value = $this->filterEmptyNotEmpty($value,$col);
-
-                        if($rel->isType('distinct'))
-                        $value = array_values((array) $rel->keyValue($value));
+                        if($col->isFilterEmptyNotEmpty() && $col::isFilterEmptyNotEmptyValue($v))
+                        {
+                            $emptyNotEmpty = ((int) $v === 0)? 'empty':'notEmpty';
+                            $loop[] = [$emptyNotEmpty];
+                            unset($value[$k]);
+                        }
                     }
 
-                    $this->where($col,$method,$value);
+                    if($rel->isType('distinct'))
+                    {
+                        $distinct = (array) $rel->keyValue($value);
+                        if(!empty($distinct))
+                        $loop[] = [$method,array_values($distinct)];
+                    }
+
+                    elseif(!empty($value))
+                    $loop[] = [$method,$value];
+
+                    $multiLoop = count($loop) > 1;
+
+                    if($multiLoop === true)
+                    $this->where('(');
+
+                    foreach ($loop as $i => $args)
+                    {
+                        if($i > 0)
+                        $this->where($filterAndOr);
+
+                        $this->where($col,...$args);
+                    }
+
+                    if($multiLoop === true)
+                    $this->where(')');
                 }
             }
         }
 
         return $this;
-    }
-
-
-    // filterEmptyNotEmpty
-    // gère empty not empty pour un filtre
-    final protected function filterEmptyNotEmpty(array $values,Col $col):array
-    {
-        $return = [];
-
-        foreach ($values as $value)
-        {
-            if($col->isFilterEmptyNotEmptyValue($value))
-            {
-                $v = ((int) $value === 0)? 'empty':'notEmpty';
-                $this->where($col,$v);
-            }
-
-            else
-            $return[] = $value;
-        }
-
-        return $return;
     }
 
 

@@ -15,7 +15,7 @@ use Quid\Main;
 
 // colSchema
 // class used to parse the information schema of a column
-class ColSchema extends Main\Root
+class ColSchema extends Main\Map
 {
     // config
     protected static array $config = [
@@ -27,33 +27,249 @@ class ColSchema extends Main\Root
             'mediumtext'=>16777215,
             'longtext'=>4294967295],
         'patternChars'=>['_','*'], // caractères pour définir les patterns
-        'pattern'=>[ // pattern pour les noms de colonnes, défini le nom de table d'une relation ainsi que le panel
+        'pattern'=>[ // pattern pour les noms de colonnes, défini par exemple le nom de table d'une relation
             'en'=>['*_en'],
             'fr'=>['*_fr'],
             'enum'=>['*_id'],
             'set'=>['*_ids']],
-        'relation'=>['enum','set'], // détermine les patterns considérés comme relation
-        'panel'=>[ // détermine les panels à utiliser à partir des patterns
-            'en'=>'en',
-            'fr'=>'fr',
-            'enum'=>'relation',
-            'set'=>'relation']
+        'relation'=>['enum','set'] // détermine les patterns considérés comme relation
     ];
 
 
+    // dynamique
+    protected ?array $mapAllow = ['jsonSerialize','serialize','clone']; // méthodes permises
+
+
     // _construct
-    // pas de possibilité de construire l'objet
-    final private function __construct()
+    // construit un nouvel objet col Schema
+    final public function __construct(array $value,?array $attr=null)
     {
+        $this->makeAttr($attr);
+        $data = static::prepareAttr($value);
+        $this->makeOverwrite($data);
+
         return;
     }
 
 
-    // is
-    // retourne vrai si la valeur est une colonne
-    final public static function is($value):bool
+    // isUnsigned
+    // retourne vrai si la colonne est unsigned
+    final public function isUnsigned():?bool
     {
-        return Base\Validate::isCol($value);
+        return ($this->isKindInt())? ($this->get('unsigned') === true):null;
+    }
+
+
+    // acceptsNull
+    // retourne vrai si la colonne accepte null
+    final public function acceptsNull():bool
+    {
+        return $this->get('null') === true;
+    }
+
+
+    // isKindInt
+    // retourne vrai si le schema est de kind int
+    final public function isKindInt():bool
+    {
+        return $this->kind() === 'int';
+    }
+
+
+    // isKindChar
+    // retourne vrai si le schema est de kind char
+    final public function isKindChar():bool
+    {
+        return $this->kind() === 'char';
+    }
+
+
+    // isKindText
+    // retourne vrai si le schema est de kind text
+    final public function isKindText():bool
+    {
+        return $this->kind() === 'text';
+    }
+
+
+    // isKindCharOrText
+    // retourne vrai si le schema est de kind char ou text
+    final public function isKindCharOrText():bool
+    {
+        return in_array($this->kind(),['char','text'],true);
+    }
+
+
+    // hasDefault
+    // retourne vrai si la colonne a une valeur par défaut
+    final public function hasDefault():bool
+    {
+        return $this->default() !== null || $this->acceptsNull();
+    }
+
+
+    // hasNullDefault
+    // retourne vrai si la colonne a une valeur par défaut null
+    final public function hasNullDefault():bool
+    {
+        return $this->hasDefault() && $this->default() === null;
+    }
+
+
+    // hasNotEmptyDefault
+    // retourne vrai si la colonne a une valeur par défaut qui n'est pas vide
+    final public function hasNotEmptyDefault()
+    {
+        return $this->hasDefault() && !empty($this->default());
+    }
+
+
+    // unique
+    // retourne vrai si la valeur de la colonne doit être unique
+    final public function unique():bool
+    {
+        return $this->get('unique') === true;
+    }
+
+
+    // checkStructure
+    // envoie une exception si la structure est invalide
+    final public function checkStructure(Col $col,?array $check=null):void
+    {
+        $data = $this->data;
+
+        if(empty($data['type']) || !is_string($data['type']))
+        static::throw($col,'invalidType');
+
+        if(!empty($check) && !Base\Arr::hasSlices($check,$data))
+        static::throw($col,$col->table(),'checkFailed');
+
+        return;
+    }
+
+
+    // type
+    // retourne le type du schema de la colonne
+    final public function type():string
+    {
+        return $this->get('type');
+    }
+
+
+    // kind
+    // retourne le kind du schema de la colonne
+    final public function kind():string
+    {
+        return $this->get('kind');
+    }
+
+
+    // name
+    // retourne le nom de la colonne
+    final public function name():string
+    {
+        return $this->get('name');
+    }
+
+
+    // nameStripPattern
+    // retourne le nom de la colonne sans le pattern
+    final public function nameStripPattern(?array $pattern=null):?string
+    {
+        return static::stripPattern($this->name(),$pattern);
+    }
+
+
+    // nameLangCode
+    // retourne le code de langue à partir du nom
+    final public function nameLangCode():?string
+    {
+        return static::langCode($this->name());
+    }
+
+
+    // default
+    // retourne le default de la colonne
+    final public function default()
+    {
+        return $this->get('default');
+    }
+
+
+    // length
+    // retourne la longueur du schema de la colonne
+    final public function length():?int
+    {
+        return $this->get('length');
+    }
+
+
+    // collation
+    // retourne la collation du schema de la colonne
+    final public function collation():?string
+    {
+        return $this->get('collate');
+    }
+
+
+    // validate
+    // retourne les règles de validation du schéma
+    final public function validate():?array
+    {
+        return $this->get('validate');
+    }
+
+
+    // relation
+    // retourne les règles de relation du schema
+    final public function relation():?string
+    {
+        return $this->get('relation');
+    }
+
+
+    // kindDefault
+    // retourne le défaut selon le kind
+    final public function kindDefault()
+    {
+        $return = null;
+        $kind = $this->kind();
+
+        if($kind === 'int')
+        $return = 0;
+
+        elseif($kind === 'char')
+        $return = '';
+
+        elseif($kind === 'text')
+        $return = '';
+
+        return $return;
+    }
+
+
+    // patternType
+    // retourne le pattern type à partir du nom de la colonne
+    final public function patternType():?string
+    {
+        return self::patternTypeFromName($this->name());
+    }
+
+
+    // formTag
+    // retourne la tag à utiliser pour toutes les méthodes form
+    // la tag peut être dans le tableau ou sinon déduit via le kind
+    final public function formTag(?array $attr=null):?string
+    {
+        $return = null;
+
+        if(!empty($attr) && array_key_exists('tag',$attr) && is_string($attr['tag']))
+        $return = $attr['tag'];
+
+        else
+        $return = static::kindTag($this->kind());
+
+        return $return;
     }
 
 
@@ -70,7 +286,7 @@ class ColSchema extends Main\Root
     final public static function isRelation($value,bool $isPatternType=false):bool
     {
         $return = false;
-        $value = ($isPatternType === true)? $value:static::patternType($value);
+        $value = ($isPatternType === true)? $value:static::patternTypeFromName($value);
 
         if(!empty($value) && in_array($value,static::$config['relation'],true))
         $return = true;
@@ -137,7 +353,7 @@ class ColSchema extends Main\Root
 
 
     // stripPattern
-    // retourne le nom du champ de la colonne sans la partie pattern
+    // retourne le nom du champ du schema de la colonne sans la partie pattern
     // est utilisé pour déterminer le pattern
     final public static function stripPattern(string $value,?array $pattern=null):?string
     {
@@ -151,10 +367,10 @@ class ColSchema extends Main\Root
     }
 
 
-    // patternType
+    // patternTypeFromName
     // retourne la clé du pattern déterminer à partir du nom de colonne
     // c'est la clé de pattern
-    final public static function patternType(string $value):?string
+    final public static function patternTypeFromName(string $value):?string
     {
         $return = null;
         $pattern = static::pattern($value);
@@ -171,25 +387,10 @@ class ColSchema extends Main\Root
     final public static function langCode(string $value):?string
     {
         $return = null;
-        $type = static::patternType($value);
+        $type = static::patternTypeFromName($value);
 
         if(is_string($type) && Base\Lang::is($type))
         $return = $type;
-
-        return $return;
-    }
-
-
-    // panel
-    // retourne le panel à utiliser à partir du nom de colonne
-    // c'est la clé de pattern
-    final public static function panel(string $value,bool $isPatternType=false):?string
-    {
-        $return = null;
-        $value = ($isPatternType === true)? $value:static::patternType($value);
-
-        if(!empty($value) && array_key_exists($value,static::$config['panel']))
-        $return = static::$config['panel'][$value];
 
         return $return;
     }
@@ -240,48 +441,10 @@ class ColSchema extends Main\Root
     }
 
 
-    // group
-    // retourne le group à partir d'un tableau d'attribut
-    // si advanced est true, prend aussi les groups avancés qui viennent de configuration dans core et non pas du scheme de la db
-    // retourne null si rien
-    final public static function group(array $attr,bool $advanced=true):?string
-    {
-        $return = null;
-
-        if($advanced === true)
-        {
-            $group = $attr['group'] ?? null;
-            $kind = $attr['kind'] ?? null;
-            if(is_string($group) && $group !== 'primary' && $group !== $kind)
-            $return = $group;
-
-            elseif(!empty($attr['relation']))
-            $return = 'relation';
-
-            elseif(!empty($attr['media']))
-            $return = 'media';
-
-            elseif(!empty($attr['date']))
-            $return = 'date';
-        }
-
-        if(empty($return))
-        {
-            if(!empty($attr['key']) && $attr['key'] === 'primary')
-            $return = 'primary';
-
-            elseif(!empty($attr['kind']) && is_string($attr['kind']))
-            $return = $attr['kind'];
-        }
-
-        return $return;
-    }
-
-
     // prepareAttr
     // prépare un tableau attribut colonne à partir du tableau fourni par sql
     // si default est null, l'attribut null doit être à YES pour être conservé
-    // panel et relation sont déduits via la méthode pattern
+    // relation est déduit via la méthode pattern
     // peut retourner null si le kind est inconnu
     final public static function prepareAttr(array $value):?array
     {
@@ -293,6 +456,8 @@ class ColSchema extends Main\Root
 
             if(is_array($return))
             {
+                $return['name'] = $value['Field'];
+
                 if(array_key_exists('Null',$value))
                 {
                     if($value['Null'] === 'YES')
@@ -315,7 +480,6 @@ class ColSchema extends Main\Root
                     if($value['Key'] === 'PRI' && array_key_exists('Extra',$value) && $value['Extra'] === 'auto_increment')
                     {
                         $return['key'] = 'primary';
-                        $return['required'] = true;
                         $return['null'] = null;
                     }
 
@@ -326,21 +490,12 @@ class ColSchema extends Main\Root
                 if(array_key_exists('Collation',$value) && is_string($value['Collation']))
                 $return['collate'] = $value['Collation'];
 
-                $return['group'] = static::group($return);
-
-                if(array_key_exists('priority',$value))
-                $return['priority'] = $value['priority'];
-
                 $return['validate'] = static::parseValidate($return);
 
                 $pattern = static::pattern($value['Field']);
                 if(!empty($pattern))
                 {
                     $type = $pattern[0];
-
-                    $panel = static::panel($type,true);
-                    if(!empty($panel))
-                    $return['panel'] = $panel;
 
                     if(static::isRelation($type,true))
                     {
@@ -378,10 +533,7 @@ class ColSchema extends Main\Root
                     $return['kind'] = null;
 
                     if(strpos($value,'char') !== false)
-                    {
-                        $return['kind'] = 'char';
-                        $return['search'] = true;
-                    }
+                    $return['kind'] = 'char';
 
                     elseif(strpos($value,'int') !== false)
                     $return['kind'] = 'int';
@@ -392,7 +544,6 @@ class ColSchema extends Main\Root
                     elseif(strpos($value,'text') !== false)
                     {
                         $return['kind'] = 'text';
-                        $return['search'] = true;
                         $length = static::textLength($value);
                     }
                 }
@@ -499,25 +650,6 @@ class ColSchema extends Main\Root
     }
 
 
-    // kindDefault
-    // retourne le défaut selon le kind
-    final public static function kindDefault(string $kind)
-    {
-        $return = null;
-
-        if($kind === 'int')
-        $return = 0;
-
-        elseif($kind === 'char')
-        $return = '';
-
-        elseif($kind === 'text')
-        $return = '';
-
-        return $return;
-    }
-
-
     // kindTag
     // retourne le input par défaut selon le kind
     final public static function kindTag(string $kind):?string
@@ -535,23 +667,6 @@ class ColSchema extends Main\Root
 
         elseif($kind === 'text')
         $return = 'textarea';
-
-        return $return;
-    }
-
-
-    // formTag
-    // retourne la tag à utiliser pour toutes les méthodes form
-    // la tag peut être dans le tableau ou sinon déduit via le kind
-    final public static function formTag(array $array):?string
-    {
-        $return = null;
-
-        if(array_key_exists('tag',$array) && $array['tag'] !== null)
-        $return = $array['tag'];
-
-        elseif(array_key_exists('kind',$array) && is_string($array['kind']))
-        $return = static::kindTag($array['kind']);
 
         return $return;
     }

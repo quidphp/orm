@@ -95,23 +95,6 @@ class Cell extends Base\Test
         assert($cell->value() === ' ');
         $cell->set(2);
 
-        // isDate
-        assert(!$cell->isDate());
-        assert($dateAdd->isDate());
-
-        // isRelation
-        assert(!$cell->isRelation());
-
-        // isEnum
-        assert(!$cell->isEnum());
-
-        // isSet
-        assert(!$cell->isSet());
-
-        // isMedia
-        assert(!$cell->isMedia());
-        assert($media->isMedia());
-
         // isVisible
         assert($cell->isVisible());
         assert($dateAdd->isVisible());
@@ -139,8 +122,8 @@ class Cell extends Base\Test
         assert(!$dateAdd->isFormTag(['tag'=>'div']));
 
         // rules
-        assert($cell->rules() === ['required'=>'required','validate'=>['string','maxLength'=>100]]);
-        assert($cell->rules(true)['validate'][0] === 'Must be a string');
+        assert($cell->rules() === ['required'=>'required','schemaValidate'=>['string','maxLength'=>100]]);
+        assert($cell->rules(true)['schemaValidate'][0] === 'Must be a string');
         assert(count($date->rules()) === 2);
         assert(count($date->rules(false,true)) === 3);
 
@@ -181,9 +164,6 @@ class Cell extends Base\Test
         assert($cell->isWhere(['='=>'2']));
         assert($cell->isWhere([true,'notNull']));
 
-        // hasDefault
-        assert($cell->hasDefault());
-
         // isLinked
         assert($cell->isLinked());
 
@@ -220,14 +200,11 @@ class Cell extends Base\Test
         // setPriority
         assert($cell->setPriority() === 5);
 
-        // colDefault
-        assert($cell->colDefault() === '');
-
         // attrRef
         assert(count($cell->attr()) >= 60);
-        assert($cell->getAttr('kind') === 'char');
-        assert($cell->isAttrNotEmpty('kind'));
-        assert(!$cell->isAttrNotEmpty('kindz'));
+        assert($cell->getAttr('length') === 100);
+        assert($cell->isAttrNotEmpty('length'));
+        assert(!$cell->isAttrNotEmpty('lengthz'));
 
         // rowPrimary
         assert($cell->rowPrimary() === 1);
@@ -245,10 +222,6 @@ class Cell extends Base\Test
         assert($cell->label(5) === 'Name');
 
         // description
-
-        // details
-        assert($cell->details() === ['Cannot be empty','Length must be at maximum 100 characters']);
-        assert($cell->details(false) === ['required',['maxLength'=>100]]);
 
         // form
         assert(strlen($cell->form()) === 76);

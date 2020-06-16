@@ -26,7 +26,7 @@ class Classe extends Main\Map
             'cols'=>Cols::class,
             'rows'=>Rows::class,
             'cells'=>Cells::class],
-        'colGroup'=>[], // classe pour colonne selon le group
+        'colKind'=>[], // classe pour colonne selon le kind
         'colAttr'=>[], // classe pour colonne selon un attribut
         'extendersKeys'=>['table','rows','row','cols','col','cells','cell'], // défini les clés à garder de l'extenders
     ];
@@ -109,7 +109,7 @@ class Classe extends Main\Map
     // tableClasseCol
     // retourne la classe d'une colonne et ajoute dans l'objet tableClasse
     // gère la cache
-    final public function tableClasseCol(Table $table,$col,?array $attr=null,bool $cache=true):string
+    final public function tableClasseCol(Table $table,$col,?ColSchema $attr=null,bool $cache=true):string
     {
         $return = null;
 
@@ -123,7 +123,7 @@ class Classe extends Main\Map
 
         if(empty($return))
         {
-            $attr = (array) $attr;
+            $attr = (!empty($attr))? $attr->toArray():[];
             $return = $this->findClass('col',$table,$col,$attr);
 
             if($cache === true)
@@ -235,7 +235,7 @@ class Classe extends Main\Map
     final protected function colAfter(Table $table,string $col,array $attr):?string
     {
         $return = null;
-        $patternType = ColSchema::patternType($col);
+        $patternType = ColSchema::patternTypeFromName($col);
 
         if(!empty($patternType))
         {
@@ -246,8 +246,8 @@ class Classe extends Main\Map
         if(empty($return))
         $return = $this->colFromAttr($table->colAttr($col),true);
 
-        if(empty($return) && array_key_exists('group',$attr) && is_string($attr['group']))
-        $return = $this->getAttr(['colGroup',$attr['group']]);
+        if(empty($return) && array_key_exists('kind',$attr) && is_string($attr['kind']))
+        $return = $this->getAttr(['colKind',$attr['kind']]);
 
         return $return;
     }

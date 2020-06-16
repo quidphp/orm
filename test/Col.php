@@ -98,21 +98,6 @@ class Col extends Base\Test
         assert(!$col->isPrimary());
         assert($id->isPrimary());
 
-        // isKindInt
-        assert(!$col->isKindInt());
-        assert($dateAdd->isKindInt());
-
-        // isKindChar
-        assert($col->isKindChar());
-        assert(!$dateAdd->isKindChar());
-
-        // isKindText
-        assert(!$col->isKindText());
-
-        // acceptsNull
-        assert($col->acceptsNull());
-        assert(!$id->acceptsNull());
-
         // hasAttrInclude
         assert(!$col->hasAttrInclude('insert'));
 
@@ -138,8 +123,6 @@ class Col extends Base\Test
         assert(!$col->hasCompare());
         assert($dateStart->hasCompare());
 
-        // showDetailsMaxLength
-
         // isDate
         assert(!$email->isDate());
         assert($dateAdd->isDate());
@@ -156,26 +139,6 @@ class Col extends Base\Test
 
         // canRelation
         assert($dateAdd->canRelation());
-
-        // isEnum
-        assert(!$email->isEnum());
-        assert($userId->isEnum());
-        assert(!$userIds->isEnum());
-        assert($myRelation->isEnum());
-        assert($other->isEnum());
-        assert($array->isEnum());
-        assert($range->isEnum());
-        assert($lang->isEnum());
-        assert(!$check->isEnum());
-
-        // isSet
-        assert(!$email->isSet());
-        assert(!$userId->isSet());
-        assert($userIds->isSet());
-        assert(!$myRelation->isSet());
-        assert(!$other->isSet());
-        assert($multi->isSet());
-        assert($check->isSet());
 
         // isMedia
         assert(!$email->isMedia());
@@ -195,15 +158,15 @@ class Col extends Base\Test
         assert(!$def->hasNullDefault());
         assert(!$dateModify->hasNullDefault());
 
-        // hasNullPlaceholder
-        assert($col->hasNullPlaceholder());
-        assert(!$id->hasNullPlaceholder());
-
         // hasNotEmptyDefault
         assert(!$col->hasNotEmptyDefault());
         assert($def->hasNotEmptyDefault());
         assert($email->hasNotEmptyDefault());
         assert(!$dateModify->hasNotEmptyDefault());
+
+        // hasNullPlaceholder
+        assert($col->hasNullPlaceholder());
+        assert(!$id->hasNullPlaceholder());
 
         // hasOnInsert
         assert(!$col->hasOnInsert());
@@ -315,11 +278,19 @@ class Col extends Base\Test
         assert($date->rulePreValidate() === ['dateToDay']);
         assert($date->rulePreValidate(true) === ['Must be a valid date (MM-DD-YYYY)']);
 
-        // ruleValidate
-        assert($col->ruleValidate() === ['string','maxLength'=>100]);
-        assert($col->ruleValidate(true)[0] === 'Must be a string');
+        // ruleSchemaValidate
+        assert(count($col->ruleSchemaValidate()) === 2);
+        assert($col->ruleSchemaValidate(true)[0] === 'Must be a string');
 
-        // rulePreValidateCommon
+        // ruleValidate
+        assert($col->ruleValidate() === []);
+        assert($email->ruleValidate() === ['email']);
+
+        // ruleValidateCombined
+        assert(count($col->ruleValidateCombined()) === 2);
+        assert(count($email->ruleValidateCombined()) === 3);
+
+        // ruleValidateCommon
 
         // preValidateClosure
         assert($col->preValidateClosure() === null);
@@ -356,7 +327,7 @@ class Col extends Base\Test
         assert($col->ruleMaxLength(true) === 'Length must be at maximum 100 characters');
 
         // rules
-        assert($col->rules() === ['required'=>'required','unique'=>'unique','validate'=>['string','maxLength'=>100]]);
+        assert($col->rules() === ['required'=>'required','unique'=>'unique','schemaValidate'=>['string','maxLength'=>100]]);
         assert($col->rules(true)['unique'] === 'Must be unique');
         assert(count($col->rules(true)) === 3);
         assert(count($date->rules()) === 2);
@@ -452,13 +423,16 @@ class Col extends Base\Test
         // name
         assert($col->name() === 'name');
 
-        // nameStripPattern
-        assert($col->nameStripPattern() === null);
+        // setSchema
 
-        // langCode
-        assert($col->langCode() === null);
+        // schema
+        assert($col->schema() instanceof Orm\ColSchema);
 
         // makeAttr
+
+        // prepareAttr
+
+        // makePriority
 
         // priority
         assert($col->priority() === 40);
@@ -466,31 +440,11 @@ class Col extends Base\Test
         // setPriority
         assert($col->setPriority() === 5);
 
-        // type
-        assert($col->type() === 'varchar');
-        assert($id->type() === 'int');
-        assert($dateAdd->type() === 'int');
-
-        // kind
-        assert($col->kind() === 'char');
-        assert($id->kind() === 'int');
-        assert($dateAdd->kind() === 'int');
-
-        // group
-        assert($col->group() === 'char');
-        assert($dateAdd->group() === 'date');
-        assert($userIds->group() === 'relation');
-        assert($media->group() === 'media');
-        assert($id->group() === 'primary');
-
         // length
-        assert($dateAdd->length() === 11);
         assert($col->length() === 100);
 
-        // unsigned
-        assert($col->unsigned() === null);
-        assert($dateAdd->unsigned());
-        assert($dateModify->unsigned() === false);
+        // group
+        assert($col->group() === null);
 
         // shouldBeUnique
         assert($col->shouldBeUnique());
@@ -501,11 +455,6 @@ class Col extends Base\Test
         assert($col->default() === null);
         assert($email->default() === 'default@def.james');
         assert($dateModify->default() === 0);
-
-        // kindDefault
-        assert($col->kindDefault() === '');
-        assert($id->kindDefault() === 0);
-        assert($dateAdd->kindDefault() === 0);
 
         // autoCast
         assert($id->autoCast('3') === 3);
@@ -542,10 +491,6 @@ class Col extends Base\Test
         // insert
         assert(is_int($dateAdd->insert(null,[])));
 
-        // patternType
-        assert($col->patternType() === null);
-        assert($userId->patternType() === 'enum');
-
         // label
         assert($dateAdd->label() === 'Date added');
         assert($dateAdd->label(null,'fr') === "Date d'ajout");
@@ -560,18 +505,6 @@ class Col extends Base\Test
         assert($email->description() === 'Ma description');
         assert($email->description('%:') === 'Ma description:');
         assert($dateAdd->description(2,null,'fr') === 'Pa');
-
-        // details
-        assert(count($col->details()) === 3);
-        assert($email->details() === ['Cannot be empty','Length must be at maximum 100 characters']);
-        assert($email->details(false) === ['required',['maxLength'=>100]]);
-
-        // makeDetails
-        assert($col->makeDetails() === []);
-
-        // collation
-        assert($email->collation() === 'utf8mb4_general_ci');
-        assert($dateAdd->collation() === null);
 
         // keyboard
         assert($email->keyboard() === 'email');
@@ -684,8 +617,8 @@ class Col extends Base\Test
 
         // attr
         assert(count($col->attr()) >= 59);
-        assert($col->isAttrNotEmpty('kind'));
-        assert(!$col->isAttrNotEmpty('kindz'));
+        assert($col->isAttrNotEmpty('length'));
+        assert(!$col->isAttrNotEmpty('lengthz'));
 
         // cleanup
         assert($db->truncate($table) instanceof \PDOStatement);

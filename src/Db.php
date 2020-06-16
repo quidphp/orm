@@ -40,7 +40,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
             'drop'=>null],
         'classe'=>[ // option pour l'objet classe
             'default'=>[], // classe par défaut
-            'colGroup'=>[], // classe pour colonne selon le group
+            'colKind'=>[], // classe pour colonne selon le kind
             'colAttr'=>[]], // classe pour colonne selon un attribut
         'classeClosure'=>null, // possible de mettre uen closure comme classe (permet de gérer la cache dans boot)
         'schemaClosure'=>null, // possible de mettre une closure comme schema (permet de gérer la cache dans boot)
