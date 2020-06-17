@@ -46,7 +46,7 @@ class Rows extends Main\MapObj
     // retourne les ids séparés par des virgules
     final public function __toString():string
     {
-        return implode(',',$this->primaries());
+        return implode(',',$this->keys());
     }
 
 
@@ -90,15 +90,8 @@ class Rows extends Main\MapObj
     // les lignes sont toujours retournés dans un nouvel objet rows
     final protected function onPrepareReturns(array $array):self
     {
-        $return = new static();
-
-        foreach ($array as $value)
-        {
-            if(!empty($value))
-            $return->add($value);
-        }
-
-        return $return;
+        $array = Base\Arr::clean($array);
+        return new static(...array_values($array));
     }
 
 
@@ -106,7 +99,7 @@ class Rows extends Main\MapObj
     // retourne la valeur cast
     final public function _cast():array
     {
-        return $this->primaries();
+        return $this->keys();
     }
 
 
@@ -142,18 +135,7 @@ class Rows extends Main\MapObj
     // retourne vrai si une des lignes a changé
     final public function hasChanged():bool
     {
-        $return = false;
-
-        foreach ($this->arr() as $key => $value)
-        {
-            if($value->hasChanged())
-            {
-                $return = true;
-                break;
-            }
-        }
-
-        return $return;
+        return !empty($this->some(fn($value) => $value->hasChanged()));
     }
 
 
@@ -315,35 +297,11 @@ class Rows extends Main\MapObj
     }
 
 
-    // label
-    // retourne les noms de toutes les lignes
-    final public function label($pattern=null,?int $withName=null,?string $lang=null,?array $option=null):array
-    {
-        return $this->pair('label',$pattern,$withName,$lang,$option);
-    }
-
-
-    // description
-    // retourne les descriptions de toutes les lignes
-    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
-    {
-        return $this->pair('description',$pattern,$replace,$lang,$option);
-    }
-
-
     // changed
     // retourne un nouvel objet rows avec les lignes qui ont changés
     final public function changed():self
     {
-        $return = new static();
-
-        foreach ($this->arr() as $key => $value)
-        {
-            if($value->hasChanged())
-            $return->add($value);
-        }
-
-        return $return;
+        return $this->filter(fn($value) => $value->hasChanged());
     }
 
 
@@ -466,26 +424,6 @@ class Rows extends Main\MapObj
     }
 
 
-    // htmlStr
-    // permet de passer le htmlStr sur une cellule dans chaque ligne
-    // éventuellement cette méthode devra être remplacé par la classe tablesCells
-    final public function htmlStr($key,string $html,bool $str=false)
-    {
-        $return = [];
-        $cells = $this->cell($key);
-
-        foreach ($cells as $id => $cell)
-        {
-            $return[$id] = $cell->htmlStr($html);
-        }
-
-        if($str === true)
-        $return = implode($return);
-
-        return $return;
-    }
-
-
     // segment
     // permet de remplacer les segments d'une chaîne par le contenu des cellules pour toutes les lignes
     // par défaut utilise value de cellule, si get est true utilise get
@@ -526,15 +464,7 @@ class Rows extends Main\MapObj
     // similaire à une syntaxe sql mais ne supporte pas les méthodes base/sql whereThree, ni les and, or et paranthèses
     final public function where(array $array):self
     {
-        $return = new static();
-
-        foreach ($this->arr() as $value)
-        {
-            if($value->cells()->isWhere($array))
-            $return->add($value);
-        }
-
-        return $return;
+        return $this->filter(fn($value) => $value->cells()->isWhere($array));
     }
 
 

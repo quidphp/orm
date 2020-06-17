@@ -46,7 +46,7 @@ class Cols extends Main\MapObj
     // retourne les noms de colonnes séparés par des virgules
     final public function __toString():string
     {
-        return implode(',',$this->names());
+        return implode(',',$this->keys());
     }
 
 
@@ -104,15 +104,8 @@ class Cols extends Main\MapObj
     // les lignes sont toujours retournés dans un nouvel objet cols
     final protected function onPrepareReturns(array $array):self
     {
-        $return = new static();
-
-        foreach ($array as $value)
-        {
-            if(!empty($value))
-            $return->add($value);
-        }
-
-        return $return;
+        $array = Base\Arr::clean($array);
+        return new static(...array_values($array));
     }
 
 
@@ -120,7 +113,7 @@ class Cols extends Main\MapObj
     // retourne la valeur cast
     final public function _cast():array
     {
-        return $this->names();
+        return $this->keys();
     }
 
 
@@ -366,15 +359,6 @@ class Cols extends Main\MapObj
     }
 
 
-    // rules
-    // retourne toutes les règles de validations et required des colonnes
-    // possible de retourner les textes si lang est true
-    final public function rules(bool $lang=false,bool $preValidate=false):array
-    {
-        return $this->pair('rules',$lang,$preValidate);
-    }
-
-
     // preValidatePrepare
     // prépare un tableau de valeur en vue d'une prévalidation
     final public function preValidatePrepare(array $return):array
@@ -561,22 +545,6 @@ class Cols extends Main\MapObj
     }
 
 
-    // label
-    // retourne le label de toutes les colonnes
-    final public function label($pattern=null,?string $lang=null,?array $option=null):array
-    {
-        return $this->pair('label',$pattern,$lang,$option);
-    }
-
-
-    // description
-    // retourne la description de toutes les colonnes
-    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
-    {
-        return $this->pair('description',$pattern,$replace,$lang,$option);
-    }
-
-
     // groupSetPriority
     // retourne un tableau avec les cellules regroupés par setPriority
     final public function groupSetPriority():array
@@ -585,71 +553,6 @@ class Cols extends Main\MapObj
         $return = Base\Arr::keysSort($return,true);
 
         return $return;
-    }
-
-
-    // form
-    // génère les éléments formulaires pour toutes les colonnes
-    final public function form(bool $str=false)
-    {
-        $return = $this->pair('form');
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // formPlaceholder
-    // génère les éléments formulaires avec placeholder pour toutes les colonnes
-    // le placeholder est le label de la colonne
-    final public function formPlaceholder(bool $str=false)
-    {
-        $return = $this->pair('formPlaceholder');
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // formWrap
-    // génère les éléments formWrap pour toutes les colonnes
-    final public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
-    {
-        $return = $this->pair('formWrap',$wrap,$pattern);
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // formPlaceholderWrap
-    // génère les éléments formPlaceholderWrap pour toutes les colonnes
-    // le placeholder est le label de la colonne, donc le label apparaît deux fois
-    final public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
-    {
-        $return = $this->pair('formPlaceholderWrap',$wrap,$pattern);
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // htmlStr
-    // retourne un tableau avec chaque colonne passé dans la méthode html
-    // la valeur est toujours celle par défaut
-    // si str est true, retourne une string
-    final public function htmlStr(string $html,bool $str=false)
-    {
-        $return = $this->pair('htmlStr',true,$html);
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // orderable
-    // retourne un objet cols avec toutes les colonnes ordonnables
-    final public function orderable():self
-    {
-        return $this->filter(fn($col) => $col->isOrderable());
-    }
-
-
-    // filterable
-    // retourne un objet cols avec toutes les colonnes filtrable
-    final public function filterable():self
-    {
-        return $this->filter(fn($col) => $col->isFilterable());
     }
 
 
@@ -683,23 +586,7 @@ class Cols extends Main\MapObj
     // retourne vrai si un terme de recherche est valide pour toutes les colonnes de l'objet
     final public function isSearchTermValid($value):bool
     {
-        $return = false;
-
-        if($this->isNotEmpty())
-        {
-            $return = true;
-
-            foreach ($this as $col)
-            {
-                if(!$col->isSearchTermValid($value))
-                {
-                    $return = false;
-                    break;
-                }
-            }
-        }
-
-        return $return;
+        return $this->every(fn($col) => $col->isSearchTermValid($value));
     }
 
 

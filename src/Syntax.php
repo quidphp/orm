@@ -279,12 +279,7 @@ abstract class Syntax extends Main\Root
     // retourne vrai si la valeur de retour contient un select, par exemple après un insert, update ou select
     final public static function isReturnSelect($value):bool
     {
-        $return = false;
-
-        if(is_array($value) && !empty($value['sql']) && array_key_exists('select',$value) && is_array($value['select']) && !empty($value['select']['sql']))
-        $return = true;
-
-        return $return;
+        return is_array($value) && !empty($value['sql']) && array_key_exists('select',$value) && is_array($value['select']) && !empty($value['select']['sql']);
     }
 
 
@@ -365,9 +360,7 @@ abstract class Syntax extends Main\Root
             foreach (static::$config['query'][$value] as $key => $value)
             {
                 if(is_string($key) && is_array($value) && !empty($value['required']))
-                {
-                    $return[] = $key;
-                }
+                $return[] = $key;
             }
         }
 

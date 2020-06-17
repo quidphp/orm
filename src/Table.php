@@ -912,14 +912,10 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // charge les colonnes si l'objet cols est toujours vide
     final public function cols(...$keys):Cols
     {
-        $return = null;
-
         if($this->isColsEmpty())
         $this->colsLoad();
 
-        $return = (empty($keys))? $this->cols:$this->cols->gets(...$keys);
-
-        return $return;
+        return (empty($keys))? $this->cols:$this->cols->gets(...$keys);
     }
 
 
@@ -929,12 +925,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // envoie une exception si non existant
     final public function col($col):Col
     {
-        $return = $this->cols()->get($col);
-
-        if(!$return instanceof Col)
-        static::throw($col);
-
-        return $return;
+        return static::checkClass($this->cols()->get($col),Col::class);
     }
 
 
@@ -1606,12 +1597,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // charge la row si non existante
     final public function checkRow($row,bool $refresh=false,?bool $inOut=null,bool $whereTrue=false):Row
     {
-        $return = $this->row($row,$refresh,$inOut,$whereTrue);
-
-        if(!$return instanceof Row)
-        static::throw();
-
-        return $return;
+        return static::checkClass($this->row($row,$refresh,$inOut,$whereTrue),Row::class);
     }
 
 

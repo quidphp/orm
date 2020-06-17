@@ -91,10 +91,6 @@ class Cols extends Base\Test
         // isStillRequiredEmpty
         assert(!$cols->isStillRequiredEmpty());
 
-        // rules
-        assert(count($cols->rules()) === 9);
-        assert($cols->rules(false,false) !== $cols->rules(false,true));
-
         // preValidatePrepare
         assert($cols->preValidatePrepare(['email'=>'ok']) === ['email'=>'ok']);
 
@@ -138,44 +134,8 @@ class Cols extends Base\Test
         assert(count($cols->inserts(['name_en'=>2])) === 5);
         assert(count($cols->inserts(['name_en'=>2],['default'=>true])) === 8);
 
-        // label
-        assert($cols->label()['active'] === 'Active');
-        assert($cols->label('%:')['active'] === 'Active:');
-
-        // description
-        assert($cols->description()['dateAdd'] === 'Perfect');
-        assert($cols->description('%:')['dateAdd'] === 'Perfect:');
-
         // groupSetPriority
         assert($cols->groupSetPriority()[5] instanceof Orm\Cols);
-
-        // form
-        assert(count($cols->form()) === 9);
-        assert(is_string($cols->form(true)));
-
-        // formPlaceholder
-        assert(strlen($cols->formPlaceholder()['id']) === 93);
-        assert(is_string($cols->formPlaceholder(true)));
-
-        // formWrap
-        assert(count($cols->formWrap('br')) === 9);
-        assert(strlen(current($cols->formWrap('br','%:'))) === 136);
-        assert(is_string($cols->formWrap('br',null,true)));
-
-        // formPlaceholderWrap
-        assert(count($cols->formPlaceholderWrap(null)) === 9);
-        assert(strlen($cols->formPlaceholderWrap('br')['id']) === 152);
-        assert(is_string($cols->formPlaceholderWrap('br',null,true)));
-
-        // htmlStr
-        assert(is_string($cols->htmlStr("<div class='%name%'>%label%: %value%</div>")['name_en']));
-        assert(is_string($cols->htmlStr("<div class='%name%'>%label%: %value%</div>",true)));
-
-        // orderable
-        assert($cols->orderable()->isCount(9));
-
-        // filterable
-        assert($cols->filterable()->isMinCount(5));
 
         // searchable
         assert(count($cols->searchable()) !== count($cols));

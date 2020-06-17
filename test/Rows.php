@@ -130,13 +130,6 @@ class Rows extends Base\Test
         assert($rows->getsRefresh(1,2)->isCount(2));
         assert(count($tb->db()->history()->keyValue()) === ($uni + 2));
 
-        // label
-        assert($db['user']->rows(1,2,3,4)->isCount(4));
-        assert($db['user']->rows()->label()[1] === 'User #1');
-
-        // description
-        assert($db['user']->rows()->description()[1] === null);
-
         // changed
         $rows[1]['name'] = 2;
         $rows[2]['name'] = 2;
@@ -179,10 +172,6 @@ class Rows extends Base\Test
         assert($rows->cellValue('name') === [1=>'james3',2=>'james3']);
         assert(is_int($rows->cellValue('dateAdd',false)[1]));
         assert(is_string($rows->cellValue('dateAdd',true)[1]));
-
-        // htmlStr
-        assert(count($rows->htmlStr('name','%label%-%value%')) === 2);
-        assert($rows->htmlStr('name','%label%-%value%',true) === 'Name-james3Name-james3');
 
         // segment
         assert($rows->segment('[name] [id]') === [1=>'james3 1',2=>'james3 2']);

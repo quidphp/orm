@@ -62,15 +62,6 @@ class Tables extends Base\Test
 
         // add
 
-        // label
-        assert($tables->label(null,'en',['def'=>true])['ormTable'] === 'Super Orm En');
-        assert($tables->label('%:','en',['def'=>true])['ormTable'] === 'Super Orm En:');
-
-        // description
-        assert($tables->description()['ormTable'] === 'Super Orm Desc En');
-        assert($tables->description(null,null,'fr')['ormTable'] === null);
-        assert($tables->description('%:')['ormTable'] === 'Super Orm Desc En:');
-
         // labels
         assert(Base\Arr::isMulti($tables->labels(null,['error'=>false])));
 
@@ -111,10 +102,10 @@ class Tables extends Base\Test
         assert($tables->gets('ormCell','ormCells','ormCol','ormCols')->isSearchTermValid('okz'));
         assert(!$tables->isSearchTermValid('k'));
 
+        // truncate
+
         // keyParent
         assert($tables->keyParent()['ormRowsIndex'] === 'ormRows');
-
-        // truncate
 
         // hierarchy
         $ormTable = $tables['ormTable'];

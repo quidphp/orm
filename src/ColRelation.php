@@ -279,12 +279,7 @@ class ColRelation extends Relation
     // envoie une exception s'il n'est pas possible de retourner la table de la relation
     final public function checkRelationTable():Table
     {
-        $return = $this->relationTable();
-
-        if(!$return instanceof Table)
-        static::throw($this->col());
-
-        return $return;
+        return static::checkClass($this->relationTable(),Table::class,$this->col());
     }
 
 

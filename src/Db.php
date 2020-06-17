@@ -555,12 +555,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne l'objet lang ou envoie une exception si non existant
     final public function lang():Main\Lang
     {
-        $return = $this->lang;
-
-        if(!$return instanceof Main\Lang)
-        static::throw();
-
-        return $return;
+        return static::checkClass($this->lang,Main\Lang::class);
     }
 
 
@@ -602,12 +597,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne l'objet roles ou envoie une exception si non existant
     final public function roles():Main\Roles
     {
-        $return = $this->roles;
-
-        if(!$return instanceof Main\Roles)
-        static::throw();
-
-        return $return;
+        return static::checkClass($this->roles,Main\Roles::class);
     }
 
 
@@ -641,12 +631,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne l'objet com ou envoie une exception si non existant
     final public function com():Main\Com
     {
-        $return = $this->com;
-
-        if(!$return instanceof Main\Com)
-        static::throw();
-
-        return $return;
+        return static::checkClass($this->com,Main\Com::class);
     }
 
 
@@ -670,12 +655,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne un objet table ou envoie une exception si inexistant
     final public function table($table):Table
     {
-        $return = $this->tables()->get($table);
-
-        if(!$return instanceof Table)
-        static::throw($table,'doesNotExist');
-
-        return $return;
+        return static::checkClass($this->tables()->get($table),Table::class,$table,'doesNotExist');
     }
 
 

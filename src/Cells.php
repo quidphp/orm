@@ -46,7 +46,7 @@ class Cells extends Main\MapObj
     // retourne les noms de cellules séparés par des virgules
     final public function __toString():string
     {
-        return implode(',',$this->names());
+        return implode(',',$this->keys());
     }
 
 
@@ -104,15 +104,8 @@ class Cells extends Main\MapObj
     // les lignes sont toujours retournés dans un nouvel objet cells
     final protected function onPrepareReturns(array $array):self
     {
-        $return = new static();
-
-        foreach ($array as $value)
-        {
-            if(!empty($value))
-            $return->add($value);
-        }
-
-        return $return;
+        $array = Base\Arr::clean($array);
+        return new static(...array_values($array));
     }
 
 
@@ -120,7 +113,7 @@ class Cells extends Main\MapObj
     // retourne la valeur cast
     final public function _cast():array
     {
-        return $this->names();
+        return $this->keys();
     }
 
 
@@ -332,15 +325,7 @@ class Cells extends Main\MapObj
     // ne retourne pas la clé primaire
     final public function isStillRequired():self
     {
-        $return = new static();
-
-        foreach ($this->isRequired() as $key => $cell)
-        {
-            if(!$cell->isPrimary() && $cell->isStillRequired())
-            $return->add($cell);
-        }
-
-        return $return;
+        return $this->filter(fn($cell) => !$cell->isPrimary() && $cell->isStillRequired());
     }
 
 
@@ -350,16 +335,6 @@ class Cells extends Main\MapObj
     final public function isStillRequiredEmpty():bool
     {
         return $this->isStillRequired()->isEmpty();
-    }
-
-
-    // rules
-    // retourne toutes les règles de validations et required des cellules
-    // n'a pas de lien avec les valeurs courantes des cellules
-    // possible de retourner les textes si lang est true
-    final public function rules(bool $lang=false,bool $preValidate=false):array
-    {
-        return $this->pair('rules',$lang,$preValidate);
     }
 
 
@@ -511,18 +486,7 @@ class Cells extends Main\MapObj
     // si une cellule a un committed callback, on considère qu'elle a changé
     final public function hasChanged():bool
     {
-        $return = false;
-
-        foreach ($this->arr() as $cell)
-        {
-            if($cell->hasChanged())
-            {
-                $return = true;
-                break;
-            }
-        }
-
-        return $return;
+        return !empty($this->some(fn($cell) => $cell->hasChanged()));
     }
 
 
@@ -617,21 +581,20 @@ class Cells extends Main\MapObj
     // les cellules required sont include par défaut
     final public function included(?array $option=null):self
     {
-        $return = new static();
         $option = Base\Arr::plus($option,['preValidate'=>false]);
+        return $this->filter(function($cell) use($option) {
+            $return = false;
 
-        foreach ($this->arr() as $cell)
-        {
             if($cell->isIncluded($option['required'] ?? true))
             {
+                $return = true;
+
                 if(!$cell->hasChanged() && $cell->col()->hasAttrInclude())
                 $cell->setSelf($option);
-
-                $return->add($cell);
             }
-        }
 
-        return $return;
+            return $return;
+        });
     }
 
 
@@ -641,22 +604,6 @@ class Cells extends Main\MapObj
     final public function keyValue(bool $get=false):array
     {
         return $this->pair(($get === true)? 'get':'value');
-    }
-
-
-    // label
-    // retourne un tableau avec toutes les label des cellules
-    final public function label($pattern=null,?string $lang=null,?array $option=null):array
-    {
-        return $this->pair('label',$pattern,$lang,$option);
-    }
-
-
-    // description
-    // retourne un tableau avec toutes les descriptions des cellules
-    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
-    {
-        return $this->pair('description',$pattern,$replace,$lang,$option);
     }
 
 
@@ -671,44 +618,6 @@ class Cells extends Main\MapObj
     }
 
 
-    // form
-    // génère les éléments formulaires pour toutes les cellules
-    final public function form(bool $str=false)
-    {
-        $return = $this->pair('form');
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // formPlaceholder
-    // génère les éléments formulaires avec placeholder pour toutes les cellules
-    // le placeholder est le label de la cellule
-    final public function formPlaceholder(bool $str=false)
-    {
-        $return = $this->pair('formPlaceholder');
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // formWrap
-    // génère les éléments formWrap pour toutes les cellules
-    final public function formWrap(?string $wrap=null,$pattern=null,bool $str=false)
-    {
-        $return = $this->pair('formWrap',$wrap,$pattern);
-        return ($str === true)? implode($return):$return;
-    }
-
-
-    // formPlaceholderWrap
-    // génère les éléments formPlaceholderWrap pour toutes les cellules
-    // le placeholder est le label de la cellule, donc le label apparaît deux fois
-    final public function formPlaceholderWrap(?string $wrap=null,$pattern=null,bool $str=false)
-    {
-        $return = $this->pair('formPlaceholderWrap',$wrap,$pattern);
-        return ($str === true)? implode($return):$return;
-    }
-
-
     // segment
     // permet de remplacer les segments d'une chaîne par le contenu des cellules
     // par défaut utilise value de cellule, si get est true utilise get
@@ -719,20 +628,6 @@ class Cells extends Main\MapObj
 
         if(!empty($segments))
         $return = Base\Segment::sets(null,$this->keyValue($get),$value);
-
-        return $return;
-    }
-
-
-    // htmlStr
-    // retourne un tableau avec chaque cellule passé dans la méthode html
-    // si str est true, retourne une string
-    final public function htmlStr(string $html,bool $str=false,?array $option=null)
-    {
-        $return = $this->pair('htmlStr',$html,$option);
-
-        if($str === true)
-        $return = implode($return);
 
         return $return;
     }

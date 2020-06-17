@@ -93,11 +93,6 @@ class Cells extends Base\Test
         // isStillRequiredEmpty
         assert($cells->isStillRequiredEmpty());
 
-        // rules
-        assert(count($cells->rules()) === 9);
-        assert($cells->rules(true)['id']['schemaValidate'][0] === 'Must be an integer');
-        assert($cells->rules(false,false) !== $cells->rules(false,true));
-
         // preValidatePrepare
         assert($cells->preValidatePrepare(['email'=>'ok']));
 
@@ -173,43 +168,12 @@ class Cells extends Base\Test
         assert(count($cells->keyValue()) === 9);
         assert($cells->keyValue()['id'] === 1);
 
-        // label
-        assert($cells->label()['dateAdd'] === 'Date added');
-        assert($cells->label(null,'fr')['dateAdd'] === "Date d'ajout");
-        assert($cells->label('%:')['dateAdd'] === 'Date added:');
-
-        // description
-
         // groupSetPriority
         assert($cells->groupSetPriority()[5] instanceof Orm\Cells);
-
-        // form
-        assert(count($cells->form()) === 9);
-        assert(is_string($cells->form(true)));
-        assert($cells->form()['active'] === "<input data-pattern='[0-9]' maxlength='1' name='active' type='text' value='2'/>");
-
-        // formPlaceholder
-        assert(strlen($cells->formPlaceholder()['id']) === 93);
-        assert(is_string($cells->formPlaceholder(true)));
-
-        // formWrap
-        assert(count($cells->formWrap(null)) === 9);
-        assert(count($cells->formWrap('br')) === 9);
-        assert(strlen(current($cells->formWrap('br','%:'))) === 136);
-        assert(is_string($cells->formWrap('br',null,true)));
-
-        // formPlaceholderWrap
-        assert(strlen($cells->formPlaceholderWrap('br')['active']) === 171);
-        assert(strlen($cells->formPlaceholderWrap('br')['id']) === 152);
-        assert(is_string($cells->formPlaceholderWrap('br',null,true)));
 
         // segment
         assert($cells->segment('[name_%lang%] [active] + [id]') === 'bla 2 + 1');
         assert($cells->segment('[name_%lang%] [active] + [id]',true) === 'bla 2 + 1');
-
-        // htmlStr
-        assert($cells->htmlStr("<div class='%name%'>%label%: %value%</div>")['id'] === "<div class='id'>Id: 1</div>");
-        assert(is_string($cells->htmlStr("<div class='%name%'>%label%: %value%</div>",true)));
 
         // writeFile
 

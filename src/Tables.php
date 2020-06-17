@@ -47,7 +47,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // retourne les noms de tables séparés par des virgules
     final public function __toString():string
     {
-        return implode(',',$this->names());
+        return implode(',',$this->keys());
     }
 
 
@@ -106,15 +106,8 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // prépare le retour pour gets
     final protected function onPrepareReturns(array $array):self
     {
-        $return = new static();
-
-        foreach ($array as $value)
-        {
-            if(!empty($value))
-            $return->add($value);
-        }
-
-        return $return;
+        $array = Base\Arr::clean($array);
+        return new static(...array_values($array));
     }
 
 
@@ -122,7 +115,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // retourne la valeur cast
     final public function _cast():array
     {
-        return $this->names();
+        return $this->keys();
     }
 
 
@@ -144,18 +137,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // retourne vrai si une des lignes des tables a changé
     final public function hasChanged():bool
     {
-        $return = false;
-
-        foreach ($this->arr() as $key => $value)
-        {
-            if($value->rows()->hasChanged())
-            {
-                $return = true;
-                break;
-            }
-        }
-
-        return $return;
+        return !empty($this->some(fn($value) => $value->rows()->hasChanged()));
     }
 
 
@@ -216,22 +198,6 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     }
 
 
-    // label
-    // retourne les noms de toutes les tables
-    final public function label($pattern=null,?string $lang=null,?array $option=null):array
-    {
-        return $this->pair('label',$pattern,$lang,$option);
-    }
-
-
-    // description
-    // retourne les descriptions de toutes les tables
-    final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):array
-    {
-        return $this->pair('description',$pattern,$replace,$lang,$option);
-    }
-
-
     // labels
     // retourne les labels de toutes les tables et de toutes les colonnes
     // pas de support pour pattern
@@ -242,7 +208,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
         foreach ($this->arr() as $key => $value)
         {
             $return[$key]['table'] = $value->label(null,$lang,$option);
-            $return[$key]['cols'] = $value->cols()->label(null,$lang,$option);
+            $return[$key]['cols'] = $value->cols()->pair('label',null,$lang,$option);
         }
 
         return $return;
@@ -259,7 +225,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
         foreach ($this->arr() as $key => $value)
         {
             $return[$key]['table'] = $value->description(null,$replace,$lang,$option);
-            $return[$key]['cols'] = $value->cols()->description(null,$replace,$lang,$option);
+            $return[$key]['cols'] = $value->cols()->pair('description',null,$replace,$lang,$option);
         }
 
         return $return;
@@ -375,17 +341,15 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // valeur peut être scalar, un tableau à un ou plusieurs niveaux
     final public function isSearchTermValid($value):bool
     {
-        $return = false;
+        return $this->every(fn($table) => $table->isSearchTermValid($value));
+    }
 
-        foreach ($this->arr() as $table)
-        {
-            $return = $table->isSearchTermValid($value);
 
-            if($return === false)
-            break;
-        }
-
-        return $return;
+    // truncate
+    // permet de lancer la requête sql truncate sur toutes les tables contenus dans l'objet
+    final public function truncate(?array $option=null):array
+    {
+        return $this->pair('truncate',$option);
     }
 
 
@@ -395,14 +359,6 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     final public function keyParent():array
     {
         return $this->pair('parent');
-    }
-
-
-    // truncate
-    // permet de lancer la requête sql truncate sur toutes les tables contenus dans l'objet
-    final public function truncate(?array $option=null):array
-    {
-        return $this->pair('truncate',$option);
     }
 
 
@@ -442,15 +398,7 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // ne retourne pas les tables non existantes
     final public function tops():self
     {
-        $return = new static();
-
-        foreach ($this->arr() as $k => $v)
-        {
-            if($this->parent($v) === null)
-            $return->add($v);
-        }
-
-        return $return;
+        return $this->filter(fn($v) => $this->parent($v) === null);
     }
 
 
