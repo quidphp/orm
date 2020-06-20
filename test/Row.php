@@ -258,6 +258,9 @@ class Row extends Base\Test
         assert($row->after()->id() === 2);
         assert($row->after()->before() === $row);
 
+        // related
+        assert($row->related(['active'])->isEmpty());
+
         // get
         assert($row->get()['dateAdd'] === 'March 22, 2018 19:46:49');
         assert(count($row->get()) === 10);

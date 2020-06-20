@@ -44,6 +44,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'like'=>'like', // méthode à utiliser pour like
         'orderCode'=>2, // code d'ordre pour les relations
         'limit'=>20, // limit à utiliser par défaut
+        'reservePrimary'=>false, // spécifie s'il faut réserver un id lors de l'insertion (et passer ce id au onSet)
         'logSql'=>[ // défini si le type de requête à la table doit être loggé
             'select'=>false,
             'show'=>false,
@@ -1669,6 +1670,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // tente l'insertion d'une nouvelle ligne dans la table
     final public function insert(array $set=[],?array $option=null)
     {
+        $option = Base\Arr::plus(['reservePrimary'=>$this->getAttr('reservePrimary')],$option);
         return Operation\Insert::newOverload($this,$option)->trigger($set);
     }
 

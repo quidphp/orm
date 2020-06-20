@@ -21,7 +21,7 @@ class Insert extends Orm\TableOperation
     // config
     protected static array $config = [
         'row'=>true,
-        'reservePrimary'=>true,
+        'reservePrimary'=>false,
         'default'=>false,
         'log'=>true,
         'preValidate'=>false,

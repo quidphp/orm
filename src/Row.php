@@ -877,6 +877,28 @@ class Row extends Main\ArrObj
     }
 
 
+    // related
+    // retourne un ensemble de lignes en lien avec la ligne courante
+    final public function related(array $cells,$where=true,$order=true,$limit=null):Rows
+    {
+        $table = $this->table();
+        $primary = $table->primary();
+        $cells = $this->cells(...array_values($cells));
+
+        if(!is_array($where))
+        $where = (array) $where;
+
+        $where[] = [$primary,'!=',$this];
+
+        foreach ($cells as $cell)
+        {
+            $where[] = [$cell->name(),'=',$cell->value()];
+        }
+
+        return $table->selects($where,$order,$limit);
+    }
+
+
     // get
     // retourne un tableau avec les valeurs get des cellules
     final public function get(...$keys):array
