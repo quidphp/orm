@@ -312,7 +312,7 @@ class TableRelation extends Relation
 
         $option = Base\Arr::plus($attr,$option);
         $option = $this->prepareOption($option);
-        $where = $option['where'] ?? null;
+        $where = $option['where'] ?? [];
         $order = $this->getOrder($option['order'],$option);
         $limit = $option['limit'] ?? null;
         $not = (isset($option['not']) && is_array($option['not']))? $option['not']:null;
@@ -618,30 +618,34 @@ class TableRelation extends Relation
     // envoie une exception si aucun champ trouvé
     final public function getOrderFieldOutput(?array $attr=null):?string
     {
-        $return = null;
+        $return = $this->table()->colName()->name();
         $attr = ($attr === null)? $this->attr():$attr;
-        $output = $attr['output'] ?? null;
-        $field = null;
 
-        if(!empty($output))
+        if(empty($attr['orderUseName']))
         {
-            if(is_array($output))
-            $field = current($output);
+            $output = $attr['output'] ?? null;
+            $field = null;
 
-            elseif(is_string($output))
-            $field = $output;
-
-            if(is_string($field) && !empty($field))
+            if(!empty($output))
             {
-                if(strpos($field,'[') !== false && strpos($field,'_[') === false)
-                {
-                    $segment = Base\Segment::get(null,$field);
-                    if(is_array($segment) && !empty($segment))
-                    $return = current($segment);
-                }
+                if(is_array($output))
+                $field = current($output);
 
-                else
-                $return = $field;
+                elseif(is_string($output))
+                $field = $output;
+
+                if(is_string($field) && !empty($field))
+                {
+                    if(strpos($field,'[') !== false && strpos($field,'_[') === false)
+                    {
+                        $segment = Base\Segment::get(null,$field);
+                        if(is_array($segment) && !empty($segment))
+                        $return = current($segment);
+                    }
+
+                    else
+                    $return = $field;
+                }
             }
         }
 
