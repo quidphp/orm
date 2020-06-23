@@ -265,12 +265,6 @@ class Cell extends Base\Test
         // htmlUnicode
         assert($cell->htmlUnicode() === '&lt;b&gt;okkkkk&lt;/b&gt;');
 
-        // htmlReplace
-        assert(count($cell->htmlReplace()) === 6);
-
-        // htmlStr
-        assert($cell->htmlStr("<div class='%name%'>%label%: %value%</div>") === "<div class='name'>Name: <b>okkkkk</b></div>");
-
         // value
         $cell->set(2);
         assert($cell->value() === '2');
@@ -305,7 +299,6 @@ class Cell extends Base\Test
         assert($cell->pair(1) === 'o');
         assert($cell->pair(true) === 'ok');
         assert($cell->pair(false) === 'ok');
-        assert($cell->pair('htmlStr','%label%') === 'Name');
         assert($userAdd->pair(true) instanceof Orm\Row);
 
         // set

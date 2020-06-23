@@ -101,6 +101,14 @@ class Row extends Base\Test
         // isDeleteable
         assert($row->isDeleteable());
 
+        // isOldest
+        assert($row->isOldest());
+        assert(!$row2->isOldest());
+
+        // isNewest
+        assert(!$row->isNewest());
+        assert($row2->isNewest());
+
         // hasRelationChilds
         assert(!$row->hasRelationChilds());
 

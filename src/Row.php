@@ -225,6 +225,30 @@ class Row extends Main\ArrObj
     }
 
 
+    // isOldest
+    // retourne vrai si la ligne est la plus ancienne (par rapport au id)
+    final public function isOldest($where=null):bool
+    {
+        $table = $this->table();
+        $primary = $this->primary();
+        $tablePrimary = $table->primary();
+
+        return $table->selectPrimary($where,[$tablePrimary=>'asc']) === $primary;
+    }
+
+
+    // isNewest
+    // retourne vrai si la ligne est la plus récente (par rapport au id)
+    final public function isNewest($where=null):bool
+    {
+        $table = $this->table();
+        $primary = $this->primary();
+        $tablePrimary = $table->primary();
+
+        return $table->selectPrimary($where,[$tablePrimary=>'desc']) === $primary;
+    }
+
+
     // hasRelationChilds
     // retourne si la row a des enfants de relation
     // excluseSelf permet à une row qui s'est par exemple modifié elle-même de toujours s'effacer
@@ -1089,9 +1113,9 @@ class Row extends Main\ArrObj
     // efface une ligne de la base de donnée et délie l'objet de table
     // la ligne est ensuite empty et mis dans un état inutilisable
     // toutes les cellules sont passés dans delete, l'envoie d'une exception arrêtera le delete
-    // par défaut l'événement est log et com est false
     final public function delete(?array $option=null):?int
     {
+        $option = Base\Arr::plus(['deleteAutoIncrement'=>$this->getAttr('deleteAutoIncrement')],$option);
         return Operation\Delete::newOverload($this,$option)->trigger();
     }
 

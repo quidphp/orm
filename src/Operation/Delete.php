@@ -23,7 +23,8 @@ class Delete extends Orm\RowOperation
         'log'=>true,
         'com'=>false,
         'strict'=>true,
-        'timestamp'=>null
+        'timestamp'=>null,
+        'deleteAutoIncrement'=>false
     ];
 
 
@@ -41,6 +42,7 @@ class Delete extends Orm\RowOperation
         $result = null;
         $attr = $this->attr();
         $timestamp = $this->getAttr('timestamp');
+        $isNewest = ($this->getAttr('deleteAutoIncrement') === true)? $row->isNewest():false;
 
         try
         {
@@ -75,7 +77,12 @@ class Delete extends Orm\RowOperation
             if(is_int($result))
             {
                 if($result === 1)
-                $row->callThis(fn() => $this->onDeleted($attr));
+                {
+                    $row->callThis(fn() => $this->onDeleted($attr));
+
+                    if($isNewest === true && $table->hasPermission('alter'))
+                    $table->alterAutoIncrement();
+                }
 
                 $row->unlink();
 

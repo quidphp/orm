@@ -645,23 +645,6 @@ class Cell extends Main\Root
     }
 
 
-    // htmlReplace
-    // retourne le tableau de remplacement, utilisé par la méthode html
-    final public function htmlReplace(?array $option=null):array
-    {
-        return $this->col()->htmlReplace($this,$option);
-    }
-
-
-    // htmlStr
-    // retourne une string html avec les valeurs entre paranthèses remplacés
-    // remplace name, label, value, get et output
-    final public function htmlStr(string $return,?array $option=null):string
-    {
-        return $this->col()->htmlStr($this,$return,$option);
-    }
-
-
     // value
     // retourne la valeur de la cellule
     // peut être la valeur de changement ou la valeur courante

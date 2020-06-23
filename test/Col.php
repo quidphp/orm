@@ -587,12 +587,6 @@ class Col extends Base\Test
         // htmlUnicode
         assert($email->htmlUnicode() === 'default@def.james');
 
-        // htmlReplace
-        assert(count($email->htmlReplace(true)) === 6);
-
-        // htmlStr
-        assert($email->htmlStr(true,"<div class='%name%'>%label%: %value%</div>") === "<div class='email'>Email: default@def.james</div>");
-
         // relation
         assert($lang->relation() instanceof Orm\ColRelation);
         assert($date->relation() instanceof Orm\ColRelation);

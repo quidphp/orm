@@ -2073,44 +2073,6 @@ class Col extends Main\Root
     }
 
 
-    // htmlReplace
-    // retourne le tableau de remplacement, utilisé par la méthode html
-    final public function htmlReplace($value=true,?array $option=null):array
-    {
-        $return = [];
-        $option = (array) $option;
-        $cell = ($value instanceof Cell)? $value:null;
-        $value = $this->value($value);
-
-        $return['name'] = $this->name();
-        $return['label'] = $this->label();
-        $return['tableLabel'] = $this->table()->label();
-        $return['value'] = $value;
-        $return['get'] = $this->attrOrMethodCall('onGet',$value,$cell,$option);
-        $return['output'] = $this->htmlOutput($value);
-
-        if($this->isRelation())
-        $return['get'] = $this->relation()->get($value,false,true,$option);
-
-        return $return;
-    }
-
-
-    // htmlStr
-    // retourne une string html avec les valeurs entre paranthèses remplacés
-    // remplace name, label, value, get et output
-    // la valeur doit être fournie en argument
-    final public function htmlStr($value=true,string $return,?array $option=null):string
-    {
-        $replace = $this->htmlReplace($value,$option);
-        $replace = Base\Obj::cast($replace);
-        $replace = Base\Arr::keysWrap('%','%',$replace);
-        $return = Base\Str::replace($replace,$return);
-
-        return $return;
-    }
-
-
     // relation
     // retourne l'instance de colRelation
     // une exception sera envoyé si la colonne n'est pas une relation

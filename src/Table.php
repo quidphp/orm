@@ -45,6 +45,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'orderCode'=>2, // code d'ordre pour les relations
         'limit'=>20, // limit à utiliser par défaut
         'reservePrimary'=>false, // spécifie s'il faut réserver un id lors de l'insertion (et passer ce id au onSet)
+        'deleteAutoIncrement'=>false, // sur suppression, tente de reset le auto increment si la ligne était la dernière
         'logSql'=>[ // défini si le type de requête à la table doit être loggé
             'select'=>false,
             'show'=>false,
