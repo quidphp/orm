@@ -33,8 +33,6 @@ trait _tableAccess
 
         if($checkLink === true && $this->isLinked())
         static::throw('alreadyInstantiated');
-
-        return;
     }
 
 

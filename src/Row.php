@@ -38,8 +38,6 @@ class Row extends Main\ArrObj
         $this->setPrimary($primary);
         $this->setLink($table,true);
         $this->cells = $this->cellsNew()->readOnly(true);
-
-        return;
     }
 
 
@@ -57,8 +55,6 @@ class Row extends Main\ArrObj
     final protected function onInit():void
     {
         $this->onRefreshed();
-
-        return;
     }
 
 
@@ -143,8 +139,6 @@ class Row extends Main\ArrObj
     final public function offsetSet($key,$value):void
     {
         $this->cell($key)->set($value);
-
-        return;
     }
 
 
@@ -154,8 +148,6 @@ class Row extends Main\ArrObj
     final public function offsetUnset($key):void
     {
         $this->cell($key)->unset();
-
-        return;
     }
 
 
@@ -316,8 +308,6 @@ class Row extends Main\ArrObj
 
         else
         static::throw();
-
-        return;
     }
 
 
@@ -432,7 +422,7 @@ class Row extends Main\ArrObj
         if($this->cells->isEmpty())
         {
             $cols = $this->table()->cols();
-            $names = $cols->names();
+            $names = $cols->keys();
 
             if(Base\Arr::keysExists($names,$data))
             {
@@ -525,8 +515,6 @@ class Row extends Main\ArrObj
     {
         $cell = new $class($value,$col,$this);
         $this->cells->add($cell);
-
-        return;
     }
 
 

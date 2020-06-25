@@ -86,8 +86,6 @@ trait _colCell
     final public function setCommittedCallback(string $key,\Closure $closure):void
     {
         $this->callback[$key] = $closure;
-
-        return;
     }
 
 
@@ -96,8 +94,6 @@ trait _colCell
     final public function clearCommittedCallback():void
     {
         $this->callback = [];
-
-        return;
     }
 
 
@@ -124,8 +120,6 @@ trait _colCell
         $message['message'] = $exception->getMessage();
         $message['messageArgs']  = $exception->messageArgs();
         $this->exception = $message;
-
-        return;
     }
 
 
@@ -134,8 +128,6 @@ trait _colCell
     final public function clearException():void
     {
         $this->exception = null;
-
-        return;
     }
 }
 ?>

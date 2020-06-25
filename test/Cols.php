@@ -46,9 +46,6 @@ class Cols extends Base\Test
 
         // offsetSet
 
-        // names
-        assert(count($cols->names()) === 9);
-
         // namesWithoutPrimary
         assert(count($cols->namesWithoutPrimary()) === 8);
         assert($cols->namesWithoutPrimary()[0] === 'name_en');

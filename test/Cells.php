@@ -53,9 +53,6 @@ class Cells extends Base\Test
         assert($cells->isWhere([['id',true],['name_en',true],['dateAdd','=',10]]));
         assert(!$cells->isWhere([['id',true],['name_en',true],['dateAdd','>',10]]));
 
-        // names
-        assert(count($cells->names()) === 9);
-
         // namesWithoutPrimary
         assert(count($cells->namesWithoutPrimary()) === 8);
         assert($cells->namesWithoutPrimary()[0] === 'name_en');

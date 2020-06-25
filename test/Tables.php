@@ -54,9 +54,6 @@ class Tables extends Base\Test
         // hasChanged
         assert(!($tables->hasChanged()));
 
-        // names
-        assert(is_array($tables->names()));
-
         // db
         assert($tables->db() instanceof Orm\Db);
 

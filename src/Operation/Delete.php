@@ -145,8 +145,6 @@ class Delete extends Orm\RowOperation
 
         elseif($this->getAttr('strict') === true && !in_array($result,[0,1],true))
         static::throw('deleteFailed',$result,'strictMode');
-
-        return;
     }
 
 
@@ -174,8 +172,6 @@ class Delete extends Orm\RowOperation
                 $com->$method('neutral',$label,$replace,$attr,...$value);
             }
         }
-
-        return;
     }
 }
 ?>

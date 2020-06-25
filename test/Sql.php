@@ -41,6 +41,9 @@ class Sql extends Base\Test
 
         // setOutput
 
+        // primary
+        assert($sql->primary() === 'id');
+
         // getTableObject
         $sql->empty();
         assert($sql->getTableObject() === null);
@@ -58,6 +61,8 @@ class Sql extends Base\Test
 
         // rows
         assert($sql->rows($table)->make()['sql'] === 'SELECT * FROM `ormSql`');
+
+        // fromArray
 
         // triggerTableCount
         assert($sql->triggerTableCount() === 5);

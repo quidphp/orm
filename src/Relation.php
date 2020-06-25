@@ -29,8 +29,6 @@ abstract class Relation extends Main\ArrMap
     final public function set():void
     {
         static::throw('notAllowed');
-
-        return;
     }
 
 
@@ -39,8 +37,6 @@ abstract class Relation extends Main\ArrMap
     final public function unset():void
     {
         static::throw('notAllowed');
-
-        return;
     }
 }
 ?>

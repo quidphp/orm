@@ -28,6 +28,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'parent'=>null, // nom du parent de la classe table, possible aussi de mettre une classe
         'priority'=>null, // code de priorité de la table
         'search'=>true, // la table est cherchable
+        'searchSeparator'=>' ', // séparateur par défaut pour la recherche
+        'searchMethod'=>'like', // méthode à utiliser pour like
         'searchMinLength'=>3, // longueur minimale de la recherche, si null renvoie vers les colonnes
         'label'=>null, // chemin label qui remplace le défaut dans lang
         'description'=>null, // chemin description qui remplace le défaut dans lang
@@ -41,7 +43,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'relation'=>['what'=>true], // champs pour représenter le what, order et output de la relation, si what est true utilise la colonne via name
         'where'=>null, // where par défaut pour la table
         'filter'=>null, // filter par défaut pour la table
-        'like'=>'like', // méthode à utiliser pour like
         'orderCode'=>2, // code d'ordre pour les relations
         'limit'=>20, // limit à utiliser par défaut
         'reservePrimary'=>false, // spécifie s'il faut réserver un id lors de l'insertion (et passer ce id au onSet)
@@ -98,8 +99,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $this->makeAttr($attr);
         $this->cols = $this->colsNew()->readOnly(true);
         $this->rows = $this->rowsNew()->readOnly(true);
-
-        return;
     }
 
 
@@ -150,8 +149,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                 static::throw($this,...$missing);
             }
         }
-
-        return;
     }
 
 
@@ -221,8 +218,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final public function offsetSet($key,$value):void
     {
         static::throw('arrayAccess','setNotAllowed');
-
-        return;
     }
 
 
@@ -235,8 +230,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         else
         static::throw('arrayAcces','doesNotExist');
-
-        return;
     }
 
 
@@ -328,8 +321,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final protected function setClasse(TableClasse $classe):void
     {
         $this->classe = $classe;
-
-        return;
     }
 
 
@@ -350,8 +341,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if($this->db()->hasTable($this->name()))
         static::throw('alreadyInstantiated',$this->name());
-
-        return;
     }
 
 
@@ -364,8 +353,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         else
         static::throw($name,'needsLowerCaseFirstChar','noComplexChars');
-
-        return;
     }
 
 
@@ -407,8 +394,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $attr = $this->onAttr($attr);
         $this->checkAttr($attr);
         $this->attr = $attr;
-
-        return;
     }
 
 
@@ -444,8 +429,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if(empty($attr['priority']) || !is_int($attr['priority']))
         static::throw('invalidPriority');
-
-        return;
     }
 
 
@@ -593,14 +576,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return[] = [$primary,'>=',1];
 
         return $return;
-    }
-
-
-    // like
-    // retourne le pattern like à utiliser pour la table
-    final public function like():?string
-    {
-        return $this->getAttr('like');
     }
 
 
@@ -776,8 +751,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final protected function setColsReady(bool $value=true):void
     {
         $this->colsReady = $value;
-
-        return;
     }
 
 
@@ -1276,8 +1249,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
                 }
             }
         }
-
-        return;
     }
 
 
@@ -1834,56 +1805,12 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     }
 
 
-    // search
-    // permet de chercher pour une valeur dans toutes les colonnes cherchables de la table ou dans les colonnes fournis en troisième argument
-    // possible de changer le mode en deuxième argument, par défaut c'est b,i|like
-    // retourne un tableau avec les ids et non pas un objet rows
-    // envoie une exception si aucune colonne cherchable
-    final public function search($search,?array $where=null,?array $whereAfter=null,?array $option=null)
+    // sql
+    // retourne un objet sql pour la table
+    // possible de le paramétrer via un array, output par défaut est rows
+    final public function sql(?array $array=null):Sql
     {
-        $return = [];
-        $option = Base\Arr::plus(['what'=>null,'method'=>null,'cols'=>null,'output'=>'columns','searchSeparator'=>null,'searchTermValid'=>true],$option);
-        $what = $option['what'] ?: $this->primary();
-        $method = (is_string($option['method']))? $option['method']:$this->like();
-
-        if(!is_array($what))
-        $what = [$what];
-
-        if(is_scalar($search))
-        $search = Base\Str::prepareSearch($search,$option['searchSeparator']);
-
-        if(is_array($search))
-        {
-            $cols = (!empty($option['cols']))? $option['cols']:$this->cols()->searchable();
-
-            if(is_array($cols))
-            $cols = $this->cols(...array_values($cols))->searchable();
-
-            if($cols instanceof Cols && $cols->isNotEmpty())
-            {
-                if($option['searchTermValid'] === true && !$cols->isSearchTermValid($search))
-                static::throw('invalidSearchTerm',$search,$this);
-
-                $db = $this->db();
-                $sql = $db->sql('select',$option['output']);
-                $sql->whats(...array_values($what));
-                $sql->table($this);
-                $sql->whereOrMany($method,$cols,$search);
-
-                if(is_array($where) && !empty($where))
-                $sql->wheresOne($where);
-
-                if(!empty($whereAfter))
-                $sql->whereAfter(...array_values($whereAfter));
-
-                $return = $sql->trigger();
-            }
-
-            else
-            static::throw('noColsToSearchIn',$this);
-        }
-
-        return $return;
+        return $this->db()->sql()->rows($this)->fromArray($array);
     }
 
 
@@ -2051,7 +1978,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         if($this->cols->isNotEmpty())
         {
             $row = $this->rows()->primaries();
-            $col = $this->cols()->names();
+            $col = $this->cols()->keys();
 
             $return['col'] = $col;
 
@@ -2060,83 +1987,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
             $return['total'] = $this->total($count,$cache);
             $return['status'] = $this->status();
-        }
-
-        return $return;
-    }
-
-
-    // sql
-    // retourne un objet sql pour la table
-    // output est rows
-    // support pour what, search, where, filter, in, notIn, order, direction, page et limit
-    // parfait pour une navigation pour page general
-    // note: order id asc est ajouter par défaut, ceci avant de forcer un deuxième sort si la variable order est identique (ceci peut crée un problème dans le calcul de l'index pour navigation specifique)
-    final public function sql(?array $array=null,?array $option=null):Sql
-    {
-        $return = $this->db()->sql()->rows($this);
-        $primary = $this->primary();
-
-        $array = (array) Base\Obj::cast($array);
-        $what = $array['what'] ?? null;
-        $search = $array['search'] ?? null;
-        $searchSeparator = $array['searchSeparator'] ?? null;
-        $where = $array['where'] ?? null;
-        $filter = $array['filter'] ?? null;
-        $in = $array['in'] ?? null;
-        $notIn = $array['notIn'] ?? null;
-        $order = $array['order'] ?? null;
-        $direction = $array['direction'] ?? null;
-        $page = $array['page'] ?? null;
-        $limit = $array['limit'] ?? null;
-
-        if(!empty($what))
-        {
-            if(!is_array($what))
-            $what = [$what];
-
-            $return->whats(...array_values($what));
-        }
-
-        if(is_string($search) && strlen($search))
-        {
-            $searchable = $this->cols()->searchable();
-
-            if($searchable->isSearchTermValid($search))
-            {
-                $like = $this->like();
-                $search = Base\Str::prepareSearch($search,$searchSeparator);
-
-                if(is_string($like) && $searchable->isNotEmpty())
-                $return->whereOrMany($like,$searchable,$search);
-            }
-        }
-
-        if(is_array($where) && !empty($where))
-        $return->wheresOne($where);
-
-        if(is_array($filter) && !empty($filter))
-        $return->filter($filter);
-
-        if(is_array($in) && !empty($in))
-        $return->where($primary,'in',$in);
-
-        if(is_array($notIn) && !empty($notIn))
-        $return->where($primary,'notIn',$notIn);
-
-        if(!empty($order) && !empty($direction))
-        $return->order($order,$direction);
-
-        if($order !== $primary)
-        $return->order($primary,'asc');
-
-        if(is_int($limit) && $limit > 0)
-        {
-            if(is_int($page) && $page > 0)
-            $return->page($page,$limit);
-
-            else
-            $return->limit($limit);
         }
 
         return $return;

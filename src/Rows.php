@@ -37,8 +37,6 @@ class Rows extends Main\MapObj
     final public function __construct(...$values)
     {
         $this->add(...$values);
-
-        return;
     }
 
 
@@ -112,8 +110,6 @@ class Rows extends Main\MapObj
 
         else
         static::throw('arrayAccess','onlyAllowedWithNullKey');
-
-        return;
     }
 
 
@@ -169,14 +165,6 @@ class Rows extends Main\MapObj
     // primaries
     // retourne les clés primaires  contenus dans l'objet
     public function primaries():array
-    {
-        return $this->keys();
-    }
-
-
-    // ids
-    // retourne les ids contenus dans l'objet
-    public function ids():array
     {
         return $this->keys();
     }

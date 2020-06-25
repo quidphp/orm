@@ -47,8 +47,6 @@ trait _dbAccess
 
         else
         $this->db = $db;
-
-        return;
     }
 
 

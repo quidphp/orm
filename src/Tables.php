@@ -38,8 +38,6 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     {
         if(!empty($values))
         $this->add(...$values);
-
-        return;
     }
 
 
@@ -128,8 +126,6 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
 
         else
         static::throw('arrayAccess','onlyAllowedWithNullKey');
-
-        return;
     }
 
 
@@ -138,14 +134,6 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     final public function hasChanged():bool
     {
         return !empty($this->some(fn($value) => $value->rows()->hasChanged()));
-    }
-
-
-    // names
-    // retourne les noms des tables contenus dans l'objet
-    final public function names():array
-    {
-        return $this->keys();
     }
 
 
@@ -245,13 +233,17 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // possible de changer la méthode en deuxième argument
     // retourne un tableau avec les ids et non pas un objet rows
     // ne retourne pas une table si aucun résultat trouvé
-    final public function search($search,?string $method=null,...$values):array
+    final public function search($search,?array $option=null):array
     {
         $return = [];
 
-        foreach ($this->searchable() as $key => $value)
+        foreach ($this->searchable() as $key => $table)
         {
-            $result = $value->search($search,$method,...$values);
+            $primary = $table->primary();
+            $sqlArray = Base\Arr::plus($option,['search'=>$search,'what'=>$primary]);
+
+            $sql = $table->sql($sqlArray);
+            $result = $sql->trigger('columns');
 
             if(!empty($result))
             $return[$key] = $result;

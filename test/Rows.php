@@ -98,9 +98,6 @@ class Rows extends Base\Test
         // primaries
         assert($rows->primaries() === [1,2,3]);
 
-        // ids
-        assert($rows->ids() === [1,2,3]);
-
         // db
         assert($rows->db() instanceof Orm\Db);
 

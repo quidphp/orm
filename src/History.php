@@ -64,8 +64,6 @@ class History extends Main\Map
     final protected function setSyntax(Pdo $pdo):void
     {
         $this->syntax = $pdo->getSyntax();
-
-        return;
     }
 
 

@@ -29,8 +29,6 @@ abstract class RowOperation extends Operation
     {
         $this->makeAttr($attr);
         $this->setRow($row);
-
-        return;
     }
 
 
@@ -56,8 +54,6 @@ abstract class RowOperation extends Operation
     final protected function setRow(Row $row):void
     {
         $this->row = $row;
-
-        return;
     }
 
 

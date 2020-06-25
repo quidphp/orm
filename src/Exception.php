@@ -58,8 +58,6 @@ class Exception extends Main\Exception
     final public static function showQuery(bool $value):void
     {
         static::$config['query'] = $value;
-
-        return;
     }
 }
 

@@ -29,8 +29,6 @@ abstract class TableOperation extends Operation
     {
         $this->makeAttr($attr);
         $this->setTable($table);
-
-        return;
     }
 
 
@@ -39,8 +37,6 @@ abstract class TableOperation extends Operation
     final protected function setTable(Table $table):void
     {
         $this->table = $table;
-
-        return;
     }
 
 

@@ -37,8 +37,6 @@ class Cols extends Main\MapObj
     final public function __construct(...$values)
     {
         $this->add(...$values);
-
-        return;
     }
 
 
@@ -126,16 +124,6 @@ class Cols extends Main\MapObj
 
         else
         static::throw('arrayAccess','onlyAllowedWithNullKey');
-
-        return;
-    }
-
-
-    // names
-    // retourne les noms de colonnes contenus dans l'objet
-    final public function names():array
-    {
-        return $this->keys();
     }
 
 
@@ -285,14 +273,10 @@ class Cols extends Main\MapObj
     // retourne vrai si tous les champs sont visibles
     final public function isVisible(?Main\Session $session=null):bool
     {
-        $return = false;
         $args = [true,null,$session];
         $hidden = $this->pair('isVisible',...$args);
 
-        if(!in_array(false,$hidden,true))
-        $return = true;
-
-        return $return;
+        return !in_array(false,$hidden,true);
     }
 
 
@@ -300,14 +284,10 @@ class Cols extends Main\MapObj
     // retourne vrai si tous les champs sont cachés
     final public function isHidden(?Main\Session $session=null):bool
     {
-        $return = false;
         $args = [true,null,$session];
         $hidden = $this->pair('isVisible',...$args);
 
-        if(!in_array(true,$hidden,true))
-        $return = true;
-
-        return $return;
+        return !in_array(true,$hidden,true);
     }
 
 

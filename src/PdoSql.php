@@ -47,8 +47,6 @@ class PdoSql extends Main\Map
         $this->setDb($db);
         $this->setType($type);
         $this->setOutput($output);
-
-        return;
     }
 
 
@@ -119,7 +117,7 @@ class PdoSql extends Main\Map
 
     // primary
     // retourne la clé primaire par défaut de l'objet db
-    final public function primary():string
+    public function primary():string
     {
         return $this->db()->primary();
     }
@@ -200,8 +198,6 @@ class PdoSql extends Main\Map
     final protected function resetCount():void
     {
         $this->count = [];
-
-        return;
     }
 
 
@@ -295,8 +291,6 @@ class PdoSql extends Main\Map
 
         else
         static::throw('requiresString');
-
-        return;
     }
 
 
@@ -316,8 +310,6 @@ class PdoSql extends Main\Map
 
         elseif(in_array($clause,['createCol','createKey','addCol','addKey','alterCol'],true) && (!is_array($value) || !count($value)))
         static::throw($clause,'requires','arrayWithCount');
-
-        return;
     }
 
 
@@ -433,8 +425,6 @@ class PdoSql extends Main\Map
 
         else
         static::throw('noValidTargetReference',$clause);
-
-        return;
     }
 
 
@@ -1621,6 +1611,70 @@ class PdoSql extends Main\Map
         }
 
         return $return;
+    }
+
+
+    // fromArray
+    // méthode utilisé pour paramétrer un objet sql à partir d'un tableau
+    // support pour what,  where, filter, in, notIn, order, direction, page et limit
+    // parfait pour une navigation pour page general
+    // note: order id asc est ajouter par défaut, ceci avant de forcer un deuxième sort si la variable order est identique (ceci peut crée un problème dans le calcul de l'index pour navigation specifique)
+    public function fromArray(array $array):self
+    {
+        $array = Base\Obj::cast($array);
+        $what = $array['what'] ?? null;
+        $where = $array['where'] ?? null;
+        $filter = $array['filter'] ?? null;
+        $in = $array['in'] ?? null;
+        $notIn = $array['notIn'] ?? null;
+        $order = $array['order'] ?? null;
+        $direction = $array['direction'] ?? null;
+        $page = $array['page'] ?? null;
+        $limit = $array['limit'] ?? null;
+        $primary = $this->primary();
+
+        if(!empty($what))
+        {
+            if(!is_array($what))
+            $what = [$what];
+
+            $this->whats(...array_values($what));
+        }
+
+        if(is_array($where) && !empty($where))
+        $this->wheresOne($where);
+
+        if(is_array($filter) && !empty($filter))
+        $this->filter($filter);
+
+        if(is_array($in) && !empty($in))
+        $this->where($primary,'in',$in);
+
+        if(is_array($notIn) && !empty($notIn))
+        $this->where($primary,'notIn',$notIn);
+
+        if(!empty($order))
+        {
+            if(!empty($direction))
+            $this->order($order,$direction);
+
+            elseif(is_array($order))
+            $this->order($order);
+        }
+
+        if($order !== $primary)
+        $this->order($primary,'asc');
+
+        if(is_int($limit) && $limit > 0)
+        {
+            if(is_int($page) && $page > 0)
+            $this->page($page,$limit);
+
+            else
+            $this->limit($limit);
+        }
+
+        return $this;
     }
 
 

@@ -111,8 +111,6 @@ class Truncate extends Orm\TableOperation
 
         elseif($this->getAttr('strict') === true && !$result instanceof \PDOStatement)
         static::throw('truncateFailed');
-
-        return;
     }
 }
 ?>

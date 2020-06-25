@@ -37,8 +37,6 @@ class Cells extends Main\MapObj
     final public function __construct(...$values)
     {
         $this->add(...$values);
-
-        return;
     }
 
 
@@ -126,8 +124,6 @@ class Cells extends Main\MapObj
 
         else
         $this->set($key,$value);
-
-        return;
     }
 
 
@@ -163,14 +159,6 @@ class Cells extends Main\MapObj
         }
 
         return $return;
-    }
-
-
-    // names
-    // retourne les noms de cellules contenus dans l'objet
-    final public function names():array
-    {
-        return $this->keys();
     }
 
 
@@ -285,14 +273,8 @@ class Cells extends Main\MapObj
     // retourne vrai si tous les champs sont visibles
     final public function isVisible(?Main\Session $session=null):bool
     {
-        $return = false;
-        $args = [null,$session];
-        $hidden = $this->pair('isVisible',...$args);
-
-        if(!in_array(false,$hidden,true))
-        $return = true;
-
-        return $return;
+        $hidden = $this->pair('isVisible',null,$session);
+        return !in_array(false,$hidden,true);
     }
 
 
@@ -300,14 +282,8 @@ class Cells extends Main\MapObj
     // retourne vrai si tous les champs sont cachés
     final public function isHidden(?Main\Session $session=null):bool
     {
-        $return = false;
-        $args = [null,$session];
-        $hidden = $this->pair('isVisible',...$args);
-
-        if(!in_array(true,$hidden,true))
-        $return = true;
-
-        return $return;
+        $hidden = $this->pair('isVisible',null,$session);
+        return !in_array(true,$hidden,true);
     }
 
 

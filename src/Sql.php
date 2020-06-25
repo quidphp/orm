@@ -35,6 +35,15 @@ class Sql extends PdoSql
     }
 
 
+    // primary
+    // retourne la clé primaire de la table ou de l'objet db
+    final public function primary():string
+    {
+        $table = $this->getTableObject();
+        return (!empty($table))? $table->primary():parent::primary();
+    }
+
+
     // getTableObject
     // retourne l'objet table lié à l'objet sql si existant
     final public function getTableObject():?Table
@@ -192,6 +201,44 @@ class Sql extends PdoSql
         $this->table($value);
 
         return $this;
+    }
+
+
+    // fromArray
+    // étend la méthode fromArray de pdoSql, ajoute la liaison aux attributs de la table
+    // ajoute aussi la recherche dans la table
+    final public function fromArray(array $array):self
+    {
+        $table = $this->getTableObject();
+
+        if(!empty($table))
+        {
+            $array = (array) Base\Obj::cast($array);
+            $search = $array['search'] ?? null;
+            $searchSeparator = $array['searchSeparator'] ?? $table->getAttr('searchSeparator');
+            $searchMethod = $array['searchMethod'] ?? $table->getAttr('searchMethod');
+            $searchCols = $array['searchCols'] ?? $table->cols()->searchable();
+            $searchTermValid = $array['searchTermValid'] ?? true;
+
+            if(is_string($searchCols))
+            $searchCols = [$searchCols];
+
+            if(is_array($searchCols))
+            $searchCols = $table->cols(...array_values($searchCols));
+
+            if(is_scalar($search))
+            $search = Base\Str::prepareSearch($search,$searchSeparator);
+
+            if(is_array($search) && !empty($search) && $searchCols->isNotEmpty() && is_string($searchMethod))
+            {
+                if($searchTermValid === true && !$searchCols->isSearchTermValid($search))
+                static::throw('invalidSearchTerm',$search);
+
+                $this->whereOrMany($searchMethod,$searchCols,$search);
+            }
+        }
+
+        return parent::fromArray($array);
     }
 
 

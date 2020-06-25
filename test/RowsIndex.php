@@ -51,9 +51,6 @@ class RowsIndex extends Base\Test
         // primaries
         assert($rows->primaries() === [$table=>[1,2,3]]);
 
-        // ids
-        assert($rows->ids() === [$table=>[1,2,3]]);
-
         // add
         $rows->add(...$tb2->rows()->toArray());
         assert($rows->isTable($tb2));
@@ -73,12 +70,6 @@ class RowsIndex extends Base\Test
         // groupByTable
         assert(count($rows->groupByTable()) === 2);
 
-        // tables
-        assert(count($rows->tables()) === 2);
-
-        // tableNames
-        assert($rows->tableNames() === [$table,$table2]);
-
         // tableDb
         assert($rows->tableDb($tb) instanceof Orm\Db);
         assert($rows->tableDb('LOL') === null);
@@ -87,21 +78,10 @@ class RowsIndex extends Base\Test
         assert($rows->unset($tb[1],$tb[2])->isCount(4));
         assert($rows->tableRemove($table)->isCount(3));
         assert($rows->add(...$tb->rows()->values())->isCount(6));
-
-        // tableUnlink
-        assert($rows->tableUnlink($table)->isCount(3));
+        assert($rows->tableRemove($table,true)->isCount(3));
         assert($rows->add(...$tb->rows()->values())->isCount(3));
         $tb->rowsLoad();
         assert($rows->add(...$tb->rows()->values())->isCount(6));
-
-        // tableUpdate
-        assert($rows->tableUpdate($table) === [1=>1,2=>1,3=>1]);
-
-        // sequential
-        assert($rows->sequential() === $rows);
-        $sort = $rows->sortBy('primary',false);
-        assert(Base\Arr::isSequential($sort->keys()));
-        assert($sort !== $rows);
 
         // alive
         assert($rows->alive());
@@ -111,6 +91,10 @@ class RowsIndex extends Base\Test
         assert($rows->refresh() instanceof Orm\RowsIndex);
 
         // rows
+        assert($rows->sequential() === $rows);
+        $sort = $rows->sortBy('primary',false);
+        assert(Base\Arr::isSequential($sort->keys()));
+        assert($sort !== $rows);
         assert($rows->delete() === 6);
         assert($db->inserts($table,['id','activez','name','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,11,12,13],[2,2,'james3',20,21,22,23],[3,3,'james2',30,31,32,33]) === [1,2,3]);
         assert($db->inserts($table2,['id','active','name','dateAdd','userAdd','dateModify','userModify'],[1,1,'james',10,11,12,13],[2,2,'james3',20,21,22,23],[3,3,'james2',30,31,32,33]) === [1,2,3]);

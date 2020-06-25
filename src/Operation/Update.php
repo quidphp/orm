@@ -159,7 +159,7 @@ class Update extends Orm\RowOperation
             elseif($this->getAttr('strict') === true)
             static::throw('invalid',$this->table(),$row,$completeValidation);
 
-            $names = Base\Arr::valuesStrip(array_keys($completeValidation),$return->names());
+            $names = Base\Arr::valuesStrip(array_keys($completeValidation),$return->keys());
 
             if(!empty($names))
             $return = $return->gets(...$names);
@@ -374,8 +374,6 @@ class Update extends Orm\RowOperation
 
         if($this->getAttr('onCommitted') === true && in_array($result,[0,1],true) && is_array($set) && !empty($set))
         $this->committed($set);
-
-        return;
     }
 
 
@@ -391,8 +389,6 @@ class Update extends Orm\RowOperation
             if($cell->hasChanged())
             $cell->callThis(fn() => $this->onCommitted(false,$attr));
         }
-
-        return;
     }
 
 
@@ -402,8 +398,6 @@ class Update extends Orm\RowOperation
     {
         if(!in_array($value,static::$types,true))
         static::throw($value);
-
-        return;
     }
 }
 ?>

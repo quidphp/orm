@@ -26,8 +26,6 @@ class TableRelation extends Relation
     {
         $this->setLink($table,false);
         $this->makeAttr($table);
-
-        return;
     }
 
 
@@ -88,8 +86,6 @@ class TableRelation extends Relation
             else
             static::throw('whatCannotBeEmpty');
         }
-
-        return;
     }
 
 
@@ -502,44 +498,38 @@ class TableRelation extends Relation
     {
         $return = null;
         $attr = $this->attr();
-        $option = Base\Arr::plus($attr,$option);
-        $option = $this->prepareOption($option);
+        $option = $this->prepareOption(Base\Arr::plus($attr,$option));
         $table = $this->table();
-
-        $cols = $option['what'] ?? $table->cols()->searchable();
-        $where = $option['where'] ?? null;
-        $order = $this->getOrder($option['order'],$option);
-        $limit = $option['limit'] ?? null;
-        $not = (isset($option['not']) && is_array($option['not']))? $option['not']:null;
-        $method = (isset($option['method']) && is_string($option['method']))? $option['method']:null;
-        $searchSeparator = $option['searchSeparator'] ?? null;
-        $searchTermValid = $option['searchTermValid'] ?? true;
 
         if(strlen($value) && $this->size() > 0)
         {
             $return = [];
+            $sqlArray  =[];
             $primary = $table->primary();
+            $cols = $option['what'] ?? $table->cols()->searchable();
+            $method = (isset($option['method']) && is_string($option['method']))? $option['method']:null;
             $isMethod = $this->isOutputMethod($method);
-            $searchOpt = ['cols'=>$cols,'searchSeparator'=>$searchSeparator,'searchTermValid'=>$searchTermValid];
 
-            if(!empty($not))
-            $where[] = [$primary,'notIn',$not];
-            $whereAfter = ['order'=>$order,'limit'=>$limit];
+            $what = ($isMethod === true)? '*':Base\Arr::merge($primary,$cols);
+            $output = ($isMethod === true)? 'rows':'assocsUnique';
 
-            if($isMethod === true)
-            {
-                $searchOpt['what'] = '*';
-                $searchOpt['output'] = 'rows';
-            }
+            $where = $option['where'] ?? [];
+            $whereNot = (isset($option['not']) && is_array($option['not']))? $option['not']:null;
+            if(!empty($whereNot))
+            $where[] = [$primary,'notIn',$whereNot];
 
-            else
-            {
-                $what = Base\Arr::merge($table->primary(),$cols);
-                $searchOpt['what'] = $what;
-                $searchOpt['output'] = 'assocsUnique';
-            }
+            $sqlArray['what'] = $what;
+            $sqlArray['where'] = $where;
+            $sqlArray['order'] = $this->getOrder($option['order'],$option);
+            $sqlArray['limit'] = $option['limit'] ?? null;
+            $sqlArray['search'] = $value;
+            $sqlArray['searchCols'] = $cols;
+            $sqlArray['searchSeparator'] = $option['searchSeparator'] ?? null;
+            $sqlArray['searchMethod'] = $option['searchMethod'] ?? null;
+            $sqlArray['searchTermValid'] = $option['searchTermValid'] ?? true;
 
-            $result = $table->search($value,$where,$whereAfter,$searchOpt);
+            $sql = $table->sql($sqlArray);
+            $result = $sql->trigger($output);
 
             if(is_array($result) || $result instanceof Rows)
             $return = $result;

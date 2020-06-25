@@ -482,6 +482,8 @@ class PdoSql extends Base\Test
         assert(count($nav->specific(2)) === 9);
         assert($nav->specific(-1) === null);
 
+        // fromArray
+
         // trigger
         $sql->select('*')->table($table)->where($table[1]);
         assert($sql->trigger()[0]['id'] === 1);

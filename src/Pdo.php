@@ -107,8 +107,6 @@ class Pdo extends Main\Root
         $this->setDsn($dsn);
         $this->setSyntax();
         $this->connect($password);
-
-        return;
     }
 
 
@@ -117,8 +115,6 @@ class Pdo extends Main\Root
     final public function __destruct()
     {
         $this->pdo = null;
-
-        return;
     }
 
 
@@ -151,8 +147,6 @@ class Pdo extends Main\Root
     final protected function onSetInst():void
     {
         $this->checkReady(true);
-
-        return;
     }
 
 
@@ -177,8 +171,6 @@ class Pdo extends Main\Root
                 $this->history()->add($value,$statement,$this);
             }
         }
-
-        return;
     }
 
 
@@ -268,8 +260,6 @@ class Pdo extends Main\Root
     {
         $this->checkReady(false);
         $this->dsn = $value;
-
-        return;
     }
 
 
@@ -305,8 +295,6 @@ class Pdo extends Main\Root
 
         if(empty($this->syntax))
         static::throw('noSyntaxFound',$driver);
-
-        return;
     }
 
 
@@ -449,8 +437,6 @@ class Pdo extends Main\Root
     final protected function makeHistory():void
     {
         $this->history = History::newOverload();
-
-        return;
     }
 
 
@@ -710,8 +696,6 @@ class Pdo extends Main\Root
     public function statementException(?array $option=null,\Exception $exception,...$values):void
     {
         static::throw($exception->getMessage(),null,$option);
-
-        return;
     }
 
 
@@ -2403,8 +2387,6 @@ class Pdo extends Main\Root
     final public static function setDefaultHistory(bool $value):void
     {
         static::$config['option']['history'] = $value;
-
-        return;
     }
 }
 ?>

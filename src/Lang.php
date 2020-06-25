@@ -51,8 +51,6 @@ class Lang extends Main\Lang
 
         if($this->inInst())
         Orm\Syntax::setShortcut('lang',$this->currentLang());
-
-        return;
     }
 
 

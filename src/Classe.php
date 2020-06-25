@@ -43,8 +43,6 @@ class Classe extends Main\Map
     {
         $this->makeAttr($attr);
         $this->setExtenders($extenders);
-
-        return;
     }
 
 
@@ -54,8 +52,6 @@ class Classe extends Main\Map
     {
         $keys = $this->extendersKeys();
         $this->extenders = $extenders->filter(fn($value,$key) => in_array($key,$keys,true));
-
-        return;
     }
 
 

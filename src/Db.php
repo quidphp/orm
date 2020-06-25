@@ -92,8 +92,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         $this->setSyntax();
         $this->setRoles($roles);
         $this->connect($password,$extenders);
-
-        return;
     }
 
 
@@ -112,8 +110,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
             elseif(!$this->hasPermission($value['type']))
             static::throw($value['type'],'notAllowed');
         }
-
-        return;
     }
 
 
@@ -149,8 +145,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
                 }
             }
         }
-
-        return;
     }
 
 
@@ -219,8 +213,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     final public function offsetSet($key,$value):void
     {
         static::throw('arrayAccess','notAllowed');
-
-        return;
     }
 
 
@@ -229,8 +221,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     final public function offsetUnset($key):void
     {
         static::throw('arrayAccess','notAllowed');
-
-        return;
     }
 
 
@@ -339,8 +329,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         $exception->setQuery($this->syntaxCall('emulate',$values[0]['sql'],$values[0]['prepare'] ?? null));
 
         throw $exception;
-
-        return;
     }
 
 
@@ -364,8 +352,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
         else
         static::throw();
-
-        return;
     }
 
 
@@ -385,8 +371,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
         else
         static::throw('alreadyExists');
-
-        return;
     }
 
 
@@ -433,8 +417,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
             else
             static::throw('noTables');
         }
-
-        return;
     }
 
 
@@ -464,8 +446,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
         if($value->getAttr('ignore') !== true)
         $this->tables()->add($value);
-
-        return;
     }
 
 
@@ -488,8 +468,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
         else
         $this->classe = Classe::newOverload($extenders,$this->getAttr('classe'));
-
-        return;
     }
 
 
@@ -517,8 +495,6 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
         if(empty($this->schema))
         $this->schema = Schema::newOverload(null,$this);
-
-        return;
     }
 
 

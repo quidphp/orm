@@ -99,8 +99,6 @@ class Col extends Main\Root
         $this->setLink($table,true);
         $this->makeAttr($colSchema);
         $this->makePriority($priority);
-
-        return;
     }
 
 
@@ -230,8 +228,6 @@ class Col extends Main\Root
 
         $this->clearCommittedCallback();
         $this->clearException();
-
-        return;
     }
 
 
@@ -1465,8 +1461,6 @@ class Col extends Main\Root
     final protected function setSchema(ColSchema $schema):void
     {
         $this->schema = $schema;
-
-        return;
     }
 
 
@@ -1503,8 +1497,6 @@ class Col extends Main\Root
         $this->attr = $attr;
         $this->attr = $this->attrOrMethodCall('onAttr',$attr);
         $this->checkAttr();
-
-        return;
     }
 
 
@@ -1566,8 +1558,6 @@ class Col extends Main\Root
         $attrPriority = $this->getAttr('priority');
         $priority = (is_int($attrPriority))? $attrPriority:$priority;
         $this->setAttr('priority',$priority);
-
-        return;
     }
 
 
@@ -2027,8 +2017,6 @@ class Col extends Main\Root
 
         else
         $this->callback[$key] = $closure;
-
-        return;
     }
 
 

@@ -33,18 +33,7 @@ class RowsIndex extends Rows
     // retourne vrai si le rowsIndex contient au moins un élément de cette table
     final public function isTable($value):bool
     {
-        $return = false;
-
-        foreach ($this->tables() as $table)
-        {
-            if((is_object($value) && $value === $table) || (is_string($value) && $value === $table->name()))
-            {
-                $return = true;
-                break;
-            }
-        }
-
-        return $return;
+        return $this->some(fn($row) => (is_object($value) && $value === $row->table()) || (is_string($value) && $value === $row->table()->name()));
     }
 
 
@@ -53,31 +42,10 @@ class RowsIndex extends Rows
     final public function sameTable():bool
     {
         $return = false;
-        $data = $this->arr();
         $table = $this->table();
 
         if(!empty($table))
-        {
-            if(count($data) > 1)
-            {
-                $i = 0;
-                foreach ($data as $key => $value)
-                {
-                    if($i > 0)
-                    {
-                        $return = $value->sameTable($table);
-
-                        if($return === false)
-                        break;
-                    }
-
-                    $i++;
-                }
-            }
-
-            else
-            $return = true;
-        }
+        $return = $this->every(fn($row) => $row->sameTable($table));
 
         return $return;
     }
@@ -87,17 +55,7 @@ class RowsIndex extends Rows
     // retourne vrai si toutes les lignes dans l'objet ont la cellule
     final public function hasCell($key):bool
     {
-        $return = false;
-
-        foreach ($this->arr() as $row)
-        {
-            $return = $row->hasCell($key);
-
-            if($return === false)
-            break;
-        }
-
-        return $return;
+        return $this->every(fn($row) => $row->hasCell($key));
     }
 
 
@@ -119,14 +77,6 @@ class RowsIndex extends Rows
         }
 
         return $return;
-    }
-
-
-    // ids
-    // retourne un tableau multidimensionnel avec tous les ids de lignes séparés par le nom de table
-    final public function ids():array
-    {
-        return $this->primaries();
     }
 
 
@@ -222,39 +172,6 @@ class RowsIndex extends Rows
     }
 
 
-    // tables
-    // retourne un tableau avec toutes les tables contenus dans l'objet
-    final public function tables():array
-    {
-        $return = [];
-
-        foreach ($this->arr() as $value)
-        {
-            $table = $value->table();
-
-            if(!in_array($table,$return,true))
-            $return[] = $table;
-        }
-
-        return $return;
-    }
-
-
-    // tableNames
-    // retourne un tableau avec tous les noms de tables présent dans l'objet
-    final public function tableNames():array
-    {
-        $return = [];
-
-        foreach ($this->tables() as $value)
-        {
-            $return[] = $value->name();
-        }
-
-        return $return;
-    }
-
-
     // tableDb
     // retourne l'objet db pour la première ligne d'une table spécifiée en argument
     final public function tableDb($table):?Db
@@ -276,58 +193,20 @@ class RowsIndex extends Rows
 
     // tableRemove
     // enlève de l'objet toutes les lignes appartenant à une table
-    final public function tableRemove($table):self
+    // possible de unlink
+    final public function tableRemove($table,bool $unlink=false):self
     {
         $table = $this->filterByTable($table);
 
         foreach ($table as $value)
         {
             $this->remove($value);
-        }
 
-        return $this->checkAfter();
-    }
-
-
-    // tableUnlink
-    // délie et enlève toutes les lignes appartenant à une table
-    // les lignes déliés sont retirés de cet objet, de rows table et prennent un statut inutilisable
-    final public function tableUnlink($table):self
-    {
-        $table = $this->filterByTable($table);
-
-        foreach ($table as $value)
-        {
-            $this->remove($value);
+            if($unlink === true)
             $value->unlink();
         }
 
         return $this->checkAfter();
-    }
-
-
-    // tableUpdate
-    // sauve toutes les lignes d'une table dans l'objet
-    // retourne un tableau avec les résultats pour chaque ligne
-    final public function tableUpdate($table):array
-    {
-        $return = $this->filterByTable($table)->update();
-        $this->checkAfter();
-
-        return $return;
-    }
-
-
-    // sequential
-    // ramène les clés de la map séquentielle, numérique et en ordre
-    // ne clone pas l'objet comme les méthodes sort
-    final public function sequential():self
-    {
-        $this->checkAllowed('sequential');
-        $data =& $this->arr();
-        $data = array_values($data);
-
-        return $this;
     }
 
 

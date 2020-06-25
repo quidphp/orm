@@ -161,7 +161,7 @@ class Insert extends Orm\TableOperation
 
         if(!empty($preValidate))
         {
-            $return = Base\Arr::valuesStrip(array_keys($preValidate),$cols->names());
+            $return = Base\Arr::valuesStrip(array_keys($preValidate),$cols->keys());
 
             if($com === true)
             $table->insertCom($preValidate,null,null,null,['table']);
@@ -278,8 +278,6 @@ class Insert extends Orm\TableOperation
 
         elseif($this->getAttr('strict') === true && !(is_int($result) && $result > 0))
         static::throw('insertFailed',$table,$result);
-
-        return;
     }
 
 
@@ -297,8 +295,6 @@ class Insert extends Orm\TableOperation
 
             $col->callThis(fn() => $this->onCommitted($cell,true,$attr));
         }
-
-        return;
     }
 }
 ?>

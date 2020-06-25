@@ -152,9 +152,6 @@ class Table extends Base\Test
         // whereAll
         assert($tb->whereAll() === [['id','>=',1]]);
 
-        // like
-        assert($tb->like() === 'like');
-
         // searchMinLength
         assert($tb->searchMinLength() === 3);
 
@@ -482,15 +479,17 @@ class Table extends Base\Test
         assert(is_string($tb->keyValue(0,['james','dateAdd'],true,3)[3]));
         assert($tb->keyValue(0,['james','name_[lang]'],true)[1] === 'james');
 
-        // search
-        assert($tb->search('james2') === [2]);
-        assert($tb->search('james',null,[['id'=>'asc']],['method'=>'like']) === [1,2]);
-        assert($tb->search([['james','james2']],null,null,['method'=>'or|like']) === [2,1]);
-        assert($tb->search('james mes2',null,null,['method'=>'like']) === [2]);
-        assert($tb->search('james + mes2',null,null,['method'=>'like','searchSeparator'=>'+']) === [2]);
-        $rows = $tb->search('james mes2',null,null,['output'=>'rows','what'=>'*']);
-        assert($rows instanceof Orm\Rows);
-        $rows->unlink();
+        // sql
+        assert($tb->sql(['search'=>[['james','james2']],'searchMethod'=>'or|like','order'=>['id'=>'desc']])->trigger('columns') === [2,1]);
+        assert($tb->sql(['search'=>'what','page'=>2,'limit'=>10]) instanceof Orm\Sql);
+        assert($tb->sql(['where'=>['active'=>1],'page'=>2,'limit'=>1])->trigger()->isCount(1));
+        assert($tb->sql(['where'=>[['active','in',[1,2,3,4]]],'page'=>1,'limit'=>10])->trigger()->isCount(3));
+        assert($tb->sql(['order'=>'james','direction'=>'desc'])->get('order')[1] === ['id','asc']);
+        assert(count($tb->sql(['order'=>'id','direction'=>'desc'])->get('order')) === 1);
+        assert($tb->sql(['search'=>'james2'])->trigger('columns') === [2]);
+        assert($tb->sql(['search'=>'james','order'=>['id'=>'asc']])->trigger('columns') === [1,2]);
+        assert($tb->sql(['search'=>'james mes2','searchMethod'=>'like'])->trigger('columns') === [2]);
+        assert($tb->sql(['search'=>'james + mes2','searchSeparator'=>'+'])->trigger('columns') === [2]);
 
         // truncate
         assert($db['ormCol']->truncate() === true);
@@ -533,13 +532,6 @@ class Table extends Base\Test
         // info
         assert(count($tb->info()) === 4);
         assert($tb->info()['row'] === [3,4,2]);
-
-        // sql
-        assert($tb->sql(['search'=>'what','page'=>2,'limit'=>10]) instanceof Orm\Sql);
-        assert($tb->sql(['where'=>['active'=>1],'page'=>2,'limit'=>1])->trigger()->isCount(1));
-        assert($tb->sql(['where'=>[['active','in',[1,2,3,4]]],'page'=>1,'limit'=>10])->trigger()->isCount(3));
-        assert($tb->sql(['order'=>'james','direction'=>'desc'])->get('order')[1] === ['id','asc']);
-        assert(count($tb->sql(['order'=>'id','direction'=>'desc'])->get('order')) === 1);
 
         // hierarchy
 

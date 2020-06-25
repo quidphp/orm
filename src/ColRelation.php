@@ -32,8 +32,6 @@ class ColRelation extends Relation
     {
         $this->setLink($col->table(),false);
         $this->prepare($col);
-
-        return;
     }
 
 
@@ -54,8 +52,6 @@ class ColRelation extends Relation
 
         if($this->checkType() === 'table')
         $this->data =& $this->relationTable()->relation()->arr();
-
-        return;
     }
 
 

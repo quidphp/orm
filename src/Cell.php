@@ -49,8 +49,6 @@ class Cell extends Main\Root
 
         else
         static::throw('tableForColAndRowAreDifferent');
-
-        return;
     }
 
 
@@ -96,8 +94,6 @@ class Cell extends Main\Root
         $col = $this->col();
         $cell = $this;
         $col->callThis(fn() => $this->onCommitted($cell,$insert,$option));
-
-        return;
     }
 
 
@@ -443,8 +439,6 @@ class Cell extends Main\Root
     final protected function setCol(Col $col):void
     {
         $this->col = $col->name();
-
-        return;
     }
 
 
@@ -453,8 +447,6 @@ class Cell extends Main\Root
     final protected function setRow(Row $row):void
     {
         $this->row = $row->primary();
-
-        return;
     }
 
 

@@ -47,8 +47,6 @@ class ColSchema extends Main\Map
         $this->makeAttr($attr);
         $data = static::prepareAttr($value);
         $this->makeOverwrite($data);
-
-        return;
     }
 
 
@@ -143,8 +141,6 @@ class ColSchema extends Main\Map
 
         if(!empty($check) && !Base\Arr::hasSlices($check,$data))
         static::throw($col,$col->table(),'checkFailed');
-
-        return;
     }
 
 

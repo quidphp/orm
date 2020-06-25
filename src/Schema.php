@@ -38,8 +38,6 @@ class Schema extends Main\Map
 
         if(!empty($data))
         $this->makeOverwrite($data);
-
-        return;
     }
 
 
