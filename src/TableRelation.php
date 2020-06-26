@@ -91,7 +91,6 @@ class TableRelation extends Relation
     // prépare les attributs pour une relation de table standard avec what
     final protected function prepareAttrWithWhat(Table $table,array $attr):array
     {
-        $return = [];
         $primary = $table->primary();
 
         $attr['output'] ??= null;
@@ -112,9 +111,7 @@ class TableRelation extends Relation
         $attr['order'] ??= $table->order();
         $attr['onGet'] ??= false;
 
-        $return = $attr;
-
-        return $return;
+        return $attr;
     }
 
 

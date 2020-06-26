@@ -134,6 +134,7 @@ class ColRelation extends Base\Test
         assert($check->size() === 11);
         assert($userId->size() === 5);
         assert($userAdd->size() === 5);
+        $dateAdd->col()->emptyCache();
         assert($dateAdd->size() >= 2);
         assert($relationCall->size() === 3);
 
