@@ -665,7 +665,7 @@ class Row extends Main\ArrObj
     // envoie une exception si non existante
     final public function cellKey(?string $lang=null):Cell
     {
-        return$this->cell($this->table()->colKey($lang));
+        return $this->cell($this->table()->colKey($lang));
     }
 
 

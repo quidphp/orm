@@ -246,6 +246,8 @@ class Table extends Base\Test
         // colContent
         assert($tb->colContent()->name() === 'content_en');
 
+        // colCommon
+
         // colsDateCommit
         assert(count($tb->colsDateCommit()) === 2);
 

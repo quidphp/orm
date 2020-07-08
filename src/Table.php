@@ -944,12 +944,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de spécifier une langue, sinon langue courante ou pas de langue
     final public function colKey(?string $lang=null):Col
     {
-        $return = $this->col($this->getAttr('key'));
-
-        if(is_string($lang) && !empty($return))
-        $return = $this->colPattern($return->schema()->nameStripPattern(),$lang);
-
-        return $return;
+        return $this->colCommon('key',$lang);
     }
 
 
@@ -958,16 +953,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de spécifier une langue, sinon langue courante ou pas de langue
     final public function colName(?string $lang=null):Col
     {
-        $return = $this->col($this->getAttr('name'));
-
-        if(is_string($lang) && !empty($return))
-        {
-            $stripPattern = $return->schema()->nameStripPattern();
-            if(is_string($stripPattern))
-            $return = $this->colPattern($stripPattern,$lang);
-        }
-
-        return $return;
+        return $this->colCommon('name',$lang);
     }
 
 
@@ -976,10 +962,22 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // possible de spécifier une langue, sinon langue courante ou pas de langue
     final public function colContent(?string $lang=null):Col
     {
-        $return = $this->col($this->getAttr('content'));
+        return $this->colCommon('content',$lang);
+    }
+
+
+    // colCommon
+    // méthode protégé utilisé par colKey, colName et colContent
+    final protected function colCommon(string $key,?string $lang=null):Col
+    {
+        $return = $this->col($this->getAttr($key));
 
         if(is_string($lang) && !empty($return))
-        $return = $this->colPattern($return->schema()->nameStripPattern(),$lang);
+        {
+            $stripPattern = $return->schema()->nameStripPattern();
+            if(is_string($stripPattern))
+            $return = $this->colPattern($stripPattern,$lang);
+        }
 
         return $return;
     }
