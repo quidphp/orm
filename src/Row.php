@@ -520,7 +520,7 @@ class Row extends Main\ArrObj
     // retourne l'objet d'une cellule ou envoie une exception si non existant
     final public function cell($cell):Cell
     {
-        return static::checkClass($this->cells()->get($cell),Cell::class);
+        return static::checkClass($this->cells()->get($cell),Cell::class,$cell);
     }
 
 
