@@ -169,7 +169,7 @@ class Table extends Base\Test
         assert(count($tb->status()) >= 18);
 
         // engine
-        assert($tb->engine() === 'MyISAM');
+        assert($tb->engine() === 'InnoDB');
 
         // autoIncrement
         assert($tb->autoIncrement() === 3);
@@ -475,7 +475,7 @@ class Table extends Base\Test
         assert(current($tb->segment('[name_%lang%] [id] [id] [dateAdd]',true,null,['id'=>'asc'])) !== 'james 1 1 10');
 
         // keyValue
-        assert($tb->keyValue(0,['james','name_en']) === [2=>'james2',1=>'james',3=>'LOL',4=>'LOL2']);
+        assert($tb->keyValue(0,['james','name_en']) === [1=>'james',2=>'james2',1=>'james',3=>'LOL',4=>'LOL2']);
         assert(is_string($tb->keyValue(0,['james','dateAdd'],true,3)[3]));
         assert($tb->keyValue(0,['james','name_[lang]'],true)[1] === 'james');
 

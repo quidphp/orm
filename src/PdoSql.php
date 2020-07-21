@@ -505,7 +505,7 @@ class PdoSql extends Main\Map
         $return = null;
         $data = $this->arr();
         $db = $this->db();
-        $output = ($output === null)? $this->getOutput():$output;
+        $output ??= $this->getOutput();
 
         if($this->getType() === 'select')
         $data = $db->selectLimit($output,$data);
@@ -1683,7 +1683,7 @@ class PdoSql extends Main\Map
     {
         $return = null;
         $db = $this->db();
-        $output = ($output === null)? $this->getOutput():$output;
+        $output ??= $this->getOutput();
         $make = $this->checkMake($output,$option);
         $return = $db->query($make,$output);
 

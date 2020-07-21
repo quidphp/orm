@@ -981,7 +981,7 @@ class Col extends Main\Root
             if($lang === true)
             {
                 $lang = $this->db()->lang();
-                $notIn = ($notIn === null)? true:$notIn;
+                $notIn ??= true;
                 $return = $lang->unique($notIn,null,$this->ruleLangOption());
             }
 

@@ -26,7 +26,7 @@ class Schema extends Base\Test
         $schema = new Orm\Schema(null,$db);
 
         // tables
-        assert(count($schema->tables()) === 25);
+        assert(count($schema->tables()) === 27);
 
         // table
         assert(count($schema->table('user')) === 13);
@@ -39,7 +39,7 @@ class Schema extends Base\Test
         assert($schema->col($table,'name_en',false)['Collation'] === 'utf8mb4_general_ci');
 
         // all
-        assert(count($schema->all()) === 25);
+        assert(count($schema->all()) === 27);
 
         // dbAccess
         assert(!empty($schema->get('user/id')));

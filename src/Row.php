@@ -1063,7 +1063,7 @@ class Row extends Main\ArrObj
 
         if(!empty($value))
         {
-            $label = ($label === null)? $this->label():$label;
+            $label ??= $this->label();
             $attr = Base\Attr::append(['row','update','data'=>['primary'=>$this,'table'=>$this->table(),'action'=>'update']],$attr);
 
             if(is_string($value))

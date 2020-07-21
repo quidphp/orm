@@ -548,7 +548,7 @@ class TableRelation extends Relation
     final public function getOrder($order=null,?array $attr=null):?array
     {
         $return = null;
-        $attr = ($attr === null)? $this->attr():$attr;
+        $attr ??= $this->attr();
         $attrOrder = $attr['order'] ?? null;
         $table = $this->table();
 
@@ -604,7 +604,7 @@ class TableRelation extends Relation
     final public function getOrderFieldOutput(?array $attr=null):?string
     {
         $return = $this->table()->colName()->name();
-        $attr = ($attr === null)? $this->attr():$attr;
+        $attr ??= $this->attr();
 
         if(empty($attr['orderUseName']))
         {

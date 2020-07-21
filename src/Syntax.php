@@ -33,7 +33,7 @@ abstract class Syntax extends Main\Root
             'dropExists'=>false, // mot à ajouter pour requête drop
             'charset'=>'utf8mb4', // charset
             'collate'=>'utf8mb4_general_ci', // collate
-            'engine'=>'MyISAM', // engine pour create
+            'engine'=>'InnoDB', // engine pour create
             'defaultCallable'=>null, // callable pour aller chercher les default selon la table
             'default'=>[
                 'what'=>'*', // what par défaut
@@ -2652,7 +2652,7 @@ abstract class Syntax extends Main\Root
                 {
                     $name = Base\Arr::keysFirstValue(['name',1],$value);
                     $col = Base\Arr::keysFirstValue(['col',2],$value);
-                    $col = ($col === null)? $name:$col;
+                    $col ??= $name;
                 }
 
                 else

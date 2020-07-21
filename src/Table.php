@@ -1652,7 +1652,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if(!empty($value))
         {
-            $label = ($label === null)? $this->label():$label;
+            $label ??= $this->label();
             $attr = Base\Attr::append(['insert','data'=>['table'=>$this,'action'=>'insert']],$attr);
 
             if(is_string($value))

@@ -294,11 +294,11 @@ class PdoSql extends Base\Test
 
         // createCol
         $sql->create($table)->createCol(['james','int'],['ok','varchar']);
-        assert($sql->emulate() === 'CREATE TABLE `main` (`james` INT(11) NULL DEFAULT NULL, `ok` VARCHAR(255) NULL DEFAULT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4');
+        assert($sql->emulate() === 'CREATE TABLE `main` (`james` INT(11) NULL DEFAULT NULL, `ok` VARCHAR(255) NULL DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 
         // createKey
         $sql->create($table)->createCol(['james','int'])->createKey(['key','myKey'],['primary',$primary]);
-        assert($sql->emulate() === 'CREATE TABLE `main` (`james` INT(11) NULL DEFAULT NULL, KEY (`myKey`), PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4');
+        assert($sql->emulate() === 'CREATE TABLE `main` (`james` INT(11) NULL DEFAULT NULL, KEY (`myKey`), PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 
         // addCol
         $sql->alter($table)->addCol(['james','int'],['ok','varchar']);
@@ -346,7 +346,7 @@ class PdoSql extends Base\Test
         assert($sql->delete('james')->where('james',false)->emulate() === "DELETE FROM `james` WHERE (`james` = '' OR `james` IS NULL)");
 
         // create
-        assert($sql->create('james')->col(['james','varchar'])->emulate() === 'CREATE TABLE `james` (`james` VARCHAR(255) NULL DEFAULT NULL) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4');
+        assert($sql->create('james')->col(['james','varchar'])->emulate() === 'CREATE TABLE `james` (`james` VARCHAR(255) NULL DEFAULT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 
         // alter
         assert($sql->alter('james')->col(['james','varchar'])->emulate() === 'ALTER TABLE `james` ADD COLUMN `james` VARCHAR(255) NULL DEFAULT NULL');

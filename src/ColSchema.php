@@ -352,7 +352,7 @@ class ColSchema extends Main\Map
     final public static function stripPattern(string $value,?array $pattern=null):?string
     {
         $return = null;
-        $pattern = ($pattern === null)? static::pattern($value):$pattern;
+        $pattern ??= static::pattern($value);
 
         if(!empty($pattern))
         $return = Base\Str::stripPattern($pattern[1],$value,static::$config['patternChars'][1]);

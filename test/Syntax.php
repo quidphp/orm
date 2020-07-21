@@ -668,7 +668,7 @@ class Syntax extends Base\Test
         assert($syntax::dropKey(['test_[lang]','test2.lala'])['sql'] === 'DROP KEY `test_en`, DROP KEY test2.`lala`');
 
         // createEnd
-        assert($syntax::createEnd($syntax::option())['sql'] === ') ENGINE=MyISAM DEFAULT CHARSET=utf8mb4');
+        assert($syntax::createEnd($syntax::option())['sql'] === ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 
         // prepareDefault
 
@@ -685,7 +685,7 @@ class Syntax extends Base\Test
         assert($syntax::make('select',[true,'james3',['id'=>3]])['table'] === 'james3');
         assert($syntax::make('select',[true,'james3',[true,'id'=>3]])['id'] === 3);
         assert($syntax::make('select',[true,'james3',[true,'id'=>[1,2,3]]])['id'] === [1,2,3]);
-        assert($syntax::make('create',['james2',['james','int'],[['unique','lol','james'],['primary','id']]],['createNotExists'=>true])['sql'] === 'CREATE TABLE IF NOT EXISTS `james2` (`james` INT(11) NULL DEFAULT NULL, UNIQUE KEY `lol` (`james`), PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4');
+        assert($syntax::make('create',['james2',['james','int'],[['unique','lol','james'],['primary','id']]],['createNotExists'=>true])['sql'] === 'CREATE TABLE IF NOT EXISTS `james2` (`james` INT(11) NULL DEFAULT NULL, UNIQUE KEY `lol` (`james`), PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         assert(count($syntax::make('select',[true,'james3',['name'=>'what'],'prepare'=>['test'=>'ok']])['prepare']) === 2);
         assert($syntax::make('select',$syntax::makeParses('select',['*','table',2,'id',3]))['sql'] === 'SELECT * FROM `table` WHERE `id` = 2 ORDER BY id LIMIT 3');
         assert($syntax::make('select',['what'=>'*','table'=>'ok','where'=>'id="2"'])['sql'] === 'SELECT * FROM `ok` WHERE id="2"');
@@ -729,7 +729,7 @@ class Syntax extends Base\Test
         assert($syntax::makeDelete(['james',['active'=>1,'james'=>2],['id'],3])['sql'] === 'DELETE FROM `james` WHERE `active` = 1 AND `james` = 2 ORDER BY `id` ASC LIMIT 3');
 
         // makeCreate
-        assert($syntax::makeCreate(['james2',[['james','int'],['ok','varchar']],[['unique','lol','james'],['primary','id']]])['sql'] === 'CREATE TABLE `james2` (`james` INT(11) NULL DEFAULT NULL, `ok` VARCHAR(255) NULL DEFAULT NULL, UNIQUE KEY `lol` (`james`), PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4');
+        assert($syntax::makeCreate(['james2',[['james','int'],['ok','varchar']],[['unique','lol','james'],['primary','id']]])['sql'] === 'CREATE TABLE `james2` (`james` INT(11) NULL DEFAULT NULL, `ok` VARCHAR(255) NULL DEFAULT NULL, UNIQUE KEY `lol` (`james`), PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 
         // makeAlter
         assert($syntax::makeAlter(['james',null,null,null,null,null])['sql'] === 'ALTER TABLE `james`');
@@ -763,7 +763,7 @@ class Syntax extends Base\Test
         assert($syntax::delete('james',['active'=>1,'james'=>2],['id'],3)['sql'] === 'DELETE FROM `james` WHERE `active` = 1 AND `james` = 2 ORDER BY `id` ASC LIMIT 3');
 
         // create
-        assert($syntax::create('james2',[['james','int'],['ok','varchar']],[['unique','lol','james'],['primary','id']])['sql'] === 'CREATE TABLE `james2` (`james` INT(11) NULL DEFAULT NULL, `ok` VARCHAR(255) NULL DEFAULT NULL, UNIQUE KEY `lol` (`james`), PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4');
+        assert($syntax::create('james2',[['james','int'],['ok','varchar']],[['unique','lol','james'],['primary','id']])['sql'] === 'CREATE TABLE `james2` (`james` INT(11) NULL DEFAULT NULL, `ok` VARCHAR(255) NULL DEFAULT NULL, UNIQUE KEY `lol` (`james`), PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 
         // alter
         assert($syntax::alter('james',['james','int'],['unique','lao',['james','id']])['sql'] === 'ALTER TABLE `james` ADD COLUMN `james` INT(11) NULL DEFAULT NULL, ADD UNIQUE KEY `lao` (`james`, `id`)');

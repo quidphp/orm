@@ -102,7 +102,7 @@ class Sql extends Base\Test
         $sql->select('*')->table($tb)->orders($tb->col('id'),['james'=>'asc','lol'=>'desc'],true);
         assert($sql->emulate() === 'SELECT * FROM `ormSql` ORDER BY `id` ASC, `james` ASC, `lol` DESC, `id` ASC');
         $sql->create($tb)->createCol(['james','int'])->createKey(['key','myKey'],['primary',$tb->col('id')]);
-        assert($sql->emulate() === 'CREATE TABLE `ormSql` (`james` INT(11) NULL DEFAULT NULL, KEY (`myKey`), PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4');
+        assert($sql->emulate() === 'CREATE TABLE `ormSql` (`james` INT(11) NULL DEFAULT NULL, KEY (`myKey`), PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
         $sql->select('*')->setOutput('rows')->table($table)->where($tb[1]);
         assert($sql->trigger()->isCount(1));
         $sql->select()->setOutput('row')->table($table)->where('name','=','james');

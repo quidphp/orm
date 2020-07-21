@@ -158,7 +158,7 @@ class Delete extends Orm\RowOperation
             $row = $this->row();
             $table = $this->table();
 
-            $label = ($label === null)? $row->label():$label;
+            $label ??= $row->label();
             $attr = Base\Attr::append(['row','delete','data'=>['table'=>$table,'primary'=>$row,'action'=>'delete']],$attr);
 
             if(Base\Arr::isAssoc($value))
