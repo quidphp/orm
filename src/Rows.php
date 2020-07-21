@@ -115,13 +115,8 @@ class Rows extends Main\MapObj
     // retourne vrai si la row contient des éléments de cette table
     public function isTable($value):bool
     {
-        $return = false;
         $table = $this->table();
-
-        if(!empty($table) && ((is_object($value) && $value === $table) || (is_string($value) && $value === $table->name())))
-        $return = true;
-
-        return $return;
+        return !empty($table) && ((is_object($value) && $value === $table) || (is_string($value) && $value === $table->name()));
     }
 
 
@@ -137,13 +132,8 @@ class Rows extends Main\MapObj
     // retourne vrai si toutes les lignes dans l'objet ont la cellule
     public function hasCell($key):bool
     {
-        $return = false;
         $first = $this->first();
-
-        if(!empty($first) && $first->hasCell($key))
-        $return = true;
-
-        return $return;
+        return !empty($first) && $first->hasCell($key);
     }
 
 
@@ -506,9 +496,7 @@ class Rows extends Main\MapObj
         if(!empty($db) && !empty($table) && !empty($ids))
         {
             $count = $db->selectCount($table,$ids);
-
-            if($count === $this->count())
-            $return = true;
+            $return = ($count === $this->count());
         }
 
         return $return;

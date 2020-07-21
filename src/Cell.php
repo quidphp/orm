@@ -423,10 +423,7 @@ class Cell extends Main\Root
         $return = true;
 
         elseif(array_key_exists('initial',$this->value) && array_key_exists('change',$this->value))
-        {
-            if($this->value['change'] !== $this->value['initial'])
-            $return = true;
-        }
+        $return = ($this->value['change'] !== $this->value['initial']);
 
         return $return;
     }

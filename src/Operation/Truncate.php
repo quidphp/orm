@@ -55,9 +55,7 @@ class Truncate extends Orm\TableOperation
         finally
         {
             $this->after($result,$attr);
-
             $table->callThis(fn() => $this->onTruncated($attr));
-
             $table->rowsUnlink();
             $return = true;
         }

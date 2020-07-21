@@ -288,10 +288,7 @@ abstract class Syntax extends Main\Root
         $return = false;
 
         if(static::isReturnSelect($value))
-        {
-            if(array_key_exists('table',$value['select']) && is_string($value['select']['table']) && array_key_exists('id',$value['select']) && is_int($value['select']['id']))
-            $return = true;
-        }
+        $return = (array_key_exists('table',$value['select']) && is_string($value['select']['table']) && array_key_exists('id',$value['select']) && is_int($value['select']['id']));
 
         return $return;
     }
@@ -304,10 +301,7 @@ abstract class Syntax extends Main\Root
         $return = false;
 
         if(is_array($value) && !empty($value['sql']))
-        {
-            if(array_key_exists('table',$value) && is_string($value['table']) && array_key_exists('id',$value) && is_int($value['id']))
-            $return = true;
-        }
+        $return = (array_key_exists('table',$value) && is_string($value['table']) && array_key_exists('id',$value) && is_int($value['id']));
 
         return $return;
     }
@@ -328,10 +322,7 @@ abstract class Syntax extends Main\Root
         $return = false;
 
         if(is_string($value) && is_string($key) && array_key_exists($value,static::$config['query']) && is_array(static::$config['query'][$value]))
-        {
-            if(array_key_exists($key,static::$config['query'][$value]))
-            $return = true;
-        }
+        $return = (array_key_exists($key,static::$config['query'][$value]));
 
         return $return;
     }
@@ -370,12 +361,7 @@ abstract class Syntax extends Main\Root
     // retourne le nom de la clé ou null
     final public static function getKeyWord(string $value):?string
     {
-        $return = null;
-
-        if(array_key_exists($value,static::$config['key']))
-        $return = static::$config['key'][$value];
-
-        return $return;
+        return static::$config['key'][$value] ?? null;
     }
 
 
@@ -383,12 +369,7 @@ abstract class Syntax extends Main\Root
     // retourne les attributs par défaut d'une colonne ou null
     final public static function getColTypeAttr(string $value):?array
     {
-        $return = null;
-
-        if(array_key_exists($value,static::$config['col']))
-        $return = static::$config['col'][$value];
-
-        return $return;
+        return static::$config['col'][$value] ?? null;
     }
 
 
@@ -424,7 +405,7 @@ abstract class Syntax extends Main\Root
     // retourne le symbol where ou null
     final public static function getWhereSymbol(string $value):?string
     {
-        return (array_key_exists($value,static::$config['where']['symbol']))? static::$config['where']['symbol'][$value]:null;
+        return static::$config['where']['symbol'][$value] ?? null;
     }
 
 
@@ -453,9 +434,7 @@ abstract class Syntax extends Main\Root
         if(is_string($value) && static::isOrderDirection($value))
         $return = $value;
 
-        $return = strtoupper($return);
-
-        return $return;
+        return strtoupper($return);
     }
 
 
@@ -639,26 +618,23 @@ abstract class Syntax extends Main\Root
     {
         $return = '';
 
-        if(is_scalar($value))
+        if(is_string($value))
         {
-            if(is_string($value))
-            {
-                if(!empty($closure))
-                $return = $closure($value);
-
-                else
-                {
-                    $value = addslashes($value);
-                    $return = Base\Str::quote($value,false);
-                }
-
-                if(is_string($return) && $replaceDoubleEscape === true)
-                $return = str_replace('\\\\','\\',$return);
-            }
+            if(!empty($closure))
+            $return = $closure($value);
 
             else
-            $return = $value;
+            {
+                $value = addslashes($value);
+                $return = Base\Str::quote($value,false);
+            }
+
+            if(is_string($return) && $replaceDoubleEscape === true)
+            $return = str_replace('\\\\','\\',$return);
         }
+
+        elseif(is_scalar($value))
+        $return = $value;
 
         return $return;
     }
@@ -1502,7 +1478,6 @@ abstract class Syntax extends Main\Root
     final public static function whereAppend(...$values)
     {
         $return = [];
-        $merge = [];
         $option = static::option();
 
         foreach ($values as $key => $value)
@@ -1514,14 +1489,11 @@ abstract class Syntax extends Main\Root
                 $prepare = static::wherePrepare($value,$option);
 
                 if(!empty($prepare) && is_array($prepare))
-                $merge[] = $prepare;
+                $return[] = $prepare;
             }
         }
 
-        if(!empty($merge))
-        $return = Base\Arr::merge(...$merge);
-
-        return $return;
+        return Base\Arr::merge(...$return);
     }
 
 
@@ -1622,7 +1594,6 @@ abstract class Syntax extends Main\Root
     // support pour b binary, i insensitive et or or
     final protected static function whereThreeMethod(string $method,?array $option=null)
     {
-        $return = [];
         $option = (array) $option;
 
         if(strpos($method,'[') !== false && Base\Segment::isWrapped(null,$method))
@@ -1664,9 +1635,7 @@ abstract class Syntax extends Main\Root
             }
         }
 
-        $return = ['method'=>$method,'option'=>$option];
-
-        return $return;
+        return ['method'=>$method,'option'=>$option];
     }
 
 
@@ -1676,7 +1645,6 @@ abstract class Syntax extends Main\Root
     {
         $return = ['sql'=>''];
         ['method'=>$method,'option'=>$option] = static::whereThreeMethod($method,$option);
-
 
         if(static::isWhereSymbol($method))
         {
@@ -2110,13 +2078,8 @@ abstract class Syntax extends Main\Root
     // construit une entrée order à trois variables
     final public static function orderThree(string $key,string $method,$value,?array $option=null):array
     {
-        $return = [];
-
         $callable = static::getOrderMethod($method);
-        if(!empty($callable))
-        $return = $callable($key,$value,$method,$option);
-
-        return $return;
+        return (!empty($callable))? $callable($key,$value,$method,$option):[];
     }
 
 
@@ -2407,7 +2370,6 @@ abstract class Syntax extends Main\Root
     final public static function setTwo(string $method,$value,?array $option=null):array
     {
         $return = ['sql'=>''];
-
         $return['sql'] .= static::functionFormat($method);
         $return['sql'] .= '(';
         $return = static::value($value,$return,$option);
@@ -2422,8 +2384,8 @@ abstract class Syntax extends Main\Root
     final public static function setThree(string $key,string $method,$value1,$value2,?array $option=null):array
     {
         $return = [];
-
         $callable = static::getSetMethod($method);
+
         if(!empty($callable))
         {
             $merge = $callable($key,$value1,$value2,$method,$option);
@@ -2651,8 +2613,7 @@ abstract class Syntax extends Main\Root
                 if($key === 'unique')
                 {
                     $name = Base\Arr::keysFirstValue(['name',1],$value);
-                    $col = Base\Arr::keysFirstValue(['col',2],$value);
-                    $col ??= $name;
+                    $col = Base\Arr::keysFirstValue(['col',2],$value) ?? $name;
                 }
 
                 else
@@ -3243,7 +3204,6 @@ abstract class Syntax extends Main\Root
     // value peut être une string qui représente like
     final public static function makeShowDatabase($value=null,?array $option=null):?array
     {
-        $return = null;
         $value = Base\Obj::cast($value,2);
         $option = static::option(Base\Arr::plus($option,['prepare'=>false]));
         $array['what'] = 'DATABASES';
@@ -3251,9 +3211,7 @@ abstract class Syntax extends Main\Root
         if(is_string($value))
         $array['where'] = 'LIKE '.static::value(static::shortcut($value),null,$option)['sql'];
 
-        $return = static::makeShow($array,$option);
-
-        return $return;
+        return static::makeShow($array,$option);
     }
 
 
@@ -3262,7 +3220,6 @@ abstract class Syntax extends Main\Root
     // value peut être une string qui représente like
     final public static function makeShowVariable($value=null,?array $option=null):?array
     {
-        $return = null;
         $value = Base\Obj::cast($value);
         $option = static::option(Base\Arr::plus($option,['prepare'=>false]));
         $array['what'] = 'VARIABLES';
@@ -3285,9 +3242,7 @@ abstract class Syntax extends Main\Root
             }
         }
 
-        $return = static::makeShow($array,$option);
-
-        return $return;
+        return static::makeShow($array,$option);
     }
 
 
@@ -3296,7 +3251,6 @@ abstract class Syntax extends Main\Root
     // value peut être une string qui représente like
     final public static function makeShowTable($value=null,?array $option=null):?array
     {
-        $return = null;
         $value = Base\Obj::cast($value,2);
         $option = static::option(Base\Arr::plus($option,['prepare'=>false]));
         $array['what'] = 'TABLES';
@@ -3304,9 +3258,7 @@ abstract class Syntax extends Main\Root
         if(is_string($value))
         $array['where'] = 'LIKE '.static::value(static::shortcut($value),null,$option)['sql'];
 
-        $return = static::makeShow($array,$option);
-
-        return $return;
+        return static::makeShow($array,$option);
     }
 
 
@@ -3315,7 +3267,6 @@ abstract class Syntax extends Main\Root
     // value peut être une string qui représente like
     final public static function makeShowTableStatus($value=null,?array $option=null):?array
     {
-        $return = null;
         $value = Base\Obj::cast($value,2);
         $option = static::option(Base\Arr::plus($option,['prepare'=>false]));
         $array['what'] = 'TABLE STATUS';
@@ -3323,9 +3274,7 @@ abstract class Syntax extends Main\Root
         if(is_string($value))
         $array['where'] = 'LIKE '.static::value(static::shortcut($value),null,$option)['sql'];
 
-        $return = static::makeShow($array,$option);
-
-        return $return;
+        return static::makeShow($array,$option);
     }
 
 

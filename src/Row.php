@@ -206,10 +206,7 @@ class Row extends Main\ArrObj
         $option = Base\Arr::plus(['relationChilds'=>true],$option);
 
         if($this->table()->hasPermission('delete'))
-        {
-            if(empty($option['relationChilds']) || !$this->hasRelationChilds(null,true))
-            $return = true;
-        }
+        $return = (empty($option['relationChilds']) || !$this->hasRelationChilds(null,true));
 
         return $return;
     }

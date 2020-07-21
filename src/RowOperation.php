@@ -35,15 +35,11 @@ abstract class RowOperation extends Operation
     // utilise valueInitial car le timestamp peut avoir changé dans les include
     final public function isValidTimestamp(int $value):bool
     {
-        $return = false;
         $row = $this->row();
         $commit = $row->newestDateCommit();
         $initial = (!empty($commit))? $commit['date']->valueInitial():null;
 
-        if(empty($initial) || $initial <= $value)
-        $return = true;
-
-        return $return;
+        return empty($initial) || $initial <= $value;
     }
 
 

@@ -578,16 +578,12 @@ class Col extends Main\Root
     // si c'est un tableau la longueur totale de l'ensemble des termes est considéré
     final public function isSearchTermValid($value):bool
     {
-        $return = false;
         $minLength = $this->searchMinLength();
 
         if(is_array($value))
         $value = Base\Arrs::implode('',$value);
 
-        if(is_string($value) && strlen($value) >= $minLength)
-        $return = true;
-
-        return $return;
+        return is_string($value) && strlen($value) >= $minLength;
     }
 
 
@@ -1970,13 +1966,8 @@ class Col extends Main\Root
     // retourne vrai si l'élément de formulaire de la colonne doit avoir un id dans le label
     public function hasFormLabelId(?array $attr=null,bool $complex=false):bool
     {
-        $return = false;
         $tag = $this->tag($attr,$complex);
-
-        if(Base\Html::isTextTag($tag))
-        $return = true;
-
-        return $return;
+        return Base\Html::isTextTag($tag);
     }
 
 

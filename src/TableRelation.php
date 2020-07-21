@@ -170,11 +170,7 @@ class TableRelation extends Relation
     {
         $option = (array) $option;
         $option = Base\Arr::clean($option);
-
-        if(!empty($option))
-        $return = false;
-
-        return $return;
+        return (!empty($option))? false:$return;
     }
 
 
@@ -182,14 +178,9 @@ class TableRelation extends Relation
     // retourne vrai si la output est une méthode de row
     final public function isOutputMethod(?string $method=null):bool
     {
-        $return = false;
         $attr = $this->attr();
         $method = $method ?? $attr['method'] ?? null;
-
-        if(is_string($method))
-        $return = true;
-
-        return $return;
+        return is_string($method);
     }
 
 
@@ -197,14 +188,11 @@ class TableRelation extends Relation
     // compte le nombre de relation
     final public function size(bool $cache=true,?array $option=null):int
     {
-        $return = 0;
         $cache = $this->shouldCache($cache,$option);
         $option = Base\Arr::plus($this->attr(),$option);
         $where = $option['where'] ?? null;
 
-        $return = $this->table()->rowsCount(true,$cache,$where);
-
-        return $return;
+        return $this->table()->rowsCount(true,$cache,$where);
     }
 
 
@@ -398,9 +386,7 @@ class TableRelation extends Relation
                 $where = Base\Arr::plus($attr['where'],$where);
                 $where[] = [$primary,'in',$primaries];
                 $count = count($primaries);
-
-                if($db->selectCount($table,$where) === $count)
-                $return = true;
+                $return = ($db->selectCount($table,$where) === $count);
             }
         }
 
@@ -438,9 +424,7 @@ class TableRelation extends Relation
             elseif($this->size() > 0)
             {
                 $all = $this->all(true);
-
-                if(!empty($all) && Base\Arr::ins($values,$all))
-                $return = true;
+                $return = (!empty($all) && Base\Arr::ins($values,$all));
             }
         }
 

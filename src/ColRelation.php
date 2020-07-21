@@ -432,8 +432,7 @@ class ColRelation extends Relation
         elseif(!empty($keys))
         {
             $all = $this->all($cache);
-            if(Base\Arr::keysExists($keys,$all))
-            $return = true;
+            $return = (Base\Arr::keysExists($keys,$all));
         }
 
         return $return;
@@ -455,8 +454,7 @@ class ColRelation extends Relation
         elseif(!empty($values))
         {
             $all = $this->all($cache);
-            if(Base\Arr::ins($values,$all))
-            $return = true;
+            $return = (Base\Arr::ins($values,$all));
         }
 
         return $return;

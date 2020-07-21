@@ -2137,10 +2137,7 @@ class Pdo extends Main\Root
             $return = true;
 
             elseif(is_array($all) && array_key_exists($value,$all) && ($type === 'select' || $type === 'show'))
-            {
-                if(empty($all[$value]['onlySelect']) || $type === 'select')
-                $return = true;
-            }
+            $return = (empty($all[$value]['onlySelect']) || $type === 'select');
         }
 
         return $return;

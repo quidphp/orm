@@ -279,13 +279,8 @@ class ColSchema extends Main\Map
     // retourne vrai si la colonne a le pattern relation
     final public static function isRelation($value,bool $isPatternType=false):bool
     {
-        $return = false;
         $value = ($isPatternType === true)? $value:static::patternTypeFromName($value);
-
-        if(!empty($value) && in_array($value,static::$config['relation'],true))
-        $return = true;
-
-        return $return;
+        return !empty($value) && in_array($value,static::$config['relation'],true);
     }
 
 

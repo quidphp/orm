@@ -245,9 +245,7 @@ class PdoSql extends Main\Map
         {
             $arr = $this->arr();
             $join = Base\Arr::keysFirst(['join','innerJoin','outerJoin'],$arr);
-
-            if($join !== null && !empty($arr[$join]) && !empty($arr[$join]['table']))
-            $return = true;
+            $return = ($join !== null && !empty($arr[$join]) && !empty($arr[$join]['table']));
         }
 
         return $return;
@@ -1199,14 +1197,9 @@ class PdoSql extends Main\Map
     // retourne vrai si le id est dans la page
     final public function isSpecificInPage($value,?int $page=null,bool $cache=true):bool
     {
-        $return = false;
         $page = (is_int($page))? $page:$this->getPage();
         $specificPage = $this->specificPage($value,$cache);
-
-        if(is_int($specificPage) && $specificPage === $page)
-        $return = true;
-
-        return $return;
+        return is_int($specificPage) && $specificPage === $page;
     }
 
 

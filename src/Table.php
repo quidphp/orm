@@ -259,13 +259,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si une requête pour la table devrait être loggé
     final public function shouldLogSql(string $type):bool
     {
-        $return = false;
         $log = $this->getAttr(['logSql',$type]);
-
-        if($log === true)
-        $return = true;
-
-        return $return;
+        return $log === true;
     }
 
 
@@ -286,11 +281,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if($return === true)
         {
-            $return = false;
-
             $searchable = $this->cols()->searchable();
-            if($searchable->isNotEmpty())
-            $return = true;
+            $return = ($searchable->isNotEmpty());
         }
 
         return $return;
@@ -2049,7 +2041,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // fait une insertion sur la table, utilisé à partir de main/importer
     final public function targetInsert(array $data,?array $option=null):bool
     {
-        $return = false;
         $option = Base\Arr::plus($option,['row'=>false]);
         $db = $this->db();
 
@@ -2057,10 +2048,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $insert = $this->insert($data,$option);
         $db->on();
 
-        if(is_int($insert))
-        $return = true;
-
-        return $return;
+        return is_int($insert);
     }
 
 
@@ -2078,9 +2066,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             $update = $row->setUpdateValid($data);
             $db->on();
             $row->unlink();
-
-            if(is_int($update))
-            $return = true;
+            $return = (is_int($update));
         }
 
         return $return;
@@ -2100,9 +2086,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             $db->off();
             $delete = $row->deleteOrDeactivate($option);
             $db->on();
-
-            if(is_int($delete))
-            $return = true;
+            $return = (is_int($delete));
         }
 
         return $return;
