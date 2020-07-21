@@ -1656,6 +1656,12 @@ class PdoSql extends Main\Map
         if($order !== $primary)
         $this->order($primary,'asc');
 
+        if(is_array($limit) && count($limit) === 1)
+        {
+            $page = key($limit);
+            $limit = current($limit);
+        }
+
         if(is_int($limit) && $limit > 0)
         {
             if(is_int($page) && $page > 0)
