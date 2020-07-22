@@ -263,6 +263,41 @@ class Sql extends PdoSql
     {
         return $this->set('what','*')->trigger('rows');
     }
+
+
+    // triggerRowsChunk
+    // méthode qui permet de faire des requêtes groupés par chun
+    // chaque row est passé dans le callback
+    // si le callback retourne false, break tout... si retourne true, unlink la row
+    // retourne le nombre de chunk
+    final public function triggerRowsChunk(int $chunk,\Closure $closure):int
+    {
+        $return = 0;
+        $page = 1;
+        $this->limit([$page=>$chunk]);
+        $rows = $this->triggerRows();
+
+        while ($rows->isNotEmpty())
+        {
+            foreach ($rows as $row)
+            {
+                $result = $closure($row,$return,$page);
+                $return++;
+
+                if($result === false)
+                break 2;
+
+                elseif($result === true)
+                $row->unlink();
+            }
+
+            $page++;
+            $this->limit([$page=>$chunk]);
+            $rows = $this->triggerRows();
+        }
+
+        return $return;
+    }
 }
 
 // init

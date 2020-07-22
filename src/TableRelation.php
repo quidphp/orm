@@ -99,14 +99,6 @@ class TableRelation extends Relation
         if(!is_array($attr['output']))
         $attr['output'] = [$attr['output']];
 
-        if(array_key_exists('appendPrimary',$attr) && $attr['appendPrimary'] === true && !in_array($primary,$attr['what'],true))
-        {
-            $attr['what'][] = $primary;
-
-            if(!in_array($primary,$attr['output'],true))
-            $attr['output'][] = $primary;
-        }
-
         $attr['where'] ??= null;
         $attr['order'] ??= $table->order();
         $attr['onGet'] ??= false;
@@ -137,25 +129,6 @@ class TableRelation extends Relation
     }
 
 
-    // prepareOption
-    // prépare le tableau d'option passé dans all, gets ou search
-    // est utilisé pour traiter appendPrimary dans une relation qui est dans une relation
-    final protected function prepareOption(array $return):array
-    {
-        if(array_key_exists('appendPrimary',$return) && $return['appendPrimary'] === false)
-        {
-            $table = $this->table();
-            $primary = $table->primary();
-            $what = (!empty($return['what']) && is_array($return['what']))? $return['what']:[];
-
-            if(count($what) > 1 && Base\Arr::valueLast($what) === $primary)
-            $return['what'] = Base\Arr::spliceLast($return['what']);
-        }
-
-        return $return;
-    }
-
-
     // searchMinLength
     // retourne la longueur minimale de la recherche
     final public function searchMinLength():int
@@ -178,8 +151,12 @@ class TableRelation extends Relation
     // retourne vrai si la output est une méthode de row
     final public function isOutputMethod(?string $method=null):bool
     {
-        $attr = $this->attr();
-        $method = $method ?? $attr['method'] ?? null;
+        if($method === null)
+        {
+            $attr = $this->attr();
+            $method ??= $attr['method'] ?? null;
+        }
+
         return is_string($method);
     }
 
@@ -222,7 +199,6 @@ class TableRelation extends Relation
         $attr = $this->attr();
         $cache = $this->shouldCache($cache,$option);
         $option = Base\Arr::plus($attr,$option);
-        $option = $this->prepareOption($option);
         $what = $option['what'];
         $where = $option['where'] ?? null;
         $method = (isset($option['method']) && is_string($option['method']))? $option['method']:null;
@@ -290,7 +266,6 @@ class TableRelation extends Relation
         $attr = $this->attr();
 
         $option = Base\Arr::plus($attr,$option);
-        $option = $this->prepareOption($option);
         $where = $option['where'] ?? [];
         $order = $this->getOrder($option['order'],$option);
         $limit = $option['limit'] ?? null;
@@ -477,7 +452,7 @@ class TableRelation extends Relation
     {
         $return = null;
         $attr = $this->attr();
-        $option = $this->prepareOption(Base\Arr::plus($attr,$option));
+        $option = Base\Arr::plus($attr,$option);
         $table = $this->table();
 
         if(strlen($value) && $this->size() > 0)
@@ -590,7 +565,7 @@ class TableRelation extends Relation
         $return = $this->table()->colName()->name();
         $attr ??= $this->attr();
 
-        if(empty($attr['orderUseName']))
+        if($this->isOutputMethod() === false)
         {
             $output = $attr['output'] ?? null;
             $field = null;
@@ -657,7 +632,7 @@ class TableRelation extends Relation
         if($onGet === true)
         {
             $cols = $this->table()->cols();
-            $array = $cols->value($array,true,true,['appendPrimary'=>false]);
+            $array = $cols->value($array,true,true);
         }
 
         if($output === true)
@@ -724,7 +699,7 @@ class TableRelation extends Relation
             if(strlen($value))
             {
                 if($key === $primary && strlen($return))
-                $return = static::outputPrimary($value,$return);
+                $return = static::appendPrimary($return,$value);
 
                 else
                 {
@@ -747,17 +722,6 @@ class TableRelation extends Relation
 
         if(is_scalar($return))
         $return = (string) $return;
-
-        return $return;
-    }
-
-
-    // outputPrimary
-    // utilisé pour ajouter le id entre paranthèse avec #
-    final public static function outputPrimary($value,string $return):string
-    {
-        if(is_numeric($value) && strlen($return))
-        $return .= " (#$value)";
 
         return $return;
     }

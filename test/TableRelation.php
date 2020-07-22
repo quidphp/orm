@@ -44,8 +44,6 @@ class TableRelation extends Base\Test
 
         // prepareAttrWithMethod
 
-        // prepareOption
-
         // searchMinLength
         assert($rel->searchMinLength() === 3);
 
@@ -73,16 +71,16 @@ class TableRelation extends Base\Test
         assert(array_keys($rel->gets([1,3,2])) === [1,3,2]);
         assert(count($rel->gets([3,2,1])) === 3);
         assert(count($rel->gets([1,2,3])) === 3);
-        assert($user->gets([3,1]) === [3=>'user (#3)',1=>'nobody (#1)']);
-        assert($user->gets([1,3]) === [1=>'nobody (#1)',3=>'user (#3)']);
+        assert($user->gets([3,1]) === [3=>'user',1=>'nobody']);
+        assert($user->gets([1,3]) === [1=>'nobody',3=>'user']);
         assert($rel2->gets([1,2]) === [1=>'test',2=>'test2']);
 
         // all
         assert(array_keys($rel->all()) === [2,1,3,4]);
         assert(count($rel->all()) === 4);
-        assert($user->all(false) === [5=>'cli (#5)',4=>'inactive (#4)',3=>'user (#3)',2=>'admin (#2)',1=>'nobody (#1)']);
-        assert($user->all() === [5=>'cli (#5)',4=>'inactive (#4)',3=>'user (#3)',2=>'admin (#2)',1=>'nobody (#1)']);
-        assert($user->all(false,['limit'=>2]) === [5=>'cli (#5)',4=>'inactive (#4)']);
+        assert($user->all(false) === [5=>'cli',4=>'inactive',3=>'user',2=>'admin',1=>'nobody']);
+        assert($user->all() === [5=>'cli',4=>'inactive',3=>'user',2=>'admin',1=>'nobody']);
+        assert($user->all(false,['limit'=>2]) === [5=>'cli',4=>'inactive']);
         assert($user->count() === 2);
         assert($rel2->all(false) === [1=>'test',2=>'test2']);
 
@@ -97,18 +95,18 @@ class TableRelation extends Base\Test
         // existsWhere
 
         // in
-        assert($user->in('admin (#2)','nobody (#1)'));
+        assert($user->in('admin','nobody'));
         $user->empty();
-        assert($user->in('admin (#2)','nobody (#1)'));
-        assert(!$user->in('admin (#2)','nobodyz (#1)'));
+        assert($user->in('admin','nobody'));
+        assert(!$user->in('admin','nobodyz'));
         assert($rel2->in('test2'));
 
         // inWhere
 
         // search
-        assert($user->search('nob',['limit'=>1]) === [1=>'nobody (#1)']);
-        assert($user->search('adm min') === [2=>'admin (#2)']);
-        assert($user->search('adm + min',['searchSeparator'=>'+']) === [2=>'admin (#2)']);
+        assert($user->search('nob',['limit'=>1]) === [1=>'nobody']);
+        assert($user->search('adm min') === [2=>'admin']);
+        assert($user->search('adm + min',['searchSeparator'=>'+']) === [2=>'admin']);
         assert($user->search('well') === []);
         assert($rel2->search('test') === [1=>'test',2=>'test2']);
         assert($rel2->search('test2') === [2=>'test2']);
@@ -146,20 +144,17 @@ class TableRelation extends Base\Test
 
         // outputMethod
 
-        // outputPrimary
-        assert(Orm\TableRelation::outputPrimary(2,'test') === 'test (#2)');
-
         // attr
-        assert($rel->attr() === ['what'=>['id','name_en','dateAdd'],'appendPrimary'=>true,'onGet'=>true,'output'=>['[dateAdd] [name_en] _ [id]'],'order'=>['name_en'=>'desc'],'where'=>[]]);
+        assert($rel->attr() === ['what'=>['id','name_en','dateAdd'],'onGet'=>true,'output'=>['[dateAdd] [name_en] _ [id]'],'order'=>['name_en'=>'desc'],'where'=>[]]);
         assert($user->attr()['order'] === ['id'=>'desc']);
-        assert($user->attr()['what'] === ['username','email','id']);
+        assert($user->attr()['what'] === ['username','email']);
         assert($session->attr()['what'] === ['id']);
 
         // arrMap
         assert($user->isNotEmpty());
         assert($user->empty() === $user);
         assert($user->isEmpty());
-        assert($user[1] === 'nobody (#1)');
+        assert($user[1] === 'nobody');
 
         // cleanup
         assert($db->truncate($table) instanceof \PDOStatement);

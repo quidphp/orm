@@ -58,7 +58,6 @@ class Col extends Main\Root
         'export'=>true, // défini si la colonne est exportable
         'exportSeparator'=>', ', // séparateur si plusieurs valeurs (tableau)
         'exists'=>true, // la colonne doit existé ou une erreur est envoyé, la valeur par défaut est prise ici, pour changer pour une colonne il faut le faire au niveau de la row/table/db
-        'excerpt'=>75, // longueur de l'excerpt
         'keyboard'=>null, // défini le keyboard à utiliser pour le champ (inputmode)
         'relationSortKey'=>true, // si la relation est sort par clé automatiquement
         'relationIndex'=>true, // si la relation est indexé (donc si les clés sont string transforme en index) -> attention si une valeur contient un caractère non url ou - ça ca causer des problèmes
@@ -400,26 +399,6 @@ class Col extends Main\Root
     public function isMedia():bool
     {
         return false;
-    }
-
-
-    // valueExcerpt
-    // créer une version résumé de la valeur si la longueur dépasse l'attribut excerpt
-    final public function valueExcerpt($return,?array $option=null)
-    {
-        $option = Base\Arr::plus(['mb'=>true,'stripTags'=>true],$option);
-        $excerpt = $this->getAttr('excerpt');
-
-        if(is_int($excerpt))
-        {
-            if(is_array($return))
-            $return = Base\Arr::valuesExcerpt($excerpt,$return,true,$option);
-
-            elseif(is_string($return))
-            $return = Base\Html::excerpt($excerpt,$return,$option);
-        }
-
-        return $return;
     }
 
 

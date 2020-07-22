@@ -247,8 +247,6 @@ class Rows extends Base\Test
         assert($rows->count() === 0);
         assert($rows->delete() === null);
 
-        // writeFile
-
         // getOverloadKeyPrepend
 
         // readOnly

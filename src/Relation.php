@@ -36,5 +36,19 @@ abstract class Relation extends Main\ArrMap
     {
         static::throw('notAllowed');
     }
+
+
+    // appendPrimary
+    // utilisé pour ajouter le id entre paranthèse avec #
+    final public static function appendPrimary($return,$value):string
+    {
+        if(!is_string($return))
+        $return = (string) $return;
+
+        if(is_numeric($value) && strlen($return))
+        $return .= " (#$value)";
+
+        return $return;
+    }
 }
 ?>

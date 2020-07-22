@@ -659,24 +659,6 @@ class Rows extends Main\MapObj
     }
 
 
-    // writeFile
-    // écrit plusieurs lignes dans l'objet file fourni en argument
-    final public function writeFile(Main\File $file,?array $option=null):self
-    {
-        $option = Base\Arr::plus(['header'=>false],$option);
-
-        foreach ($this->arr() as $row)
-        {
-            $row->writeFile($file,$option);
-
-            if($option['header'] === true)
-            $option['header'] = false;
-        }
-
-        return $this;
-    }
-
-
     // getOverloadKeyPrepend
     // retourne le prepend de la clé à utiliser pour le tableau overload
     final public static function getOverloadKeyPrepend():?string

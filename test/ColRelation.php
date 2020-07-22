@@ -145,7 +145,7 @@ class ColRelation extends Base\Test
         assert(count($multi->all()) === 3);
         assert(count($check->all()) === 11);
         assert(count($rangeInt->all()) === 8);
-        assert($userAdd[1] === 'nobody (#1)');
+        assert($userAdd[1] === 'nobody');
         assert(count($userAdd->all()) !== 5);
         assert(count($userAdd2->all()) !== 5);
         assert(count($userId->all(false)) === 5);
@@ -184,14 +184,14 @@ class ColRelation extends Base\Test
         assert($multi->in('oken'));
         assert($multi->in('oken','bla'));
         assert(!$multi->in('oken','blaz'));
-        assert($userId->in('nobody (#1)'));
-        assert($userId->in('nobody (#1)','admin (#2)'));
-        assert($userId->in('nobody (#1)','admin (#2)'));
-        assert(!$userId->in('nobody (#1)','adminz (#2)'));
+        assert($userId->in('nobody'));
+        assert($userId->in('nobody','admin'));
+        assert($userId->in('nobody','admin'));
+        assert(!$userId->in('nobody','adminz'));
 
         // search
-        assert($userId->search('nobo ody') === [1=>'nobody (#1)']);
-        assert($userId->search('adm') === [2=>'admin (#2)']);
+        assert($userId->search('nobo ody') === [1=>'nobody']);
+        assert($userId->search('adm') === [2=>'admin']);
         assert($userId->search('zzz') === []);
         assert($lang->search('wll LEL') === [3=>'wllel']);
         assert($lang->search('wll + LEL',['searchSeparator'=>'+']) === [3=>'wllel']);
@@ -214,8 +214,8 @@ class ColRelation extends Base\Test
 
         // keyValue
         assert($lang->keyValue(2) === [2=>'oken']);
-        assert($userId->keyValue(2) === [2=>'admin (#2)']);
-        assert($userIds->keyValue(2) === [2=>'admin (#2)']);
+        assert($userId->keyValue(2) === [2=>'admin']);
+        assert($userIds->keyValue(2) === [2=>'admin']);
         assert(count($userIds->keyValue([1,2,3])) === 3);
         assert(count($userIds->keyValue([2,1,3,1000])) === 4);
         assert(count($userIds->keyValue([1,2,3,1000],true)) === 3);
@@ -224,7 +224,7 @@ class ColRelation extends Base\Test
         assert($lang->one(2) === 'oken');
         assert($lang->one(8) === null);
         assert($lang->one('oken') === null);
-        assert($userAdd->one(2) === 'admin (#2)');
+        assert($userAdd->one(2) === 'admin');
         assert($range->one(0) === 0);
         assert($str->one(0) === 'test');
 
@@ -233,9 +233,9 @@ class ColRelation extends Base\Test
         assert($multi->many([2,3]) === [2=>'oken',3=>'wllel']);
         assert($multi->many([2,3,1000]) === [2=>'oken',3=>'wllel',1000=>null]);
         assert($multi->many([2,3,1000],true) === [2=>'oken',3=>'wllel']);
-        assert($userIds->many(1) === [1=>'nobody (#1)']);
-        assert($userIds->many([2,1,1000]) === [2=>'admin (#2)',1=>'nobody (#1)',1000=>null]);
-        assert($userIds->many([2,1,1000],true) === [2=>'admin (#2)',1=>'nobody (#1)']);
+        assert($userIds->many(1) === [1=>'nobody']);
+        assert($userIds->many([2,1,1000]) === [2=>'admin',1=>'nobody',1000=>null]);
+        assert($userIds->many([2,1,1000],true) === [2=>'admin',1=>'nobody']);
 
         // row
         assert($userAdd->row(2) instanceof Orm\Row);
@@ -310,7 +310,7 @@ class ColRelation extends Base\Test
         assert(!empty(serialize($clone)));
         assert($lang->empty() === $lang);
         assert(count($userId->all()) === 5);
-        assert($userId[2] === 'admin (#2)');
+        assert($userId[2] === 'admin');
         assert($userAdd2->isNotEmpty());
         assert($userId->isNotEmpty());
         assert($userId->empty() === $userId);
@@ -318,7 +318,7 @@ class ColRelation extends Base\Test
         assert($userId->isEmpty());
         assert($userId->isCount(0));
         assert($userAdd2->count() === 0);
-        assert($userId[2] === 'admin (#2)');
+        assert($userId[2] === 'admin');
         assert($userAdd2->count() === 1);
 
         return true;

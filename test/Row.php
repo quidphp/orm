@@ -189,7 +189,7 @@ class Row extends Base\Test
         assert($row->keyValue('id',['lol','dateAdd'],true) === [1=>'March 22, 2018 19:46:49']);
 
         // relationKeyValue
-        assert($row->relationKeyValue() === 'bla (#1)');
+        assert($row->relationKeyValue() === 'bla');
 
         // relationChilds
         assert($row->relationChilds() === []);

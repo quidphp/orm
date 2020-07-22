@@ -141,9 +141,6 @@ class Col extends Base\Test
         // isMedia
         assert(!$email->isMedia());
 
-        // valueExcerpt
-        assert($col->valueExcerpt('test') === 'test');
-
         // hasDefault
         assert($col->hasDefault());
         assert($email->hasDefault());

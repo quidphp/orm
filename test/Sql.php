@@ -71,6 +71,16 @@ class Sql extends Base\Test
         // triggerRows
         assert($sql->select()->table($table)->where(2)->triggerRows() instanceof Orm\Rows);
 
+        // triggerRowsChunk
+        $sql->select()->table($table)->limit(3)->triggerRowsChunk(2,function($row,int $index,int $page) {
+            assert(in_array($page,[1,2,3],true));
+
+            if($row->id() === 4)
+            return false;
+            else
+            return true;
+        });
+
         // main
         $sql->setType('select')->one('what',$tb->col('id'),'count()')->one('table','table');
         assert($sql->get('what') === [['id','count()']]);
