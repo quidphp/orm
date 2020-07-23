@@ -2047,7 +2047,7 @@ class Col extends Main\Root
     // retourne les clés primaries qui réponde à la requête
     final public function primaries($where,...$args):array
     {
-        return $this->db()->selectPrimaries($this->table(),[$this->name()=>$where],...$args);
+        return $this->db()->selectPrimaries($this->table(),[[$this->name(),'findInSet',$where]],...$args);
     }
 
 
@@ -2055,7 +2055,7 @@ class Col extends Main\Root
     // retourne le count des clés primaries qui réponde à la requête
     final public function countPrimaries($where,...$args):?int
     {
-        return $this->db()->selectCount($this->table(),[$this->name()=>$where],...$args);
+        return $this->db()->selectCount($this->table(),[[$this->name(),'findInSet',$where]],...$args);
     }
 
 

@@ -194,6 +194,9 @@ class Row extends Base\Test
         // relationChilds
         assert($row->relationChilds() === []);
 
+        // relationParents
+        assert($row->relationParents()['user'][2] instanceof Orm\Row);
+
         // isActive
         assert($row->isActive(2));
         assert($logSql->insert(['type'=>1])->isActive());

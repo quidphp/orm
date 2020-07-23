@@ -591,6 +591,47 @@ class Row extends Main\ArrObj
     }
 
 
+    // relationParents
+    // retourne toutes les relations parents de la ligne
+    // retourne un tableau dont les relations de même table, dans différents champs sont regroupés
+    final public function relationParents():array
+    {
+        $return = [];
+        $cells = $this->cells()->filter(fn($cell) => $cell->col()->relation()->isRelationTable());
+
+        foreach ($cells as $cell)
+        {
+            $relation = $cell->col()->relation();
+            $table = $relation->relationTable();
+            $tableName = $table->name();
+            $rows = $relation->getRow($cell);
+
+            if(!empty($rows))
+            {
+                if($rows instanceof self)
+                $rows = $rows->toRows();
+
+                $array = [];
+                foreach ($rows->toArray() as $key => $row)
+                {
+                    if($row !== $this)
+                    $array[$key] = $row;
+                }
+
+                if(!empty($array))
+                {
+                    if(!array_key_exists($tableName,$return))
+                    $return[$tableName] = [];
+
+                    $return[$tableName] = Base\Arr::replace($return[$tableName],$array);
+                }
+            }
+        }
+
+        return $return;
+    }
+
+
     // isActive
     // retourne vrai si la cellule active a la valeur donné en argument, par défaut 1
     // si active est non existante et que value est 1, retourne true

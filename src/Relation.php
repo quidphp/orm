@@ -45,7 +45,7 @@ abstract class Relation extends Main\ArrMap
         if(!is_string($return))
         $return = (string) $return;
 
-        if(is_numeric($value) && strlen($return))
+        if(is_numeric($value) && strlen($return) && (string) $value !== $return)
         $return .= " (#$value)";
 
         return $return;
