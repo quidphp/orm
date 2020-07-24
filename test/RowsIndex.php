@@ -33,14 +33,6 @@ class RowsIndex extends Base\Test
         $rows = new Orm\RowsIndex(...$tb->rows()->toArray());
         assert(Base\Arr::isSequential($rows->toArray()));
 
-        // isTable
-        assert($rows->isTable($table));
-        assert($rows->isTable($tb));
-        assert(!$rows->isTable('session'));
-
-        // sameTable
-        assert($rows->sameTable());
-
         // hasCell
         assert($rows->hasCell('id'));
         assert(!$rows->hasCell('active'));
@@ -49,7 +41,11 @@ class RowsIndex extends Base\Test
         // primaries
         assert($rows->primaries() === [$table=>[1,2,3]]);
 
-        // add
+        // map
+        assert($rows->isTable($table));
+        assert($rows->isTable($tb));
+        assert(!$rows->isTable('session'));
+        assert($rows->sameTable());
         $rows->add(...$tb2->rows()->toArray());
         assert($rows->isTable($tb2));
         assert(count($rows->primaries()) === 2);
@@ -58,28 +54,11 @@ class RowsIndex extends Base\Test
         assert(!$rows->sameTable());
         $rows2 = new Orm\RowsIndex();
         assert($rows2->add($tb->rows(),$tb2->rows())->isCount(6));
-
-        // filterByTable
         assert($rows->filterByTable($tb)->isCount(3));
         assert($rows->filterByTable('LOL') === null);
         assert($rows->filterByTable($tb) instanceof Orm\Rows);
         assert(!$rows->filterByTable($table) instanceof Orm\RowsIndex);
-
-        // groupByTable
         assert(count($rows->groupByTable()) === 2);
-
-        // tableDb
-        assert($rows->tableDb($tb) instanceof Orm\Db);
-        assert($rows->tableDb('LOL') === null);
-
-        // tableRemove
-        assert($rows->unset($tb[1],$tb[2])->isCount(4));
-        assert($rows->tableRemove($table)->isCount(3));
-        assert($rows->add(...$tb->rows()->values())->isCount(6));
-        assert($rows->tableRemove($table,true)->isCount(3));
-        assert($rows->add(...$tb->rows()->values())->isCount(3));
-        $tb->rowsLoad();
-        assert($rows->add(...$tb->rows()->values())->isCount(6));
 
         // alive
         assert($rows->alive());
@@ -107,6 +86,7 @@ class RowsIndex extends Base\Test
 
         // cleanup
         assert($db->truncate($table) instanceof \PDOStatement);
+        assert($db->truncate($table2) instanceof \PDOStatement);
 
         return true;
     }

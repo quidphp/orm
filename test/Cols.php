@@ -29,27 +29,24 @@ class Cols extends Base\Test
         foreach ($cols as $key => $value) { }
         $clone = $cols->clone();
 
-        // construct
-
-        // toString
+        // colsMap
+        assert($cols->_cast()[0] === 'id');
+        assert(count($cols->withoutPrimary()) === 8);
+        assert(!$cols->isVisible());
+        assert(!$cols->isHidden());
+        assert($cols->included()->isCount(5));
+        assert(count($cols->searchable()) !== count($cols));
+        assert($cols->searchMinLength() === 3);
+        assert($cols->isSearchTermValid('avbc'));
+        assert(!$cols->isSearchTermValid('a'));
 
         // onPrepareKey
         assert($cols->get($tb[1]['id']) === $cols['id']);
         assert($cols->in($tb->col('id')));
 
-        // onPrepareReturns
-
-        // cast
-        assert($cols->_cast()[0] === 'id');
-
-        // offsetSet
-
         // namesWithoutPrimary
         assert(count($cols->namesWithoutPrimary()) === 8);
         assert($cols->namesWithoutPrimary()[0] === 'name_en');
-
-        // db
-        assert($cols->db() instanceof Orm\Db);
 
         // table
         assert($cols->table() instanceof Orm\Table);
@@ -60,20 +57,11 @@ class Cols extends Base\Test
         assert($cols->are('id','date','email','name_en','active','dateAdd','dateModify','userAdd','userModify'));
         assert(!$cols->are('idz','email','name_en','active','dateAdd','dateModify','userAdd','userModify'));
 
-        // withoutPrimary
-        assert(count($cols->withoutPrimary()) === 8);
-
         // default
         assert($cols->default() === ['name_en'=>'LOL','active'=>1,'email'=>'default@def.james','date'=>null,'userAdd'=>null,'dateAdd'=>null,'userModify'=>null,'dateModify'=>null]);
 
         // value
         assert($cols->value(['id'=>4,'dateAdd'=>123123213,'james'=>'OK'],true) === ['id'=>4,'dateAdd'=>'November 25, 1973 19:53:33']);
-
-        // isVisible
-        assert(!$cols->isVisible());
-
-        // isHidden
-        assert(!$cols->isHidden());
 
         // isRequired
         assert($cols->isRequired() === ['name_en'=>'LOL','email'=>'default@def.james','date'=>null]);
@@ -117,9 +105,6 @@ class Cols extends Base\Test
 
         // triggerValidate
 
-        // included
-        assert($cols->included()->isCount(5));
-
         // insert
         assert($cols->insert('name_en',2) === '2');
 
@@ -131,18 +116,6 @@ class Cols extends Base\Test
 
         // groupSetPriority
         assert($cols->groupSetPriority()[5] instanceof Orm\Cols);
-
-        // searchable
-        assert(count($cols->searchable()) !== count($cols));
-
-        // searchMinLength
-        assert($cols->searchMinLength() === 3);
-
-        // isSearchTermValid
-        assert($cols->isSearchTermValid('avbc'));
-        assert(!$cols->isSearchTermValid('a'));
-
-        // writeFile
 
         // keyClassExtends
         assert(count($cols::keyClassExtends()) === 2);

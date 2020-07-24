@@ -30,22 +30,24 @@ class Cells extends Base\Test
         foreach ($cells as $key => $value) { }
         $clone = $cells->clone();
 
-        // construct
-
-        // toString
+        // cellsMap
+        assert($cells->gets('id','active','name_[lang]')->count() === 3);
+        assert(!empty($cells->_cast()));
+        assert(count($cells->withoutPrimary()) === 8);
+        assert($cells->withoutPrimary() instanceof Orm\Cells);
+        assert($cells->isVisible());
+        assert(!$cells->isHidden());
+        assert($cells->isRequired()->isCount(3));
+        assert(!$cells->isStillRequiredEmpty());
+        assert($cells->isStillRequired()->isCount(1));
+        $cells['email']->set('test@test.com');
+        assert($cells->isStillRequired()->isEmpty());
+        assert($cells->isStillRequiredEmpty());
 
         // onPrepareKey
         assert($cells->get($tb->col('id')) === $cells['id']);
         assert($cells->get(0)->name() === 'id');
         assert($cells->get(['LOL',1000,1])->name() === 'name_en');
-
-        // onPrepareReturns
-        assert($cells->gets('id','active','name_[lang]')->count() === 3);
-
-        // cast
-        assert(!empty($cells->_cast()));
-
-        // offsetSet
 
         // isWhere
         assert($cells->isWhere([['id',true],['name_en',true],['dateAdd','=',10]]));
@@ -55,9 +57,6 @@ class Cells extends Base\Test
         assert(count($cells->namesWithoutPrimary()) === 8);
         assert($cells->namesWithoutPrimary()[0] === 'name_en');
 
-        // db
-        assert($cells->db() instanceof Orm\Db);
-
         // table
         assert($cells->table() instanceof Orm\Table);
 
@@ -65,28 +64,6 @@ class Cells extends Base\Test
         assert($cells->row() instanceof Orm\Row);
 
         // add
-
-        // withoutPrimary
-        assert(count($cells->withoutPrimary()) === 8);
-        assert($cells->withoutPrimary() instanceof Orm\Cells);
-
-        // isVisible
-        assert($cells->isVisible());
-
-        // isHidden
-        assert(!$cells->isHidden());
-
-        // isRequired
-        assert($cells->isRequired()->isCount(3));
-
-        // isStillRequired
-        assert(!$cells->isStillRequiredEmpty());
-        assert($cells->isStillRequired()->isCount(1));
-        $cells['email']->set('test@test.com');
-        assert($cells->isStillRequired()->isEmpty());
-
-        // isStillRequiredEmpty
-        assert($cells->isStillRequiredEmpty());
 
         // preValidatePrepare
         assert($cells->preValidatePrepare(['email'=>'ok']));
@@ -124,20 +101,12 @@ class Cells extends Base\Test
         assert($cells->completeValidation()['email'] === ['required']);
         $cells['email']->set('testtest.com');
 
-        // update
+        // cellsMap
         assert($cells->hasChanged());
         assert($cells->update() === $cells);
-
-        // delete
         assert($cells->delete() === $cells);
-
-        // hasChanged
         assert($cells->hasChanged());
-
-        // notEmpty
         assert($cells->notEmpty()->isCount(9));
-
-        // firstNotEmpty
         assert($cells->firstNotEmpty()->name() === 'id');
 
         // set
@@ -147,7 +116,7 @@ class Cells extends Base\Test
         assert($cells->sets(['active'=>4])['active']->value() === 4);
         assert($cells->hasChanged());
 
-        // changed
+        // cellsMap
         assert($cells->clone()->unset('id')->pair('reset')['active']->value() === 1);
         assert($cells->gets('active','dateModify')->pair('unset')['active']->value() === 6);
         assert($cells->changed()['dateModify'] instanceof Orm\Cell);
@@ -155,8 +124,6 @@ class Cells extends Base\Test
         $cells['active'] = 2;
         assert($cells['active'] instanceof Orm\Cell);
         assert(count($cells->changed(true)) === 6);
-
-        // included
         assert($cells->included() instanceof Orm\Cells);
 
         // keyValue
@@ -169,8 +136,6 @@ class Cells extends Base\Test
         // segment
         assert($cells->segment('[name_%lang%] [active] + [id]') === 'bla 2 + 1');
         assert($cells->segment('[name_%lang%] [active] + [id]',true) === 'bla 2 + 1');
-
-        // writeFile
 
         // keyClassExtends
         assert(count($cells::keyClassExtends()) === 2);

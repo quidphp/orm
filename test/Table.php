@@ -314,7 +314,7 @@ class Table extends Base\Test
 
         // rowsIn
         $tb->rowsUnlink(2);
-        assert($tb->rows()->primaries() === [1]);
+        assert($tb->rows()->keys() === [1]);
         assert($tb->rowsIn(2,1)->count() === 1);
         assert($tb->rows(2,1)->count() === 2);
 
@@ -341,7 +341,7 @@ class Table extends Base\Test
 
         // rowsUnlink
         assert($tb->rows(1,2,3,4)->count() === 2);
-        assert($tb->rows()->primaries() === [1,2]);
+        assert($tb->rows()->keys() === [1,2]);
         $tb->rowsUnlink(1);
         assert($tb->rows()->count() === 1);
         assert($tb->rows(1,2,3,4)->count() === 2);

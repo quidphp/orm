@@ -13,37 +13,15 @@ use Quid\Main;
 
 // cells
 // class for a collection of many cells within a same row
-class Cells extends Main\MapObj
+class Cells extends CellsMap
 {
-    // trait
-    use Main\Map\_readOnly;
-    use Main\Map\_sort;
-
-
     // config
     protected static array $config = [];
 
 
     // dynamique
     protected ?array $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
-    protected $mapIs = Cell::class; // classe d'objet permis
     protected ?string $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
-
-
-    // construct
-    // construit un nouvel objet cells
-    final public function __construct(...$values)
-    {
-        $this->add(...$values);
-    }
-
-
-    // toString
-    // retourne les noms de cellules séparés par des virgules
-    final public function __toString():string
-    {
-        return implode(',',$this->keys());
-    }
 
 
     // onPrepareKey
@@ -95,36 +73,6 @@ class Cells extends Main\MapObj
     }
 
 
-    // onPrepareReturns
-    // prépare le retour pour indexes, gets, slice et slice index
-    // les lignes sont toujours retournés dans un nouvel objet cells
-    final protected function onPrepareReturns(array $array):self
-    {
-        $array = Base\Arr::clean($array);
-        return new static(...array_values($array));
-    }
-
-
-    // cast
-    // retourne la valeur cast
-    final public function _cast():array
-    {
-        return $this->keys();
-    }
-
-
-    // offsetSet
-    // arrayAccess offsetSet si la clé est null [] ou si la clé est un nom de cellule
-    final public function offsetSet($key,$value):void
-    {
-        if($key === null)
-        $this->add($value);
-
-        else
-        $this->set($key,$value);
-    }
-
-
     // isWhere
     // retourne vrai si les cellules correspondent à la vérification where du tableau en argument
     // similaire à une syntaxe sql mais ne supporte pas les méthodes base/sql whereThree, ni les and, or et paranthèses
@@ -132,10 +80,12 @@ class Cells extends Main\MapObj
     {
         $return = false;
         $array = Base\Obj::cast($array);
-        $db = $this->db();
+        $table = $this->table();
 
-        if(!empty($db))
+        if(!empty($table))
         {
+            $db = $table->db();
+
             foreach ($array as $key => $value)
             {
                 foreach ($db->syntaxCall('wherePrepareOne',$key,$value) as $v)
@@ -171,19 +121,6 @@ class Cells extends Main\MapObj
             if(!$value->isPrimary())
             $return[] = $key;
         }
-
-        return $return;
-    }
-
-
-    // db
-    // retourne la db du premier objet
-    final public function db():?Db
-    {
-        $return = null;
-        $first = $this->first();
-        if(!empty($first))
-        $return = $first->db();
 
         return $return;
     }
@@ -256,59 +193,6 @@ class Cells extends Main\MapObj
         }
 
         return $this->checkAfter();
-    }
-
-
-    // withoutPrimary
-    // retourne un objet avec les cellules sans la clé primaire
-    final public function withoutPrimary():self
-    {
-        return $this->gets(...$this->namesWithoutPrimary());
-    }
-
-
-    // isVisible
-    // retourne vrai si tous les champs sont visibles
-    final public function isVisible(?Main\Session $session=null):bool
-    {
-        $hidden = $this->pair('isVisible',null,$session);
-        return !in_array(false,$hidden,true);
-    }
-
-
-    // isHidden
-    // retourne vrai si tous les champs sont cachés
-    final public function isHidden(?Main\Session $session=null):bool
-    {
-        $hidden = $this->pair('isVisible',null,$session);
-        return !in_array(true,$hidden,true);
-    }
-
-
-    // isRequired
-    // retourne un objet cells avec toutes les cellules requises
-    // ne retourne pas la clé primaire
-    final public function isRequired(bool $value=true):self
-    {
-        return $this->filter(fn($cell) => $cell->isRequired($value));
-    }
-
-
-    // isStillRequired
-    // retourne un objet cells avec toutes les cellules toujours requises
-    // ne retourne pas la clé primaire
-    final public function isStillRequired():self
-    {
-        return $this->filter(fn($cell) => !$cell->isPrimary() && $cell->isStillRequired());
-    }
-
-
-    // isStillRequiredEmpty
-    // retourne vrai si l'objet isStillRequired est vide
-    // ceci signifie que toutes les cellules requises ont une valeur
-    final public function isStillRequiredEmpty():bool
-    {
-        return $this->isStillRequired()->isEmpty();
     }
 
 
@@ -427,59 +311,6 @@ class Cells extends Main\MapObj
     }
 
 
-    // update
-    // passe toutes les cellules, sauf la primaire, dans la méthode onUpdate
-    final public function update(?array $option=null):self
-    {
-        foreach ($this->arr() as $key => $cell)
-        {
-            if(!$cell->isPrimary())
-            $return = $cell->update($option);
-        }
-
-        return $this;
-    }
-
-
-    // delete
-    // passe toutes les cellules, sauf la primaire, dans la méthode onDelete, si existante
-    final public function delete(?array $option=null):self
-    {
-        foreach ($this->arr() as $key => $cell)
-        {
-            if(!$cell->isPrimary())
-            $cell->delete($option);
-        }
-
-        return $this;
-    }
-
-
-    // hasChanged
-    // retourne vrai si une des cellules de cells a changé
-    // si une cellule a un committed callback, on considère qu'elle a changé
-    final public function hasChanged():bool
-    {
-        return !empty($this->some(fn($cell) => $cell->hasChanged()));
-    }
-
-
-    // notEmpty
-    // retourne un objet avec toutes les cellules non vides
-    final public function notEmpty():self
-    {
-        return $this->filter(fn($cell) => $cell->isNotEmpty());
-    }
-
-
-    // firstNotEmpty
-    // retoure la première cellule non vide
-    final public function firstNotEmpty():?Cell
-    {
-        return $this->notEmpty()->first();
-    }
-
-
     // set
     // change la valeur d'une cellule
     // possible d'enrobber l'opération dans un tryCatch
@@ -532,46 +363,6 @@ class Cells extends Main\MapObj
     }
 
 
-    // changed
-    // retourne un objet des cellules qui ont changés
-    // si include est true, inclut aussi les colonne ayant l'attribut include
-    final public function changed(bool $included=false,?array $option=null):self
-    {
-        $return = ($included === true)? $this->included($option):new static();
-
-        foreach ($this->arr() as $cell)
-        {
-            if(!$return->in($cell) && $cell->hasChanged())
-            $return->add($cell);
-        }
-
-        return $return;
-    }
-
-
-    // included
-    // retourne un objet des cellules avec les included
-    // si la cellule incluse n'a pas changé et qu'elle a attrInclude, set sa propre valeur pour lancer les callback onSet
-    // les cellules required sont include par défaut
-    final public function included(?array $option=null):self
-    {
-        $option = Base\Arr::plus($option,['preValidate'=>false]);
-        return $this->filter(function($cell) use($option) {
-            $return = false;
-
-            if($cell->isIncluded($option['required'] ?? true))
-            {
-                $return = true;
-
-                if(!$cell->hasChanged() && $cell->col()->hasAttrInclude())
-                $cell->setSelf($option);
-            }
-
-            return $return;
-        });
-    }
-
-
     // keyValue
     // retourne les clés et valeurs des cellules de la ligne sous forme de tableau associatif
     // possible de retourner le résultat de get si get est true, sinon ce sera value
@@ -604,32 +395,6 @@ class Cells extends Main\MapObj
         $return = Base\Segment::sets(null,$this->keyValue($get),$value);
 
         return $return;
-    }
-
-
-    // writeFile
-    // écrit les cellules dans l'objet file fourni en argument
-    // par défaut le type est format, donc passe dans export
-    // par exemple pour une ligne de csv
-    final public function writeFile(Main\File $file,?array $option=null):self
-    {
-        $option = Base\Arr::plus(['type'=>'format'],$option);
-        $array = [];
-
-        foreach ($this as $key => $cell)
-        {
-            if($option['type'] === 'format')
-            $value = $cell->export($option);
-
-            else
-            $value = (string) $cell;
-
-            $array = Base\Arr::merge($array,$value);
-        }
-
-        $file->write($array,$option);
-
-        return $this;
     }
 
 

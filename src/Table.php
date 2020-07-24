@@ -1122,7 +1122,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         if($return->isEmpty() || $this->rowsCount(true,true) !== $return->count())
         {
             $this->checkLink();
-            $primaries = $return->primaries();
+            $primaries = $return->keys();
             $where = (!empty($primaries))? [['id','notIn',$primaries]]:null;
             $rows = $this->db()->selectAllsPrimary($this,$where,[$this->primary()=>'asc']);
 
@@ -1965,7 +1965,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
         if($this->cols->isNotEmpty())
         {
-            $row = $this->rows()->primaries();
+            $row = $this->rows()->keys();
             $col = $this->cols()->keys();
 
             $return['col'] = $col;

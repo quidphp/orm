@@ -180,34 +180,26 @@ class Col extends Main\Root
     // doit retourner un tableau
     final protected function onExport($value=null,Cell $cell,string $type,?array $option=null):array
     {
-        $return = [];
+        $return = [$value];
 
-        if(in_array($type,['col','cell'],true))
-        {
-            $separator = $this->getAttr('exportSeparator');
-
-            if($type === 'col')
-            $value = $this->label();
-
-            $return = [$value];
-
-            $callable = $this->getAttr('onExport');
-            if(!empty($callable))
-            $return = $callable($return,$type,$cell,$option);
-
-            if(!is_array($return))
-            $return = (array) $return;
-
-            foreach ($return as $key => $value)
-            {
-                $return[$key] = Base\Str::cast($value,$separator);
-            }
-        }
-
-        else
+        if(!in_array($type,['col','cell'],true))
         static::throw();
 
-        return $return;
+        $separator = $this->getAttr('exportSeparator');
+
+        if($type === 'col')
+        $value = $this->label();
+
+        $return = [$value];
+
+        $callable = $this->getAttr('onExport');
+        if(!empty($callable))
+        $return = $callable($return,$type,$cell,$option);
+
+        if(!is_array($return))
+        $return = (array) $return;
+
+        return Base\Arr::map($return,fn($value) => Base\Str::cast($value,$separator));
     }
 
 

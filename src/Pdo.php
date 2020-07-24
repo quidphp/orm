@@ -741,32 +741,29 @@ class Pdo extends Main\Root
             if(!$this->isOutput($value['type'],$output))
             static::throw($output,'invalidOutputFor',$value['type']);
 
-            else
+            $output = $this->output($value['type'],$output);
+
+            if(!empty($output))
             {
-                $output = $this->output($value['type'],$output);
+                if($output['type'] === 'statement')
+                $return = $statement;
 
-                if(!empty($output))
+                elseif(!empty($output['method']))
                 {
-                    if($output['type'] === 'statement')
-                    $return = $statement;
+                    $method = $output['method'];
+                    $type = $value['type'];
 
-                    elseif(!empty($output['method']))
-                    {
-                        $method = $output['method'];
-                        $type = $value['type'];
+                    if($method === 'infoStatement')
+                    $return = $this->infoStatement($value,$statement);
 
-                        if($method === 'infoStatement')
-                        $return = $this->infoStatement($value,$statement);
+                    elseif($method === 'rowCount' && $this->isOutput($type,$output['type']))
+                    $return = $statement->rowCount();
 
-                        elseif($method === 'rowCount' && $this->isOutput($type,$output['type']))
-                        $return = $statement->rowCount();
+                    elseif($method === 'lastInsertId' && $this->isOutput($type,$output['type']))
+                    $return = $this->lastInsertId();
 
-                        elseif($method === 'lastInsertId' && $this->isOutput($type,$output['type']))
-                        $return = $this->lastInsertId();
-
-                        elseif(in_array($type,['select','show'],true))
-                        $return = $this->outputStatementSelectShow($value,$output,$statement);
-                    }
+                    elseif(in_array($type,['select','show'],true))
+                    $return = $this->outputStatementSelectShow($value,$output,$statement);
                 }
             }
         }

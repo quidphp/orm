@@ -814,7 +814,7 @@ class Row extends Main\ArrObj
     final public function namePrimary(?string $pattern=null,?int $excerpt=null):string
     {
         $return = '';
-        $pattern = (is_string($pattern))? $pattern:'%name% (#%primary%)';
+        $pattern ??= '%name% (#%primary%)';
         $name = $this->cellName()->value();
 
         if(is_int($excerpt))
@@ -992,13 +992,15 @@ class Row extends Main\ArrObj
 
         if(!empty($preValidate))
         {
+            $keys = array_keys($preValidate);
+
             if($option['com'] === true)
             $this->updateCom($preValidate);
 
             elseif($option['strict'] === true)
-            static::throw($this->table(),...array_keys($preValidate));
+            static::throw($this->table(),...$keys);
 
-            $return = Base\Arr::keysStrip(array_keys($preValidate),$return);
+            $return = Base\Arr::keysStrip($keys,$return);
         }
 
         return $return;

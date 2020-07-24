@@ -1172,7 +1172,7 @@ class PdoSql extends Main\Map
     final protected function pageBase(string $method,?int $page=null,bool $cache=true,...$args)
     {
         $limit = $this->parseLimit();
-        $page = (is_int($page))? $page:$limit['page'];
+        $page ??= $limit['page'];
         return Base\Nav::$method($page,$this->triggerWhatCount($cache),$limit['limit'],...$args);
     }
 
@@ -1197,7 +1197,7 @@ class PdoSql extends Main\Map
     // retourne vrai si le id est dans la page
     final public function isSpecificInPage($value,?int $page=null,bool $cache=true):bool
     {
-        $page = (is_int($page))? $page:$this->getPage();
+        $page ??= $this->getPage();
         $specificPage = $this->specificPage($value,$cache);
         return is_int($specificPage) && $specificPage === $page;
     }
@@ -1241,7 +1241,7 @@ class PdoSql extends Main\Map
     {
         $return = null;
         $limit = $this->parseLimit();
-        $page = (is_int($page))? $page:$limit['page'];
+        $page ??= $limit['page'];
         $return = Base\Nav::pagesClose($page,$this->triggerWhatCount($cache),$limit['limit'],$amount);
 
         return $return;
@@ -1324,7 +1324,7 @@ class PdoSql extends Main\Map
     final public function pageWithSpecific(?int $value=null):?array
     {
         $return = null;
-        $value = (is_int($value))? $value:$this->getPage();
+        $value ??= $this->getPage();
 
         if(is_int($value))
         {

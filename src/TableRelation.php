@@ -40,50 +40,47 @@ class TableRelation extends Relation
         if(is_scalar($attr))
         $attr = ['what'=>$attr];
 
-        if(is_array($attr) && !empty($attr))
+        if(!is_array($attr))
+        $attr = [];
+
+        if(!array_key_exists('what',$attr))
+        $attr['what'] = true;
+
+        if($attr['what'] === true)
         {
-            if(!array_key_exists('what',$attr))
-            $attr['what'] = true;
+            $colName = $table->colName();
+            $value = [];
+            if(!empty($colName))
+            $value[] = $colName->name();
 
-            if($attr['what'] === true)
-            {
-                $colName = $table->colName();
-                $value = [];
-                if(!empty($colName))
-                $value[] = $colName->name();
-
-                $attr['what'] = $value;
-            }
-
-            if(!is_array($attr['what']))
-            $attr['what'] = [$attr['what']];
-
-            if(!empty($attr['what']))
-            {
-                if(array_key_exists('method',$attr) && is_string($attr['method']))
-                $attr = $this->prepareAttrWithMethod($table,$attr);
-
-                else
-                $attr = $this->prepareAttrWithWhat($table,$attr);
-
-                foreach ($attr as $key => $value)
-                {
-                    if(!empty($value) && static::isCallable($value))
-                    {
-                        $value = $value($this);
-                        $attr[$key] = Base\Obj::cast($value);
-                    }
-
-                    if($key === 'where' && !is_array($attr[$key]))
-                    $attr[$key] = (array) $attr[$key];
-                }
-
-                $this->attr = $attr;
-            }
-
-            else
-            static::throw('whatCannotBeEmpty');
+            $attr['what'] = $value;
         }
+
+        if(!is_array($attr['what']))
+        $attr['what'] = [$attr['what']];
+
+        if(empty($attr['what']))
+        static::throw('whatCannotBeEmpty');
+
+        if(array_key_exists('method',$attr) && is_string($attr['method']))
+        $attr = $this->prepareAttrWithMethod($table,$attr);
+
+        else
+        $attr = $this->prepareAttrWithWhat($table,$attr);
+
+        foreach ($attr as $key => $value)
+        {
+            if(!empty($value) && static::isCallable($value))
+            {
+                $value = $value($this);
+                $attr[$key] = Base\Obj::cast($value);
+            }
+
+            if($key === 'where' && !is_array($attr[$key]))
+            $attr[$key] = (array) $attr[$key];
+        }
+
+        $this->attr = $attr;
     }
 
 
@@ -213,41 +210,38 @@ class TableRelation extends Relation
         {
             $missing = (!empty($return))? Base\Arr::valuesStrip(array_keys($return),$primaries):$primaries;
 
-            if(!empty($missing))
-            {
-                if(!empty($return) && $found === false)
-                $return = Base\Arr::gets($primaries,$data);
+            if(empty($missing))
+            static::throw();
 
-                $db = $this->db();
-                $table = $this->table();
-                $primary = $table->primary();
-                $where[] = [$primary,'in',$missing];
+            if(!empty($return) && $found === false)
+            $return = Base\Arr::gets($primaries,$data);
 
-                if($isMethod === true)
-                $result = $db->rows($table,$where);
+            $db = $this->db();
+            $table = $this->table();
+            $primary = $table->primary();
+            $where[] = [$primary,'in',$missing];
 
-                else
-                {
-                    $what = Base\Arr::merge($primary,$what);
-                    $result = $db->selectAssocsUnique($what,$table,$where);
-                }
-
-                if(is_array($result) || $result instanceof Rows)
-                {
-                    foreach ($result as $key => $value)
-                    {
-                        $return[$key] = $this->makeOutput($value,$option);
-
-                        if($cache === true)
-                        $data[$key] = $return[$key];
-                    }
-
-                    $return = Base\Arr::getsExists($primaries,$return);
-                }
-            }
+            if($isMethod === true)
+            $result = $db->rows($table,$where);
 
             else
-            static::throw();
+            {
+                $what = Base\Arr::merge($primary,$what);
+                $result = $db->selectAssocsUnique($what,$table,$where);
+            }
+
+            if(is_array($result) || $result instanceof Rows)
+            {
+                foreach ($result as $key => $value)
+                {
+                    $return[$key] = $this->makeOutput($value,$option);
+
+                    if($cache === true)
+                    $data[$key] = $return[$key];
+                }
+
+                $return = Base\Arr::getsExists($primaries,$return);
+            }
         }
 
         return $return;

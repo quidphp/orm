@@ -13,37 +13,15 @@ use Quid\Main;
 
 // cols
 // class for a collection of many columns within a same table
-class Cols extends Main\MapObj
+class Cols extends ColsMap
 {
-    // trait
-    use Main\Map\_readOnly;
-    use Main\Map\_sort;
-
-
     // config
     protected static array $config = [];
 
 
     // dynamique
     protected ?array $mapAllow = ['add','unset','remove','empty','filter','sort','clone']; // méthodes permises
-    protected $mapIs = Col::class; // classe d'objet permis
     protected ?string $mapSortDefault = 'priority'; // défini la méthode pour sort par défaut
-
-
-    // construct
-    // construit un nouvel objet cols
-    final public function __construct(...$values)
-    {
-        $this->add(...$values);
-    }
-
-
-    // toString
-    // retourne les noms de colonnes séparés par des virgules
-    final public function __toString():string
-    {
-        return implode(',',$this->keys());
-    }
 
 
     // onPrepareKey
@@ -95,36 +73,6 @@ class Cols extends Main\MapObj
     }
 
 
-    // onPrepareReturns
-    // prépare le retour pour indexes, gets, slice et slice index
-    // les lignes sont toujours retournés dans un nouvel objet cols
-    final protected function onPrepareReturns(array $array):self
-    {
-        $array = Base\Arr::clean($array);
-        return new static(...array_values($array));
-    }
-
-
-    // cast
-    // retourne la valeur cast
-    final public function _cast():array
-    {
-        return $this->keys();
-    }
-
-
-    // offsetSet
-    // arrayAccess offsetSet est seulement permis si la clé est null []
-    final public function offsetSet($key,$value):void
-    {
-        if($key === null)
-        $this->add($value);
-
-        else
-        static::throw('arrayAccess','onlyAllowedWithNullKey');
-    }
-
-
     // namesWithoutPrimary
     // retourne les noms de colonnes contenus dans l'objet sans la colonne primaire
     final public function namesWithoutPrimary():array
@@ -136,19 +84,6 @@ class Cols extends Main\MapObj
             if(!$value->isPrimary())
             $return[] = $key;
         }
-
-        return $return;
-    }
-
-
-    // db
-    // retourne la db du premier objet
-    final public function db():?Db
-    {
-        $return = null;
-        $first = $this->first();
-        if(!empty($first))
-        $return = $first->db();
 
         return $return;
     }
@@ -264,28 +199,6 @@ class Cols extends Main\MapObj
         }
 
         return $return;
-    }
-
-
-    // isVisible
-    // retourne vrai si tous les champs sont visibles
-    final public function isVisible(?Main\Session $session=null):bool
-    {
-        $args = [true,null,$session];
-        $hidden = $this->pair('isVisible',...$args);
-
-        return !in_array(false,$hidden,true);
-    }
-
-
-    // isHidden
-    // retourne vrai si tous les champs sont cachés
-    final public function isHidden(?Main\Session $session=null):bool
-    {
-        $args = [true,null,$session];
-        $hidden = $this->pair('isVisible',...$args);
-
-        return !in_array(true,$hidden,true);
     }
 
 
@@ -441,15 +354,6 @@ class Cols extends Main\MapObj
     }
 
 
-    // included
-    // retourne un objet avec les colonnes incluses par défaut
-    // inclusion des required est true par défaut
-    final public function included(?array $option=null):self
-    {
-        return $this->filter(fn($col) => $col->isIncluded('insert',$option['required'] ?? true));
-    }
-
-
     // insert
     // change la valeur d'une colonne et retourne la valeur
     // possible d'enrobber l'opération dans un tryCatch
@@ -531,68 +435,6 @@ class Cols extends Main\MapObj
         $return = Base\Arr::keysSort($return,true);
 
         return $return;
-    }
-
-
-    // searchable
-    // retourne un objet cols avec toutes les colonnes cherchables
-    final public function searchable():self
-    {
-        return $this->filter(fn($col) => $col->isSearchable());
-    }
-
-
-    // searchMinLength
-    // retourne la longueur de recherche minimale pour les colonnes
-    final public function searchMinLength():?int
-    {
-        $return = null;
-
-        foreach ($this as $col)
-        {
-            $minLength = $col->searchMinLength();
-
-            if($return === null || $minLength > $return)
-            $return = $minLength;
-        }
-
-        return $return;
-    }
-
-
-    // isSearchTermValid
-    // retourne vrai si un terme de recherche est valide pour toutes les colonnes de l'objet
-    final public function isSearchTermValid($value):bool
-    {
-        return $this->every(fn($col) => $col->isSearchTermValid($value));
-    }
-
-
-    // writeFile
-    // écrit les colonnes dans l'objet file fourni en argument
-    // par exemple pour une première ligne de csv
-    final public function writeFile(Main\File $file,?Cells $cells=null,?array $option=null):self
-    {
-        $option = Base\Arr::plus(['type'=>'format'],$option);
-        $array = [];
-
-        foreach ($this as $key => $col)
-        {
-            if($option['type'] === 'format' && !empty($cells))
-            {
-                $cell = $cells->checkGet($key);
-                $value = $col->export($cell,$option);
-            }
-
-            else
-            $value = $col->name();
-
-            $array = Base\Arr::merge($array,$value);
-        }
-
-        $file->write($array,$option);
-
-        return $this;
     }
 
 
