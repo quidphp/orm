@@ -136,7 +136,7 @@ class Insert extends Orm\TableOperation
 
                 if($outputRow === true)
                 {
-                    $return = static::checkClass($row,Orm\Row::class,'databaseError');
+                    $return = static::typecheck($row,Orm\Row::class,'databaseError');
                     $return->callThis(fn() => $this->onInserted($attr));
                 }
             }

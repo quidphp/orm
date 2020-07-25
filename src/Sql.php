@@ -62,12 +62,7 @@ class Sql extends PdoSql
     // envoie une exception si non existant
     final public function checkTableObject():Table
     {
-        $return = $this->getTableObject();
-
-        if(empty($return))
-        static::throw();
-
-        return $return;
+        return $this->getTableObject() ?: static::throw();
     }
 
 
@@ -141,7 +136,6 @@ class Sql extends PdoSql
     // retourne le tableau make, si problème ou retour vide lance une exception
     final protected function checkMake($output,?array $option=null):?array
     {
-        $return = null;
         $arr = $this->arr();
         $db = $this->db();
         $required = $db->syntaxCall('getQueryRequired',$this->getType());
@@ -158,17 +152,7 @@ class Sql extends PdoSql
         elseif(empty($arr))
         static::throw('queryEmpty');
 
-        else
-        {
-            $make = $this->make($output,$option);
-            if(empty($make))
-            static::throw('sqlReturnEmpty');
-
-            else
-            $return = $make;
-        }
-
-        return $return;
+        return $this->make($output,$option) ?: static::throw('sqlReturnEmpty');
     }
 
 

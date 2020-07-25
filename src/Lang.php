@@ -122,10 +122,7 @@ class Lang extends Main\Lang
             }
         }
 
-        if(empty($return))
-        $return = $this->def($colLabel,null,$lang,$option);
-
-        return $return;
+        return $return ?: $this->def($colLabel,null,$lang,$option);
     }
 
 
@@ -426,8 +423,7 @@ class Lang extends Main\Lang
                 $return = $exists;
             }
 
-            if(empty($return))
-            $return = $base;
+            $return = $return ?: $base;
         }
 
         return $return;

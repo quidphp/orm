@@ -128,11 +128,10 @@ class Cols extends ColsMap
 
             $name = $value->name();
 
-            if(!array_key_exists($name,$data))
-            $data[$name] = $value;
-
-            else
+            if(array_key_exists($name,$data))
             static::throw('colAlreadyIn',$name);
+
+            $data[$name] = $value;
         }
 
         return $this->checkAfter();

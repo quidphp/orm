@@ -223,11 +223,10 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // unlink une row ou envoie une exception si row non loader
     final public function offsetUnset($key):void
     {
-        if(is_int($key) && $this->hasRow($key))
-        $this->row($key)->unlink();
-
-        else
+        if(!is_int($key) || !$this->hasRow($key))
         static::throw('arrayAcces','doesNotExist');
+
+        $this->row($key)->unlink();
     }
 
 
@@ -503,9 +502,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         if(is_array($return))
         $return = Base\Call::dig(true,$return);
 
-        $return = $db->syntaxCall('removeDefault',$return);
-
-        return $return;
+        return $db->syntaxCall('removeDefault',$return);
     }
 
 
@@ -617,10 +614,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             }
         }
 
-        if(empty($return))
-        static::throw();
-
-        return $return;
+        return $return ?: static::throw();
     }
 
 
@@ -749,15 +743,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // si les colonnes n'ont pas encore été chargés, elles le seront
     final public function colsNew():Cols
     {
-        $return = null;
-        $class = $this->classe()->cols();
-
-        if(!empty($class))
-        $return = new $class();
-        else
-        static::throw('noColsClass');
-
-        return $return;
+        $class = $this->classe()->cols() ?: static::throw('noColsClass');
+        return new $class();
     }
 
 
@@ -792,52 +779,36 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     {
         $this->checkLink();
 
-        if($this->isColsEmpty())
+        if(!$this->isColsEmpty())
+        static::throw('alreadyLoaded');
+
+        $db = $this->db();
+        $dbCols = $db->schema()->table($this);
+
+        if(empty($dbCols))
+        static::throw('tableHasNoCol');
+
+        $priority = 0;
+        $dbClasse = $db->classe();
+        $increment = $db->getPriorityIncrement();
+        $this->cols->readOnly(false);
+
+        foreach ($dbCols as $value => $dbAttr)
         {
-            $db = $this->db();
-            $dbCols = $db->schema()->table($this);
+            $colSchema = new ColSchema($dbAttr);
 
-            if(!empty($dbCols))
-            {
-                $priority = 0;
-                $dbClasse = $db->classe();
-                $increment = $db->getPriorityIncrement();
-                $this->cols->readOnly(false);
+            if(!is_string($value))
+            static::throw('invalidCol',$value);
 
-                foreach ($dbCols as $value => $dbAttr)
-                {
-                    $colSchema = new ColSchema($dbAttr);
-
-                    if(is_string($value))
-                    {
-                        $class = $dbClasse->tableClasseCol($this,$value,$colSchema);
-
-                        if(!empty($class))
-                        {
-                            $priority += $increment;
-                            $col = $this->colMake($class,$value,$colSchema,$priority);
-                            $dbClasse->tableClasseCell($this,$col);
-                        }
-
-                        else
-                        static::throw('noColClass');
-                    }
-
-                    else
-                    static::throw('invalidCol',$value);
-                }
-
-                $this->cols()->sortDefault()->readOnly(true);
-                $this->onColsLoad();
-                $this->setColsReady(true);
-            }
-
-            else
-            static::throw('tableHasNoCol');
+            $class = $dbClasse->tableClasseCol($this,$value,$colSchema) ?: static::throw('noColClass');
+            $priority += $increment;
+            $col = $this->colMake($class,$value,$colSchema,$priority);
+            $dbClasse->tableClasseCell($this,$col);
         }
 
-        else
-        static::throw('alreadyLoaded');
+        $this->cols()->sortDefault()->readOnly(true);
+        $this->onColsLoad();
+        $this->setColsReady(true);
 
         return $this;
     }
@@ -890,7 +861,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // envoie une exception si non existant
     final public function col($col):Col
     {
-        return static::checkClass($this->cols()->get($col),Col::class);
+        return static::typecheck($this->cols()->get($col),Col::class);
     }
 
 
@@ -1079,15 +1050,8 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // crée et retourne l'objet rows
     final public function rowsNew():Rows
     {
-        $return = null;
         $class = $this->rowsClass();
-
-        if(!empty($class))
-        $return = new $class();
-        else
-        static::throw('noRowsClass');
-
-        return $return;
+        return new $class();
     }
 
 
@@ -1318,7 +1282,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final public function rowsDelete(...$values):Rows
     {
         $this->rows(...$values)->delete();
-
         return $this->rows();
     }
 
@@ -1330,7 +1293,6 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final public function rowsUnlink(...$values):Rows
     {
         $this->rows(...$values)->unlink();
-
         return $this->rows();
     }
 
@@ -1382,30 +1344,23 @@ class Table extends Main\ArrObj implements Main\Contract\Import
             if(!$this->hasRow($primary))
             {
                 $class = $this->rowClass();
+                $rows = $this->rows();
+                $rows->readOnly(false);
+                $return = new $class($primary,$this);
+                $rows->add($return);
 
-                if(!empty($class))
+                if(is_array($data) && !empty($data))
+                $return->cellsLoad($data);
+
+                if($return->cells()->isEmpty())
                 {
-                    $rows = $this->rows();
-                    $rows->readOnly(false);
-                    $return = new $class($primary,$this);
-                    $rows->add($return);
+                    $return->refresh();
 
-                    if(is_array($data) && !empty($data))
-                    $return->cellsLoad($data);
-
-                    if($return->cells()->isEmpty())
-                    {
-                        $return->refresh();
-
-                        if(!$return->isLinked())
-                        $return = null;
-                    }
-
-                    $rows->readOnly(true);
+                    if(!$return->isLinked())
+                    $return = null;
                 }
 
-                else
-                static::throw('noClass');
+                $rows->readOnly(true);
             }
 
             elseif(is_array($data) && !empty($data))
@@ -1558,7 +1513,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // charge la row si non existante
     final public function checkRow($row,bool $refresh=false,?bool $inOut=null,bool $whereTrue=false):Row
     {
-        return static::checkClass($this->row($row,$refresh,$inOut,$whereTrue),Row::class);
+        return static::typecheck($this->row($row,$refresh,$inOut,$whereTrue),Row::class);
     }
 
 
@@ -1729,12 +1684,10 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // ne peut pas retourner null
     final public function relation():TableRelation
     {
-        $return = $this->relation;
+        if(empty($this->relation))
+        $this->relation = TableRelation::newOverload($this);
 
-        if(empty($return))
-        $return = $this->relation = TableRelation::newOverload($this);
-
-        return $return;
+        return $this->relation;
     }
 
 
@@ -2105,7 +2058,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne vrai si la table est ignoré
     final public static function isIgnored():bool
     {
-        return !empty(static::$config['ignore']) && static::$config['ignore'] === true;
+        return  static::$config['ignore'] === true;
     }
 
 

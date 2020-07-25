@@ -119,11 +119,10 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
     // arrayAccess offsetSet est seulement permis si la clé est null []
     final public function offsetSet($key,$value):void
     {
-        if($key === null)
-        $this->add($value);
-
-        else
+        if($key !== null)
         static::throw('arrayAccess','onlyAllowedWithNullKey');
+
+        $this->add($value);
     }
 
 
@@ -173,11 +172,10 @@ class Tables extends Main\MapObj implements Main\Contract\Hierarchy
 
             $name = $value->name();
 
-            if(!array_key_exists($name,$data))
-            $data[$name] = $value;
-
-            else
+            if(array_key_exists($name,$data))
             static::throw('tableAlreadyIn',$name);
+
+            $data[$name] = $value;
         }
 
         return $this->checkAfter();

@@ -78,7 +78,7 @@ trait _dbAccess
         if(is_string($return))
         $return = Db::instSafe($return);
 
-        return static::checkClass($return,Pdo::class,'dbPropertyIsInvalid','objectUnusable');
+        return static::typecheck($return,Pdo::class,'dbPropertyIsInvalid','objectUnusable');
     }
 
 

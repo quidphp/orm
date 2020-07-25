@@ -273,7 +273,7 @@ class ColRelation extends Relation
     // envoie une exception s'il n'est pas possible de retourner la table de la relation
     final public function checkRelationTable():Table
     {
-        return static::checkClass($this->relationTable(),Table::class,$this->col());
+        return static::typecheck($this->relationTable(),Table::class,$this->col());
     }
 
 
@@ -582,16 +582,13 @@ class ColRelation extends Relation
     {
         $return = null;
 
-        if($this->isEnum())
-        {
-            $relation = $this->keyValue($value,false,$cache,$option);
-
-            if(is_array($relation) && !empty($relation))
-            $return = current($relation);
-        }
-
-        else
+        if(!$this->isEnum())
         static::throw('onlyForEnum');
+
+        $relation = $this->keyValue($value,false,$cache,$option);
+
+        if(is_array($relation) && !empty($relation))
+        $return = current($relation);
 
         return $return;
     }
@@ -601,15 +598,10 @@ class ColRelation extends Relation
     // retourne la valeur d'un élément de relation (peut conte nir plusiuers éléments)
     final public function many($value,bool $found=false,bool $cache=true,?array $option=null):?array
     {
-        $return = null;
-
-        if($this->isSet() || is_array($value))
-        $return = $this->keyValue($value,$found,$cache,$option);
-
-        else
+        if(!$this->isSet() && !is_array($value))
         static::throw('onlyForSet');
 
-        return $return;
+        return $this->keyValue($value,$found,$cache,$option);
     }
 
 
@@ -620,16 +612,13 @@ class ColRelation extends Relation
     {
         $return = null;
 
-        if($this->isEnum())
-        {
-            $table = $this->checkRelationTable();
-
-            if(!empty($value) && is_scalar($value))
-            $return = $table->row($value);
-        }
-
-        else
+        if(!$this->isEnum())
         static::throw('useRowsForSet');
+
+        $table = $this->checkRelationTable();
+
+        if(!empty($value) && is_scalar($value))
+        $return = $table->row($value);
 
         return $return;
     }

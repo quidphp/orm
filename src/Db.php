@@ -345,11 +345,10 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         if(is_bool($value))
         $value = ($value === true)? CatchableException::class:Exception::class;
 
-        if(is_string($value) && is_subclass_of($value,\Exception::class,true))
-        $this->exception = $value;
-
-        else
+        if(!is_string($value) || !is_subclass_of($value,\Exception::class,true))
         static::throw();
+
+        $this->exception = $value;
     }
 
 
@@ -358,17 +357,14 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // enregistre la méthode onCloseDown
     final protected function makeTables(Main\Extenders $extenders):void
     {
-        if(empty($this->tables))
-        {
-            $this->tables = Tables::newOverload();
-            $this->makeClasse($extenders);
-            $this->tablesLoad();
-            $this->tables()->sortDefault()->readOnly(true);
-            Base\Response::onCloseDown(fn() => $this->onCloseDown());
-        }
-
-        else
+        if(!empty($this->tables))
         static::throw('alreadyExists');
+
+        $this->tables = Tables::newOverload();
+        $this->makeClasse($extenders);
+        $this->tablesLoad();
+        $this->tables()->sortDefault()->readOnly(true);
+        Base\Response::onCloseDown(fn() => $this->onCloseDown());
     }
 
 
@@ -380,40 +376,27 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     {
         if($this->tables()->isEmpty())
         {
-            $showTables = $this->schema()->tables();
+            $showTables = $this->schema()->tables() ?: static::throw('noTables');
             $classe = $this->classe();
+            $showTables = Base\Arr::camelCaseParent($showTables);
+            $priority = 0;
+            $increment = $this->getPriorityIncrement();
 
-            if(!empty($showTables))
+            foreach ($showTables as $value => $parent)
             {
-                $showTables = Base\Arr::camelCaseParent($showTables);
-                $priority = 0;
-                $increment = $this->getPriorityIncrement();
+                $tableClasse = $classe->tableClasse($value);
+                $class = $tableClasse->table() ?: static::throw('classEmpty');
 
-                foreach ($showTables as $value => $parent)
+                if(!$class::isIgnored())
                 {
-                    $tableClasse = $classe->tableClasse($value);
-                    $class = $tableClasse->table();
+                    $priority += $increment;
+                    $attr = ['priority'=>$priority];
+                    if(!empty($parent))
+                    $attr['parent'] = $parent;
 
-                    if(!empty($class))
-                    {
-                        if(!$class::isIgnored())
-                        {
-                            $priority += $increment;
-                            $attr = ['priority'=>$priority];
-                            if(!empty($parent))
-                            $attr['parent'] = $parent;
-
-                            $this->tableMake($class,$value,$tableClasse,$attr);
-                        }
-                    }
-
-                    else
-                    static::throw('classEmpty');
+                    $this->tableMake($class,$value,$tableClasse,$attr);
                 }
             }
-
-            else
-            static::throw('noTables');
         }
     }
 
@@ -529,7 +512,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne l'objet lang ou envoie une exception si non existant
     final public function lang():Main\Lang
     {
-        return static::checkClass($this->lang,Main\Lang::class);
+        return static::typecheck($this->lang,Main\Lang::class);
     }
 
 
@@ -571,7 +554,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne l'objet roles ou envoie une exception si non existant
     final public function roles():Main\Roles
     {
-        return static::checkClass($this->roles,Main\Roles::class);
+        return static::typecheck($this->roles,Main\Roles::class);
     }
 
 
@@ -605,7 +588,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne l'objet com ou envoie une exception si non existant
     final public function com():Main\Com
     {
-        return static::checkClass($this->com,Main\Com::class);
+        return static::typecheck($this->com,Main\Com::class);
     }
 
 
@@ -629,7 +612,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // retourne un objet table ou envoie une exception si inexistant
     final public function table($table):Table
     {
-        return static::checkClass($this->tables()->get($table),Table::class,$table,'doesNotExist');
+        return static::typecheck($this->tables()->get($table),Table::class,$table,'doesNotExist');
     }
 
 
@@ -653,9 +636,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
             if(empty($value['table']))
             static::throw($output,'requiresTable');
 
-            $type = $this->getRowOutputType($output);
-            if(empty($type))
-            static::throw('emptyType');
+            $type = $this->getRowOutputType($output) ?: static::throw('emptyType');
             $value = $this->prepareRow($value,$type);
 
             if(!array_key_exists('id',$value))
@@ -712,17 +693,14 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // envoie une exception si le type est incorrect
     final public function prepareRow(array $return,string $type):array
     {
-        if(in_array($type,['row','rows'],true))
-        {
-            if(empty($return['id']) || empty($return['whereOnlyId']))
-            {
-                $output = ($type === 'rows')? 'columns':'column';
-                $return['id'] = $this->query($return,$output);
-            }
-        }
-
-        else
+        if(!in_array($type,['row','rows'],true))
         static::throw();
+
+        if(empty($return['id']) || empty($return['whereOnlyId']))
+        {
+            $output = ($type === 'rows')? 'columns':'column';
+            $return['id'] = $this->query($return,$output);
+        }
 
         return $return;
     }

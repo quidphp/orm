@@ -53,10 +53,7 @@ class Col extends Base\Test
         // toString
 
         // invoke
-        assert($other() === $other);
-        assert($other('name') === 'other');
-        assert($other('direction',false) === 'ASC');
-        assert($other('direction',true) === 'asc');
+        assert($other('setPriority') === 5);
 
         // onInsert
 
@@ -263,10 +260,6 @@ class Col extends Base\Test
         assert($check->isFormTag());
         assert(!$col->isFormTag(['tag'=>'div']));
         assert($col->isFormTag(['tag'=>'textarea']));
-
-        // pair
-        assert($lang->pair() === $lang);
-        assert($lang->pair('name') === 'relationLang');
 
         // rulePreValidate
         assert($col->rulePreValidate() === []);

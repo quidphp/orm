@@ -222,7 +222,7 @@ class Row extends Base\Test
 
         // cellContent
         assert($row->cellContent()->name() === 'content_en');
-        assert($row->cellContent()(true) === '');
+        assert($row->cellContent()(true) === null);
 
         // cellsDateCommit
         assert(count($row->cellsDateCommit()) === 2);

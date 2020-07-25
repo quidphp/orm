@@ -67,11 +67,10 @@ trait _mapIndex
             if(!is_a($value,$class,true))
             static::throw('requires',$class);
 
-            if(!in_array($value,$data,true))
-            $data[] = $value;
-
-            else
+            if(in_array($value,$data,true))
             static::throw('alreadyIn');
+
+            $data[] = $value;
         }
 
         return $this;
@@ -99,12 +98,9 @@ trait _mapIndex
         if($table instanceof Table)
         {
             $type = static::$collectionType;
-            $classe = $table->classe()->$type();
-
-            if(empty($classe))
-            static::throw('noClass');
-
+            $classe = $table->classe()->$type() ?: static::throw('noClass');
             $return = new $classe();
+
             foreach ($this->arr() as $value)
             {
                 if($value->sameTable($table))
@@ -131,13 +127,8 @@ trait _mapIndex
             if(!array_key_exists($tableName,$return))
             {
                 $type = static::$collectionType;
-                $classe = $table->classe()->$type();
-
-                if(!empty($classe))
+                $classe = $table->classe()->$type() ?: static::throw('noClass');
                 $return[$tableName] = new $classe();
-
-                else
-                static::throw('noClass');
             }
 
             $return[$tableName]->add($value);

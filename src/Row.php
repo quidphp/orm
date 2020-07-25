@@ -298,11 +298,10 @@ class Row extends Main\ArrObj
     // change la ligne primaire de la ligne
     final protected function setPrimary(int $primary):void
     {
-        if($primary > 0)
-        $this->primary = $primary;
-
-        else
+        if($primary <= 0)
         static::throw();
+
+        $this->primary = $primary;
     }
 
 
@@ -360,7 +359,6 @@ class Row extends Main\ArrObj
     // possible d'inclure le nom et de mettre une longueur maximale au nom
     final public function label($pattern=null,?int $withName=null,?string $lang=null,?array $option=null):?string
     {
-        $return = null;
         $obj = $this->db()->lang();
         $option = Base\Arr::plus($option,['pattern'=>$pattern]);
         $table = $this->table();
@@ -372,9 +370,7 @@ class Row extends Main\ArrObj
             $name = Base\Str::excerpt($withName,$name);
         }
 
-        $return = $obj->rowLabel($this->primary(),$table->name(),$name,$lang,$option);
-
-        return $return;
+        return $obj->rowLabel($this->primary(),$table->name(),$name,$lang,$option);
     }
 
 
@@ -382,13 +378,10 @@ class Row extends Main\ArrObj
     // retourne la description de la row
     final public function description($pattern=null,?array $replace=null,?string $lang=null,?array $option=null):?string
     {
-        $return = null;
         $obj = $this->db()->lang();
         $option = Base\Arr::plus($option,['pattern'=>$pattern]);
         $tableName = $this->tableName();
-        $return = $obj->rowDescription($this->primary(),$tableName,$replace,$lang,$option);
-
-        return $return;
+        return $obj->rowDescription($this->primary(),$tableName,$replace,$lang,$option);
     }
 
 
@@ -396,15 +389,8 @@ class Row extends Main\ArrObj
     // crée l'objet cells
     final protected function cellsNew():Cells
     {
-        $return = null;
-
-        $class = $this->cellsClass();
-        if(!empty($class))
-        $return = new $class();
-        else
-        static::throw('noCellsClass');
-
-        return $return;
+        $class = $this->cellsClass() ?: static::throw('noCellsClass');
+        return new $class();
     }
 
 
@@ -414,37 +400,26 @@ class Row extends Main\ArrObj
     // envoie une exception si le tableau data ne contient pas toutes les colonnes non ignorés
     final public function cellsLoad(array $data):self
     {
-        if($this->cells->isEmpty())
+        if($this->cells->isNotEmpty())
+        static::throw('cellsNotEmpty');
+
+        $cols = $this->table()->cols();
+        $names = $cols->keys();
+
+        if(!Base\Arr::keysExists($names,$data))
+        static::throw('invalidInitialData','provideAllColumns');
+
+        $this->cells()->readOnly(false);
+
+        foreach ($names as $key)
         {
-            $cols = $this->table()->cols();
-            $names = $cols->keys();
-
-            if(Base\Arr::keysExists($names,$data))
-            {
-                $this->cells()->readOnly(false);
-
-                foreach ($names as $key)
-                {
-                    $col = $cols->get($key);
-                    $class = $this->cellClass($col);
-
-                    if(!empty($class))
-                    $this->cellMake($class,$col,$data[$key]);
-
-                    else
-                    static::throw('noClass');
-                }
-
-                $this->cells()->readOnly(true);
-                $this->onInit();
-            }
-
-            else
-            static::throw('invalidInitialData','provideAllColumns');
+            $col = $cols->get($key);
+            $class = $this->cellClass($col) ?: static::throw('noClass');
+            $this->cellMake($class,$col,$data[$key]);
         }
 
-        else
-        static::throw('cellsNotEmpty');
+        $this->cells()->readOnly(true);
+        $this->onInit();
 
         return $this;
     }
@@ -459,22 +434,19 @@ class Row extends Main\ArrObj
     {
         $cells = $this->cells();
 
-        if(!$cells->isEmpty())
-        {
-            foreach ($data as $key => $value)
-            {
-                if($cells->exists($key))
-                {
-                    $cell = $cells->get($key);
-                    $cell->setInitial($value);
-                }
-            }
+        if($cells->isEmpty())
+        static::throw('cellsEmpty');
 
-            $this->onRefreshed();
+        foreach ($data as $key => $value)
+        {
+            if($cells->exists($key))
+            {
+                $cell = $cells->get($key);
+                $cell->setInitial($value);
+            }
         }
 
-        else
-        static::throw('cellsEmpty');
+        $this->onRefreshed();
 
         return $this;
     }
@@ -517,7 +489,7 @@ class Row extends Main\ArrObj
     // retourne l'objet d'une cellule ou envoie une exception si non existant
     final public function cell($cell):Cell
     {
-        return static::checkClass($this->cells()->get($cell),Cell::class,$cell);
+        return static::typecheck($this->cells()->get($cell),Cell::class,$cell);
     }
 
 
@@ -565,13 +537,11 @@ class Row extends Main\ArrObj
     // si get est true, value est passé dans get plutôt que value
     final public function keyValue($key,$value,bool $get=false):array
     {
-        $return = [];
         $key = $this->cell($key)->value();
         $value = $this->cell($value);
         $value = ($get === true)? $value->get():$value->value();
-        $return = [$key=>$value];
 
-        return $return;
+        return [$key=>$value];
     }
 
 
@@ -655,19 +625,13 @@ class Row extends Main\ArrObj
     // envoie une exception si désactivation impossible
     final public function deactivate(?array $option=null):?int
     {
-        $return = null;
         $active = $this->cellActive();
 
-        if(!empty($active))
-        {
-            $active->set(null);
-            $return = $this->updateChanged($option);
-        }
-
-        else
+        if(empty($active))
         static::throw('noActiveCell');
 
-        return $return;
+        $active->set(null);
+        return $this->updateChanged($option);
     }
 
 
@@ -813,7 +777,6 @@ class Row extends Main\ArrObj
     // retourne le nom de la row avec la primary entre paranthèse
     final public function namePrimary(?string $pattern=null,?int $excerpt=null):string
     {
-        $return = '';
         $pattern ??= '%name% (#%primary%)';
         $name = $this->cellName()->value();
 
@@ -822,9 +785,8 @@ class Row extends Main\ArrObj
 
         $replace['%name%'] = $name;
         $replace['%primary%'] = $this->primary();
-        $return = Base\Str::replace($replace,$pattern);
 
-        return $return;
+        return Base\Str::replace($replace,$pattern);
     }
 
 
@@ -873,29 +835,23 @@ class Row extends Main\ArrObj
     // permet de dupliquer la ligne
     final public function duplicate(?array $option=null)
     {
-        $return = null;
         $table = $this->table();
         $cells = $this->cells()->withoutPrimary()->filter(fn($cell) => $cell->getAttr('duplicate') === true);
 
-        if($cells->isNotEmpty())
-        {
-            $keyValue = [];
-            $option = (array) $option;
-
-            foreach ($cells as $key => $cell)
-            {
-                $col = $cell->col();
-                $value = $col->callThis(fn() => $this->attrOrMethodCall('onDuplicate',$cell,$option));
-                $keyValue[$key] = $value;
-            }
-
-            $return = $table->insert($keyValue,$option);
-        }
-
-        else
+        if($cells->isEmpty())
         static::throw('noCellsToDuplicate');
 
-        return $return;
+        $keyValue = [];
+        $option = (array) $option;
+
+        foreach ($cells as $key => $cell)
+        {
+            $col = $cell->col();
+            $value = $col->callThis(fn() => $this->attrOrMethodCall('onDuplicate',$cell,$option));
+            $keyValue[$key] = $value;
+        }
+
+        return $table->insert($keyValue,$option);
     }
 
 
@@ -937,7 +893,6 @@ class Row extends Main\ArrObj
         $where = (array) $where;
 
         $where[] = [$primary,'!=',$this];
-
         foreach ($cells as $cell)
         {
             $where[] = [$cell->name(),'=',$cell->value()];
@@ -1191,7 +1146,6 @@ class Row extends Main\ArrObj
         $rows->readOnly(false);
         $rows->remove($this);
         $rows->readOnly(true);
-
         $this->teardown();
 
         return $this;

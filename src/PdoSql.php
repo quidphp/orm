@@ -81,14 +81,10 @@ class PdoSql extends Main\Map
     // seulement pour des requêtes select ou show
     final public function toArray():array
     {
-        $return = [];
-
-        if(in_array($this->getType(),['select','show'],true))
-        $return = $this->trigger();
-        else
+        if(!in_array($this->getType(),['select','show'],true))
         static::throw('onlyForSelectAndShow');
 
-        return $return;
+        return $this->trigger();
     }
 
 
@@ -138,22 +134,19 @@ class PdoSql extends Main\Map
         if($type === null)
         $type = $this->getAttr('default');
 
-        if($this->syntaxCall('isQuery',$type))
-        {
-            $db = $this->db();
-            $this->empty();
-            $this->resetCount();
-            $this->type = $type;
-
-            if(!$db->isOutput($type,$this->getOutput()))
-            $this->setOutput(true);
-
-            if($output !== null)
-            $this->setOutput($output);
-        }
-
-        else
+        if(!$this->syntaxCall('isQuery',$type))
         static::throw();
+
+        $db = $this->db();
+        $this->empty();
+        $this->resetCount();
+        $this->type = $type;
+
+        if(!$db->isOutput($type,$this->getOutput()))
+        $this->setOutput(true);
+
+        if($output !== null)
+        $this->setOutput($output);
 
         return $this;
     }
@@ -226,12 +219,7 @@ class PdoSql extends Main\Map
     // envoie une exception si non existant
     final public function checkTable():string
     {
-        $return = $this->getTable();
-
-        if(empty($return))
-        static::throw();
-
-        return $return;
+        return $this->getTable() ?: static::throw();
     }
 
 
@@ -267,26 +255,20 @@ class PdoSql extends Main\Map
     // retourne vrai si la clause est valide avec le type, sinon lance une exception
     final protected function checkClause($value):void
     {
-        if(is_string($value))
-        {
-            $type = $this->getType();
-            $output = $this->getOutput();
-
-            if(!$this->syntaxCall('hasQueryClause',$type,$value))
-            {
-                if($value === 'on')
-                {
-                    if(!$this->hasJoin())
-                    static::throw($value,'noJoinStartedOn',$type);
-                }
-
-                else
-                static::throw($value,'invalidFor',$type);
-            }
-        }
-
-        else
+        if(!is_string($value))
         static::throw('requiresString');
+
+        $type = $this->getType();
+        $output = $this->getOutput();
+
+        if(!$this->syntaxCall('hasQueryClause',$type,$value))
+        {
+            if($value !== 'on')
+            static::throw($value,'invalidFor',$type);
+
+            if(!$this->hasJoin())
+            static::throw($value,'noJoinStartedOn',$type);
+        }
     }
 
 
@@ -339,17 +321,7 @@ class PdoSql extends Main\Map
         elseif(empty($arr))
         static::throw('queryEmpty');
 
-        else
-        {
-            $make = $this->make($output,$option);
-            if(empty($make))
-            static::throw('sqlReturnEmpty');
-
-            else
-            $return = $make;
-        }
-
-        return $return;
+        return $this->make($output,$option) ?: static::throw('sqlReturnEmpty');
     }
 
 
@@ -390,37 +362,34 @@ class PdoSql extends Main\Map
             $target =& $arr[$clause];
         }
 
-        if(isset($target) && is_array($target))
+        if(!isset($target) || !is_array($target))
+        static::throw('noValidTargetReference',$clause);
+
+        if(in_array($clause,['table','limit','join','innerJoin','outerJoin'],true))
+        $target = $value;
+
+        elseif(in_array($clause,['insertSet','updateSet'],true))
+        $target = Base\Arr::replace($target,$value);
+
+        elseif(in_array($clause,['what','where','order','group','createCol','createKey','addCol','addKey','alterCol','dropCol','dropKey','on'],true))
         {
-            if(in_array($clause,['table','limit','join','innerJoin','outerJoin'],true))
-            $target = $value;
-
-            elseif(in_array($clause,['insertSet','updateSet'],true))
-            $target = Base\Arr::replace($target,$value);
-
-            elseif(in_array($clause,['what','where','order','group','createCol','createKey','addCol','addKey','alterCol','dropCol','dropKey','on'],true))
+            if(Base\Arr::isAssoc($value))
             {
-                if(Base\Arr::isAssoc($value))
-                {
-                    if($prepend === true)
-                    $target = Base\Arr::merge($value,$target);
-                    else
-                    $target = Base\Arr::merge($target,$value);
-                }
+                if($prepend === true)
+                $target = Base\Arr::merge($value,$target);
+                else
+                $target = Base\Arr::merge($target,$value);
+            }
+
+            else
+            {
+                if($prepend === true)
+                $target = Base\Arr::merge((is_array($value))? [$value]:$value,$target);
 
                 else
-                {
-                    if($prepend === true)
-                    $target = Base\Arr::merge((is_array($value))? [$value]:$value,$target);
-
-                    else
-                    $target[] = $value;
-                }
+                $target[] = $value;
             }
         }
-
-        else
-        static::throw('noValidTargetReference',$clause);
     }
 
 
@@ -654,30 +623,27 @@ class PdoSql extends Main\Map
     // par défaut une parenthèse enroberra ces entrées where
     final public function whereSeparator(string $separator,$method,$cols,$value=null,bool $parenthesis=true):self
     {
-        if($this->syntaxCall('isWhereSeparator',$separator))
+        if(!$this->syntaxCall('isWhereSeparator',$separator))
+        static::throw();
+
+        $cols = Base\Obj::cast($cols,6);
+
+        if($parenthesis === true)
+        $this->where('(');
+
+        $i = 0;
+        foreach ($cols as $col)
         {
-            $cols = Base\Obj::cast($cols,6);
+            if($i > 0)
+            $this->where($separator);
 
-            if($parenthesis === true)
-            $this->where('(');
+            $this->where($col,$method,$value);
 
-            $i = 0;
-            foreach ($cols as $col)
-            {
-                if($i > 0)
-                $this->where($separator);
-
-                $this->where($col,$method,$value);
-
-                $i++;
-            }
-
-            if($parenthesis === true)
-            $this->where(')');
+            $i++;
         }
 
-        else
-        static::throw();
+        if($parenthesis === true)
+        $this->where(')');
 
         return $this;
     }
@@ -708,21 +674,18 @@ class PdoSql extends Main\Map
     // possible de spécifier un séparateur et un séparateur interne
     final public function whereSeparatorMany(string $separator,string $innerSeparator,$method,$cols,array $values,bool $parenthesis=true):self
     {
-        if($this->syntaxCall('isWhereSeparator',$innerSeparator))
-        {
-            $i = 0;
-            foreach ($values as $value)
-            {
-                if($i > 0)
-                $this->where($innerSeparator);
-
-                $this->whereSeparator($separator,$method,$cols,$value,$parenthesis);
-                $i++;
-            }
-        }
-
-        else
+        if(!$this->syntaxCall('isWhereSeparator',$innerSeparator))
         static::throw();
+
+        $i = 0;
+        foreach ($values as $value)
+        {
+            if($i > 0)
+            $this->where($innerSeparator);
+
+            $this->whereSeparator($separator,$method,$cols,$value,$parenthesis);
+            $i++;
+        }
 
         return $this;
     }
@@ -1323,27 +1286,21 @@ class PdoSql extends Main\Map
     // retourne les ids contenus dans une page
     final public function pageWithSpecific(?int $value=null):?array
     {
-        $return = null;
         $value ??= $this->getPage();
 
-        if(is_int($value))
-        {
-            $primary = $this->primary();
-            $limit = $this->getLimit();
-
-            $sql = clone $this;
-            $sql->unset('what');
-            $sql->what($primary);
-            $sql->page($value,$limit);
-            $sql->setOutput('columns');
-
-            $return = $sql->trigger();
-        }
-
-        else
+        if(!is_int($value))
         static::throw();
 
-        return $return;
+        $primary = $this->primary();
+        $limit = $this->getLimit();
+
+        $sql = clone $this;
+        $sql->unset('what');
+        $sql->what($primary);
+        $sql->page($value,$limit);
+        $sql->setOutput('columns');
+
+        return $sql->trigger();
     }
 
 

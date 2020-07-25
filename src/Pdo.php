@@ -932,11 +932,10 @@ class Pdo extends Main\Root
                 {
                     $k = current($value);
 
-                    if(Base\Arr::isKey($k) && !array_key_exists($k,$return))
-                    $return[$k] = Base\Segment::sets(null,$value,$arg);
-
-                    else
+                    if(!Base\Arr::isKey($k) || array_key_exists($k,$return))
                     static::throw('invalidKey',$k);
+
+                    $return[$k] = Base\Segment::sets(null,$value,$arg);
                 }
             }
         }
@@ -1481,15 +1480,12 @@ class Pdo extends Main\Root
 
         foreach ($values as $value)
         {
-            if(count($value) === $count)
-            {
-                $set = Base\Arr::combine($fields,$value);
-                $insert = $this->insert($table,$set);
-                $return[] = $insert;
-            }
-
-            else
+            if(count($value) !== $count)
             static::throw('allFieldsMustBeIncluded');
+
+            $set = Base\Arr::combine($fields,$value);
+            $insert = $this->insert($table,$set);
+            $return[] = $insert;
         }
 
         return $return;
@@ -2346,11 +2342,10 @@ class Pdo extends Main\Root
                 $keys = array_keys($array);
                 $values = array_values($return);
 
-                if(count($keys) === count($values))
-                $return = array_combine($keys,$values);
-
-                else
+                if(count($keys) !== count($values))
                 static::throw('keysAndValuesCountNotTheSame');
+
+                $return = array_combine($keys,$values);
             }
 
             else

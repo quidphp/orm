@@ -108,10 +108,10 @@ class Col extends Main\Root
 
 
     // invoke
-    // appel de l'objet, renvoie vers pair
+    // appel de l'objet, renvoie vers getAttr
     final public function __invoke(...$args)
     {
-        return $this->pair(...$args);
+        return $this->getAttr(...$args);
     }
 
 
@@ -769,19 +769,6 @@ class Col extends Main\Root
     final public function isFormTag(?array $attr=null,bool $complex=false):bool
     {
         return Base\Html::isFormTag($this->tag($attr,$complex));
-    }
-
-
-    // pair
-    // si value est string c'est une méthode pouvant avoir des arguments
-    final public function pair($value=null,...$args)
-    {
-        $return = $this;
-
-        if(is_string($value))
-        $return = $return->$value(...$args);
-
-        return $return;
     }
 
 
@@ -2026,12 +2013,10 @@ class Col extends Main\Root
     // une exception sera envoyé si la colonne n'est pas une relation
     final public function relation():ColRelation
     {
-        $return = $this->relation;
+        if(empty($this->relation))
+        $this->relation = ColRelation::newOverload($this);
 
-        if(empty($return))
-        $return = $this->relation = ColRelation::newOverload($this);
-
-        return $return;
+        return $this->relation;
     }
 
 

@@ -37,16 +37,13 @@ class Cell extends Main\Root
     {
         $table = $col->table();
 
-        if($table === $row->table())
-        {
-            $this->setCol($col);
-            $this->setRow($row);
-            $this->setLink($table,true);
-            $this->setInitial($value);
-        }
-
-        else
+        if($table !== $row->table())
         static::throw('tableForColAndRowAreDifferent');
+
+        $this->setCol($col);
+        $this->setRow($row);
+        $this->setLink($table,true);
+        $this->setInitial($value);
     }
 
 
@@ -718,22 +715,26 @@ class Cell extends Main\Root
 
 
     // pair
-    // si value est true, retourne le htmlOutput de cellule
+    // si value est true, retourne le get de la cellule
     // si value est false, c'est value
     // si value est int, retourne le htmlExcerpt de cellule
+    // si c'est html, renvoie vers htmlOutput
     // si value est string c'est une méthode pouvant avoir des arguments
     public function pair($value=null,...$args)
     {
         $return = $this;
 
         if($value === true)
-        $return = $return->htmlOutput();
+        $return = $return->get();
 
         elseif($value === false)
         $return = $return->value();
 
         elseif(is_int($value))
         $return = $return->htmlExcerpt($value);
+
+        elseif($value === 'html')
+        $return = $return->htmlOutput(...$args);
 
         elseif(is_string($value))
         $return = $return->$value(...$args);
@@ -762,6 +763,7 @@ class Cell extends Main\Root
         {
             $value = $col->preValidatePrepare($value);
             $preValidate = $col->preValidate($value);
+
             if(is_array($preValidate))
             static::throw('preValidate',$this->name(),$preValidate);
         }
@@ -903,13 +905,10 @@ class Cell extends Main\Root
         $table = $this->table();
         $value = $this->db()->selectColumns($this->col(),$table,$this->row());
 
-        if(!empty($value) && is_array($value))
-        $this->setInitial(current($value));
-
-        else
+        if(empty($value) || !is_array($value))
         static::throw('rowDoesNotExists');
 
-        return $this;
+        return $this->setInitial(current($value));
     }
 
 

@@ -39,7 +39,7 @@ class Cell extends Base\Test
         // toString
 
         // invoke
-        assert($cell(true) === 'james');
+        assert($cell(true) === 'jamesabcde');
         assert($cell(2) === 'ja');
         assert($cell() === $cell);
 
@@ -295,7 +295,7 @@ class Cell extends Base\Test
         // pair
         assert($cell->pair() instanceof Orm\Cell);
         assert($cell->pair(1) === 'o');
-        assert($cell->pair(true) === 'ok');
+        assert($cell->pair(true) === 'okabcde');
         assert($cell->pair(false) === 'ok');
         assert($userAdd->pair(true) instanceof Orm\Row);
 

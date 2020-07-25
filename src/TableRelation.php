@@ -106,21 +106,15 @@ class TableRelation extends Relation
 
     // prepareAttrWithMethod
     // prépare les attributs pour une relation de table avec output de méthode
-    final protected function prepareAttrWithMethod(Table $table,array $attr):array
+    final protected function prepareAttrWithMethod(Table $table,array $return):array
     {
-        $return = [];
         $primary = $table->primary();
 
-        if(array_key_exists('method',$attr) && is_string($attr['method']))
-        {
-            $attr['where'] ??= null;
-            $attr['order'] ??= [$primary=>'asc'];
-
-            $return = $attr;
-        }
-
-        else
+        if(!array_key_exists('method',$return) || !is_string($return['method']))
         static::throw('methodMustBeString');
+
+        $return['where'] ??= null;
+        $return['order'] ??= [$primary=>'asc'];
 
         return $return;
     }

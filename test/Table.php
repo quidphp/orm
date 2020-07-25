@@ -35,7 +35,7 @@ class Table extends Base\Test
         $user = $db['user'];
         $logSql = $db['logSql'];
         assert($tb['name_[lang]']->name() === 'name_en');
-        assert($tb['id']('name') === 'id');
+        assert($tb['id']->name() === 'id');
 
         // construct
 

@@ -26,11 +26,10 @@ abstract class RowsMap extends Map
     // arrayAccess offsetSet est seulement permis si la clé est null []
     final public function offsetSet($key,$value):void
     {
-        if($key === null)
-        $this->add($value);
-
-        else
+        if($key !== null)
         static::throw('arrayAccess','onlyAllowedWithNullKey');
+
+        $this->add($value);
     }
 
 
