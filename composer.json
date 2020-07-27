@@ -10,7 +10,7 @@
         "email": "emondpph@gmail.com"
     }],
     "require": {
-        "php": ">=7.3.0",
+        "php": ">=7.4.0",
         "quidphp/base": "dev-master",
         "quidphp/main": "dev-master"
     },
