@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Quid\Orm;
 use Quid\Base;
+use Quid\Base\Html;
 use Quid\Main;
 
 // cell
@@ -249,7 +250,7 @@ class Cell extends Main\Root
     // retourne vrai si la tag de la colonne est de type form
     final public function isFormTag(?array $attr=null,bool $complex=false):bool
     {
-        return Base\Html::isFormTag($this->tag($attr,$complex));
+        return Html::isFormTag($this->tag($attr,$complex));
     }
 
 
