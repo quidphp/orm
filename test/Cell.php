@@ -260,6 +260,9 @@ class Cell extends Base\Test
         // htmlOutput
         assert($cell->htmlOutput() === '&lt;b&gt;okkkkk&lt;/b&gt;');
 
+        // htmlXss
+        assert($cell->htmlXss() === '<b>okkkkk</b>');
+
         // htmlUnicode
         assert($cell->htmlUnicode() === '&lt;b&gt;okkkkk&lt;/b&gt;');
 

@@ -620,6 +620,14 @@ class Cell extends Main\Root
     }
 
 
+    // htmlXss
+    // permet de retirer les tags et attributs dangereux tout en conservant le maximum d'html
+    final public function htmlXss():string
+    {
+        return $this->col()->htmlXss($this);
+    }
+
+
     // htmlUnicode
     // removeLineBreaks, trim et convert (specialchars)
     // conserve unicode

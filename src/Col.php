@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Quid\Orm;
 use Quid\Base;
+use Quid\Base\Html;
 use Quid\Main;
 
 // col
@@ -666,7 +667,7 @@ class Col extends Main\Root
         if($visible === true)
         $return = true;
 
-        if(Base\Html::isHiddenTag($tag) || $visible === false)
+        if(Html::isHiddenTag($tag) || $visible === false)
         $return = false;
 
         elseif(is_array($visible) && !empty($visible))
@@ -768,7 +769,7 @@ class Col extends Main\Root
     // retourne vrai si la tag lié à la colonne en est une de formulaire
     final public function isFormTag(?array $attr=null,bool $complex=false):bool
     {
-        return Base\Html::isFormTag($this->tag($attr,$complex));
+        return Html::isFormTag($this->tag($attr,$complex));
     }
 
 
@@ -1779,9 +1780,9 @@ class Col extends Main\Root
 
         if($this->isFormTag($attr,$complex))
         {
-            $isTextTag = Base\Html::isTextTag($tag);
-            $isInputMethod = Base\Html::isInputMethod($tag);
-            $isHiddenTag = Base\Html::isHiddenTag($tag);
+            $isTextTag = Html::isTextTag($tag);
+            $isInputMethod = Html::isInputMethod($tag);
+            $isHiddenTag = Html::isHiddenTag($tag);
 
             if(!array_key_exists('data-required',$return) && $this->isRequired())
             $return['data-required'] = true;
@@ -1825,13 +1826,14 @@ class Col extends Main\Root
     // possible de merge un tableau attribut sur celui de la colonne
     final public function form($value=true,?array $attr=null,?array $option=null):string
     {
-        $return = '';
         $value = $this->value($value);
         $tag = $this->tag($attr);
         $attr = $this->formAttr($attr);
-        $return = Base\Html::$tag($value,$attr,$option);
 
-        return $return;
+        if(!Html::isFormTag($tag))
+        $value = Html::xss($value);
+
+        return Html::$tag($value,$attr,$option);
     }
 
 
@@ -1914,7 +1916,7 @@ class Col extends Main\Root
         $form = $this->$method($value,$attr,$option);
 
         if(is_string($form))
-        $return = Base\Html::formWrapStr($label,$form,$wrap,$replace,$id);
+        $return = Html::formWrapStr($label,$form,$wrap,$replace,$id);
 
         return $return;
     }
@@ -1925,7 +1927,7 @@ class Col extends Main\Root
     public function hasFormLabelId(?array $attr=null,bool $complex=false):bool
     {
         $tag = $this->tag($attr,$complex);
-        return Base\Html::isTextTag($tag);
+        return Html::isTextTag($tag);
     }
 
 
@@ -1973,11 +1975,8 @@ class Col extends Main\Root
     // mb est true par défaut
     final public function htmlExcerpt(?int $length,$value=true,?array $option=null):string
     {
-        $return = '';
         $value = Base\Str::cast($this->value($value));
-        $return = Base\Html::excerpt($length,$value,$option);
-
-        return $return;
+        return Html::excerpt($length,$value,$option);
     }
 
 
@@ -1987,11 +1986,17 @@ class Col extends Main\Root
     // mb est true par défaut
     final public function htmlOutput($value=true,?array $option=null):string
     {
-        $return = '';
         $value = Base\Str::cast($this->value($value));
-        $return = Base\Html::output($value,$option);
+        return Html::output($value,$option);
+    }
 
-        return $return;
+
+    // htmlXss
+    // permet de retirer les tags et attributs dangereux tout en conservant le maximum d'html
+    final public function htmlXss($value=true):string
+    {
+        $value = Base\Str::cast($this->value($value));
+        return Html::xss($value);
     }
 
 
@@ -2000,11 +2005,8 @@ class Col extends Main\Root
     // conserve unicode
     final public function htmlUnicode($value=true,?array $option=null):string
     {
-        $return = '';
         $value = Base\Str::cast($this->value($value));
-        $return = Base\Html::unicode($value,$option);
-
-        return $return;
+        return Html::unicode($value,$option);
     }
 
 

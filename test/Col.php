@@ -572,6 +572,9 @@ class Col extends Base\Test
         assert($email->htmlOutput() === 'default@def.james');
         assert($email->htmlOutput('<b>ok</b>') === '&lt;b&gt;ok&lt;/b&gt;');
 
+        // htmlXss
+        assert($email->htmlXss("<b class='MEH' data-ok='YEAH' style='OK' onmouseover='ALERT'>ok</b>") === "<b class='MEH' data-ok='YEAH' style='OK' >ok</b>");
+
         // htmlUnicode
         assert($email->htmlUnicode() === 'default@def.james');
 
