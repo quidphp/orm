@@ -50,7 +50,7 @@ class Row extends Main\ArrObj
     // onInit
     // appeler après le premier cellsLoad de la row
     // par défaut renvoie à onRefreshed
-    final protected function onInit():void
+    protected function onInit():void
     {
         $this->onRefreshed();
     }
@@ -58,7 +58,7 @@ class Row extends Main\ArrObj
 
     // onRefreshed
     // appeler après chaque appel réussi à cellsLoad ou cellsRefresh
-    final protected function onRefreshed():void
+    protected function onRefreshed():void
     {
         return;
     }
