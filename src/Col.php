@@ -1349,6 +1349,7 @@ class Col extends Main\Root
 
     // makeCompleteValidation
     // méthode utilisé par com et cell pour générer le retour de completeValidation
+    // required sera seulement appelé s'il n'y pas d'autres erreurs
     // unique doit être une closure, sera seulement appelé s'il n'y a pas d'autres erreurs
     final public function makeCompleteValidation(array $array)
     {
@@ -1360,9 +1361,6 @@ class Col extends Main\Root
 
         if(empty($error))
         {
-            if(!empty($array['required']) && is_string($array['required']))
-            $error[] = $array['required'];
-
             if(!empty($array['editable']) && is_string($array['editable']))
             $error[] = $array['editable'];
 
@@ -1371,6 +1369,9 @@ class Col extends Main\Root
 
             if(!empty($array['compare']) && is_array($array['compare']))
             $error = Base\Arr::merge($error,$array['compare']);
+
+            if(empty($error) && !empty($array['required']) && is_string($array['required']))
+            $error[] = $array['required'];
 
             if(empty($error) && !empty($array['unique']) && $array['unique'] instanceof \Closure)
             {

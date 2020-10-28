@@ -99,7 +99,7 @@ class Cols extends Base\Test
         assert($cols->compare(['email'=>'bla']) === []);
 
         // completeValidation
-        assert($cols->completeValidation(['email'=>''])['email'] === ['required','email']);
+        assert($cols->completeValidation(['email'=>''])['email'] === ['email']);
         assert($cols->completeValidation(['email'=>'asd'])['email'] === ['email']);
         assert(count($cols->completeValidation(['email'=>''],true,false)) === 9);
 
