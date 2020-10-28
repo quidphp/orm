@@ -67,6 +67,10 @@ class Col extends Base\Test
 
         // onSet
 
+        // onPreValidate
+
+        // onValidate
+
         // onDuplicate
 
         // onDelete
@@ -280,12 +284,6 @@ class Col extends Base\Test
 
         // ruleValidateCommon
 
-        // preValidateClosure
-        assert($col->preValidateClosure() === null);
-
-        // validateClosure
-        assert($col->validateClosure() === null);
-
         // attrCompare
         assert($col->attrCompare() === []);
         assert($dateStart->attrCompare()['<='] instanceof Orm\Col);
@@ -361,10 +359,10 @@ class Col extends Base\Test
 
         // compare
         assert($dateStart->compare(1234));
-        assert($dateStart->compare(1234,['dateEnd'=>1245]));
-        assert($dateStart->compare(1234,['dateEnd'=>1233])['<='] === $dateEnd);
-        assert($dateStart->compare(1234,['dateEnd'=>1233],true) === ['Must be equal or smaller than End date']);
-        assert($dateStart->compare(1234,['dateEnd'=>1234],true));
+        assert($dateStart->compare(1234,false,null,['dateEnd'=>1245]));
+        assert($dateStart->compare(1234,false,null,['dateEnd'=>1233])['<='] === $dateEnd);
+        assert($dateStart->compare(1234,true,null,['dateEnd'=>1233]) === ['Must be equal or smaller than End date']);
+        assert($dateStart->compare(1234,true,null,['dateEnd'=>1234]));
 
         // isUnique
         assert(!$col->isUnique('james',2));
@@ -402,7 +400,7 @@ class Col extends Base\Test
         assert($col->completeValidation(2) === ['string']);
         assert($col->completeValidation(0) === ['string']);
         assert($col->completeValidation('') === ['required']);
-        assert($col->completeValidation('',[],true) === ['Cannot be empty']);
+        assert($col->completeValidation('',true,null,[]) === ['Cannot be empty']);
 
         // makeCompleteValidation
 

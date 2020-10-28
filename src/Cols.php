@@ -270,7 +270,7 @@ class Cols extends ColsMap
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
     final public function preValidate(array $set=[],bool $lang=false,bool $filter=true):array
     {
-        return $this->triggerValidate('preValidate',$set,$lang,$filter);
+        return $this->triggerValidate('preValidate',$set,$lang,$filter,false);
     }
 
 
@@ -280,7 +280,7 @@ class Cols extends ColsMap
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
     final public function validate(array $set=[],bool $lang=false,bool $filter=true):array
     {
-        return $this->triggerValidate('validate',$set,$lang,$filter);
+        return $this->triggerValidate('validate',$set,$lang,$filter,true);
     }
 
 
@@ -290,7 +290,7 @@ class Cols extends ColsMap
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
     final public function required(array $set=[],bool $lang=false,bool $filter=true):array
     {
-        return $this->triggerValidate('required',$set,$lang,$filter);
+        return $this->triggerValidate('required',$set,$lang,$filter,false);
     }
 
 
@@ -300,7 +300,7 @@ class Cols extends ColsMap
     // par défaut filter est true, donc les colonnes qui passent le test ne sont pas retournés
     final public function unique(array $set=[],bool $lang=false,bool $filter=true):array
     {
-        return $this->triggerValidate('unique',$set,$lang,$filter);
+        return $this->triggerValidate('unique',$set,$lang,$filter,false);
     }
 
 
@@ -341,7 +341,7 @@ class Cols extends ColsMap
             $v = $set[$key];
 
             if($argSet === true)
-            $v = $col->$method($v,$set,$lang);
+            $v = $col->$method($v,$lang,null,$set);
             else
             $v = $col->$method($v,$lang);
 

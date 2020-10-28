@@ -66,6 +66,8 @@ class Col extends Main\Root
         'onAttr'=>null, // callback lors de la création de la colonne, génération des attributs
         'onGet'=>null, // callable pour onGet, appelé pour avoir la version get d'une valeur
         'onSet'=>null, // callable pour onSet, appelé à chaque set de valeur
+        'onPreValidate'=>null, // callback pour la prévalidation, doit retourner une closure
+        'onValidate'=>null, // callback pour la validation, doit retourner une closure, envoie des arguments supplémentaires comme pour onSet
         'onDuplicate'=>null, // callback sur duplication
         'onDelete'=>null, // callback sur suppression de la ligne
         'onExport'=>null, // callback lors de l'exporation
@@ -156,6 +158,22 @@ class Col extends Main\Root
     protected function onSet($return,?Cell $cell=null,array $row,array $option)
     {
         return $return;
+    }
+
+
+    // onPreValidate
+    // callback qui permet de retourner la closure pour la prévalidation
+    public function onPreValidate():?\Closure
+    {
+        return null;
+    }
+
+
+    // onValidate
+    // callback qui permet de retourner la closure pour la validation
+    public function onValidate():?\Closure
+    {
+        return null;
     }
 
 
@@ -780,7 +798,7 @@ class Col extends Main\Root
     // validation est la valeur avant l'insertion dans la base de données
     final public function rulePreValidate(bool $lang=false):array
     {
-        return $this->ruleValidateCommon($this->getAttr('preValidate'),'preValidateClosure',$lang);
+        return $this->ruleValidateCommon($this->getAttr('preValidate'),'onPreValidate',$lang);
     }
 
 
@@ -798,7 +816,7 @@ class Col extends Main\Root
     // si lang est true, retourne les textes plutôt que les règles de validation
     final public function ruleValidate(bool $lang=false):array
     {
-        return $this->ruleValidateCommon($this->getAttr('validate'),'validateClosure',$lang);
+        return $this->ruleValidateCommon($this->getAttr('validate'),'onValidate',$lang);
     }
 
 
@@ -819,10 +837,10 @@ class Col extends Main\Root
 
         if(!empty($method))
         {
-            $closure = $this->$method();
+            $closure = $this->attrOrMethodCall($method);
             if(!empty($closure))
             {
-                $key = $closure('lang');
+                $key = $closure('lang',null,$this);
                 if(!empty($key))
                 $return[$key] = $closure;
             }
@@ -836,22 +854,6 @@ class Col extends Main\Root
         }
 
         return $return;
-    }
-
-
-    // preValidateClosure
-    // retourne la closure pour la prévalidation
-    public function preValidateClosure():?\Closure
-    {
-        return null;
-    }
-
-
-    // validateClosure
-    // retourne la closure pour la validation
-    public function validateClosure():?\Closure
-    {
-        return null;
     }
 
 
@@ -1070,12 +1072,13 @@ class Col extends Main\Root
 
     // rulesWrapClosure
     // enrobe les closures dans une autre closure pour y spécifier le contexte
-    final protected function rulesWrapClosure(string $context,array $return,$value=null):array
+    // injecte aussi l'objet col et d'autres arguments
+    final protected function rulesWrapClosure(string $context,array $return,$value=null,?Cell $cell=null,?array $row=null):array
     {
         foreach ($return as $k => $v)
         {
             if($v instanceof \Closure)
-            $return[$k] = fn() => $v($context,$value);
+            $return[$k] = fn() => $v($context,$value,$this,$cell,$row);
         }
 
         return $return;
@@ -1124,15 +1127,15 @@ class Col extends Main\Root
     // retourne true si ok, sinon retourne un tableau avec les détails sur les validations non passés
     // les règles de validation ne s'applique pas si la valeur est celle par défaut ou null, si null est accepté
     // si lang est true, retourne les textes plutôt que les règles de validation
-    final public function validate($value,bool $lang=false)
+    final public function validate($value,bool $lang=false,?Cell $cell=null,?array $row=null)
     {
-        return $this->triggerValidate($value,$this->ruleValidateCombined(),false,$lang);
+        return $this->triggerValidate($value,$this->ruleValidateCombined(),false,$lang,$cell,$row);
     }
 
 
     // triggerValidate
     // utilisé par preValidate et validate comme c'est le même code
-    final protected function triggerValidate($value,array $rules,bool $ignoreEmpty=false,bool $lang=false)
+    final protected function triggerValidate($value,array $rules,bool $ignoreEmpty=false,bool $lang=false,?Cell $cell=null,?array $row=null)
     {
         $return = true;
         $acceptsNull = $this->schema()->acceptsNull();
@@ -1146,7 +1149,7 @@ class Col extends Main\Root
 
             if($isNull === false && $isDefault === false && $isEmpty === false)
             {
-                $rules = $this->rulesWrapClosure('validate',$rules,$value);
+                $rules = $this->rulesWrapClosure('validate',$rules,$value,$cell,$row);
                 $return = Base\Validate::isAndCom($rules,$value);
 
                 if($lang === true && is_array($return))
@@ -1165,15 +1168,12 @@ class Col extends Main\Root
     // fait les test de comparaison sur la colonne
     // le tableau row, contenant toutes les données de la ligne doit être fourni
     // si lang est true, retourne le message d'erreur
-    final public function compare($value,$row=[],bool $lang=false)
+    final public function compare($value,bool $lang=false,?Cell $cell=null,?array $row=null)
     {
         $return = true;
 
         if($value instanceof Cell)
         $value = $value->value();
-
-        if($row instanceof Row)
-        $row = $row->value();
 
         if($this->hasCompare() && is_array($row) && !empty($row) && !Base\Vari::isReallyEmpty($value))
         {
@@ -1333,13 +1333,13 @@ class Col extends Main\Root
     // completeValidation
     // fait les test required, validate et unique sur la colonne
     // si lang est true, retourne les textes plutôt que les règles de validation
-    final public function completeValidation($value,$row=[],bool $lang=false)
+    final public function completeValidation($value,bool $lang=false,?Cell $cell=null,?array $row=null)
     {
         $array = [];
         $array['exception'] = $this->exception($lang);
         $array['required'] = $this->required($value,$lang);
-        $array['validate'] = $this->validate($value,$lang);
-        $array['compare'] = $this->compare($value,$row,$lang);
+        $array['validate'] = $this->validate($value,$lang,$cell,$row);
+        $array['compare'] = $this->compare($value,$lang,$cell,$row);
         $array['unique'] = fn() => $this->unique($value,null,$lang);
         $array['editable'] = true;
 

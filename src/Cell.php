@@ -274,7 +274,7 @@ class Cell extends Main\Root
     // possible de retourner le texte si lang est true
     final public function compare(bool $lang=false)
     {
-        return $this->col()->compare($this,$this->row(),$lang);
+        return $this->col()->compare($this,$lang,$this,$this->row()->value());
     }
 
 
@@ -316,7 +316,7 @@ class Cell extends Main\Root
     // si cache est true, retoure la propriété validate qui garde en cache la dernière validation
     final public function validate(bool $lang=false)
     {
-        return $this->col()->validate($this,$lang);
+        return $this->col()->validate($this,$lang,$this,$this->row()->value());
     }
 
 
