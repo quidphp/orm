@@ -1689,12 +1689,13 @@ class Col extends Main\Root
     // normalement à l'insertion true se transforme en défaut
     final public function insert($return,array $row,?array $option=null)
     {
-        $option = (array) $option;
+        $option = Base\Arr::plus(['valueDefault'=>false],$option);
         $this->clearCommittedCallback();
         $this->clearException();
 
         // fix pour pouvoir insérer une colonne relation avec un bool qui se transforme en 0/1
-        if(is_bool($return) && $this->isRelation() && ($this->hasNullDefault() || !$this->hasDefault()))
+        // valueDefault a été rajouté car sinon une colonne included avec valeur true (default) devenait 1, ce qui causait une erreur hors de relation
+        if($option['valueDefault'] === false && is_bool($return) && $this->isRelation() && ($this->hasNullDefault() || !$this->hasDefault()))
         {
             $return = $this->autoCastRelation($return);
             if(is_bool($return))

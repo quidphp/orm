@@ -149,7 +149,7 @@ class PdoSql extends Base\Test
         assert($sql->unset('from')->isEmpty());
 
         // make
-        $sql->select('*')->table($table)->wheres(2,true,['active'=>'name_en','Ok'=>2],'or','(',['name_en','find',[2,'lol']],'or',['ok'=>'lol'],')');
+        $sql->select('*')->table($table)->wheres(2,true,['active'=>'name_en','Ok'=>2],'or',['ok'=>'lol'],')');
         assert(count($sql->make()) === 6);
 
         // what

@@ -396,11 +396,12 @@ class Cols extends ColsMap
         foreach ($this->groupSetPriority() as $cols)
         {
             $included = $cols->included($option);
+            $optIncluded = Base\Arr::plus($option,['valueDefault'=>true]);
 
             foreach ($included->arr() as $key => $col)
             {
                 if(!array_key_exists($key,$set))
-                $return[$key] = $row[$key] = $this->insert($col,true,$row,$option);
+                $return[$key] = $row[$key] = $this->insert($col,true,$row,$optIncluded);
             }
 
             foreach ($set as $key => $value)
