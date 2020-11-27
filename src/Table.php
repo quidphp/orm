@@ -45,6 +45,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         'limit'=>20, // limit à utiliser par défaut
         'reservePrimary'=>false, // spécifie s'il faut réserver un id lors de l'insertion (et passer ce id au onSet)
         'deleteAutoIncrement'=>false, // sur suppression, tente de reset le auto increment si la ligne était la dernière
+        'whereFilterTrueActive'=>true, // s'il faut joindre la colonne active dans le whereFilterTrue
         'logSql'=>[ // défini si le type de requête à la table doit être loggé
             'select'=>false,
             'show'=>false,
@@ -513,11 +514,14 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     final public function whereFilterTrue():array
     {
         $return = [];
-        $active = $this->colActive();
         $required = $this->cols()->filter(fn($col) => $col->isRequired());
 
-        if(!empty($active))
-        $return = [$active->name()=>1];
+        if($this->getAttr('whereFilterTrueActive',true) === true)
+        {
+            $active = $this->colActive();
+            if(!empty($active))
+            $return = [$active->name()=>1];
+        }
 
         if(!empty($required))
         {
