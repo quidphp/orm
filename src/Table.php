@@ -379,7 +379,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         }
 
         $attr = $callable(static::class,$dbAttr,$baseAttr,$tableAttr,$rowAttr);
-        $attr['parent'] = $this->makeAttrParent($attr['parent'] ?? null);
+        $attr['parent'] = $this->makeAttrParent($attr['parent'] ?: null);
 
         $attr = $this->onAttr($attr);
         $this->checkAttr($attr);
@@ -426,7 +426,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // retourne le nom de parent de la table, ou null
     final public function parent():?string
     {
-        return $this->getAttr('parent');
+        return $this->getAttr('parent') ?: null;
     }
 
 
@@ -509,7 +509,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
 
     // whereFilterTrue
     // retourne where ou filter à utiliser si la valeur de l'attribut est true
-    // retourne la colonne active à 1 si existante
+    // retourne la colonne active à 1 si existante et si l'attribut whereFilterTrueActive retourne true
     // retourne toutes les colonnes requises
     final public function whereFilterTrue():array
     {
