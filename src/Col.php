@@ -197,7 +197,7 @@ class Col extends Main\Root
     // onExport
     // callback sur exportation
     // doit retourner un tableau
-    final protected function onExport($value=null,Cell $cell,string $type,?array $option=null):array
+    final protected function onExport($value,Cell $cell,string $type,?array $option=null):array
     {
         $return = [$value];
 
@@ -226,7 +226,7 @@ class Col extends Main\Root
     // callback après une insertion ou mise à jour réussie
     // la nouvelle cellule est donné en argument
     // ne retourne rien
-    protected function onCommitted(Cell $cell,bool $insert=false,array $option)
+    protected function onCommitted(Cell $cell,bool $insert,array $option)
     {
         if($this->hasCommittedCallback('onCommitted'))
         {

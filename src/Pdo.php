@@ -1984,7 +1984,7 @@ class Pdo extends Main\Root
     // updateIncrement
     // incrément la valeur d'une colonne
     // output est true par défaut
-    final public function updateIncrement($what,int $amount=1,$table,$where=null,$output=true,?array $option=null)
+    final public function updateIncrement($what,int $amount,$table,$where=null,$output=true,?array $option=null)
     {
         $return = null;
         $what = Base\Obj::cast($what,1);
@@ -2008,7 +2008,7 @@ class Pdo extends Main\Root
     // updateDecrement
     // décrement la valeur d'une colonne
     // output est true par défaut
-    final public function updateDecrement($what,int $amount=1,$table,$where=null,$output=true,?array $option=null)
+    final public function updateDecrement($what,int $amount,$table,$where=null,$output=true,?array $option=null)
     {
         $return = null;
         $what = Base\Obj::cast($what,1);

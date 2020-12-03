@@ -77,7 +77,7 @@ class Cell extends Main\Root
     // onCommitted
     // callback après une mise à jour réussie
     // ne retourne rien
-    final protected function onCommitted(bool $insert=false,array $option)
+    final protected function onCommitted(bool $insert,array $option)
     {
         if($this->hasCommittedCallback('onCommitted'))
         {
