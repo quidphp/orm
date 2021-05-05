@@ -376,8 +376,7 @@ abstract class RowsMap extends Map
     // delete
     // efface les lignes, fait une requête pour l'ensemble
     // les lignes effacés sont teardown, effacé de l'objet table et de cet objet rows
-    // retourne un tableau avec les résultats pour chaque ligne
-    final public function delete(?array $option=null)
+    final public function delete(?array $option=null):?int
     {
         $return = null;
 
