@@ -1739,12 +1739,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
         $return = $this->db()->selectKeyPairs($key,$value,$this,...$values);
 
         if($get === true && !empty($return))
-        {
-            foreach ($return as $k => $v)
-            {
-                $return[$k] = $value->get($v);
-            }
-        }
+        $return = Base\Arr::map($return,fn($v) => $value->get($v));
 
         return $return;
     }

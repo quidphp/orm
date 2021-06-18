@@ -73,7 +73,8 @@ class Col extends Main\Root
         'onExport'=>null, // callback lors de l'exporation
         'onInsert'=>null, // callback sur insertion
         'onUpdate'=>null, // callback sur update
-        'onCommit'=>null, // callack sur insertion ou update
+        'onCommit'=>null, // callback sur insertion ou update
+        'onCommitted'=>null, // callback après insertion ou update
         'permission'=>[ // tableau des permissions
             '*'=>[
                 'nullPlaceholder'=>true]]
@@ -228,11 +229,16 @@ class Col extends Main\Root
     // ne retourne rien
     protected function onCommitted(Cell $cell,bool $insert,array $option)
     {
+        $callback = null;
+
         if($this->hasCommittedCallback('onCommitted'))
-        {
-            $callback = $this->getCommittedCallback('onCommitted');
-            $callback($cell,$insert,$option);
-        }
+        $callback = $this->getCommittedCallback('onCommitted');
+
+        else
+        $callback = $this->getAttr('onCommitted');
+
+        if(!empty($callback))
+        $callback($cell,$insert,$option);
 
         $this->clearCommittedCallback();
         $this->clearException();

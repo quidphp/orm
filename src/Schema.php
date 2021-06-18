@@ -139,19 +139,12 @@ class Schema extends Main\Map
     // recharge tout le schema de la base de données
     final public function all():?array
     {
-        $return = null;
         $data =& $this->arr();
         $this->empty();
         $this->tables();
+        Base\Arr::each($data,fn($value,$key) => $this->table($key));
 
-        foreach ($data as $key => $value)
-        {
-            $this->table($key);
-        }
-
-        $return = $data;
-
-        return $return;
+        return $data;
     }
 }
 ?>

@@ -594,12 +594,7 @@ abstract class Syntax extends Main\Root
             if(static::hasDot($return))
             {
                 $x = Base\Str::explodeTrimClean('.',$return,2);
-
-                foreach ($x as $i => $v)
-                {
-                    $x[$i] = Base\Str::stripStartEnd('`','`',$x[$i]);
-                }
-
+                $x = Base\Arr::map($x,fn($v,$i) => Base\Str::stripStartEnd('`','`',$x[$i]));
                 $return = implode('.',$x);
             }
 

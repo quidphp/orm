@@ -606,10 +606,8 @@ class PdoSql extends Main\Map
         {
             foreach ($values as $key => $value)
             {
-                if(is_string($key))
-                $this->where([$key=>$value]);
-                else
-                $this->where($value);
+                $arg = (is_string($key))? [$key=>$value]:$value;
+                $this->where($arg);
             }
         }
 

@@ -2329,10 +2329,7 @@ class Pdo extends Main\Root
             if(is_object($current))
             {
                 $array = $return;
-                foreach ($array as $k => $v)
-                {
-                    $array[$k] = (array) $v;
-                }
+                $array = Base\Arr::map($array,fn($v) => (array) $v);
 
                 if(is_int($key))
                 $array = Base\Column::keyFromIndex($key,$array);
