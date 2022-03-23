@@ -28,6 +28,7 @@ class Pdo extends Main\Root
         'primary'=>'id', // nom de la clé primaire
         'charset'=>'utf8mb4', // charset
         'sql'=>null, // option pour baseSql
+        'checkVersion'=>true, // s'il faut vérifier la version à la connexion
         'connect'=>[ // attribut de connexion
             \PDO::ATTR_DEFAULT_FETCH_MODE=>\PDO::FETCH_ASSOC,
             \PDO::ATTR_EMULATE_PREPARES=>false,
@@ -86,7 +87,10 @@ class Pdo extends Main\Root
             'character_set_connection','character_set_database','character_set_filesystem',
             'character_set_results','character_set_server','character_set_system','lower_case_table_names',
             'collation_connection','collation_database','collation_server',
-            'default_storage_engine','default_tmp_storage_engine']
+            'default_storage_engine','default_tmp_storage_engine'],
+        'minVersion'=>[ // version minimale de la base de donnée
+            'mariadb'=>'10.5.0',
+            'mysql'=>'8.0.0']
     ];
 
 
@@ -193,7 +197,12 @@ class Pdo extends Main\Root
         if(!static::isDriver($dsn['scheme']))
         static::throw('unsupportedDriver');
 
-        $this->pdo = new \PDO($dsn['dsn'],null,$password,$this->getAttr('connect'));
+        $pdo = new \PDO($dsn['dsn'],null,$password,$this->getAttr('connect'));
+
+        if($this->getAttr('checkVersion') === true)
+        $this->checkVersion($pdo);
+
+        $this->pdo = $pdo;
         $this->makeHistory();
 
         return $this;
@@ -209,6 +218,18 @@ class Pdo extends Main\Root
         $this->history = null;
 
         return $this;
+    }
+
+
+    // checkVersion
+    // envoie une exception si la version n'est pas supporté selon la config minimal version
+    final protected function checkVersion(\Pdo $pdo):void
+    {
+        $statement = $pdo->query('SELECT VERSION()');
+        $version = $statement->fetchColumn(0);
+
+        if(!static::isValidVersion($version))
+        static::throw('invalidDbVersion',$version);
     }
 
 
@@ -2358,6 +2379,30 @@ class Pdo extends Main\Root
     }
 
 
+    // isValidVersion
+    // retourne vrai si la string version est valide
+    final public static function isValidVersion(string $value):bool
+    {
+        $return = false;
+        $explode = Base\Str::explode('-',$value,2);
+        $explode = array_map('strtolower',$explode);
+        $engine = 'mysql';
+
+        if(!empty($explode[0]))
+        $version = $explode[0];
+
+        if(!empty($explode[1]) && array_key_exists($explode[1],static::$config['minVersion']))
+        $engine = $explode[1];
+
+        $minVersion = static::$config['minVersion'][$engine] ?? null;
+
+        if(!empty($minVersion))
+        $return = version_compare($version,$minVersion,'>=');
+
+        return $return;
+    }
+
+
     // allDrivers
     // retourne les drivers pdo disponibles
     final public static function allDrivers():array
@@ -2367,10 +2412,18 @@ class Pdo extends Main\Root
 
 
     // setDefaultHistory
-    // change la valeur par défaut d'history dans option avant la création de l'objet db
+    // change la valeur par défaut d'history avant la création de l'objet db
     final public static function setDefaultHistory(bool $value):void
     {
-        static::$config['option']['history'] = $value;
+        static::$config['history'] = $value;
+    }
+
+
+    // setDefaultCheckVersion
+    // change la valeur par défaut de check version avant la création de l'objet db
+    final public static function setDefaultCheckVersion(bool $value):void
+    {
+        static::$config['checkVersion'] = $value;
     }
 }
 ?>

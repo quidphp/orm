@@ -1332,27 +1332,25 @@ class PdoSql extends Main\Map
 
     // specificIndex
     // retourne le offset d'un id à l'intérieur de la requête
-    final public function specificIndex($value)
+    // passage à ROW_NUMBER dû à une incompatibilité entre mariaDB 10.2 et 10.6 en lien avec le orderBY
+    final public function specificIndex($value,bool $debug=false)
     {
         $return = null;
         $value = Base\Obj::cast($value,4);
         $table = $this->checkTable();
         $primary = $this->primary();
         $where = $this->get('where');
-        $order = $this->get('order');
+        $order = $this->get('order') ?: [$primary=>'ASC'];
 
         $tableName = $this->syntaxCall('tick',$table).' t';
-        $what = ['t.'.$primary];
-        if(!empty($where))
-        $what = Base\Arr::mergeUnique($what,$this->syntaxCall('whatFromWhere',$where,'t'));
-        $what[] = ['@rownum := @rownum + 1','position'];
+        $orderStr = $this->syntaxCall('order',$order);
+        $what = 't.`id`, ROW_NUMBER() OVER ( ORDER BY '.$orderStr['sql'].' ) AS `position`';
 
         $innerSql = clone $this;
-        $innerSql->select(...$what);
+        $innerSql->select($what);
         $innerSql->table($tableName);
-        $innerSql->set('join','(SELECT @rownum := 0) r');
         $innerSql->set('where',$where);
-        $innerSql->set('order',$order);
+        $innerSql->unset('order');
         $innerSql = $innerSql->_cast().' x';
 
         $sql = clone $this;

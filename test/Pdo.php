@@ -58,6 +58,8 @@ class Pdo extends Base\Test
         assert($pdo->disconnect() === $pdo);
         assert($pdo->connect($credentials[1]) === $pdo);
 
+        // checkVersion
+
         // pdo
         assert($pdo->pdo() instanceof \Pdo);
 
@@ -766,14 +768,25 @@ class Pdo extends Base\Test
         $obj2->test = 3;
         assert(Orm\Pdo::outputKey(0,[$obj,$obj2])[2] === $obj);
 
+        // isValidVersion
+        assert(Orm\Pdo::isValidVersion('10.5.5-MariaDB'));
+        assert(!Orm\Pdo::isValidVersion('10.4.5-MariaDB'));
+        assert(!Orm\Pdo::isValidVersion('10.1.5-MariaDB'));
+        assert(Orm\Pdo::isValidVersion('8.0.27'));
+        assert(Orm\Pdo::isValidVersion('8.0.27-original'));
+        assert(!Orm\Pdo::isValidVersion('5.7.27'));
+
         // allDrivers
         assert(in_array('mysql',Orm\Pdo::allDrivers(),true));
 
         // setDefaultHistory
         $pdo::setDefaultHistory(true);
 
+        // setDefaultCheckVersion
+        $pdo::setDefaultCheckVersion(true);
+
         // attr
-        assert(count($pdo->attr()) === 13);
+        assert(count($pdo->attr()) === 15);
 
         // cleanup
         assert($pdo->truncate($table) instanceof \PDOStatement);

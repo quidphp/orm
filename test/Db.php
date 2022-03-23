@@ -279,7 +279,7 @@ class Db extends Base\Test
         assert($db->getRowOutputType('rowsIn') === 'rows');
 
         // attr
-        assert(count($db->attr()) === 26);
+        assert(count($db->attr()) === 27);
 
         // inst
         assert(Orm\Db::hasInst());
