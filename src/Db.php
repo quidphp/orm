@@ -651,6 +651,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
             {
                 if(empty($value['id']))
                 $return = $table->rowsNew();
+
                 else
                 {
                     $ids = array_values((array) $value['id']);

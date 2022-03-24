@@ -407,6 +407,10 @@ class Table extends Base\Test
         assert($tb->selectPrimary(2) === 2);
         assert($tb->selectPrimary(200000) === null);
 
+        // selectDebug
+        assert($tb->selectDebug(2,['james'=>'desc'],4)['sql'] === 'SELECT * FROM `ormTable` WHERE `id` = 2 ORDER BY `james` DESC LIMIT 4');
+        assert($tb->selectDebug(['id'=>'BLA'],['james'=>'desc'],4)['emulate'] === "SELECT * FROM `ormTable` WHERE `id` = 'BLA' ORDER BY `james` DESC LIMIT 4");
+
         // selects
         assert($tb->selects(['active'=>false])->isEmpty());
 

@@ -1539,6 +1539,16 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     }
 
 
+    // selectDebug
+    // retourne le tableau de syntax de la requête
+    // n'effectue pas la requête
+    final public function selectDebug(...$values):array
+    {
+        $db = $this->db();
+        return $db->debug($db->syntaxCall('select','*',$this,...$values));
+    }
+
+
     // selects
     // permet de faire une requête select avec output rows sur la table
     // utilise true pour obtenir les valeurs par défaut
