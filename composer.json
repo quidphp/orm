@@ -7,7 +7,9 @@
     "license": "MIT",
     "authors": [{
         "name": "Pierre-Philippe Emond",
-        "email": "emondpph@gmail.com"
+        "email": "emondpph@gmail.com",
+        "homepage": "https://emond.io",
+        "role": "Developer"
     }],
     "require": {
         "php": ">=7.4.0",
@@ -19,5 +21,7 @@
             "Quid\\Orm\\": "src/",
             "Quid\\Test\\Orm\\": "test/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
