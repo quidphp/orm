@@ -147,7 +147,7 @@ class Col extends Main\Root
 
     // onGet
     // permet de formater une valeur simple vers un type plus complexe, par exemple lors d'un affichage
-    protected function onGet($return,?Cell $cell=null,array $option)
+    protected function onGet($return,?Cell $cell,array $option)
     {
         return $return;
     }
@@ -156,7 +156,7 @@ class Col extends Main\Root
     // onSet
     // permet de formater une valeur complexe vers le simple, par exemple lors d'une insertion ou mise à jour
     // cell est fourni en troisième argument si c'est une update
-    protected function onSet($return,?Cell $cell=null,array $row,array $option)
+    protected function onSet($return,?Cell $cell,array $row,array $option)
     {
         return $return;
     }

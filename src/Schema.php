@@ -30,7 +30,7 @@ class Schema extends Main\Map
 
     // construct
     // construit l'objet schema
-    final public function __construct(?array $data=null,Db $db)
+    final public function __construct(?array $data,Db $db)
     {
         $this->setDb($db);
 

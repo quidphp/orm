@@ -200,6 +200,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
     // offsetGet
     // arrayAccess offsetGet retourne une table
     // lance une exception si table non existante
+    #[\ReturnTypeWillChange]
     final public function offsetGet($key)
     {
         return $this->table($key);
@@ -317,7 +318,7 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
 
     // statementException
     // lance une exception de db attrapable en cas d'erreur sur le statement
-    final public function statementException(?array $option=null,\Exception $exception,...$values):void
+    final public function statementException(?array $option,\Exception $exception,...$values):void
     {
         $class = $this->getExceptionClass();
         $message = $exception->getMessage();

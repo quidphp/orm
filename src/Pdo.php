@@ -712,7 +712,7 @@ class Pdo extends Main\Root
 
     // statementException
     // lance une exception de db attrapable
-    public function statementException(?array $option=null,\Exception $exception,...$values):void
+    public function statementException(?array $option,\Exception $exception,...$values):void
     {
         static::throw($exception->getMessage(),null,$option);
     }
