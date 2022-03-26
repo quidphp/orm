@@ -1356,7 +1356,6 @@ class PdoSql extends Main\Map
         $sql = clone $this;
         $sql->select('x.position');
         $sql->table($innerSql);
-        $sql->set('where',$where);
         $sql->where($primary,'=',$value);
         $sql->setOutput('column');
 
