@@ -89,7 +89,7 @@ class Pdo extends Main\Root
             'collation_connection','collation_database','collation_server',
             'default_storage_engine','default_tmp_storage_engine'],
         'minVersion'=>[ // version minimale de la base de donnée
-            'mariadb'=>'10.9.0',
+            'mariadb'=>'10.5.0',
             'mysql'=>'8.0.0']
     ];
 
