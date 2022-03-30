@@ -12,7 +12,7 @@
 **QuidPHP/Orm** is available as an open-source software under the [MIT license](LICENSE).
 
 ## Documentation
-**QuidPHP/Orm** documentation is being written. Once ready, it will be available at https://quidphp.github.io/project.
+**QuidPHP/Orm** documentation is being written. Once ready, it will be available at https://quidphp.github.io/docs.
 
 ## Installation
 **QuidPHP/Orm** can be easily installed with [Composer](https://getcomposer.org). It is available on [Packagist](https://packagist.org/packages/quidphp/orm).
