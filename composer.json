@@ -2,7 +2,7 @@
     "name": "quidphp/orm",
     "type": "library",
     "description": "PHP library that provides database access and a comprehensive ORM",
-    "keywords": ["quidphp","quid","framework"],
+    "keywords": ["quidphp","quid","php-framework"],
     "homepage": "https://quidphp.com",
     "license": "MIT",
     "authors": [{
