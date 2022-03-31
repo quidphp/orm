@@ -124,4 +124,4 @@ All dependencies will be resolved by using the [Composer](https://getcomposer.or
 - [TableRelation](test/TableRelation.php) - Class for testing Quid\Orm\TableRelation
 - [Tables](test/Tables.php) - Class for testing Quid\Orm\Tables
 
-**QuidPHP/Orm** PHP testsuite can be run by creating a new [QuidPHP/Assert](https://github.com/quidphp/assert) project.
+**QuidPHP/Orm** testsuite can be run by creating a new [QuidPHP/Assert](https://github.com/quidphp/assert) project.
