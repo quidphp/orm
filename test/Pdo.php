@@ -770,7 +770,7 @@ class Pdo extends Base\Test
 
         // isValidVersion
         assert(Orm\Pdo::isValidVersion('10.5.5-MariaDB'));
-        assert(!Orm\Pdo::isValidVersion('10.4.5-MariaDB'));
+        assert(Orm\Pdo::isValidVersion('10.4.5-MariaDB'));
         assert(!Orm\Pdo::isValidVersion('10.1.5-MariaDB'));
         assert(Orm\Pdo::isValidVersion('8.0.27'));
         assert(Orm\Pdo::isValidVersion('8.0.27-original'));
