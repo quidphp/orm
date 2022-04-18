@@ -195,7 +195,7 @@ class Table extends Main\ArrObj implements Main\Contract\Import
     // arrayAccess offsetGet fait appel à la méthode row si key est int, ou col si key est string
     // tente de charger la row si non existante
     // lance une exception si rien d'existant
-    final public function offsetGet($key)
+    final public function offsetGet($key):mixed
     {
         $return = null;
 

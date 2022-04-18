@@ -382,6 +382,7 @@ class Syntax extends Base\Test
         assert($syntax::where([['id','>',0]])['sql'] === "`id` > '0'");
         assert($syntax::where([['id','>',1]])['sql'] === '`id` > 1');
         assert($syntax::where([['id','>',1.2]])['sql'] === '`id` > 1.2');
+        assert($syntax::where([['id','=',2],['OR'],['id','=',4]])['sql'] === '`id` = 2 OR `id` = 4');
 
         // whereDefault
         assert($syntax::whereDefault([true,3],$syntax::option()) === ['active'=>1,1=>['id','=',3]]);
@@ -411,6 +412,7 @@ class Syntax extends Base\Test
         assert($syntax::wherePrepareOne(0,'(') === [['(']]);
         assert($syntax::wherePrepareOne(0,'AND') === [['AND']]);
         assert($syntax::wherePrepareOne(0,'or') === [['or']]);
+        assert($syntax::wherePrepareOne(0,['or']) === [['or']]);
         assert($syntax::wherePrepareOne(0,['active','=',1]) === [['active','=',1]]);
 
         // whereCols

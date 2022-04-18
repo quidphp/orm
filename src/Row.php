@@ -125,7 +125,7 @@ class Row extends Main\ArrObj
     // offsetGet
     // arrayAccess offsetGet retourne une cellule
     // lance une exception si cellule non existante
-    final public function offsetGet($key)
+    final public function offsetGet($key):mixed
     {
         return $this->cell($key);
     }

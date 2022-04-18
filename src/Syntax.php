@@ -1431,15 +1431,23 @@ abstract class Syntax extends Main\Root
 
         elseif(is_numeric($key))
         {
-            if(is_array($value) && !Base\Arr::onlyNumeric($value) && in_array(count($value),[2,3],true))
-            $return[] = array_values($value);
+            if(is_array($value))
+            {
+                $count = count($value);
+
+                if(!Base\Arr::onlyNumeric($value) && in_array($count,[2,3],true))
+                $return[] = array_values($value);
+
+                elseif($count === 1 && !empty($value[0]) && is_string($value[0]))
+                {
+                    if(static::isWhereSeparator($value[0]) || static::isParenthesis($value[0]))
+                    $return[] = $value;
+                }
+            }
 
             elseif(is_string($value))
             {
-                if(static::isWhereSeparator($value))
-                $return[] = [$value];
-
-                elseif(static::isParenthesis($value))
+                if(static::isWhereSeparator($value) || static::isParenthesis($value))
                 $return[] = [$value];
             }
         }
