@@ -405,6 +405,8 @@ class Syntax extends Base\Test
         assert(count($syntax::wherePrepare(['active'=>1,'OR','(','james'=>2,')','lala'=>3])) === 7);
         assert($syntax::wherePrepare([['active','=',false]]) === [['active','=',false]]);
         assert(count($syntax::wherePrepare(['(',['ok','=',2]])) === 3);
+        assert($syntax::wherePrepare(['active'=>1,'OR','(','james'=>2,')','lala'=>3])[1] === ['OR']);
+        assert($syntax::wherePrepare(['active'=>1,'OR','(','james'=>2,')','lala'=>3])[2] === ['(']);
 
         // wherePrepareOne
         assert($syntax::wherePrepareOne('active',1) === [['active','=',1]]);
@@ -419,6 +421,7 @@ class Syntax extends Base\Test
         assert($syntax::whereCols([['id','=',3],'james'=>2,['id','=',4],['ok','in',[1,3,3]]]) === ['id','james','ok']);
 
         // whereAppend
+        assert($syntax::whereAppend(true,['james'=>3,['caca','!=',4]],[['james','in',[1,2,3]]])[2] === ['AND']);
         assert($syntax::where($syntax::whereAppend(true,['james'=>3],[['james','in',[1,2,3]]]))['sql'] === '`active` = 1 AND `james` = 3 AND `james` IN(1, 2, 3)');
         assert($syntax::where($syntax::whereAppend(true,['james'=>[3,2,1]],[['james','in',[1,2,3]]]))['sql'] === '`active` = 1 AND `james` IN(3, 2, 1) AND `james` IN(1, 2, 3)');
         assert($syntax::where($syntax::whereAppend(true,1))['sql'] === '`active` = 1 AND `id` = 1');
