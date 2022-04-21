@@ -364,7 +364,8 @@ class Db extends Pdo implements \ArrayAccess, \Countable, \Iterator
         $this->makeClasse($extenders);
         $this->tablesLoad();
         $this->tables()->sortDefault()->readOnly(true);
-        Base\Response::onCloseDown(fn() => $this->onCloseDown());
+        $response = Main\ResponseCurrent::singleton();
+        $response->onCloseDown(fn() => $this->onCloseDown());
     }
 
 

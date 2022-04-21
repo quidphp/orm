@@ -282,7 +282,6 @@ class Db extends Base\Test
         assert(count($db->attr()) === 27);
 
         // inst
-        assert(Orm\Db::hasInst());
         assert(Orm\Db::isInst(0));
         assert(Orm\Db::isInst($db->instName()));
         assert($db->inInst());
