@@ -360,13 +360,14 @@ class Row extends Main\ArrObj
     final public function label($pattern=null,?int $withName=null,?string $lang=null,?array $option=null):?string
     {
         $obj = $this->db()->lang();
-        $option = Base\Arr::plus($option,['pattern'=>$pattern]);
+        $option = Base\Arr::plus($option,['pattern'=>$pattern,'htmlOutput'=>false]);
         $table = $this->table();
         $name = null;
 
         if(is_int($withName))
         {
-            $name = (string) $this->cellName($lang)->htmlOutput();
+            $method = ($option['htmlOutput'] === true)? 'htmlOutput':'value';
+            $name = (string) $this->cellName($lang)->$method();
             $name = Base\Str::excerpt($withName,$name);
         }
 
