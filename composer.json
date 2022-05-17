@@ -13,8 +13,8 @@
     }],
     "require": {
         "php": ">=8.1.0",
-        "quidphp/base": "dev-master",
-        "quidphp/main": "dev-master"
+        "quidphp/base": "5.31.*",
+        "quidphp/main": "5.31.*"
     },
     "autoload": {
         "psr-4": {
