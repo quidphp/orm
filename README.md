@@ -12,7 +12,7 @@
 **QuidPHP/Orm** is available as an open-source software under the [MIT license](LICENSE).
 
 ## Documentation
-**QuidPHP/Orm** documentation is being written. Once ready, it will be available at [QuidPHP/Docs](https://github.com/quidphp/docs).
+**QuidPHP/Orm** documentation is available at [QuidPHP/Docs](https://github.com/quidphp/docs).
 
 ## Installation
 **QuidPHP/Orm** can be easily installed with [Composer](https://getcomposer.org). It is available on [Packagist](https://packagist.org/packages/quidphp/orm).
@@ -23,29 +23,28 @@ Once installed, the **Quid\Orm** namespace will be available within your PHP app
 
 ## Requirement
 **QuidPHP/Orm** requires the following:
-- PHP 7.4, 8.0 or 8.1 with these extensions:
+- PHP 8.1 with these extensions:
     - PDO
     - pdo_mysql
-    - And all PHP extensions required by [quidphp/base](https://github.com/quidphp/base)
-- Mysql (>= 8.0) or MariaDB (>= 10.5) database
+- All requirements of [quidphp/main](https://github.com/quidphp/main)
+- Mysql (>= 8.0) or MariaDB (>= 10.4) database
 
 ## Dependency
-**QuidPHP/Orm** has the following dependencies:
-- [quidphp/base](https://github.com/quidphp/base) - Quid\Base - PHP library that provides a set of low-level static methods
+**QuidPHP/Orm** has the following dependency:
 - [quidphp/main](https://github.com/quidphp/main) - Quid\Main - PHP library that provides a set of base objects and collections 
 
-All dependencies will be resolved by using the [Composer](https://getcomposer.org) installation process.
+The dependency will be resolved by using the [Composer](https://getcomposer.org) installation process.
 
 ## Comment
-**QuidPHP/Orm** code is commented and all methods are explained. However, most of the comments are written in French.
+**QuidPHP/Orm** code is commented and all methods are explained (in French).
 
 ## Convention
 **QuidPHP/Orm** is built on the following conventions:
+- *Coding*: No curly braces are used in a IF statement if the condition can be resolved in only one statement.
+- *Config*: A special $config static property exists in all classes. This property gets recursively merged with the parents' property on initialization.
 - *Dynamic singleton*: Table, Col, Row and Cell objects can only exist once for a same source.
 - *Traits*: Traits filenames start with an underscore (_).
 - *Type*: Files, function arguments and return types are strict typed.
-- *Config*: A special $config static property exists in all classes. This property gets recursively merged with the parents' property on initialization.
-- *Coding*: No curly braces are used in a IF statement if the condition can be resolved in only one statement.
 
 ## Overview
 **QuidPHP/Orm** contains 45 classes and traits. Here is an overview:
