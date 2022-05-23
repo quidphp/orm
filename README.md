@@ -26,8 +26,8 @@ Once installed, the **Quid\Orm** namespace will be available within your PHP app
 - PHP 8.1 with these extensions:
     - PDO
     - pdo_mysql
-- All requirements of [quidphp/main](https://github.com/quidphp/main)
 - Mysql (>= 8.0) or MariaDB (>= 10.4) database
+- All requirements of [quidphp/main](https://github.com/quidphp/main)
 
 ## Dependency
 **QuidPHP/Orm** has the following dependency:
