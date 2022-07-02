@@ -94,7 +94,7 @@ The dependency will be resolved by using the [Composer](https://getcomposer.org)
 - [_mapIndex](src/_mapIndex.php) - Trait that grants common methods for indexed collections (cols, cells, rows)
 - [_tableAccess](src/_tableAccess.php) - Trait that grants table access to the class using
 
-## Testing
+### Testing
 **QuidPHP/Orm** contains 26 test classes:
 - [CatchableException](test/CatchableException.php) - Class for testing Quid\Orm\CatchableException
 - [Cell](test/Cell.php) - Class for testing Quid\Orm\Cell
