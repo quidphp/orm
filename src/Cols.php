@@ -174,8 +174,8 @@ class Cols extends ColsMap
 
     // value
     // passe les valeurs de set dans les méthode onGet des colonnes
-    // si onlyScalar est true, les valeurs de retour non scalaire ne sont pas conservés
-    final public function value(array $set=[],bool $onlyScalar=false,bool $relation=false,?array $option=null):array
+    // si onlySimple est true, les valeurs de retour complexes ne sont pas conservés
+    final public function value(array $set=[],bool $onlySimple=false,bool $relation=false,?array $option=null):array
     {
         $return = [];
         $option = (array) $option;
@@ -192,7 +192,7 @@ class Cols extends ColsMap
                 else
                 $value = $col->callThis(fn() => $this->get($value,$option));
 
-                if($onlyScalar === false || is_scalar($value))
+                if($onlySimple === false || is_scalar($value) || null === $value)
                 $return[$key] = $value;
             }
         }
