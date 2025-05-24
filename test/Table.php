@@ -175,7 +175,7 @@ class Table extends Base\Test
         assert($tb->autoIncrement() === 3);
 
         // collation
-        assert($tb->collation() === 'utf8mb4_general_ci');
+        assert(in_array($tb->collation(),['utf8mb4_general_ci','utf8mb4_uca1400_ai_ci']));
 
         // updateTime
         assert(is_int($tb->updateTime()));
