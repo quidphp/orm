@@ -96,7 +96,6 @@ class ColSchema extends Base\Test
         assert($col->length() === 100);
 
         // collation
-        d($email->collation());
         assert(in_array($email->collation(),['utf8mb4_general_ci','utf8mb4_uca1400_ai_ci']));
         assert($dateAdd->collation() === null);
 
