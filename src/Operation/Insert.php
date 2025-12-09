@@ -130,7 +130,7 @@ class Insert extends Orm\TableOperation
                 {
                     $row = $table->row($return);
 
-                    if($onCommitted === true && !empty($return) && is_array($set) && !empty($set))
+                    if($onCommitted === true && !empty($row) && is_array($set) && !empty($set))
                     $this->committed($row,$set);
                 }
 
